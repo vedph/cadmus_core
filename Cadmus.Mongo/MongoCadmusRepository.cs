@@ -441,7 +441,7 @@ namespace Cadmus.Mongo
                     // text layer parts, whose role ID is assumed to be equal to their fragment
                     // type ID, which always begin with "fr-"
                     string reqTypeId = BuildPartTypeProviderId(doc);
-                    Type t = _partTypeProvider.GetType(reqTypeId);
+                    Type t = _partTypeProvider.Get(reqTypeId);
 
                     if (t == null)
                     {
@@ -868,7 +868,7 @@ namespace Cadmus.Mongo
             foreach (BsonDocument doc in results)
             {
                 string reqTypeId = BuildPartTypeProviderId(doc);
-                Type t = _partTypeProvider.GetType(reqTypeId);
+                Type t = _partTypeProvider.Get(reqTypeId);
                 itemParts.Add((IPart)BsonSerializer.Deserialize(doc, t));
             }
 

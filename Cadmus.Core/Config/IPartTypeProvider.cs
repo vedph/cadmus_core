@@ -14,6 +14,6 @@ namespace Cadmus.Core.Config
         /// <returns>
         /// part/fragment type, or null if not found
         /// </returns>
-        Type GetType(string id);
+        Type Get(string id);
     }
 }

@@ -131,9 +131,9 @@ namespace Cadmus.Core.Config
             if (directory == null)
                 throw new ArgumentNullException(nameof(directory));
 
-            foreach (string filePath in Directory.GetFiles(directory, fileMask))
+            foreach (FileInfo file in new DirectoryInfo(directory).GetFiles(fileMask))
             {
-                Assembly assembly = Assembly.Load(filePath);
+                Assembly assembly = Assembly.Load(AssemblyName.GetAssemblyName(file.FullName));
                 ScanAssembly(assembly);
             }
             if (assemblies.Length > 0) Add(assemblies);

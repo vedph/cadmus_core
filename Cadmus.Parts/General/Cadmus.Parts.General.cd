@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Cadmus.Parts.General.CategoriesPart">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAEAAAAAAIAAAAAAA=</HashCode>
+      <FileName>General\CategoriesPart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cadmus.Parts.General.KeywordsPart">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAIAAAAgAA=</HashCode>
+      <FileName>General\KeywordsPart.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Keywords" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Cadmus.Parts.General.Keyword">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAQEgAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>General\Keyword.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Cadmus.Parts.General.NotePart">
+    <Position X="0.5" Y="4" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>General\NotePart.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Cadmus.Parts.General.HierarchyPart">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAggAAAAAAAAAAAAAAAAAAAAgAIAAAAAAA=</HashCode>
+      <FileName>General\HierarchyPart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cadmus.Parts.General.NumberingPart">
+    <Position X="5.25" Y="2.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAFAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>General\NumberingPart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Cadmus.Core.Blocks;
+using Fusi.Tools.Config;
+
+namespace Cadmus.Archive.Parts
+{
+    /// <summary>
+    /// Archive units counts part ("consistenze").
+    /// </summary>
+    /// <remarks>
+    /// <para>Search pins:</para>
+    /// <list type="bullet">
+    /// 	<item>
+    /// 		<term>counts.K where K is a key</term>
+    /// 		<description>value</description>
+    /// 	</item>
+    /// </list>
+    /// </remarks>
+    [Tag("archive-counts")]
+    public sealed class ArchiveCountsPart : PartBase
+    {
+        /// <summary>
+        /// Gets or sets the counts.
+        /// </summary>
+        public Dictionary<string,int> Counts { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArchiveCountsPart"/> class.
+        /// </summary>
+        public ArchiveCountsPart()
+        {
+            Counts = new Dictionary<string, int>();
+        }
+
+        /// <summary>
+        /// Get all the key=value pairs exposed by the implementor.
+        /// </summary>
+        /// <returns>pins</returns>
+        public override IEnumerable<DataPin> GetDataPins()
+        {
+            if (Counts?.Count == 0) return new DataPin[0];
+
+            return from p in Counts
+                select CreateDataPin($"counts.{p.Key}",
+                    p.Value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            if (Counts?.Count == 0) return nameof(ArchiveCountsPart);
+
+            return nameof(ArchiveCountsPart) + ": " +
+                   String.Join(", ", from p in Counts
+                       select $"{p.Key}={p.Value}");
+        }
+    }
+}

@@ -1,0 +1,505 @@
+﻿using System;
+using Cadmus.Core.Config;
+using Cadmus.Core.Storage;
+using Cadmus.Parts.General;
+using Cadmus.Parts.Layers;
+using Cadmus.TestBase;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Conventions;
+using MongoDB.Driver;
+using Xunit;
+
+namespace Cadmus.Mongo.Test
+{
+    [CollectionDefinition(name: "Mongo repository", DisableParallelization = true)]
+    public class MongoCadmusRepositoryTest : CadmusRepositoryTestBase
+    {
+        private const string DB_NAME = "cadmustest";
+
+        private readonly MongoClient _client;
+
+        public MongoCadmusRepositoryTest()
+        {
+            _client = new MongoClient();
+        }
+
+        protected override ICadmusRepository GetRepository()
+        {
+            TagToTypeMap map = new TagToTypeMap();
+            map.Add(new[]
+            {
+                typeof(NotePart).Assembly
+            });
+            MongoCadmusRepository repository = new MongoCadmusRepository(
+                new StandardPartTypeProvider(map));
+            repository.Configure(new MongoCadmusRepositoryOptions
+            {
+                // use the default ConnectionStringTemplate (local DB)
+                // ConnectionStringTemplate = ...
+                DatabaseName = DB_NAME
+            });
+            return repository;
+        }
+
+        #region Seeding
+        private static void SeedFlags(IMongoDatabase db)
+        {
+            var collection = db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION);
+            collection.InsertMany(new[]
+            {
+                new StoredFlagDefinition
+                {
+                    Id = 1,
+                    Label = "Alpha",
+                    Description = "The alpha flag",
+                    ColorKey = "FF0000"
+                },
+                new StoredFlagDefinition
+                {
+                    Id = 2,
+                    Label = "Beta",
+                    Description = "The beta flag",
+                    ColorKey = "00FF00"
+                }
+            });
+        }
+
+        private static void SeedFacets(IMongoDatabase db)
+        {
+            var collection = db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
+
+            StoredItemFacet facetA = new StoredItemFacet
+            {
+                Id = "alpha",
+                Label = "Alpha",
+                Description = "Alpha facet",
+            };
+            facetA.PartDefinitions.AddRange(new[]
+            {
+                new PartDefinition
+                {
+                    TypeId = "categories",
+                    RoleId = "categories",
+                    Name = "Categories",
+                    Description = "Item's categories",
+                    IsRequired = true,
+                    ColorKey = "FF0000",
+                    GroupKey = "General",
+                    SortKey = "categories"
+                },
+                new PartDefinition
+                {
+                    TypeId = "note",
+                    RoleId = "note",
+                    Name = "Note",
+                    Description = "Generic note",
+                    IsRequired = false,
+                    ColorKey = "00FF00",
+                    GroupKey = "General",
+                    SortKey = "note"
+                }
+            });
+
+            StoredItemFacet facetB = new StoredItemFacet
+            {
+                Id = "beta",
+                Label = "Beta",
+                Description = "Beta facet"
+            };
+            facetB.PartDefinitions.AddRange(new[]
+            {
+                new PartDefinition
+                {
+                    TypeId = "categories",
+                    RoleId = "categories",
+                    Name = "Categories",
+                    Description = "Item's categories",
+                    IsRequired = true,
+                    ColorKey = "FF0000",
+                    GroupKey = "General",
+                    SortKey = "categories"
+                },
+                new PartDefinition
+                {
+                    TypeId = "keywords",
+                    RoleId = "keywords",
+                    Name = "Keywords",
+                    Description = "Generic keywords",
+                    IsRequired = false,
+                    ColorKey = "00FF00",
+                    GroupKey = "General",
+                    SortKey = "keywords"
+                }
+            });
+
+            collection.InsertMany(new[]
+            {
+                facetA,
+                facetB
+            });
+        }
+
+        private static void SeedItems(IMongoDatabase db)
+        {
+            var collection = db.GetCollection<StoredItem>(StoredItem.COLLECTION);
+
+            for (int i = 1; i <= 20; i++)
+            {
+                StoredItem item = new StoredItem
+                {
+                    Id = $"item-{i:000}",
+                    Title = $"Item {i}",
+                    Description = $"Description of item {i}",
+                    FacetId = (i & 1) == 1 ? "alpha" : "beta",
+                    SortKey = $"item{i:000}",
+                    Flags = i,
+                    UserId = (i & 1) == 1 ? "Odd" : "Even",
+                    TimeModified = new DateTime(2015, 12, i, 0, 0, 0, DateTimeKind.Utc)
+                };
+                collection.InsertOne(item);
+            }
+        }
+
+        private static void SeedItemParts(IMongoDatabase db)
+        {
+            var collection = db.GetCollection<BsonDocument>(MongoCadmusRepository.COLL_PARTS);
+
+            // categories
+            CategoriesPart partCategories = new CategoriesPart
+            {
+                Id = "part-001",
+                ItemId = "item-001",
+                RoleId = "categories",
+                TimeModified = DateTime.UtcNow,
+                UserId = "Odd",
+                Categories = {"alpha", "beta"}
+            };
+            collection.InsertOne(partCategories.ToBsonDocument());
+
+            // note
+            NotePart partNote = new NotePart
+            {
+                Id = "part-002",
+                ItemId = "item-001",
+                RoleId = "note",
+                TimeModified = DateTime.UtcNow,
+                UserId = "Odd",
+                Text = "Some notes."
+            };
+            collection.InsertOne(partNote.ToBsonDocument());
+
+            // layer: comments
+            TokenTextLayerPart<CommentLayerFragment> partCommentLayer = 
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                Id = "part-003",
+                ItemId = "item-001",
+                TimeModified = DateTime.UtcNow,
+                UserId = "Odd"
+            };
+            partCommentLayer.Fragments.AddRange(new []
+            {
+                new CommentLayerFragment
+                {
+                    Location = "1.2",
+                    Text = "The comment to 1.2"
+                },
+                new CommentLayerFragment
+                {
+                    Location = "1.3",
+                    Text = "The comment to 1.3"
+                }
+            });
+            collection.InsertOne(partCommentLayer.ToBsonDocument());
+        }
+
+        private static void ClearHistory(IMongoDatabase db)
+        {
+            var parts = db.GetCollection<BsonDocument>(MongoCadmusRepository.COLL_HISTORYPARTS);
+            parts.DeleteMany(new BsonDocument());
+
+            var items = db.GetCollection<BsonDocument>(StoredHistoryItem.COLLECTION);
+            items.DeleteMany(new BsonDocument());
+        }
+
+        protected override void PrepareDatabase()
+        {
+            // camel case everything:
+            // https://stackoverflow.com/questions/19521626/mongodb-convention-packs/19521784#19521784
+            ConventionPack pack = new ConventionPack
+            {
+                new CamelCaseElementNameConvention()
+            };
+            ConventionRegistry.Register("camel case", pack, t => true);
+
+            _client.DropDatabase(DB_NAME);
+            IMongoDatabase db = _client.GetDatabase(DB_NAME);
+
+            SeedFlags(db);
+            SeedFacets(db);
+            SeedItems(db);
+            SeedItemParts(db);
+            ClearHistory(db);
+        }
+        #endregion
+
+        #region Helper
+        [Fact]
+        public void GetDocumentsPage_NoFilterSortByKey_Ok()
+        {
+            IMongoDatabase db = _client.GetDatabase(DB_NAME);
+            var collection = db.GetCollection<BsonDocument>(StoredItem.COLLECTION);
+
+            var page = MongoHelper.GetDocumentsPage(collection, 
+                "{}", "{\"sortKey\":1}", 1, 10);
+
+            Assert.Equal(10, page.Items.Count);
+            Assert.Equal(20, page.Total);
+        }
+
+        [Fact]
+        public void GetDocumentsPage_UserIdSortByKey_Ok()
+        {
+            IMongoDatabase db = _client.GetDatabase(DB_NAME);
+            var collection = db.GetCollection<BsonDocument>(StoredItem.COLLECTION);
+
+            var page = MongoHelper.GetDocumentsPage(collection,
+                "{\"userId\": \"Odd\"}", "{\"sortKey\":1}", 1, 10);
+
+            Assert.Equal(10, page.Items.Count);
+            Assert.Equal(10, page.Total);
+        }
+        #endregion
+
+        #region Flags
+        [Fact]
+        public void GetFlagDefinitions_Ok()
+        {
+            DoGetFlagDefinitions_Ok();
+        }
+
+        [Fact]
+        public void GetFlagDefinition_NotExisting_Null()
+        {
+            DoGetFlagDefinition_NotExisting_Null();
+        }
+
+        [Fact]
+        public void GetFlagDefinition_Existing_Ok()
+        {
+            DoGetFlagDefinition_Existing_Ok();
+        }
+
+        [Fact]
+        public void AddFlagDefinition_Existing_Updated()
+        {
+            DoAddFlagDefinition_Existing_Updated();
+        }
+
+        [Fact]
+        public void AddFlagDefinition_NotExisting_Added()
+        {
+            DoAddFlagDefinition_NotExisting_Added();
+        }
+
+        [Fact]
+        public void DeleteFlagDefinition_NotExisting_Nope()
+        {
+            DoDeleteFlagDefinition_NotExisting_Nope();
+        }
+
+        [Fact]
+        public void DeleteFlagDefinition_Existing_Deleted()
+        {
+            DoDeleteFlagDefinition_Existing_Deleted();
+        }
+        #endregion
+
+        #region Facets
+        [Fact]
+        public void GetFacets_Ok()
+        {
+            DoGetFacets_Ok();
+        }
+
+        [Fact]
+        public void GetFacet_NotExisting_Null()
+        {
+            DoGetFacet_NotExisting_Null();
+        }
+
+        [Fact]
+        public void GetFacet_Existing_Ok()
+        {
+            DoGetFacet_Existing_Ok();
+        }
+
+        [Fact]
+        public void AddFacet_Existing_Updated()
+        {
+            DoAddFacet_Existing_Updated();
+        }
+
+        [Fact]
+        public void AddFacet_NotExisting_Added()
+        {
+            DoAddFacet_NotExisting_Added();
+        }
+
+        [Fact]
+        public void DeleteFacet_NotExisting_Nope()
+        {
+            DoDeleteFacet_NotExisting_Nope();
+        }
+
+        [Fact]
+        public void DeleteFacet_Existing_Deleted()
+        {
+            DoDeleteFacet_Existing_Deleted();
+        }
+        #endregion
+
+        #region Items
+        [Fact]
+        public void GetItemsPage_1_Ok()
+        {
+            DoGetItemsPage_1_Ok();
+        }
+
+        [Fact]
+        public void GetItemsPage_2_Ok()
+        {
+            DoGetItemsPage_2_Ok();
+        }
+
+        [Fact]
+        public void GetItemsPage_10_Empty()
+        {
+            DoGetItemsPage_10_Empty();
+        }
+
+        [Fact]
+        public void GetItem_NotExisting_Null()
+        {
+            DoGetItem_NotExisting_Null();
+        }
+
+        [Fact]
+        public void GetItem_Existing_Ok()
+        {
+            DoGetItem_Existing_Ok();
+        }
+
+        [Fact]
+        public void GetItem_ExistingExcludeParts_Ok()
+        {
+            DoGetItem_ExistingExcludeParts_Ok();
+        }
+
+        [Fact]
+        public void AddItem_Existing_Updated()
+        {
+            DoAddItem_Existing_Updated();
+        }
+
+        [Fact]
+        public void AddItem_NotExisting_Added()
+        {
+            DoAddItem_NotExisting_Added();
+        }
+
+        [Fact]
+        public void SetItemFlags_NotExisting_Nope()
+        {
+            DoSetItemFlags_NotExisting_Nope();
+        }
+
+        [Fact]
+        public void SetItemFlags_Existing_Updated()
+        {
+            DoSetItemFlags_Existing_Updated();
+        }
+
+        [Fact]
+        public void DeleteItem_NotExisting_Nope()
+        {
+            DoDeleteItem_NotExisting_Nope();
+        }
+
+        [Fact]
+        public void DeleteItem_Existing_Deleted()
+        {
+            DoDeleteItem_ExistingNoParts_Deleted();
+        }
+
+        [Fact]
+        public void DeleteItem_ExistingNoPartsNoHistory_Deleted()
+        {
+            DoDeleteItem_ExistingNoPartsNoHistory_Deleted();
+        }
+
+        [Fact]
+        public void DeleteItem_ExistingWithParts_Deleted()
+        {
+            DoDeleteItem_ExistingWithParts_Deleted();
+        }
+
+        [Fact]
+        public void GetItemLayers_NotFound_Empty()
+        {
+            DoGetItemLayers_NotFound_Empty();
+        }
+
+        [Fact]
+        public void GetItemLayers_LayerParts_Ok()
+        {
+            DoGetItemLayers_LayerParts_Ok();
+        }
+        #endregion
+
+        #region Parts
+        [Fact]
+        public void GetPartsPage_1Any_2()
+        {
+            DoGetPartsPage_1Any_2();
+        }
+
+        [Fact]
+        public void GetPartsPage_1TypeId_1()
+        {
+            DoGetPartsPage_1TypeId_1();
+        }
+
+        [Fact]
+        public void GetPartsPage_1RoleId_1()
+        {
+            DoGetPartsPage_1RoleId_1();
+        }
+
+        [Fact]
+        public void GetPartsPage_TypeIdSortExpressions_Ok()
+        {
+            DoGetPartsPage_TypeIdSortExpressions_Ok();
+        }
+
+        [Fact]
+        public void GetPartsPage_ItemIdTypeId_Ok()
+        {
+            DoGetPartsPage_ItemIdTypeId_Ok();
+        }
+
+        [Fact]
+        public void GetItemParts_Item1_2()
+        {
+            DoGetItemParts_Item1_2();
+        }
+
+        [Fact]
+        public void GetItemParts_Items1And2_2()
+        {
+            DoGetItemParts_Items1And2_2();
+        }
+        // TODO
+        #endregion
+    }
+}

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Cadmus.Archive.Parts.ArchiveDatePart">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAABAAAIAAAAAAA=</HashCode>
+      <FileName>ArchiveDatePart.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Date" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveDate">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAgAAEEQAAAAAAAAAAAAAIAAAAACEAAAA=</HashCode>
+      <FileName>ArchiveDate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Min" />
+      <Property Name="Max" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveDatePoint">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAJAAAAAAEAAAAAAAIAAAAAAAEAAAQECAAAAA=</HashCode>
+      <FileName>ArchiveDatePoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveCountsPart">
+    <Position X="0.5" Y="2" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>ArchiveCountsPart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveMarksPart">
+    <Position X="0.5" Y="3.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAQIAAAAAAA=</HashCode>
+      <FileName>ArchiveMarksPart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveEnvelopePart">
+    <Position X="0.5" Y="5.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAEAEAAAAAAAAAAAAABAAAIAAAAAAA=</HashCode>
+      <FileName>ArchiveEnvelopePart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveAttachmentsPart">
+    <Position X="6" Y="3.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>ArchiveAttachmentsPart.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Attachments" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Cadmus.Archive.Parts.ArchiveAttachment">
+    <Position X="3" Y="3.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAQAAAAAAAABAAAAAAEAAAA=</HashCode>
+      <FileName>ArchiveAttachmentsPart.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Date" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

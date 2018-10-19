@@ -851,8 +851,8 @@ namespace Cadmus.Mongo
             else
             {
                 // http://stackoverflow.com/questions/39065424/mongodb-c-sharp-linq-contains-against-a-string-array-throws-argumentexception/39068513#39068513
-                List<BsonValue> aValues = itemIds.Select(BsonValue.Create).ToList();
-                parts = parts.Where(d => aValues.Contains(d["itemId"]));
+                List<BsonValue> values = itemIds.Select(BsonValue.Create).ToList();
+                parts = parts.Where(d => values.Contains(d["itemId"]));
             } //eelse
 
             if (typeId != null)
@@ -869,6 +869,11 @@ namespace Cadmus.Mongo
             {
                 string reqTypeId = BuildPartTypeProviderId(doc);
                 Type t = _partTypeProvider.Get(reqTypeId);
+                if (t == null)
+                {
+                    Debug.WriteLine($"Unable to get part type from part ID {doc["typeId"].AsString}");
+                    continue;
+                }
                 itemParts.Add((IPart)BsonSerializer.Deserialize(doc, t));
             }
 

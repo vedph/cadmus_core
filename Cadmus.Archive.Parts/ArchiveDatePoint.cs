@@ -21,13 +21,15 @@ namespace Cadmus.Archive.Parts
 
         #region Properties
         /// <summary>
-        /// Gets or sets the value, which corresponds to the year (e.g. 1923), decade
-        /// (e.g. 191=1910), or century (e.g. 20=XX sec.). A value of 0=undefined date.
+        /// Gets or sets the value, which corresponds to the year (e.g. 1923),
+        /// decade (e.g. 191=1910), or century (e.g. 20=XX sec.). A value of
+        /// 0=undefined date.
         /// </summary>
         public short Value { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating the type of this date point's <see cref="Value"/>.
+        /// Gets or sets a value indicating the type of this date point's
+        /// <see cref="Value"/>.
         /// </summary>
         public DateValueType ValueType { get; set; }
 
@@ -75,7 +77,7 @@ namespace Cadmus.Archive.Parts
             {
                 case DateValueType.Century:
                     // century year defaults at its middle: e.g. 1950 from XX
-                    year = (Math.Abs(Value) - 1) * 100 + 50;
+                    year = ((Math.Abs(Value) - 1) * 100) + 50;
 
                     // century approximation
                     switch (Approximation)
@@ -98,7 +100,7 @@ namespace Cadmus.Archive.Parts
                     break;
 
                 case DateValueType.Decade:
-                    year = Value * 10 + 5; // e.g. 1915
+                    year = (Value * 10) + 5; // e.g. 1915
                     break;
 
                 default:
@@ -106,7 +108,7 @@ namespace Cadmus.Archive.Parts
                     break;
             }
 
-            return year * 365 + Month * 30 + Day;
+            return (year * 365) + (Month * 30) + Day;
         }
 
         /// <summary>

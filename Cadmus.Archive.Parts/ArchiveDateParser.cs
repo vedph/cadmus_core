@@ -35,49 +35,63 @@ namespace Cadmus.Archive.Parts
         private readonly Regex _betweenRegex;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArchiveDateParser"/> class.
+        /// Initializes a new instance of the <see cref="ArchiveDateParser"/>
+        /// class.
         /// </summary>
         public ArchiveDateParser()
         {
             _ymdSlashSepRegex = new Regex(@"(?:/\d{1,2}/)|" +
                                       @"(?:(?<!-)[12]\d{3}/\d{1,2}\b)|" +
                                       @"(?:\b\d{1,2}/[12]\d{3}\b)");
-            _ymdDashSepRegex = new Regex(@"(?:-\d{1,2}-)|(?:(?<!/)[12]\d{3}-\d{1,2}\b)");
+            _ymdDashSepRegex = new Regex(
+                @"(?:-\d{1,2}-)|(?:(?<!/)[12]\d{3}-\d{1,2}\b)");
 
-            _dmyRegex = new Regex(@"\b((?:(?:\d{1,2})|(?:[a-z]{3,}\s*))[-/\.\s])[12]\d{3}[^\p{L}\d]*$",
+            _dmyRegex = new Regex(
+                @"\b((?:(?:\d{1,2})|(?:[a-z]{3,}\s*))[-/\.\s])[12]\d{3}[^\p{L}\d]*$",
                 RegexOptions.IgnoreCase);
-            _dmyNamedRegex = new Regex(@"(?:(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic|" +
-                                   @"gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\.)" +
-                                   @"\s*[12]\d{3}\b", RegexOptions.IgnoreCase);
+            _dmyNamedRegex = new Regex(
+                "(?:(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic|" +
+                @"gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|" +
+                @"settembre|ottobre|novembre|dicembre)\.)" +
+                @"\s*[12]\d{3}\b", RegexOptions.IgnoreCase);
 
             _squaresRegex = new Regex(@"[\[\]]+");
-            _sineDataRegex = new Regex(@"(?:senza data)|(?:s\.d\.)", RegexOptions.IgnoreCase);
-            _centuryRegex = new Regex(@"[IVX]+");
-            _centPrefixModRegex = new Regex(@"^\s*(ca\.?|circa|inizio|II?\s+metà|metà|fine)\b",
+            _sineDataRegex = new Regex(@"(?:senza data)|(?:s\.d\.)",
                 RegexOptions.IgnoreCase);
-            _centSuffixModRegex = new Regex(@"[IVX]+\s+(?:(?:sec\.|secolo)\s+)?(in\.|ex\.)", 
+            _centuryRegex = new Regex("[IVX]+");
+            _centPrefixModRegex = new Regex(
+                @"^\s*(ca\.?|circa|inizio|II?\s+metà|metà|fine)\b",
+                RegexOptions.IgnoreCase);
+            _centSuffixModRegex = new Regex(
+                @"[IVX]+\s+(?:(?:sec\.|secolo)\s+)?(in\.|ex\.)", 
                 RegexOptions.IgnoreCase);
 
             _wsRegex = new Regex(@"\s+");
             _acRegex = new Regex(@"\ba\.C\.\b", RegexOptions.IgnoreCase);
 
-            _decadeRegex = new Regex(@"anni\s+(1\d{3}|'[1-9]0|dieci|venti|trenta|quaranta|cinquanta|" +
-                                 @"sessanta|settanta|ottanta|novanta)", RegexOptions.IgnoreCase);
+            _decadeRegex = new Regex(
+                @"anni\s+(1\d{3}|'[1-9]0|dieci|venti|trenta|quaranta|cinquanta|" +
+                "sessanta|settanta|ottanta|novanta)", RegexOptions.IgnoreCase);
 
             _dmyRegexes = new[]
             {
                 // style N like 20-12-1923
-                new Regex(@"(?:(?:(?<d>\[?\d{1,2}\]?)[^\d\[]+)?(?<m>\[?\d{1,2}\]?)[^\d\[]+)?" +
-                          @"(?<y>\[?[12]\d{3}\]?)"),
+                new Regex(
+                    @"(?:(?:(?<d>\[?\d{1,2}\]?)[^\d\[]+)?" +
+                    @"(?<m>\[?\d{1,2}\]?)[^\d\[]+)?" +
+                    @"(?<y>\[?[12]\d{3}\]?)"),
 
                 // style S like 20 dic.1923
                 new Regex(@"(?:(?<d>\[?\d{1,2}\]?[^\p{L}\[]+)?" +
-                          @"(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic)\.\]?[^\p{L}\d\[]+))?" +
+                          @"(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|" +
+                          @"sett?|ott|nov|dic)\.\]?[^\p{L}\d\[]+))?" +
                           @"(?<y>\[?[12]\d{3}\]?)", RegexOptions.IgnoreCase),
 
                 // style F like 20 dicembre 1923
                 new Regex(@"(?:(?<d>\[?\d{1,2}\]?[^\p{L}\[]+)?" +
-                          @"(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\]?[^\p{L}\d\[]+))?" +
+                          @"(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|" +
+                          @"giugno|luglio|agosto|settembre|ottobre|novembre|" +
+                          @"dicembre)\]?[^\p{L}\d\[]+))?" +
                           @"(?<y>\[?[12]\d{3}\]?)", RegexOptions.IgnoreCase)
             };
 
@@ -90,15 +104,19 @@ namespace Cadmus.Archive.Parts
                 // style S like 1923, dic. 20
                 new Regex(@"(?<y>\[?[12]\d{3}\]?)" +
                           @"(?:[^\d\[\p{L}]+" +
-                          @"(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic)\.?\]?)" +
-                          @"(?:[^\p{L}\d\[]+(?<d>\[?\d{1,2}\]?))?)?", RegexOptions.IgnoreCase),
+                          @"(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?" +
+                          @"|sett?|ott|nov|dic)\.?\]?)" +
+                          @"(?:[^\p{L}\d\[]+(?<d>\[?\d{1,2}\]?))?)?",
+                          RegexOptions.IgnoreCase),
 
                 // style F like 1923, dicembre 20
                 new Regex(@"(?<y>\[?[12]\d{3}\]?)" +
                           @"(?:[^\d\[\p{L}]+" +
-                          @"(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|" +
+                          @"(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio" +
+                          @"|giugno|luglio|" +
                           @"agosto|settembre|ottobre|novembre|dicembre)\.?\]?)" +
-                          @"(?:[^\p{L}\d\[]+(?<d>\[?\d{1,2}\]?))?)?", RegexOptions.IgnoreCase)
+                          @"(?:[^\p{L}\d\[]+(?<d>\[?\d{1,2}\]?))?)?",
+                          RegexOptions.IgnoreCase)
             };
 
             _shortenedDmyRegexes = new[]
@@ -109,15 +127,21 @@ namespace Cadmus.Archive.Parts
 
                 // style S like 30 mag. (DM) or just mag. (M) or just 30 (D)
                 new Regex(@"(?:(?<d>\d{1,2})\s+" +
-                          @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic)\.?\]?)))|" +
-                          @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic)\.?\]?))|" +
+                          @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?" +
+                          @"|ago?|sett?|ott|nov|dic)\.?\]?)))|" +
+                          @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?" +
+                          @"|ago?|sett?|ott|nov|dic)\.?\]?))|" +
                           @"(?:(?<d>\b\d{1,2}\b))",
                     RegexOptions.IgnoreCase),
 
                 // style F like 30 maggio (DM) or just maggio (M) or just 30 (D)
                 new Regex(@"(?:(?<d>\d{1,2})\s+" +
-                          @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\.?\]?)))|" +
-                          @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\.?\]?))|" +
+                          @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio" +
+                          @"|giugno|luglio|agosto|settembre|ottobre|novembre" +
+                          @"|dicembre)\.?\]?)))|" +
+                          @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio" +
+                          @"|giugno|luglio|agosto|settembre|ottobre|novembre" +
+                          @"|dicembre)\.?\]?))|" +
                           @"(?:(?<d>\b\d{1,2}\b))",
                     RegexOptions.IgnoreCase),
             };
@@ -130,23 +154,31 @@ namespace Cadmus.Archive.Parts
 
                 // style S like giu. 28 or just giu. (M) or just 28 (D)
                 new Regex(
-                    @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic)\.?\]?)\s+(?<d>\d{1,2}))|" +
-                    @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?|ott|nov|dic)\.?\]?))|" +
+                    @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|" +
+                    @"sett?|ott|nov|dic)\.?\]?)\s+(?<d>\d{1,2}))|" +
+                    @"(?:(?<m>\[?(?:genn?|febb?|mar|apr|mag|giu|lug?|ago?|sett?" +
+                    @"|ott|nov|dic)\.?\]?))|" +
                     @"(?:(?<d>\b\d{1,2}\b))",
                     RegexOptions.IgnoreCase),
 
                 // style F like giugno 28 or just giugno (M) or just 28 (D)
                 new Regex(
-                    @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\.?\]?)\s+(?<d>\d{1,2}))|" +
-                    @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\.?\]?))|" +
+                    @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno" +
+                    @"|luglio|agosto|settembre|ottobre|novembre|dicembre)\.?\]?)" +
+                    @"\s+(?<d>\d{1,2}))|" +
+                    @"(?:(?<m>\[?(?:gennaio|febbraio|marzo|aprile|maggio|giugno" +
+                    @"|luglio|agosto|settembre|ottobre|novembre|dicembre)\.?\]?))|" +
                     @"(?:(?<d>\b\d{1,2}\b))",
                     RegexOptions.IgnoreCase)
             };
 
-            _aboutRegex = new Regex(@"\b(?:ca\.?|circa)\b", RegexOptions.IgnoreCase);
-            _antePostRegex = new Regex(@"^\s*(ante|post)\b", RegexOptions.IgnoreCase);
+            _aboutRegex = new Regex(@"\b(?:ca\.?|circa)\b",
+                RegexOptions.IgnoreCase);
+            _antePostRegex = new Regex(@"^\s*(ante|post)\b",
+                RegexOptions.IgnoreCase);
 
-            _betweenRegex = new Regex(@"tra\s+il\s+(.+?)\s+e\s+il\s+(.+)", RegexOptions.IgnoreCase);
+            _betweenRegex = new Regex(@"tra\s+il\s+(.+?)\s+e\s+il\s+(.+)",
+                RegexOptions.IgnoreCase);
         }
 
         private static DateMonthStyle DetectMonthStyle(string text)
@@ -173,7 +205,12 @@ namespace Cadmus.Archive.Parts
         {
             // corner case: tra il ... e il ...
             Match m = _betweenRegex.Match(text);
-            if (m.Success) return Tuple.Create(m.Groups[1].Value.Trim(), m.Groups[2].Value.Trim());
+            if (m.Success)
+            {
+                return Tuple.Create(
+                   m.Groups[1].Value.Trim(),
+                   m.Groups[2].Value.Trim());
+            }
 
             string[] a = text.Split(new[] { " - ", " / " }, StringSplitOptions.None);
             if (a.Length == 2) return Tuple.Create(a[0], a[1]);
@@ -237,17 +274,20 @@ namespace Cadmus.Archive.Parts
                             point.Approximation = ApproximationType.End;
                             break;
                     }
+                    // remove matched postfix
+                    text = text.Remove(m.Groups[1].Index, m.Groups[1].Length);
                 }
-
-                // remove matched postfix
-                text = text.Remove(m.Groups[1].Index, m.Groups[1].Length);
             }
 
             // parse value
             m = _centuryRegex.Match(text);
             if (!m.Success)
+            {
                 throw new ArgumentException(
-                    LocalizedStrings.Format(Properties.Resources.NoCenturyValue, text));
+                   LocalizedStrings.Format(
+                       Properties.Resources.NoCenturyValue, text));
+            }
+
             point.Value = (short) RomanNumber.FromRoman(m.Value);
             if (_acRegex.IsMatch(text)) point.Value = (short) -point.Value;
 
@@ -292,12 +332,11 @@ namespace Cadmus.Archive.Parts
                     break;
                 default:
                     // 'NN or NNNN
-                    if (text[0] == '\'')
-                        point.Value = (short)
-                            (Int16.Parse(text.Substring(1), CultureInfo.InvariantCulture) / 10 + 190);
-                    else
-                        point.Value = (short)
-                            (Int16.Parse(text, CultureInfo.InvariantCulture) / 10);
+                    point.Value = text[0] == '\''
+                        ? (short)(short.Parse(text.Substring(1),
+                             CultureInfo.InvariantCulture) / 10 + 190)
+                        : (short)
+                        (short.Parse(text, CultureInfo.InvariantCulture) / 10);
                     break;
             }
             return point;
@@ -318,7 +357,8 @@ namespace Cadmus.Archive.Parts
             }
         }
 
-        private ArchiveDatePoint ParsePoint(string text, bool dmy, DateMonthStyle monthStyle)
+        private ArchiveDatePoint ParsePoint(string text, bool dmy,
+            DateMonthStyle monthStyle)
         {
             // senza data or s.d.
             if (_sineDataRegex.IsMatch(text)) return null;
@@ -336,7 +376,8 @@ namespace Cadmus.Archive.Parts
             ArchiveDatePoint point = new ArchiveDatePoint();
 
             // about
-            if (_aboutRegex.IsMatch(text)) point.Approximation = ApproximationType.About;
+            if (_aboutRegex.IsMatch(text))
+                point.Approximation = ApproximationType.About;
 
             int i = (int) (monthStyle == 0 ? 0 : monthStyle - 1);
             Regex r = dmy ? _dmyRegexes[i] : _ymdRegexes[i];
@@ -368,10 +409,12 @@ namespace Cadmus.Archive.Parts
             return point;
         }
 
-        private void AdjustYmdForShortenedRange(Tuple<string, string> input, ArchiveDate date, DateMonthStyle monthStyle)
+        private void AdjustYmdForShortenedRange(Tuple<string, string> input,
+            ArchiveDate date, DateMonthStyle monthStyle)
         {
             // YMD/YM can shorten Max
-            if (date.Max != null || date.Min?.ValueType != DateValueType.Year || date.Min.Month == 0) return;
+            if (date.Max != null || date.Min?.ValueType != DateValueType.Year ||
+                date.Min.Month == 0) return;
 
             int i = (int)(monthStyle == 0 ? 0 : monthStyle - 1);
             Match match = _shortenedYmdRegexes[i].Match(input.Item2);
@@ -393,14 +436,18 @@ namespace Cadmus.Archive.Parts
                     if (match.Groups["md"].Length > 0)
                     {
                         if (date.Min.Day > 0)
-                            date.Max.Day = Int16.Parse(match.Groups["md"].Value, CultureInfo.InvariantCulture);
+                            date.Max.Day = short.Parse(match.Groups["md"].Value,
+                                CultureInfo.InvariantCulture);
                         else
-                            date.Max.Month = Int16.Parse(match.Groups["md"].Value, CultureInfo.InvariantCulture);
+                            date.Max.Month = short.Parse(match.Groups["md"].Value,
+                                CultureInfo.InvariantCulture);
                     }
                     else
                     {
-                        date.Max.Month = Int16.Parse(match.Groups["m"].Value, CultureInfo.InvariantCulture);
-                        date.Max.Day = Int16.Parse(match.Groups["d"].Value, CultureInfo.InvariantCulture);
+                        date.Max.Month = short.Parse(match.Groups["m"].Value,
+                            CultureInfo.InvariantCulture);
+                        date.Max.Day = short.Parse(match.Groups["d"].Value,
+                            CultureInfo.InvariantCulture);
                     }
                 } // N
                 else
@@ -420,9 +467,11 @@ namespace Cadmus.Archive.Parts
             }
         }
 
-        private void AdjustDmyForShortenedRange(Tuple<string, string> input, ArchiveDate date, DateMonthStyle monthStyle)
+        private void AdjustDmyForShortenedRange(Tuple<string, string> input,
+            ArchiveDate date, DateMonthStyle monthStyle)
         {
-            if (date.Min != null || date.Max?.ValueType != DateValueType.Year || date.Max.Month == 0) return;
+            if (date.Min != null || date.Max?.ValueType != DateValueType.Year ||
+                date.Max.Month == 0) return;
 
             int i = (int)(monthStyle == 0 ? 0 : monthStyle - 1);
             Match match = _shortenedDmyRegexes[i].Match(input.Item1);
@@ -444,14 +493,18 @@ namespace Cadmus.Archive.Parts
                     if (match.Groups["md"].Length > 0)
                     {
                         if (date.Max.Day > 0)
-                            date.Min.Day = Int16.Parse(match.Groups["md"].Value, CultureInfo.InvariantCulture);
+                            date.Min.Day = short.Parse(match.Groups["md"].Value,
+                                CultureInfo.InvariantCulture);
                         else
-                            date.Min.Month = Int16.Parse(match.Groups["md"].Value, CultureInfo.InvariantCulture);
+                            date.Min.Month = short.Parse(match.Groups["md"].Value,
+                                CultureInfo.InvariantCulture);
                     }
                     else
                     {
-                        date.Min.Month = Int16.Parse(match.Groups["m"].Value, CultureInfo.InvariantCulture);
-                        date.Min.Day = Int16.Parse(match.Groups["d"].Value, CultureInfo.InvariantCulture);
+                        date.Min.Month = short.Parse(match.Groups["m"].Value,
+                            CultureInfo.InvariantCulture);
+                        date.Min.Day = short.Parse(match.Groups["d"].Value,
+                            CultureInfo.InvariantCulture);
                     }
                 } // N
                 else
@@ -471,17 +524,19 @@ namespace Cadmus.Archive.Parts
             }
         }
 
-        private void AdjustForShortenedRange(Tuple<string,string> input, ArchiveDate date, bool dmy, 
-            DateMonthStyle monthStyle)
+        private void AdjustForShortenedRange(Tuple<string,string> input,
+            ArchiveDate date, bool dmy, DateMonthStyle monthStyle)
         {
-            // if no match for Min/Max but we're inside a range, try with shortened ranges
+            // if no match for Min/Max but we're inside a range, 
+            // try with shortened ranges
             // DMY can shorten Min
             if (dmy) AdjustDmyForShortenedRange(input, date, monthStyle);
             else AdjustYmdForShortenedRange(input, date, monthStyle);
         }
 
         /// <summary>
-        /// Parses the specified text, representing one or more dates or dates ranges.
+        /// Parses the specified text, representing one or more dates or dates
+        /// ranges.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns>date(s) parsed</returns>
@@ -490,7 +545,8 @@ namespace Cadmus.Archive.Parts
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
 
-            // split at `;` (TODO: prefilter to replace `,` as ranges separator with `;`)
+            // split at `;` (TODO: prefilter to replace `,` as ranges
+            // separator with `;`)
             DateMonthStyle monthStyle = DateMonthStyle.Undefined;
             char ymdSep = '\0';
             List<ArchiveDate> dates = new List<ArchiveDate>();
@@ -507,12 +563,16 @@ namespace Cadmus.Archive.Parts
                     monthStyle = DetectMonthStyle(purgedPart);
 
                 // detect numeric M style (unless already detected in another part)
-                if ((monthStyle == DateMonthStyle.Numeric || monthStyle == DateMonthStyle.Undefined) &&
+                if ((monthStyle == DateMonthStyle.Numeric ||
+                     monthStyle == DateMonthStyle.Undefined) &&
                     ymdSep == '\0')
+                {
                     ymdSep = DetectYmdSeparator(purgedPart);
+                }
 
                 // detect YMD order
-                bool dmy = _dmyRegex.IsMatch(purgedPart) || _dmyNamedRegex.IsMatch(purgedPart);
+                bool dmy = _dmyRegex.IsMatch(purgedPart) ||
+                    _dmyNamedRegex.IsMatch(purgedPart);
 
                 // split range pair if any
                 var t = SplitRange(part, ymdSep);
@@ -538,9 +598,15 @@ namespace Cadmus.Archive.Parts
                     if (m.Success)
                     {
                         pointText = part.Substring(m.Length);
-                        if (String.Equals(m.Groups[1].Value, "ante", 
-                            StringComparison.InvariantCultureIgnoreCase)) min = false;
-                        else max = false;
+                        if (string.Equals(m.Groups[1].Value, "ante",
+                            StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            min = false;
+                        }
+                        else
+                        {
+                            max = false;
+                        }
                     }
 
                     ArchiveDatePoint point = ParsePoint(pointText, dmy, monthStyle);

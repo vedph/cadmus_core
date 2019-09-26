@@ -13,9 +13,10 @@ namespace Cadmus.Parts.General
         /// <summary>
         /// Line Y value.
         /// </summary>
-        /// <remarks>This is not the line number but just a line ID, whose function is not only
-        /// defining its identity against all other lines in the text, but also to define its
-        /// order in the sequence of lines. The number starts from 1.</remarks>
+        /// <remarks>This is not the line number but just a line ID, whose
+        /// function is not only defining its identity against all other lines
+        /// in the text, but also to define its order in the sequence of lines.
+        /// The number starts from 1.</remarks>
         public int Y { get; set; }
 
         /// <summary>

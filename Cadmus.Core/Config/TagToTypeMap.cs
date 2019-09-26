@@ -15,7 +15,7 @@ namespace Cadmus.Core.Config
     /// </summary>
     /// <remarks>For those classes implementing <see cref="ITextLayerFragment"/>,
     /// and of course decorated with the <see cref="TagAttribute"/>, a mapping
-    /// is added by combining the generic <see cref="LayerPart{T}"/> with
+    /// is added by combining the generic layer part with
     /// each of these fragment classes. This way, we have a mapping for all
     /// the closed generic types representing the various text layers. In this
     /// case, the tag is prefixed with the tag from the layer part followed by
@@ -79,8 +79,10 @@ namespace Cadmus.Core.Config
                             .GetCustomAttributes<TagAttribute>()
                             .FirstOrDefault();
                         if (attrFr != null)
+                        {
                             _frMap[$"{attr.Tag}:{attrFr.Tag}"] =
                                 type.MakeGenericType(fragmentType);
+                        }
                     }
                 }
             }

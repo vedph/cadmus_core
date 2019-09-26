@@ -19,7 +19,8 @@ namespace Cadmus.Mongo
         private readonly Regex _dbAndParamsRegex;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoCadmusManager"/> class.
+        /// Initializes a new instance of the <see cref="MongoCadmusManager"/>
+        /// class.
         /// </summary>
         public MongoCadmusManager()
         {
@@ -31,7 +32,7 @@ namespace Cadmus.Mongo
             {
                 new CamelCaseElementNameConvention()
             };
-            ConventionRegistry.Register("camel case", pack, t => true);
+            ConventionRegistry.Register("camel case", pack, _ => true);
         }
 
         private string GetDatabaseName(string connectionString)
@@ -146,15 +147,15 @@ namespace Cadmus.Mongo
             IMongoDatabase db = client.GetDatabase(GetDatabaseName(source));
 
             // items
-            db.GetCollection<StoredItem>(StoredItem.COLLECTION).DeleteMany(i => true);
+            db.GetCollection<StoredItem>(StoredItem.COLLECTION).DeleteMany(_ => true);
             // history-items
-            db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION).DeleteMany(i => true);
+            db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION).DeleteMany(_ => true);
             // facets
-            db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION).DeleteMany(i => true);
+            db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION).DeleteMany(_ => true);
             // flags
-            db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION).DeleteMany(i => true);
+            db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION).DeleteMany(_ => true);
             // sets
-            db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION).DeleteMany(i => true);
+            db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION).DeleteMany(_ => true);
         }
 
         private static IEnumerable<BsonDocument> Enumerate(IAsyncCursor<BsonDocument> docs)

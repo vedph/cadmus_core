@@ -42,20 +42,23 @@ namespace Cadmus.Mongo
         public string ColorKey { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StoredFlagDefinition"/> class.
+        /// Initializes a new instance of the <see cref="StoredFlagDefinition"/>
+        /// class.
         /// </summary>
         public StoredFlagDefinition()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StoredFlagDefinition"/> class.
+        /// Initializes a new instance of the <see cref="StoredFlagDefinition"/>
+        /// class.
         /// </summary>
         /// <param name="definition">The definition to get data from.</param>
         /// <exception cref="ArgumentNullException">null definition</exception>
         public StoredFlagDefinition(IFlagDefinition definition)
         {
-            if (definition == null) throw new ArgumentNullException(nameof(definition));
+            if (definition == null)
+                throw new ArgumentNullException(nameof(definition));
 
             Id = definition.Id;
             Label = definition.Label;

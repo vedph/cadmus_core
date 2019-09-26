@@ -15,7 +15,8 @@ namespace Cadmus.Mongo
         public new const string COLLECTION = "history-items";
 
         /// <summary>
-        /// Gets or sets the identifier of the data record this history record refers to.
+        /// Gets or sets the identifier of the data record this history record
+        /// refers to.
         /// </summary>
         public string ReferenceId { get; set; }
 
@@ -25,7 +26,8 @@ namespace Cadmus.Mongo
         public EditStatus Status { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StoredHistoryItem"/> class.
+        /// Initializes a new instance of the <see cref="StoredHistoryItem"/>
+        /// class.
         /// </summary>
         /// <param name="item">The source item.</param>
         /// <exception cref="ArgumentNullException">null item</exception>

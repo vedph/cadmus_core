@@ -20,18 +20,18 @@ namespace Cadmus.Lexicon.Parts
         public string Postlemma { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            if (!String.IsNullOrEmpty(Prelemma)) sb.Append(Prelemma).Append(" ");
+            if (!string.IsNullOrEmpty(Prelemma)) sb.Append(Prelemma).Append(" ");
             sb.Append(Value);
-            if (!String.IsNullOrEmpty(Postlemma)) sb.Append(" ").Append(Postlemma);
-            if (!String.IsNullOrEmpty(Usage)) sb.Append(" (").Append(Usage).Append(")");
+            if (!string.IsNullOrEmpty(Postlemma)) sb.Append(" ").Append(Postlemma);
+            if (!string.IsNullOrEmpty(Usage)) sb.Append(" (").Append(Usage).Append(")");
 
             return sb.ToString();
         }

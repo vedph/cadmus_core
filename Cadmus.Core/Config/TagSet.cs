@@ -33,8 +33,10 @@ namespace Cadmus.Core.Config
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
                 if (!Regex.IsMatch(value, @"^[a-zA-Z0-9_\-\.]+\@[a-z]{2}$"))
+                {
                     throw new ArgumentException(LocalizedStrings.Format(
                         Properties.Resources.InvalidTagSetId, value));
+                }
                 _id = value;
             }
         }
@@ -107,7 +109,7 @@ namespace Cadmus.Core.Config
                 Id = id,
                 Name = name
             };
-            Tag old = Tags.FirstOrDefault(t => t.Id == id);
+            Tag old = Tags.Find(t => t.Id == id);
             if (old != null) Tags.Remove(old);
             Tags.Add(tag);
         }

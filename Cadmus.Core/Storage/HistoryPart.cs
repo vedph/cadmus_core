@@ -7,7 +7,7 @@ namespace Cadmus.Core.Storage
     /// A history part wrapper.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class HistoryPart<T> : IHistoryPart<T> where T:class,IPart
+    public class HistoryPart<T> : IHistoryPart<T> where T : class, IPart
     {
         /// <summary>
         /// Gets or sets the history record identifier.
@@ -20,7 +20,8 @@ namespace Cadmus.Core.Storage
         public T Content { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier of the data record (part) this history record refers to.
+        /// Gets or sets the identifier of the data record (part) this history
+        /// record refers to.
         /// </summary>
         public string ReferenceId { get; set; }
 
@@ -43,10 +44,10 @@ namespace Cadmus.Core.Storage
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

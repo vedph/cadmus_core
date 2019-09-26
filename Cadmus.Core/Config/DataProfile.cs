@@ -95,7 +95,7 @@ namespace Cadmus.Core.Config
                 // @id @label @color
                 IFlagDefinition flag = new FlagDefinition
                 {
-                    Id = Int32.Parse(flagElement.Attribute("id").Value, NumberStyles.HexNumber),
+                    Id = int.Parse(flagElement.Attribute("id").Value, NumberStyles.HexNumber),
                     Label = flagElement.Attribute("label").Value,
                     ColorKey = flagElement.Attribute("color").Value,
                     Description = flagElement.Value.Length > 0 ? flagElement.Value : null
@@ -130,7 +130,7 @@ namespace Cadmus.Core.Config
         /// </summary>
         /// <param name="element">The profile XML root element.</param>
         /// <returns>profile</returns>
-        /// <exception cref="System.ArgumentNullException">null XML element</exception>
+        /// <exception cref="ArgumentNullException">null XML element</exception>
         public virtual void Load(XElement element)
         {
             if (element == null) throw new ArgumentNullException(nameof(element));

@@ -11,11 +11,11 @@ namespace Cadmus.Parts.General
     /// <remarks>This part contains any number of <see cref="Keyword"/>'s.
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>keyword.XXX</term>
-    /// 		<description>: a string containing the keyword for the language specified by XXX, 
-    /// (ISO-639 3), e.g. <c>keyword.eng</c>.</description>
-    /// 	</item>
+    /// <item>
+    /// <term>keyword.XXX</term>
+    /// <description>: a string containing the keyword for the language
+    /// specified by XXX, (ISO-639 3), e.g. <c>keyword.eng</c>.</description>
+    /// </item>
     /// </list>
     /// </remarks>
     [Tag("keywords")]

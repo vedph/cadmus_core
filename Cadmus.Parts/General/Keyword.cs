@@ -5,8 +5,8 @@ namespace Cadmus.Parts.General
     /// <summary>
     /// Keyword.
     /// </summary>
-    /// <remarks>A keyword has an ISO 639-3 language ID and a value, and represents any relevant keyword
-    /// linked to an item.</remarks>
+    /// <remarks>A keyword has an ISO 639-3 language ID and a value, and
+    /// represents any relevant keyword linked to an item.</remarks>
     public sealed class Keyword : IEquatable<Keyword>, IComparable, IComparable<Keyword>
     {
         #region Properties
@@ -31,10 +31,12 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        /// Indicates whether the current object is equal to another object of
+        /// the same type.
         /// </summary>
         /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// true if the current object is equal to the <paramref name="other"/>
+        /// parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(Keyword other)
@@ -47,7 +49,8 @@ namespace Cadmus.Parts.General
         /// Compare this keyword to another.
         /// </summary>
         /// <param name="other">other keyword</param>
-        /// <returns>comparison result (first by language, then by value; case insensitive)</returns>
+        /// <returns>comparison result (first by language, then by value;
+        /// case insensitive)</returns>
         /// <exception cref="ArgumentNullException">null keyword</exception>
         public int CompareTo(Keyword other)
         {
@@ -62,7 +65,8 @@ namespace Cadmus.Parts.General
         /// Compare this keyword to another.
         /// </summary>
         /// <param name="obj">other keyword</param>
-        /// <returns>comparison result (first by language, then by value; case insensitive)</returns>
+        /// <returns>comparison result (first by language, then by value;
+        /// case insensitive)</returns>
         /// <exception cref="ArgumentNullException">null keyword</exception>
         public int CompareTo(object obj)
         {

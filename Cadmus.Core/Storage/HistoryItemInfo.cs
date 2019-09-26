@@ -49,10 +49,12 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         public string UserId { get; set; }
 
-        /// <summary> Gets or sets the identifier of the data record this history record refers to.
+        /// <summary> Gets or sets the identifier of the data record this 
+        /// history record refers to.
         /// </summary>
         public string ReferenceId { get; set; }
 

@@ -5,26 +5,27 @@ using Fusi.Tools.Config;
 namespace Cadmus.Parts.General
 {
     /// <summary>
-    /// Generic numbering part, providing the ordinal number representing the position 
-    /// of an item in the context of its "sibling" items, plus an optional arbitrarily 
-    /// defined number label.
+    /// Generic numbering part, providing the ordinal number representing the
+    /// position of an item in the context of its "sibling" items, plus an
+    /// optional arbitrarily defined number label.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>ordinal</term>
-    /// 		<description><see cref="Tag"/> + space + <see cref="Ordinal"/></description>
-    /// 	</item>
+    /// <item>
+    /// <term>ordinal</term>
+    /// <description><see cref="Tag"/> + space + <see cref="Ordinal"/></description>
+    /// </item>
     /// </list>
     /// </remarks>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
+    /// <seealso cref="PartBase" />
     [Tag("numbering")]
     public sealed class NumberingPart : PartBase
     {
         /// <summary>
-        /// Gets or sets the optional "number" assigned to an item in the context of its 
-        /// siblings. This can be any alphanumeric arbitrary string (e.g. <c>A.1.II.</c>).
+        /// Gets or sets the optional "number" assigned to an item in the context
+        /// of its siblings. This can be any alphanumeric arbitrary string
+        /// (e.g. <c>A.1.II.</c>).
         /// </summary>
         public string Number { get; set; }
 
@@ -35,9 +36,9 @@ namespace Cadmus.Parts.General
         public int Ordinal { get; set; }
 
         /// <summary>
-        /// Gets or sets the optional tag. This property can be used to provide several 
-        /// different numberings to the same sequence of items, each representing a 
-        /// different numbering criterion.
+        /// Gets or sets the optional tag. This property can be used to provide
+        /// several different numberings to the same sequence of items, each
+        /// representing a different numbering criterion.
         /// </summary>
         public string Tag { get; set; }
 

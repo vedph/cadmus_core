@@ -23,8 +23,8 @@ namespace Cadmus.Philology.Parts.Layers
 
             // create the A and B strings, assuming that in char diffing each piece
             // is a single char.
-            string a = string.Join("", result.PiecesOld);
-            string b = string.Join("", result.PiecesNew);
+            string a = string.Concat(result.PiecesOld);
+            string b = string.Concat(result.PiecesNew);
 
             List<MspOperation> operations = new List<MspOperation>();
             int i = 0;
@@ -53,11 +53,10 @@ namespace Cadmus.Philology.Parts.Layers
                     // MOVE corner case: delete+insert
                     DiffBlock next = i + 1 < result.DiffBlocks.Count ?
                         result.DiffBlocks[i + 1] : null;
-                    if (next != null &&
-                        next.DeleteCountA == 0 &&
-                        next.InsertCountB > 0 &&
-                        b.Substring(block.InsertStartB, block.InsertCountB) ==
-                        a.Substring(next.DeleteStartA, next.DeleteCountA))
+                    if (next?.DeleteCountA == 0
+                        && next.InsertCountB > 0
+                        && b.Substring(block.InsertStartB, block.InsertCountB)
+                        == a.Substring(next.DeleteStartA, next.DeleteCountA))
                     {
                         operations.Add(new MspOperation
                         {
@@ -87,16 +86,15 @@ namespace Cadmus.Philology.Parts.Layers
                 if (block.DeleteCountA == 0 && block.InsertCountB > 0)
                 {
                     // SWAP corner case: insert+delete
-                    DiffBlock next = i + 1 < result.DiffBlocks.Count ? 
+                    DiffBlock next = i + 1 < result.DiffBlocks.Count ?
                         result.DiffBlocks[i + 1] : null;
                     string inserted;
 
-                    if (next != null &&
-                        next.DeleteCountA > 0 &&
-                        next.InsertCountB == 0 &&
-                        Math.Abs(block.DeleteStartA - next.DeleteStartA) == 1 &&
-                        (inserted = b.Substring(block.InsertStartB, block.InsertCountB)) ==
-                        a.Substring(next.DeleteStartA, next.DeleteCountA))
+                    if (next?.DeleteCountA > 0
+                        && next.InsertCountB == 0
+                        && Math.Abs(block.DeleteStartA - next.DeleteStartA) == 1
+                        && (inserted = b.Substring(block.InsertStartB, block.InsertCountB))
+                        == a.Substring(next.DeleteStartA, next.DeleteCountA))
                     {
                         operations.Add(new MspOperation
                         {

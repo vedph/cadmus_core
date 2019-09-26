@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Core.Blocks;
 using Fusi.Tools.Config;
@@ -19,8 +20,8 @@ namespace Cadmus.Parts.General
         public string Tag { get; set; }
 
         /// <summary>
-        /// Gets or sets the text. The format of the text is chosen by the implementor
-        /// (it might be plain text, Markdown, RTF, HTML, XML, etc).
+        /// Gets or sets the text. The format of the text is chosen by the
+        /// implementor (it might be plain text, Markdown, RTF, HTML, XML, etc).
         /// </summary>
         public string Text { get; set; }
 
@@ -45,10 +46,10 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

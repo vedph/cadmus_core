@@ -7,14 +7,17 @@ using Fusi.Tools.Config;
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// Epigraphical letters ligature: ligature ("", abbreviation: <c>L</c>), inversion 
-    /// ("inversione", <c>I</c>), overlap ("sovrapposizione", <c>O</c>), replacement 
-    /// ("sostituzione", <c>R</c>), graft ("innesto", <c>G</c>), inclusion ("inclusione", 
-    /// <c>N</c>), connection ("nesso", <c>C</c>), complex (<c>X</c>) (see Manzella 1987 149-151).
+    /// Epigraphical letters ligature: ligature ("", abbreviation: <c>L</c>),
+    /// inversion ("inversione", <c>I</c>), overlap ("sovrapposizione", <c>O</c>),
+    /// replacement ("sostituzione", <c>R</c>), graft ("innesto", <c>G</c>),
+    /// inclusion ("inclusione", <c>N</c>), connection ("nesso", <c>C</c>),
+    /// complex (<c>X</c>) (see Manzella 1987 149-151).
     /// </summary>
-    /// <remarks>This part defines all the essential graphical connection types occurring among letters.
-    /// The letters can belong to the same word or (rarely) to different words. A single item defines a
-    /// specific connection type including 2 or more consecutive letters.
+    /// <remarks>This part defines all the essential graphical connection types
+    /// occurring among letters.
+    /// The letters can belong to the same word or (rarely) to different words.
+    /// A single item defines a specific connection type including 2 or more
+    /// consecutive letters.
     /// <para>Search pins:</para>
     /// <list type="bullet">
     /// 	<item>
@@ -33,9 +36,9 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         /// <remarks>
         /// The location can be expressed in different ways according to the
-        /// text coordinates system being adopted. For instance, it might be a simple
-        /// token-based coordinates system (e.g. 1.2=second token of first block), or
-        /// a more complex system like an XPath expression.
+        /// text coordinates system being adopted. For instance, it might be a
+        /// simple token-based coordinates system (e.g. 1.2=second token of
+        /// first block), or a more complex system like an XPath expression.
         /// </remarks>
         public string Location { get; set; }
 
@@ -47,7 +50,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Data pins.</returns>
         /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<DataPin> GetDataPins()
         {
@@ -103,30 +106,46 @@ namespace Cadmus.Philology.Parts.Layers
     {
         /// <summary>No ligature.</summary>
         None = 0,
-        /// <summary>standard ligature: a shared trait among several letters.</summary>
+
+        /// <summary>standard ligature: a shared trait among several letters.
+        /// </summary>
         Ligature,
-        /// <summary>standard nexus with inversion of a letter for graphical commodity: e.g.<c>PR</c>
-        /// where P is horizontally flipped so that its vertical trait can be shared with <c>R</c>.</summary>
+
+        /// <summary>standard nexus with inversion of a letter for graphical
+        /// commodity: e.g.<c>PR</c> where P is horizontally flipped so that
+        /// its vertical trait can be shared with <c>R</c>.</summary>
         Inversion,
-        /// <summary>overlap: letters parts overlap like <c>DO</c> where the right part of <c>D</c> and
-        /// the left part of <c>O</c> cross each other, or <c>AV</c> where <c>V</c> is vertically flipped
-        /// and overlapped to <c>A</c>.</summary>
+
+        /// <summary>overlap: letters parts overlap like <c>DO</c> where the
+        /// right part of <c>D</c> and the left part of <c>O</c> cross each other,
+        /// or <c>AV</c> where <c>V</c> is vertically flipped and overlapped
+        /// to <c>A</c>.</summary>
         Overlap,
-        /// <summary>replacement: a trait is shared with another letter replacing the other letter's trait
-        /// which would be graphically unfit: e.g. <c>OE</c> where the curve of <c>O</c> also hosts the
-        /// horizontal traits of <c>E</c>, replacing the <c>E</c>'s vertical trait.</summary>
+
+        /// <summary>replacement: a trait is shared with another letter replacing
+        /// the other letter's trait which would be graphically unfit: e.g.
+        /// <c>OE</c> where the curve of <c>O</c> also hosts the horizontal traits
+        /// of <c>E</c>, replacing the <c>E</c>'s vertical trait.</summary>
         Replacement,
-        /// <summary>graft: a letter continues the tracing of another letter, like <c>I</c> which in <c>CI</c>
-        /// continues the topright terminal point of <c>C</c> somewhat like a vertically flipped <c>G</c>.
+
+        /// <summary>graft: a letter continues the tracing of another letter,
+        /// like <c>I</c> which in <c>CI</c> continues the topright terminal
+        /// point of <c>C</c> somewhat like a vertically flipped <c>G</c>.
         /// </summary>
         Graft,
-        /// <summary>inclusion: improperly considered a nexus: a letter is smaller and placed inside another
-        /// letter, like <c>O</c> in <c>C</c> and <c>I</c> in <c>G</c> of the word <c>CONIUGI</c>.</summary>
+
+        /// <summary>inclusion: improperly considered a nexus: a letter is
+        /// smaller and placed inside another letter, like <c>O</c> in <c>C</c>
+        /// and <c>I</c> in <c>G</c> of the word <c>CONIUGI</c>.</summary>
         Inclusion,
-        /// <summary>connection: letters are connected via additional traits not belonging to any letter
+
+        /// <summary>connection: letters are connected via additional traits
+        /// not belonging to any letter
         /// shape</summary>
         Connection,
-        /// <summary>complex ligature: any complex combination of the other types.</summary>
+
+        /// <summary>complex ligature: any complex combination of the other
+        /// types.</summary>
         Complex
     }
     #endregion

@@ -68,6 +68,7 @@ namespace Cadmus.Mongo
     {
         /// <summary>The name of the parts collection.</summary>
         public const string COLL_PARTS = "parts";
+
         /// <summary>The name of the history parts collection.</summary>
         public const string COLL_HISTORYPARTS = "history-parts";
 
@@ -78,7 +79,6 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoCadmusRepository"/> class.
         /// </summary>
-        /// <param name="options">The options.</param>
         /// <param name="partTypeProvider">The part type provider.</param>
         /// <exception cref="ArgumentNullException">null options or part type provider</exception>
         public MongoCadmusRepository(IPartTypeProvider partTypeProvider)
@@ -115,10 +115,10 @@ namespace Cadmus.Mongo
         public IList<IFlagDefinition> GetFlagDefinitions()
         {
             IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredFlagDefinition> collection = 
+            IMongoCollection<StoredFlagDefinition> collection =
                 db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION);
 
-            return (from d in collection.Find(f => true).SortBy(f => f.Id).ToList()
+            return (from d in collection.Find(_ => true).SortBy(f => f.Id).ToList()
                 select (IFlagDefinition) new FlagDefinition
                 {
                     Id = d.Id,
@@ -184,7 +184,7 @@ namespace Cadmus.Mongo
             IMongoCollection<StoredItemFacet> collection =
                 db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
 
-            return (from f in collection.Find(f => true).SortBy(f => f.Label).ToList()
+            return (from f in collection.Find(_ => true).SortBy(f => f.Label).ToList()
                 select (IFacet)new Facet
                 {
                     Id = f.Id,
@@ -395,8 +395,8 @@ namespace Cadmus.Mongo
             // text layer parts, whose role ID is assumed to be equal to their fragment
             // type ID, which always begin with "fr-", up to the 1st dot if any.
             return doc["typeId"].AsString +
-                   (!doc["roleId"].IsBsonNull &&
-                     Regex.IsMatch(doc["roleId"].AsString, @"fr-.+")
+                   (!doc["roleId"].IsBsonNull
+                     && Regex.IsMatch(doc["roleId"].AsString, "fr-.+")
                        ? $":{GetFrTypeFromRoleId(doc["roleId"].AsString)}"
                        : "");
         }
@@ -582,7 +582,7 @@ namespace Cadmus.Mongo
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
             IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredHistoryItem> collection = 
+            IMongoCollection<StoredHistoryItem> collection =
                 db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
 
             IQueryable<StoredHistoryItem> items = collection.AsQueryable();
@@ -597,12 +597,16 @@ namespace Cadmus.Mongo
                 items = items.Where(i => i.Status.Equals(filter.Status.Value));
 
             if (filter.MinModified.HasValue)
-                items = items.Where(i => 
+            {
+                items = items.Where(i =>
                     i.TimeModified.ToUniversalTime() >= filter.MinModified.Value);
+            }
 
             if (filter.MaxModified.HasValue)
+            {
                 items = items.Where(i =>
                     i.TimeModified.ToUniversalTime() >= filter.MaxModified.Value);
+            }
 
             int total = items.Count();
             if (total == 0)
@@ -664,7 +668,7 @@ namespace Cadmus.Mongo
             if (item == null) throw new ArgumentNullException(nameof(item));
 
             IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredHistoryItem> items = 
+            IMongoCollection<StoredHistoryItem> items =
                 db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
 
             items.ReplaceOne(h => h.Id.Equals(item.Id), new StoredHistoryItem(item));
@@ -753,10 +757,12 @@ namespace Cadmus.Mongo
 
             IQueryable<BsonDocument> parts = collection.AsQueryable();
 
-            if (filter.ItemIds != null && filter.ItemIds.Length > 0)
+            if (filter.ItemIds?.Length > 0)
             {
                 if (filter.ItemIds.Length == 1)
+                {
                     parts = parts.Where(d => d["itemId"].Equals(filter.ItemIds[0]));
+                }
                 else
                 {
                     // http://stackoverflow.com/questions/39065424/mongodb-c-sharp-linq-contains-against-a-string-array-throws-argumentexception/39068513#39068513
@@ -770,7 +776,7 @@ namespace Cadmus.Mongo
 
             if (filter.RoleId != null)
                 parts = parts.Where(d => d["roleId"].Equals(filter.RoleId));
-            
+
             if (filter.UserId != null)
                 parts = parts.Where(d => d["userId"].Equals(filter.UserId));
 
@@ -788,9 +794,11 @@ namespace Cadmus.Mongo
             {
                 // if no sort order specified, sort by TypeId,RoleId
                 if (filter.SortExpressions == null)
+                {
                     results = parts.OrderBy(d => d["typeId"])
                         .ThenBy(d => d["roleId"])
                         .ToList();
+                }
                 else
                 {
                     // else apply the requested sort order
@@ -807,8 +815,10 @@ namespace Cadmus.Mongo
             {
                 // if no sort order specified, sort by TypeId,RoleId
                 if (filter.SortExpressions == null)
+                {
                     parts = parts.OrderBy(d => d["typeId"])
                         .ThenBy(d => d["roleId"]);
+                }
                 else
                 {
                     foreach (Tuple<string, bool> t in filter.SortExpressions)
@@ -847,13 +857,15 @@ namespace Cadmus.Mongo
             IQueryable<BsonDocument> parts = collection.AsQueryable();
 
             if (itemIds.Length == 1)
+            {
                 parts = parts.Where(d => d["itemId"].Equals(itemIds[0]));
+            }
             else
             {
                 // http://stackoverflow.com/questions/39065424/mongodb-c-sharp-linq-contains-against-a-string-array-throws-argumentexception/39068513#39068513
                 List<BsonValue> values = itemIds.Select(BsonValue.Create).ToList();
                 parts = parts.Where(d => values.Contains(d["itemId"]));
-            } //eelse
+            }
 
             if (typeId != null)
                 parts = parts.Where(d => d["typeId"].Equals(typeId));
@@ -900,7 +912,7 @@ namespace Cadmus.Mongo
             var builder = new FilterDefinitionBuilder<BsonDocument>();
             var filter = builder.And(
                 builder.Eq(d => d["itemId"], BsonValue.Create(id)),
-                builder.Regex(d => d["roleId"], new BsonRegularExpression(new Regex(@"^fr-"))));
+                builder.Regex(d => d["roleId"], new BsonRegularExpression(new Regex("^fr-"))));
 
             var a = db.GetCollection<BsonDocument>(COLL_PARTS)
                 .Find(filter)
@@ -944,7 +956,7 @@ namespace Cadmus.Mongo
             IMongoCollection<BsonDocument> collection = db.GetCollection<BsonDocument>(COLL_PARTS);
             BsonDocument doc = collection.Find(p => p["_id"].Equals(id)).FirstOrDefault();
 
-            return doc == null ? null : doc.ToJson();
+            return doc?.ToJson();
         }
 
         /// <summary>
@@ -974,7 +986,7 @@ namespace Cadmus.Mongo
                     new BsonElement("content", part.ToBsonDocument())
                 };
 
-                IMongoCollection<BsonDocument> historyParts = 
+                IMongoCollection<BsonDocument> historyParts =
                     db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
                 historyParts.InsertOne(historyPart);
             }
@@ -1070,10 +1082,12 @@ namespace Cadmus.Mongo
 
             IQueryable<BsonDocument> parts = collection.AsQueryable();
 
-            if (filter.ItemIds != null && filter.ItemIds.Length > 0)
+            if (filter.ItemIds?.Length > 0)
             {
                 if (filter.ItemIds.Length == 1)
+                {
                     parts = parts.Where(d => d["content"]["itemId"].Equals(filter.ItemIds[0]));
+                }
                 else
                 {
                     List<BsonValue> aValues = filter.ItemIds.Select(BsonValue.Create).ToList();

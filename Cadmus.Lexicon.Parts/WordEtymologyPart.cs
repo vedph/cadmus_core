@@ -81,7 +81,7 @@ namespace Cadmus.Lexicon.Parts
             if (Date != null) sb.Append(" (").Append(Date).Append(")");
 
             // discussion
-            if (!String.IsNullOrEmpty(Discussion))
+            if (!string.IsNullOrEmpty(Discussion))
                 sb.Append(TextCutter.Cut(Discussion, _options));
 
             return sb.ToString();

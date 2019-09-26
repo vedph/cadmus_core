@@ -11,14 +11,14 @@ namespace Cadmus.Parts.Layers
     /// <summary>
     /// Text layer part class, based on token-referenced text.
     /// </summary>
-    /// <remarks>This class represents any text layer part. The text layer item part is 
-    /// just a wrapper for a collection of such text layer items, and adds no other piece 
-    /// of data to the part itself.
-    /// <para>A text layer part is like any other ordinary part, and derives from the same base 
-    /// class; its only peculiarity is that it only contains a collection of 
-    /// <see cref="ITextLayerFragment"/>-derived fragments, and exposes some utility methods 
-    /// to deal with them (e.g. adding a fragment, or getting all the fragments at the 
-    /// specified location).</para>
+    /// <remarks>This class represents any text layer part. The text layer
+    /// item part is just a wrapper for a collection of such text layer items,
+    /// and adds no other piece of data to the part itself.
+    /// <para>A text layer part is like any other ordinary part, and derives
+    /// from the same base class; its only peculiarity is that it only contains
+    /// a collection of <see cref="ITextLayerFragment"/>-derived fragments,
+    /// and exposes some utility methods to deal with them (e.g. adding a
+    /// fragment, or getting all the fragments at the specified location).</para>
     /// </remarks>
     [Tag("token-text-layer")]
     public sealed class TokenTextLayerPart<TFragment> : PartBase
@@ -30,13 +30,16 @@ namespace Cadmus.Parts.Layers
         public List<TFragment> Fragments { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TokenTextLayerPart{TFragment}"/> class.
-        /// Note that the <see cref="PartBase.RoleId"/> property is set here to the tag
-        /// value of the fragment type. For instance, a <see cref="TokenTextLayerPart{TFragment}"/>
-        /// with fragments whose type has a <see cref="TagAttribute"/> value equal to
-        /// <c>fr-comment</c> will have its <see cref="PartBase.RoleId"/> property equal
-        /// to <c>fr-comment</c>. This effectively is the role played by this generic layer
-        /// part in an item, as determined by the type of its fragments.
+        /// Initializes a new instance of the <see cref="TokenTextLayerPart{TFragment}"/>
+        /// class.
+        /// Note that the <see cref="PartBase.RoleId"/> property is set here
+        /// to the tag value of the fragment type. For instance, a 
+        /// <see cref="TokenTextLayerPart{TFragment}"/> with fragments whose
+        /// type has a <see cref="TagAttribute"/> value equal to <c>fr-comment</c>
+        /// will have its <see cref="PartBase.RoleId"/> property equal
+        /// to <c>fr-comment</c>. This effectively is the role played by this
+        /// generic layer part in an item, as determined by the type of its
+        /// fragments.
         /// </summary>
         public TokenTextLayerPart()
         {

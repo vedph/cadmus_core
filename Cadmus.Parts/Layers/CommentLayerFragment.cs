@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Core.Blocks;
 using Cadmus.Core.Layers;
@@ -7,8 +8,8 @@ using Fusi.Tools.Config;
 namespace Cadmus.Parts.Layers
 {
     /// <summary>
-    /// Generic comment fragment. This item contains a generic comment referred to a 
-    /// specific text portion. The text format depends on the implementor.
+    /// Generic comment fragment. This item contains a generic comment referred
+    /// to a specific text portion. The text format depends on the implementor.
     /// </summary>
     /// <seealso cref="Cadmus.Core.Layers.ITextLayerFragment" />
     /// <seealso cref="Cadmus.Core.Blocks.IHasText" />
@@ -20,21 +21,22 @@ namespace Cadmus.Parts.Layers
         /// </summary>
         /// <remarks>
         /// The location can be expressed in different ways according to the
-        /// text coordinates system being adopted. For instance, it might be a simple
-        /// token-based coordinates system (e.g. 1.2=second token of first block), or
-        /// a more complex system like an XPath expression.
+        /// text coordinates system being adopted. For instance, it might be a
+        /// simple token-based coordinates system (e.g. 1.2=second token of
+        /// first block), or a more complex system like an XPath expression.
         /// </remarks>
         public string Location { get; set; }
 
         /// <summary>
-        /// Gets or sets the optional tag linked to this comment. You might want to use
-        /// this value to categorize or group comments according to some criteria.
+        /// Gets or sets the optional tag linked to this comment. You might want
+        /// to use this value to categorize or group comments according to some
+        /// criteria.
         /// </summary>
         public string Tag { get; set; }
 
         /// <summary>
-        /// Gets or sets the text. The format of the text is chosen by the implementor
-        /// (it might be plain text, Markdown, RTF, HTML, XML, etc).
+        /// Gets or sets the text. The format of the text is chosen by the
+        /// implementor (it might be plain text, Markdown, RTF, HTML, XML, etc).
         /// </summary>
         public string Text { get; set; }
 
@@ -50,7 +52,7 @@ namespace Cadmus.Parts.Layers
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Data pins.</returns>
         public IEnumerable<DataPin> GetDataPins()
         {
             return Tag != null
@@ -66,10 +68,10 @@ namespace Cadmus.Parts.Layers
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

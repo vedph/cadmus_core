@@ -35,8 +35,11 @@ namespace Cadmus.Core.Blocks
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
                 if (!_keyRegex.IsMatch(value))
+                {
                     throw new ArgumentException(LocalizedStrings.Format(
                         Properties.Resources.InvalidDataPinName, value));
+                }
+
                 _name = value;
             }
         }

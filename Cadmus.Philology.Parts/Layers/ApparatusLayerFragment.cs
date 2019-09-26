@@ -8,39 +8,44 @@ using Fusi.Tools.Config;
 
 namespace Cadmus.Philology.Parts.Layers
 {
-    /// <inheritdoc />
     /// <summary>
     /// Critical apparatus layer fragment.
     /// </summary>
-    /// <remarks>Any apparatus fragment may define a textual variant which should be replaced 
-    /// to the lemma according to their proposers, or any text which should be inserted 
-    /// before/after the lemma according to their proposers, or any other annotation related 
-    /// to the constitution of the text. According to these types, the entry is either a 
-    /// replacement, an addition, or just a note respectively:
+    /// <remarks>Any apparatus fragment may define a textual variant which
+    /// should be replaced to the lemma according to their proposers, or any
+    /// text which should be inserted before/after the lemma according to their
+    /// proposers, or any other annotation related to the constitution of the
+    /// text. According to these types, the entry is either a replacement, an
+    /// addition, or just a note respectively:
     /// <list type="bullet">
     /// <item>
     ///		<term>replacement</term>
-    ///		<description>: the entry has been proposed as a replacement for its lemma by 1
-    ///		or more authors (<c>Authors</c> property). Eventually the variant can be <see cref="IsAccepted"/>,
-    ///		so that it should replace the lemma in the output text. Only 1 variant in a set
-    ///		can be accepted. The replacement variant is the most common type of variant. 
-    ///     A special case for this variant type is the deletion by an editor: in this case,
-    ///     the variant text is zero (i.e. a null string: e.g. <c>in om. Crusius</c>).
+    ///		<description>: the entry has been proposed as a replacement for its
+    ///		lemma by 1 or more authors (<c>Authors</c> property). Eventually
+    ///		the variant can be <see cref="IsAccepted"/>, so that it should
+    ///		replace the lemma in the output text. Only 1 variant in a set
+    ///		can be accepted. The replacement variant is the most common type of
+    ///		variant. 
+    ///     A special case for this variant type is the deletion by an editor:
+    ///     in this case, the variant text is zero (i.e. a null string: e.g.
+    ///     <c>in om. Crusius</c>).
     /// </description>
     /// </item>
     /// <item>
     ///		<term>addition</term>
-    ///		<description>: the entry text has been proposed as an addition before/after the 
-    ///     lemma it refers to (e.g. <c>in</c> before <c>domo</c>) by 1 or more authors 
-    ///     (<see cref="Authors"/> property). If this variant is accepted, the output text 
-    ///     should insert the variant text before or after the lemma with the proper 
-    ///     diacritics.</description>
+    ///		<description>: the entry text has been proposed as an addition
+    ///		before/after the lemma it refers to (e.g. <c>in</c> before
+    ///		<c>domo</c>) by 1 or more authors (<see cref="Authors"/> property).
+    ///		If this variant is accepted, the output text should insert the
+    ///		variant text before or after the lemma with the proper diacritics.
+    ///		</description>
     /// </item>
     /// <item>
     ///		<term>note</term>
-    ///		<description>: any annotation strictly connected to the text constitution 
-    ///     (e.g. <c>dubitat Crusius an interpungendum sit</c>). In such case, the 
-    ///     <see cref="Value"/> and <see cref="IsAccepted"/> properties have no meaning.
+    ///		<description>: any annotation strictly connected to the text
+    ///		constitution (e.g. <c>dubitat Crusius an interpungendum sit</c>).
+    ///		In such case, the <see cref="Value"/> and <see cref="IsAccepted"/>
+    ///		properties have no meaning.
     ///		</description>
     /// </item>
     /// </list>
@@ -92,7 +97,8 @@ namespace Cadmus.Philology.Parts.Layers
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ApparatusLayerFragment"/> class.
+        /// Initializes a new instance of the <see cref="ApparatusLayerFragment"/>
+        /// class.
         /// </summary>
         public ApparatusLayerFragment()
         {
@@ -107,14 +113,17 @@ namespace Cadmus.Philology.Parts.Layers
         public IEnumerable<DataPin> GetDataPins()
         {
             if (Authors.Count > 0)
+            {
                 return new []
                 {
                     new DataPin
                     {
                         Name = "adpar.entry.author",
-                        Value = String.Join("; ", Authors)
+                        Value = string.Join("; ", Authors)
                     }
                 };
+            }
+
             return Enumerable.Empty<DataPin>();
         }
 
@@ -131,15 +140,15 @@ namespace Cadmus.Philology.Parts.Layers
                     break;
 
                 case LemmaVariantType.AdditionBefore:
-                    sb.Append($"{Value} add.");
+                    sb.Append(Value).Append(" add.");
                     break;
                 case LemmaVariantType.AdditionAfter:
                     goto case LemmaVariantType.AdditionBefore;
             }
 
-            if (Authors != null) sb.Append(" " + String.Join(", ", Authors));
+            if (Authors != null) sb.Append(' ').Append(string.Join(", ", Authors));
 
-            if (!String.IsNullOrEmpty(Note)) sb.Append($" {Note}");
+            if (!string.IsNullOrEmpty(Note)) sb.Append(' ').Append(Note);
             if (IsAccepted) sb.Append(" (ok)");
 
             return sb.ToString();
@@ -154,10 +163,13 @@ namespace Cadmus.Philology.Parts.Layers
     {
         /// <summary>variant should replace lemma</summary>
         Replacement = 0,
+
         /// <summary>variant should be added before lemma</summary>
         AdditionBefore,
+
         /// <summary>variant should be added after lemma</summary>
         AdditionAfter,
+
         /// <summary>any note to the text</summary>
         Note
     }

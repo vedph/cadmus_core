@@ -64,10 +64,16 @@ namespace Cadmus.Core.Layers
 
             _pt1.CopyFrom(other.Primary);
 
-            if (other.Secondary == null) Secondary = null;
+            if (other.Secondary == null)
+            {
+                Secondary = null;
+            }
             else
             {
-                if (Secondary == null) Secondary = new TokenTextPoint();
+                if (Secondary == null)
+                {
+                    Secondary = new TokenTextPoint();
+                }
                 Secondary.CopyFrom(other.Secondary);
             }
         }
@@ -81,7 +87,7 @@ namespace Cadmus.Core.Layers
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(TokenTextLocation other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(_pt1, other._pt1) && Equals(Secondary, other.Secondary);
         }
@@ -93,7 +99,7 @@ namespace Cadmus.Core.Layers
         /// <param name="obj">The object to compare with the current object. </param>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj is TokenTextLocation location && Equals(location);
         }
@@ -106,8 +112,8 @@ namespace Cadmus.Core.Layers
         {
             unchecked
             {
-                return (_pt1.GetHashCode() * 397) ^
-                       (Secondary != null ? Secondary.GetHashCode() : 0);
+                return (_pt1.GetHashCode() * 397)
+                       ^ (Secondary?.GetHashCode() ?? 0);
             }
         }
         #endregion
@@ -128,7 +134,7 @@ namespace Cadmus.Core.Layers
         public int CompareTo(TokenTextLocation other)
         {
             if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
+            if (other is null) return 1;
 
             int pt1Comparison = _pt1.CompareTo(other._pt1);
             if (pt1Comparison != 0) return pt1Comparison;
@@ -151,7 +157,7 @@ namespace Cadmus.Core.Layers
         /// <paramref name="obj" /> is not the same type as this instance. </exception>
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)) return 1;
+            if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
 
             if (!(obj is TokenTextLocation))
@@ -185,8 +191,8 @@ namespace Cadmus.Core.Layers
                 return Secondary == null ?
                     _pt1.IntegralCompareTo(other.Primary) == 0 :
 
-                    _pt1.CompareTo(other.Primary) <= 0 &&
-                    Secondary.CompareTo(other.Primary) >= 0;
+                    _pt1.CompareTo(other.Primary) <= 0
+                        && Secondary.CompareTo(other.Primary) >= 0;
             }
 
             // 2) if B is a range, cases are:
@@ -195,11 +201,11 @@ namespace Cadmus.Core.Layers
             //	2.2. A is a range: A (range) overlaps with B (range) 
             //       when B-right >= A-left and B-left <= A-right
             return Secondary == null ?
-                other.Primary.CompareTo(_pt1) <= 0 &&
-                other.Secondary.CompareTo(_pt1) >= 0 :
+                other.Primary.CompareTo(_pt1) <= 0
+                && other.Secondary.CompareTo(_pt1) >= 0 :
 
-                other.Secondary.CompareTo(_pt1) >= 0 &&
-                other.Primary.CompareTo(Secondary) <= 0;
+                other.Secondary.CompareTo(_pt1) >= 0
+                && other.Primary.CompareTo(Secondary) <= 0;
         }
 
         /// <summary>

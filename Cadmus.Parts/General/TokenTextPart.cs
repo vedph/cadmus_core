@@ -12,7 +12,7 @@ namespace Cadmus.Parts.General
     /// <summary>
     /// Token-based text part, to be used with text layers.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
+    /// <seealso cref="PartBase" />
     [Tag("token-text")]
     public sealed class TokenTextPart : PartBase, IHasText
     {
@@ -46,10 +46,11 @@ namespace Cadmus.Parts.General
         {
             return Lines == null ?
                 "" :
-                String.Join(Environment.NewLine, from l in Lines select l.Text);
+                string.Join(Environment.NewLine, from l in Lines select l.Text);
         }
 
-        private static void ExtractFirstTokenText(ITextLocation<TokenTextPoint> location, string token, 
+        private static void ExtractFirstTokenText(
+            ITextLocation<TokenTextPoint> location, string token,
             bool wholeToken, string begMarker, string endMarker, StringBuilder sb)
         {
             // is it partial?
@@ -59,21 +60,30 @@ namespace Cadmus.Parts.General
                 if (wholeToken)
                 {
                     // left part
-                    sb.Append(token.Substring(0, location.Primary.At - 1));
+                    sb.Append(token, 0, location.Primary.At - 1);
 
                     // marker
-                    if (!String.IsNullOrEmpty(begMarker)) sb.Append(begMarker);
+                    if (!string.IsNullOrEmpty(begMarker)) sb.Append(begMarker);
 
                     // right part (with end marker if not a range)
-                    if (location.IsRange) sb.Append(token.Substring(location.Primary.At - 1));
+                    if (location.IsRange)
+                    {
+                        sb.Append(token, location.Primary.At - 1,
+                            token.Length - location.Primary.At - 1);
+                    }
                     else
                     {
-                        sb.Append(token.Substring(location.Primary.At - 1, location.Primary.Run));
+                        sb.Append(token, location.Primary.At - 1,
+                            location.Primary.Run);
 
-                        if (!String.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
+                        if (!string.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
 
                         if (location.Primary.At - 1 + location.Primary.Run < token.Length)
-                            sb.Append(token.Substring(location.Primary.At - 1 + location.Primary.Run));
+                        {
+                            sb.Append(token,
+                                location.Primary.At - 1 + location.Primary.Run,
+                                token.Length - location.Primary.At - 1 + location.Primary.Run);
+                        }
                     }
                 }
 
@@ -87,7 +97,10 @@ namespace Cadmus.Parts.General
             }
 
             // not a partial token, just copy it
-            else sb.Append(token);
+            else
+            {
+                sb.Append(token);
+            }
         }
 
         private static void ExtractRangeLastTokenText(ITextLocation<TokenTextPoint> location, string token,
@@ -96,20 +109,27 @@ namespace Cadmus.Parts.General
             if (location.Secondary.At > 0)
             {
                 // add token left portion
-                sb.Append(token.Substring(0, location.Secondary.Run));
+                sb.Append(token, 0, location.Secondary.Run);
 
                 // if we must get the whole token get also its right portion and add markers if any
                 if (wholeToken)
                 {
-                    if (!String.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
+                    if (!string.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
 
                     if (location.Secondary.At - 1 + location.Secondary.Run < token.Length)
-                        sb.Append(token.Substring(location.Secondary.At - 1 + location.Secondary.Run));
+                    {
+                        sb.Append(token,
+                            location.Secondary.At - 1 + location.Secondary.Run,
+                            token.Length - location.Secondary.At - 1 + location.Secondary.Run);
+                    }
                 }
             }
 
             // not a partial token, just copy it
-            else sb.Append(token);
+            else
+            {
+                sb.Append(token);
+            }
         }
 
         /// <summary>
@@ -151,7 +171,10 @@ namespace Cadmus.Parts.General
                     // else we're going to deal with a range
                     start++;
                 } // 1st
-                else sb.AppendLine();
+                else
+                {
+                    sb.AppendLine();
+                }
 
                 // range: set end token
                 Debug.Assert(location.IsRange);
@@ -173,10 +196,10 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

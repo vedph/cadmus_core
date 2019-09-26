@@ -26,8 +26,10 @@ namespace Cadmus.Core.Config
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
                 if (!Regex.IsMatch(value, @"^[a-zA-Z0-9_\-\.]+$"))
+                {
                     throw new ArgumentException(LocalizedStrings.Format(
                         Properties.Resources.InvalidTagId, value));
+                }
                 _id = value;
             }
         }
@@ -38,7 +40,7 @@ namespace Cadmus.Core.Config
         public string Name { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.

@@ -33,14 +33,14 @@ namespace Cadmus.Lexicon.Parts
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
-            return $"[{Rank}]: " + String.Join(" < ", from step in Steps
+            return $"[{Rank}]: " + string.Join(" < ", from step in Steps
                                                       select step.ToString());
         }
     }

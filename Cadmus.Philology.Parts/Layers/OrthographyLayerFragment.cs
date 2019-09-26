@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Cadmus.Core.Blocks;
@@ -8,7 +9,8 @@ using Fusi.Tools.Config;
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// Orthography layer fragment, used to mark deviations from the orthographical norm.
+    /// Orthography layer fragment, used to mark deviations from the
+    /// orthographical norm.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
     [Tag("fr-orthography")]
@@ -19,15 +21,15 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         /// <remarks>
         /// The location can be expressed in different ways according to the
-        /// text coordinates system being adopted. For instance, it might be a simple
-        /// token-based coordinates system (e.g. 1.2=second token of first block), or
-        /// a more complex system like an XPath expression.
+        /// text coordinates system being adopted. For instance, it might be a
+        /// simple token-based coordinates system (e.g. 1.2=second token of
+        /// first block), or a more complex system like an XPath expression.
         /// </remarks>
         public string Location { get; set; }
 
         /// <summary>
-        /// Gets or sets the standard orthography form for the word linked to this
-        /// fragment.
+        /// Gets or sets the standard orthography form for the word linked to
+        /// this fragment.
         /// </summary>
         public string Standard { get; set; }
 
@@ -64,15 +66,16 @@ namespace Cadmus.Philology.Parts.Layers
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             return $"Orthography: {Location} {Standard} " +
-                   (Operations != null ? Operations.Count.ToString(CultureInfo.InvariantCulture) : "");
+                   (Operations != null ? 
+                   Operations.Count.ToString(CultureInfo.InvariantCulture) : "");
         }
     }
 }

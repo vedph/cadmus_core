@@ -195,8 +195,8 @@ namespace Cadmus.Philology.Parts.Layers
 
         private static int ParseRangeNumber(string text)
         {
-            if (String.IsNullOrEmpty(text)) return 1;
-            return Int32.Parse(text, CultureInfo.InvariantCulture);
+            if (string.IsNullOrEmpty(text)) return 1;
+            return int.Parse(text, CultureInfo.InvariantCulture);
         }
 
         private static void DetermineOperator(string text, MspOperation operation)
@@ -228,7 +228,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <returns>operation, or null if invalid text</returns>
         public static MspOperation Parse(string text)
         {
-            if (String.IsNullOrEmpty(text)) return null;
+            if (string.IsNullOrEmpty(text)) return null;
 
             Match m = _opRegex.Match(text);
             if (!m.Success) return null;
@@ -249,15 +249,19 @@ namespace Cadmus.Philology.Parts.Layers
             DetermineOperator(m.Groups["op"].Value, operation);
 
             // range B is allowed only for move/swap
-            if (operation._operator != MspOperator.Move &&
-                operation._operator != MspOperator.Swap)
+            if (operation._operator != MspOperator.Move
+                && operation._operator != MspOperator.Swap)
+            {
                 operation.RangeB = TextRange.Empty;
+            }
 
             // value B is allowed only for insert/replace/swap
-            if (operation._operator != MspOperator.Insert &&
-                operation._operator != MspOperator.Replace &&
-                operation._operator != MspOperator.Swap)
+            if (operation._operator != MspOperator.Insert
+                && operation._operator != MspOperator.Replace
+                && operation._operator != MspOperator.Swap)
+            {
                 operation.ValueB = null;
+            }
 
             return operation;
         }
@@ -270,12 +274,16 @@ namespace Cadmus.Philology.Parts.Layers
     {
         /// <summary>Delete</summary>
         Delete = 0,
+
         /// <summary>Replace</summary>
         Replace,
+
         /// <summary>Insert</summary>
         Insert,
+
         /// <summary>Move</summary>
         Move,
+
         /// <summary>Swap</summary>
         Swap
     }

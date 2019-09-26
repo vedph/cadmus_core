@@ -23,7 +23,8 @@ namespace Cadmus.Core.Layers
     public sealed class TokenTextPoint : ITextPoint
     {
         // sample: 12.3@2x3
-        private static readonly Regex _pointRegex = new Regex(@"^(?<y>\d+)\.(?<x>\d+)" +
+        private static readonly Regex _pointRegex = new Regex(
+            @"^(?<y>\d+)\.(?<x>\d+)" +
             @"(?:@(?<at>\d+)" +
             @"(?:x(?<run>\d+))?)?$", RegexOptions.IgnorePatternWhitespace);
 
@@ -117,18 +118,20 @@ namespace Cadmus.Core.Layers
 
             Match m = _pointRegex.Match(text);
             if (!m.Success)
+            {
                 throw new ArgumentException(LocalizedStrings.Format(
                     Properties.Resources.InvalidTokenPoint, text));
+            }
 
-            Y = Int32.Parse(m.Groups["y"].Value, CultureInfo.InvariantCulture);
-            X = Int32.Parse(m.Groups["x"].Value, CultureInfo.InvariantCulture);
+            Y = int.Parse(m.Groups["y"].Value, CultureInfo.InvariantCulture);
+            X = int.Parse(m.Groups["x"].Value, CultureInfo.InvariantCulture);
 
             // at, run
             if (m.Groups["at"].Length > 0)
             {
-                At = Int16.Parse(m.Groups["at"].Value, CultureInfo.InvariantCulture);
+                At = short.Parse(m.Groups["at"].Value, CultureInfo.InvariantCulture);
                 Run = m.Groups["run"].Length > 0 ?
-                    Int16.Parse(m.Groups["run"].Value, CultureInfo.InvariantCulture) :
+                    short.Parse(m.Groups["run"].Value, CultureInfo.InvariantCulture) :
                     (short)1;
             }
         }
@@ -231,7 +234,7 @@ namespace Cadmus.Core.Layers
         /// <paramref name="obj" /> is not the same type as this instance. </exception>
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)) return 1;
+            if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
 
             if (!(obj is TokenTextPoint))
@@ -245,7 +248,7 @@ namespace Cadmus.Core.Layers
         /// True if these coordinates are equal to the specified coordinates.
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
+        /// <returns>True if equal.</returns>
         public bool Equals(ITextPoint other)
         {
             return CompareTo(other) == 0;

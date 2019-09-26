@@ -1,7 +1,6 @@
 ﻿using System;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Cadmus.Core.Storage;
 using Fusi.Tools.Data;
 
 namespace Cadmus.Mongo
@@ -14,15 +13,18 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets the specified virtual page of documents.
         /// </summary>
-        /// <typeparam name="T">The strong type of document, or just <see cref="BsonDocument"/></typeparam>
+        /// <typeparam name="T">The strong type of document, or just 
+        /// <see cref="BsonDocument"/></typeparam>
         /// <param name="collection">The collection to load data from.</param>
         /// <param name="query">The query JSON string.</param>
         /// <param name="sort">The sort JSON string.</param>
         /// <param name="number">The page number (1-N).</param>
         /// <param name="size">The page size.</param>
         /// <returns>page</returns>
-        /// <exception cref="ArgumentNullException">null collection, query or sort</exception>
-        /// <exception cref="ArgumentOutOfRangeException">number or size less than 1</exception>
+        /// <exception cref="ArgumentNullException">null collection, query or
+        /// sort</exception>
+        /// <exception cref="ArgumentOutOfRangeException">number or size less
+        /// than 1</exception>
         public static PagedData<T> GetDocumentsPage<T>(IMongoCollection<T> collection,
             string query, string sort, int number, int size) where T : class
         {

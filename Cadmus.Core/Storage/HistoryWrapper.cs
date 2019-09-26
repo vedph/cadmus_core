@@ -32,13 +32,15 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryWrapper{T}"/> class.
         /// </summary>
-        /// <remarks>A new <see cref="Id"/> value is automatically generated.</remarks>
+        /// <remarks>A new <see cref="Id"/> value is automatically generated.
+        /// </remarks>
         /// <param name="content">The content.</param>
         /// <exception cref="ArgumentNullException">null content</exception>
         public HistoryWrapper(T content)
@@ -55,8 +57,10 @@ namespace Cadmus.Core.Storage
     {
         /// <summary>The item has been created.</summary>
         Created = 0,
+
         /// <summary>The item was existing and has been updated.</summary>
         Updated = 1,
+
         /// <summary>The item has been deleted. This is a status typically
         /// used in history.</summary>
         Deleted = 2

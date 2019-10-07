@@ -44,12 +44,14 @@ namespace Cadmus.Parts.Layers
         public TokenTextLayerPart()
         {
             Fragments = new List<TFragment>();
-            RoleId = typeof(TFragment).GetTypeInfo().GetCustomAttribute<TagAttribute>()?.Tag;
+            RoleId = typeof(TFragment).GetTypeInfo()
+                .GetCustomAttribute<TagAttribute>()?.Tag;
         }
 
         /// <summary>
-        /// Add the specified layer fragment to this part. Any other existing fragment 
-        /// (of the same type) eventually overlapping the new one will be removed.
+        /// Add the specified layer fragment to this part. Any other existing
+        /// fragment (of the same type) eventually overlapping the new one will
+        /// be removed.
         /// </summary>
         /// <param name="fragment">The new fragment.</param>
         /// <exception cref="ArgumentNullException">null item</exception>
@@ -64,7 +66,8 @@ namespace Cadmus.Parts.Layers
             for (int i = Fragments.Count - 1; i > -1; i--)
             {
                 if (Fragments[i].GetType() != t) continue;
-                TokenTextLocation loc = TokenTextLocation.Parse(Fragments[i].Location);
+                TokenTextLocation loc =
+                    TokenTextLocation.Parse(Fragments[i].Location);
                 if (newLoc.Overlaps(loc)) Fragments.RemoveAt(i);
             }
 

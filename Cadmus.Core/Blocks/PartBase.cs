@@ -32,9 +32,9 @@ namespace Cadmus.Core.Blocks
         /// </summary>
         /// <remarks>
         /// Parts of the same type in the same item can have different
-        /// roles. For instance, two date parts may refer to the date of the original
-        /// text and to that of its later copy. In this case, a role ID helps
-        /// selecting the desired part from an item.
+        /// roles. For instance, two date parts may refer to the date of the
+        /// original text and to that of its later copy. In this case, a
+        /// role ID helps selecting the desired part from an item.
         /// </remarks>
         public string RoleId { get; set; }
 
@@ -46,7 +46,8 @@ namespace Cadmus.Core.Blocks
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
@@ -55,7 +56,8 @@ namespace Cadmus.Core.Blocks
         protected PartBase()
         {
             Id = Guid.NewGuid().ToString("N");
-            TagAttribute attr = GetType().GetTypeInfo().GetCustomAttribute<TagAttribute>();
+            TagAttribute attr = GetType().GetTypeInfo()
+                .GetCustomAttribute<TagAttribute>();
             TypeId = attr != null ? attr.Tag : GetType().FullName;
             TimeModified = DateTime.UtcNow;
         }

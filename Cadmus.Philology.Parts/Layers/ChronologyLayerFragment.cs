@@ -9,8 +9,8 @@ using Fusi.Tools.Config;
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// Chronology layer fragment: a chronological indication linked to a specific 
-    /// portion of text.
+    /// Chronology layer fragment: a chronological indication linked to a
+    /// specific portion of text.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
     [Tag("fr-chronology")]
@@ -21,9 +21,9 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         /// <remarks>
         /// The location can be expressed in different ways according to the
-        /// text coordinates system being adopted. For instance, it might be a simple
-        /// token-based coordinates system (e.g. 1.2=second token of first block), or
-        /// a more complex system like an XPath expression.
+        /// text coordinates system being adopted. For instance, it might be a
+        /// simple token-based coordinates system (e.g. 1.2=second token of
+        /// first block), or a more complex system like an XPath expression.
         /// </remarks>
         public string Location { get; set; }
 

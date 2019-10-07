@@ -4,11 +4,12 @@ namespace Cadmus.Core.Layers
 {
     /// <summary>
     /// Token-based text location, including 1 or 2 <see cref="TokenTextPoint"/>'s.
-    /// This represents the location of either a single token (when <see cref="Secondary"/>
-    /// is null), or the location of a range of contiguous tokens (from <see cref="Primary"/>
-    /// to <see cref="Secondary"/>, inclusive). Further, each of this points
-    /// can locate only a portion of its target, starting from a character ordinal
-    /// and extending for the specified run of characters.
+    /// This represents the location of either a single token
+    /// (when <see cref="Secondary"/> is null), or the location of a range of
+    /// contiguous tokens (from <see cref="Primary"/> to <see cref="Secondary"/>,
+    /// inclusive). Further, each of this points can locate only a portion of
+    /// its target, starting from a character ordinal and extending for the
+    /// specified run of characters.
     /// </summary>
     public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>
     {
@@ -70,10 +71,7 @@ namespace Cadmus.Core.Layers
             }
             else
             {
-                if (Secondary == null)
-                {
-                    Secondary = new TokenTextPoint();
-                }
+                if (Secondary == null) Secondary = new TokenTextPoint();
                 Secondary.CopyFrom(other.Secondary);
             }
         }
@@ -96,7 +94,7 @@ namespace Cadmus.Core.Layers
         /// Determines whether the specified object is equal to the current object.</summary>
         /// <returns>true if the specified object is equal to the current object; 
         /// otherwise, false.</returns>
-        /// <param name="obj">The object to compare with the current object. </param>
+        /// <param name="obj">The object to compare with the current object.</param>
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
@@ -121,16 +119,18 @@ namespace Cadmus.Core.Layers
         #region Comparison
         /// <summary>
         /// Compares the current instance with another object of the same type 
-        /// and returns an integer that indicates whether the current instance precedes, 
-        /// follows, or occurs in the same position in the sort order as the other object.
+        /// and returns an integer that indicates whether the current instance
+        /// precedes, 
+        /// follows, or occurs in the same position in the sort order as the
+        /// other object.
         /// </summary>
-        /// <returns>A value that indicates the relative order of the objects being 
-        /// compared. The return value has these meanings: less than zero: this instance 
-        /// precedes <paramref name="other" /> in the sort order; zero: this instance 
-        /// occurs in the same position in the sort order as <paramref name="other" />; 
-        /// greater than zero This instance follows <paramref name="other" /> in the sort 
-        /// order.</returns>
-        /// <param name="other">An object to compare with this instance. </param>
+        /// <returns>A value that indicates the relative order of the objects
+        /// being compared. The return value has these meanings: less than zero:
+        /// this instance  precedes <paramref name="other" /> in the sort order;
+        /// zero: this instance  occurs in the same position in the sort order
+        /// as <paramref name="other" />; greater than zero: this instance
+        /// follows <paramref name="other" /> in the sort order.</returns>
+        /// <param name="other">An object to compare with this instance.</param>
         public int CompareTo(TokenTextLocation other)
         {
             if (ReferenceEquals(this, other)) return 0;

@@ -61,11 +61,12 @@ namespace Cadmus.Archive.Parts
         }
 
         /// <summary>
-        /// Parses the specified text representing an YMD token, eventually surrounded by
-        /// an opening and/or closing square bracket.
+        /// Parses the specified text representing an YMD token, eventually
+        /// surrounded by an opening and/or closing square bracket.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <param name="type">The type of token to parse: <c>y</c>, <c>m</c>, <c>d</c>.</param>
+        /// <param name="type">The type of token to parse: <c>y</c>, <c>m</c>,
+        /// <c>d</c>.</param>
         /// <returns>parsed token or null if invalid</returns>
         /// <exception cref="ArgumentNullException">null text</exception>
         public static YmdToken Parse(string text, char type)
@@ -81,17 +82,20 @@ namespace Cadmus.Archive.Parts
             if (m.Groups["r"].Length > 0) token.HasRightBracket = true;
             string sValue = m.Groups["v"].Value.ToLowerInvariant();
 
-            switch (Char.ToLowerInvariant(type))
+            switch (char.ToLowerInvariant(type))
             {
                 case 'y':
-                    token.Value = Int16.Parse(sValue, CultureInfo.InvariantCulture);
+                    token.Value = short.Parse(sValue, CultureInfo.InvariantCulture);
                     break;
 
                 case 'm':
-                    if (sValue.Any(Char.IsLetter))
+                    if (sValue.Any(char.IsLetter))
                     {
                         short n = GetValueFromFullMonth(sValue);
-                        if (n > 0) token.Value = n;
+                        if (n > 0)
+                        {
+                            token.Value = n;
+                        }
                         else
                         {
                             string s = sValue.EndsWith(".", StringComparison.Ordinal)
@@ -101,7 +105,7 @@ namespace Cadmus.Archive.Parts
                             if (n > 0) token.Value = n;
                         }
                     }
-                    else token.Value = Int16.Parse(sValue, CultureInfo.InvariantCulture);
+                    else token.Value = short.Parse(sValue, CultureInfo.InvariantCulture);
                     break;
 
                 case 'd':
@@ -112,10 +116,10 @@ namespace Cadmus.Archive.Parts
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

@@ -11,16 +11,16 @@ namespace Cadmus.Parts.General
     /// <remarks>
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>y</term>
-    /// 		<description><see cref="Y"/> value</description>
-    /// 		<term>x</term>
-    /// 		<description><see cref="X"/> value</description>
-    /// 	</item>
-    /// 	<item>
-    /// 		<term>tag (optional)</term>
-    /// 		<description><see cref="Tag"/> value</description>
-    /// 	</item>
+    /// <item>
+    /// <term>y</term>
+    /// <description><see cref="Y"/> value</description>
+    /// <term>x</term>
+    /// <description><see cref="X"/> value</description>
+    /// </item>
+    /// <item>
+    /// <term>tag (optional)</term>
+    /// <description><see cref="Tag"/> value</description>
+    /// </item>
     /// </list>
     /// </remarks>
     /// <seealso cref="PartBase" />
@@ -38,8 +38,8 @@ namespace Cadmus.Parts.General
         public List<string> ChildrenIds { get; set; }
 
         /// <summary>
-        /// Gets or sets the depth level value represented by this part. Note that the 
-        /// y-level number is not necessarily progressive.
+        /// Gets or sets the depth level value represented by this part.
+        /// Note that the y-level number is not necessarily progressive.
         /// </summary>
         public int Y { get; set; }
 

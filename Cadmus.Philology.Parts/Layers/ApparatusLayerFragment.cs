@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Cadmus.Core.Blocks;
@@ -19,34 +18,34 @@ namespace Cadmus.Philology.Parts.Layers
     /// addition, or just a note respectively:
     /// <list type="bullet">
     /// <item>
-    ///		<term>replacement</term>
-    ///		<description>: the entry has been proposed as a replacement for its
-    ///		lemma by 1 or more authors (<c>Authors</c> property). Eventually
-    ///		the variant can be <see cref="IsAccepted"/>, so that it should
-    ///		replace the lemma in the output text. Only 1 variant in a set
-    ///		can be accepted. The replacement variant is the most common type of
-    ///		variant. 
-    ///     A special case for this variant type is the deletion by an editor:
-    ///     in this case, the variant text is zero (i.e. a null string: e.g.
-    ///     <c>in om. Crusius</c>).
+    ///	<term>replacement</term>
+    ///	<description>: the entry has been proposed as a replacement for its
+    ///	lemma by 1 or more authors (<c>Authors</c> property). Eventually
+    ///	the variant can be <see cref="IsAccepted"/>, so that it should
+    ///	replace the lemma in the output text. Only 1 variant in a set
+    ///	can be accepted. The replacement variant is the most common type of
+    ///	variant. 
+    /// A special case for this variant type is the deletion by an editor:
+    /// in this case, the variant text is zero (i.e. a null string: e.g.
+    /// <c>in om. Crusius</c>).
     /// </description>
     /// </item>
     /// <item>
-    ///		<term>addition</term>
-    ///		<description>: the entry text has been proposed as an addition
-    ///		before/after the lemma it refers to (e.g. <c>in</c> before
-    ///		<c>domo</c>) by 1 or more authors (<see cref="Authors"/> property).
-    ///		If this variant is accepted, the output text should insert the
-    ///		variant text before or after the lemma with the proper diacritics.
-    ///		</description>
+    ///	<term>addition</term>
+    ///	<description>: the entry text has been proposed as an addition
+    ///	before/after the lemma it refers to (e.g. <c>in</c> before
+    ///	<c>domo</c>) by 1 or more authors (<see cref="Authors"/> property).
+    ///	If this variant is accepted, the output text should insert the
+    ///	variant text before or after the lemma with the proper diacritics.
+    ///	</description>
     /// </item>
     /// <item>
-    ///		<term>note</term>
-    ///		<description>: any annotation strictly connected to the text
-    ///		constitution (e.g. <c>dubitat Crusius an interpungendum sit</c>).
-    ///		In such case, the <see cref="Value"/> and <see cref="IsAccepted"/>
-    ///		properties have no meaning.
-    ///		</description>
+    ///	<term>note</term>
+    ///	<description>: any annotation strictly connected to the text
+    ///	constitution (e.g. <c>dubitat Crusius an interpungendum sit</c>).
+    ///	In such case, the <see cref="Value"/> and <see cref="IsAccepted"/>
+    ///	properties have no meaning.
+    ///	</description>
     /// </item>
     /// </list>
     /// </remarks>

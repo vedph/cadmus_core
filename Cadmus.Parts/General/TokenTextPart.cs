@@ -78,11 +78,13 @@ namespace Cadmus.Parts.General
 
                         if (!string.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
 
-                        if (location.Primary.At - 1 + location.Primary.Run < token.Length)
+                        if (location.Primary.At - 1 + location.Primary.Run
+                            < token.Length)
                         {
                             sb.Append(token,
                                 location.Primary.At - 1 + location.Primary.Run,
-                                token.Length - location.Primary.At - 1 + location.Primary.Run);
+                                token.Length - location.Primary.At - 1
+                                    + location.Primary.Run);
                         }
                     }
                 }
@@ -92,7 +94,8 @@ namespace Cadmus.Parts.General
                 {
                     sb.Append(location.IsRange
                         ? token.Substring(location.Primary.At - 1)
-                        : token.Substring(location.Primary.At - 1, location.Primary.Run));
+                        : token.Substring(location.Primary.At - 1,
+                            location.Primary.Run));
                 }
             }
 

@@ -20,10 +20,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// consecutive letters.
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>Layer.Ligature.Type</term>
-    /// 		<description>a character representing the ligature type.</description>
-    /// 	</item>
+    /// <item>
+    /// <term>Layer.Ligature.Type</term>
+    /// <description>a character representing the ligature type.</description>
+    /// </item>
     /// </list>
     /// </remarks>
     [Tag("fr-ligature")]
@@ -66,7 +66,8 @@ namespace Cadmus.Philology.Parts.Layers
 
         #region Abbreviations
         /// <summary>
-        /// Get a 1-letter abbreviation corresponding to the specified ligature type.
+        /// Get a 1-letter abbreviation corresponding to the specified ligature
+        /// type.
         /// </summary>
         /// <param name="type">ligature type</param>
         /// <returns>letter</returns>
@@ -76,7 +77,8 @@ namespace Cadmus.Philology.Parts.Layers
         }
 
         /// <summary>
-        /// Get the ligature type corresponding to the specified 1-letter abbreviation.
+        /// Get the ligature type corresponding to the specified 1-letter
+        /// abbreviation.
         /// </summary>
         /// <param name="abbreviation">abbreviation</param>
         /// <returns>ligature type</returns>
@@ -89,8 +91,12 @@ namespace Cadmus.Philology.Parts.Layers
         }
         #endregion
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return $"Ligature: {Location} {Enum.GetName(typeof(LigatureType), Type)}";

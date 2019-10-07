@@ -104,7 +104,8 @@ namespace Cadmus.Core.Storage
         /// Gets the specified item.
         /// </summary>
         /// <param name="id">The item's identifier.</param>
-        /// <param name="includeParts">if set to <c>true</c>, include all the item's parts.</param>
+        /// <param name="includeParts">if set to <c>true</c>, include all the
+        /// item's parts.</param>
         /// <returns>item or null if not found</returns>
         IItem GetItem(string id, bool includeParts = true);
 
@@ -112,7 +113,8 @@ namespace Cadmus.Core.Storage
         /// Adds or updates the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be affected.</param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
         void AddItem(IItem item, bool history = true);
 
         /// <summary>
@@ -120,7 +122,8 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be affected.</param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
         void DeleteItem(string id, string userId, bool history = true);
 
         /// <summary>
@@ -159,14 +162,16 @@ namespace Cadmus.Core.Storage
 
         #region Parts
         /// <summary>
-        /// Gets the specified page of matching parts, or all the matching parts when page size=0.
+        /// Gets the specified page of matching parts, or all the matching
+        /// parts when page size=0.
         /// </summary>
         /// <param name="filter">The parts filter.</param>
         /// <returns>parts page result</returns>
         PagedData<IPartInfo> GetPartsPage(PartFilter filter);
 
         /// <summary>
-        /// Gets the parts belonging to the specified item(s), eventually filtered by their type
+        /// Gets the parts belonging to the specified item(s), eventually
+        /// filtered by their type
         /// and/or role.
         /// </summary>
         /// <param name="itemIds">The item ID(s).</param>
@@ -177,8 +182,9 @@ namespace Cadmus.Core.Storage
 
         /// <summary>
         /// Gets the layer parts role IDs and part IDs for the specified item.
-        /// This is useful when you want to have a list of all the item's layer parts
-        /// IDs (part ID and role ID) so that you can retrieve each of them separately.
+        /// This is useful when you want to have a list of all the item's layer
+        /// parts IDs (part ID and role ID) so that you can retrieve each of
+        /// them separately.
         /// </summary>
         /// <param name="id">The item's identifier.</param>
         /// <returns>array of tuples where 1=role ID and 2=part ID</returns>
@@ -204,22 +210,26 @@ namespace Cadmus.Core.Storage
         /// Adds or updates the specified part.
         /// </summary>
         /// <param name="part">The part.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be affected.</param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
         void AddPart(IPart part, bool history = true);
 
         /// <summary>
         /// Adds or updates the part represented by the specified JSON code.
         /// </summary>
         /// <param name="json">The JSON code representing the part.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be affected.</param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
         void AddPartJson(string json, bool history = true);
 
         /// <summary>
         /// Deletes the specified part.
         /// </summary>
         /// <param name="id">The part's identifier.</param>
-        /// <param name="userId">The identifier of the user deleting the part.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be affected.</param>
+        /// <param name="userId">The identifier of the user deleting the part.
+        /// </param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
         void DeletePart(string id, string userId, bool history = true);
 
         /// <summary>

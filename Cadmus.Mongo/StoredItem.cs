@@ -39,7 +39,8 @@ namespace Cadmus.Mongo
         public string FacetId { get; set; }
 
         /// <summary>
-        /// The sort key for the item. This is a value used to sort items in a list.
+        /// The sort key for the item. This is a value used to sort items in a
+        /// list.
         /// </summary>
         public string SortKey { get; set; }
 
@@ -51,7 +52,8 @@ namespace Cadmus.Mongo
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>

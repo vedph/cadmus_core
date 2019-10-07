@@ -16,7 +16,8 @@ namespace Cadmus.Core.Storage
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier of the data record this history record refers to.
+        /// Gets or sets the identifier of the data record this history record
+        /// refers to.
         /// </summary>
         public string ReferenceId { get; set; }
 
@@ -33,7 +34,8 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
@@ -55,7 +57,8 @@ namespace Cadmus.Core.Storage
         public string FacetId { get; set; }
 
         /// <summary>
-        /// The sort key for the item. This is a value used to sort items in a list.
+        /// The sort key for the item. This is a value used to sort items in
+        /// a list.
         /// </summary>
         public string SortKey { get; set; }
 
@@ -69,8 +72,12 @@ namespace Cadmus.Core.Storage
         /// </summary>
         public List<IPart> Parts { get; set; }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return $"{Id}: {Title}";

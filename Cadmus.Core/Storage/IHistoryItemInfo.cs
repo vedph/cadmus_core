@@ -33,7 +33,8 @@ namespace Cadmus.Core.Storage
         string Facet { get; set; }
 
         /// <summary>
-        /// The sort key for the item. This is a value used to sort items in a list.
+        /// The sort key for the item. This is a value used to sort items in
+        /// a list.
         /// </summary>
         string SortKey { get; set; }
 

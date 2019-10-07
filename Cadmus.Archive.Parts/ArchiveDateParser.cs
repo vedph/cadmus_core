@@ -40,9 +40,10 @@ namespace Cadmus.Archive.Parts
         /// </summary>
         public ArchiveDateParser()
         {
-            _ymdSlashSepRegex = new Regex(@"(?:/\d{1,2}/)|" +
-                                      @"(?:(?<!-)[12]\d{3}/\d{1,2}\b)|" +
-                                      @"(?:\b\d{1,2}/[12]\d{3}\b)");
+            _ymdSlashSepRegex = new Regex(
+                @"(?:/\d{1,2}/)|" +
+                @"(?:(?<!-)[12]\d{3}/\d{1,2}\b)|" +
+                @"(?:\b\d{1,2}/[12]\d{3}\b)");
             _ymdDashSepRegex = new Regex(
                 @"(?:-\d{1,2}-)|(?:(?<!/)[12]\d{3}-\d{1,2}\b)");
 
@@ -63,7 +64,7 @@ namespace Cadmus.Archive.Parts
                 @"^\s*(ca\.?|circa|inizio|II?\s+metà|metà|fine)\b",
                 RegexOptions.IgnoreCase);
             _centSuffixModRegex = new Regex(
-                @"[IVX]+\s+(?:(?:sec\.|secolo)\s+)?(in\.|ex\.)", 
+                @"[IVX]+\s+(?:(?:sec\.|secolo)\s+)?(in\.|ex\.)",
                 RegexOptions.IgnoreCase);
 
             _wsRegex = new Regex(@"\s+");
@@ -185,11 +186,15 @@ namespace Cadmus.Archive.Parts
         {
             if (YmdToken.MonthShortNames.Any(s =>
                 text.IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1))
+            {
                 return DateMonthStyle.ShortName;
+            }
 
             if (YmdToken.MonthFullNames.Any(s =>
                 text.IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1))
+            {
                 return DateMonthStyle.FullName;
+            }
 
             return DateMonthStyle.Undefined;
         }
@@ -366,7 +371,9 @@ namespace Cadmus.Archive.Parts
             // century
             if (text.IndexOf("secolo", StringComparison.OrdinalIgnoreCase) > -1 ||
                 text.IndexOf("sec.", StringComparison.CurrentCultureIgnoreCase) > -1)
+            {
                 return ParseCenturyPoint(text);
+            }
 
             // decade
             Match match = _decadeRegex.Match(text);
@@ -413,21 +420,24 @@ namespace Cadmus.Archive.Parts
             ArchiveDate date, DateMonthStyle monthStyle)
         {
             // YMD/YM can shorten Max
-            if (date.Max != null || date.Min?.ValueType != DateValueType.Year ||
-                date.Min.Month == 0) return;
+            if (date.B != null || date.A?.ValueType != DateValueType.Year ||
+                date.A.Month == 0)
+            {
+                return;
+            }
 
             int i = (int)(monthStyle == 0 ? 0 : monthStyle - 1);
             Match match = _shortenedYmdRegexes[i].Match(input.Item2);
             if (match.Success)
             {
                 // copy YM from Min
-                date.Max = new ArchiveDatePoint
+                date.B = new ArchiveDatePoint
                 {
                     ValueType = DateValueType.Year,
-                    Value = date.Min.Value,
-                    IsYearInferred = date.Min.IsYearInferred,
-                    Month = date.Min.Month,
-                    IsMonthInferred = date.Min.IsMonthInferred
+                    Value = date.A.Value,
+                    IsYearInferred = date.A.IsYearInferred,
+                    Month = date.A.Month,
+                    IsMonthInferred = date.A.IsMonthInferred
                 };
 
                 // style N has groups d/m or md
@@ -435,18 +445,22 @@ namespace Cadmus.Archive.Parts
                 {
                     if (match.Groups["md"].Length > 0)
                     {
-                        if (date.Min.Day > 0)
-                            date.Max.Day = short.Parse(match.Groups["md"].Value,
+                        if (date.A.Day > 0)
+                        {
+                            date.B.Day = short.Parse(match.Groups["md"].Value,
                                 CultureInfo.InvariantCulture);
+                        }
                         else
-                            date.Max.Month = short.Parse(match.Groups["md"].Value,
-                                CultureInfo.InvariantCulture);
+                        {
+                            date.B.Month = short.Parse(match.Groups["md"].Value,
+                               CultureInfo.InvariantCulture);
+                        }
                     }
                     else
                     {
-                        date.Max.Month = short.Parse(match.Groups["m"].Value,
+                        date.B.Month = short.Parse(match.Groups["m"].Value,
                             CultureInfo.InvariantCulture);
-                        date.Max.Day = short.Parse(match.Groups["d"].Value,
+                        date.B.Day = short.Parse(match.Groups["d"].Value,
                             CultureInfo.InvariantCulture);
                     }
                 } // N
@@ -456,12 +470,12 @@ namespace Cadmus.Archive.Parts
                     if (match.Groups["m"].Length > 0)
                     {
                         YmdToken m = YmdToken.Parse(match.Groups["m"].Value, 'm');
-                        date.Max.Month = m.Value;
+                        date.B.Month = m.Value;
                     } //eif
                     if (match.Groups["d"].Length > 0)
                     {
                         YmdToken d = YmdToken.Parse(match.Groups["d"].Value, 'd');
-                        date.Max.Day = d.Value;
+                        date.B.Day = d.Value;
                     }
                 } // !N
             }
@@ -470,21 +484,24 @@ namespace Cadmus.Archive.Parts
         private void AdjustDmyForShortenedRange(Tuple<string, string> input,
             ArchiveDate date, DateMonthStyle monthStyle)
         {
-            if (date.Min != null || date.Max?.ValueType != DateValueType.Year ||
-                date.Max.Month == 0) return;
+            if (date.A != null || date.B?.ValueType != DateValueType.Year ||
+                date.B.Month == 0)
+            {
+                return;
+            }
 
             int i = (int)(monthStyle == 0 ? 0 : monthStyle - 1);
             Match match = _shortenedDmyRegexes[i].Match(input.Item1);
             if (match.Success)
             {
                 // copy YM from Max
-                date.Min = new ArchiveDatePoint
+                date.A = new ArchiveDatePoint
                 {
                     ValueType = DateValueType.Year,
-                    Value = date.Max.Value,
-                    IsYearInferred = date.Max.IsYearInferred,
-                    Month = date.Max.Month,
-                    IsMonthInferred = date.Max.IsMonthInferred
+                    Value = date.B.Value,
+                    IsYearInferred = date.B.IsYearInferred,
+                    Month = date.B.Month,
+                    IsMonthInferred = date.B.IsMonthInferred
                 };
 
                 // style N has groups d/m or md
@@ -492,18 +509,22 @@ namespace Cadmus.Archive.Parts
                 {
                     if (match.Groups["md"].Length > 0)
                     {
-                        if (date.Max.Day > 0)
-                            date.Min.Day = short.Parse(match.Groups["md"].Value,
-                                CultureInfo.InvariantCulture);
+                        if (date.B.Day > 0)
+                        {
+                            date.A.Day = short.Parse(match.Groups["md"].Value,
+                               CultureInfo.InvariantCulture);
+                        }
                         else
-                            date.Min.Month = short.Parse(match.Groups["md"].Value,
-                                CultureInfo.InvariantCulture);
+                        {
+                            date.A.Month = short.Parse(match.Groups["md"].Value,
+                               CultureInfo.InvariantCulture);
+                        }
                     }
                     else
                     {
-                        date.Min.Month = short.Parse(match.Groups["m"].Value,
+                        date.A.Month = short.Parse(match.Groups["m"].Value,
                             CultureInfo.InvariantCulture);
-                        date.Min.Day = short.Parse(match.Groups["d"].Value,
+                        date.A.Day = short.Parse(match.Groups["d"].Value,
                             CultureInfo.InvariantCulture);
                     }
                 } // N
@@ -513,12 +534,12 @@ namespace Cadmus.Archive.Parts
                     if (match.Groups["m"].Length > 0)
                     {
                         YmdToken m = YmdToken.Parse(match.Groups["m"].Value, 'm');
-                        date.Min.Month = m.Value;
+                        date.A.Month = m.Value;
                     }
                     if (match.Groups["d"].Length > 0)
                     {
                         YmdToken d = YmdToken.Parse(match.Groups["d"].Value, 'd');
-                        date.Min.Day = d.Value;
+                        date.A.Day = d.Value;
                     }
                 } // !N 
             }
@@ -552,7 +573,7 @@ namespace Cadmus.Archive.Parts
             List<ArchiveDate> dates = new List<ArchiveDate>();
 
             // several dates (or dates ranges) are separated by ;
-            foreach (string part in text.Split(new[] { ';' }, 
+            foreach (string part in text.Split(new[] { ';' },
                 StringSplitOptions.RemoveEmptyEntries))
             {
                 // remove [ ] to simplify styles detection
@@ -580,8 +601,8 @@ namespace Cadmus.Archive.Parts
                 {
                     ArchiveDate date = new ArchiveDate
                     {
-                        Min = ParsePoint(t.Item1, dmy, monthStyle),
-                        Max = ParsePoint(t.Item2, dmy, monthStyle)
+                        A = ParsePoint(t.Item1, dmy, monthStyle),
+                        B = ParsePoint(t.Item2, dmy, monthStyle)
                     };
 
                     // corner case: shortened ranges
@@ -615,13 +636,13 @@ namespace Cadmus.Archive.Parts
                         ArchiveDate date = new ArchiveDate();
                         if (min && max)
                         {
-                            date.Min = point;
-                            date.Max = point.Clone();
+                            date.A = point;
+                            date.B = point.Clone();
                         }
                         else
                         {
-                            if (min) date.Min = point;
-                            else date.Max = point;
+                            if (min) date.A = point;
+                            else date.B = point;
                         }
                         dates.Add(date);
                     }
@@ -639,10 +660,13 @@ namespace Cadmus.Archive.Parts
     {
         /// <summary>Undefined (=use default)</summary>
         Undefined = 0,
+
         /// <summary>Numeric: N or NN (1-12)</summary>
         Numeric,
+
         /// <summary>Short name (e.g. <c>gen.</c>)</summary>
         ShortName,
+
         /// <summary>Full name (e.g. <c>gennaio</c></summary>
         FullName
     }

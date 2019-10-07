@@ -85,7 +85,8 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="source">The database source.</param>
         /// <param name="profile">The database profile.</param>
-        /// <exception cref="ArgumentNullException">null source or profile</exception>
+        /// <exception cref="ArgumentNullException">null source or profile
+        /// </exception>
         public void CreateDatabase(string source, string profile)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -101,19 +102,23 @@ namespace Cadmus.Mongo
 
             if (p.Facets.Length > 0)
             {
-                var collFacets = db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
-                collFacets.InsertMany(p.Facets.Select(f => new StoredItemFacet(f)));
+                var collFacets = db.GetCollection<StoredItemFacet>(
+                    StoredItemFacet.COLLECTION);
+                collFacets.InsertMany(p.Facets.Select(
+                    f => new StoredItemFacet(f)));
             }
 
             if (p.Flags.Length > 0)
             {
-                var collFlags = db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION);
+                var collFlags = db.GetCollection<StoredFlagDefinition>(
+                    StoredFlagDefinition.COLLECTION);
                 collFlags.InsertMany(p.Flags.Select(f => new StoredFlagDefinition(f)));
             }
 
             if (p.TagSets.Length > 0)
             {
-                var collSets = db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION);
+                var collSets = db.GetCollection<StoredTagSet>(
+                    StoredTagSet.COLLECTION);
                 collSets.InsertMany(p.TagSets.Select(s => new StoredTagSet(s)));
             }
 
@@ -147,18 +152,24 @@ namespace Cadmus.Mongo
             IMongoDatabase db = client.GetDatabase(GetDatabaseName(source));
 
             // items
-            db.GetCollection<StoredItem>(StoredItem.COLLECTION).DeleteMany(_ => true);
+            db.GetCollection<StoredItem>(StoredItem.COLLECTION)
+                .DeleteMany(_ => true);
             // history-items
-            db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION).DeleteMany(_ => true);
+            db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION)
+                .DeleteMany(_ => true);
             // facets
-            db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION).DeleteMany(_ => true);
+            db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION)
+                .DeleteMany(_ => true);
             // flags
-            db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION).DeleteMany(_ => true);
+            db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION)
+                .DeleteMany(_ => true);
             // sets
-            db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION).DeleteMany(_ => true);
+            db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION)
+                .DeleteMany(_ => true);
         }
 
-        private static IEnumerable<BsonDocument> Enumerate(IAsyncCursor<BsonDocument> docs)
+        private static IEnumerable<BsonDocument> Enumerate(
+            IAsyncCursor<BsonDocument> docs)
         {
             while (docs.MoveNext())
             {
@@ -180,7 +191,8 @@ namespace Cadmus.Mongo
             string databaseName = GetDatabaseName(source);
 
             // http://stackoverflow.com/questions/7049722/check-if-mongodb-database-exists
-            var dbList = Enumerate(client.ListDatabases()).Select(db => db.GetValue("name").AsString);
+            var dbList = Enumerate(client.ListDatabases())
+                .Select(db => db.GetValue("name").AsString);
             return dbList.Contains(databaseName);
         }
     }

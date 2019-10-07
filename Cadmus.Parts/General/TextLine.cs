@@ -8,7 +8,8 @@ namespace Cadmus.Parts.General
     /// </summary>
     public class TextLine
     {
-        private static readonly char[] TOKENS_SEPARATORS = { ' ', '\t', '\r', '\n' };
+        private static readonly char[] TOKENS_SEPARATORS =
+            { ' ', '\t', '\r', '\n' };
 
         /// <summary>
         /// Line Y value.
@@ -33,7 +34,7 @@ namespace Cadmus.Parts.General
         /// <returns>token number (1-N) or 0 if no token at this column</returns>
         public int TokenFromColumn(int colNumber)
         {
-            if (String.IsNullOrEmpty(Text)) return 0;
+            if (string.IsNullOrEmpty(Text)) return 0;
 
             int tok = 1;
             colNumber--;
@@ -55,7 +56,7 @@ namespace Cadmus.Parts.General
         /// <returns>column number (1-N or 0 if token not found)</returns>
         public int ColumnFromToken(int tokenNumber)
         {
-            if (String.IsNullOrEmpty(Text)) return 0;
+            if (string.IsNullOrEmpty(Text)) return 0;
             if (tokenNumber == 1) return 1;
 
             int tok = 1;
@@ -78,7 +79,7 @@ namespace Cadmus.Parts.General
         /// last token char) in a tuple, or null if no text</returns>
         public Tuple<int,int> GetTokenBounds(int tokenNumber)
         {
-            if (String.IsNullOrEmpty(Text)) return null;
+            if (string.IsNullOrEmpty(Text)) return null;
             int left = 0, right, n = 1;
 
             for (int i = 0; n < tokenNumber && i < Text.Length; i++)
@@ -119,7 +120,8 @@ namespace Cadmus.Parts.General
         /// <returns>array of tokens</returns>
         public string[] GetTokens()
         {
-            return Text != null ? Text.Split(TOKENS_SEPARATORS) : new string[0];
+            return Text != null ?
+                Text.Split(TOKENS_SEPARATORS) : Array.Empty<string>();
         }
 
         /// <summary>
@@ -129,15 +131,16 @@ namespace Cadmus.Parts.General
         /// <returns>tokens count</returns>
         public static int CountTokens(string text)
         {
-            return String.IsNullOrEmpty(text) ? 0 : text.Split(TOKENS_SEPARATORS).Length;
+            return string.IsNullOrEmpty(text) ?
+                0 : text.Split(TOKENS_SEPARATORS).Length;
         }
         #endregion
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

@@ -6,7 +6,8 @@
     public interface IHasHistory
     {
         /// <summary>
-        /// Gets or sets the identifier of the data record this history record refers to.
+        /// Gets or sets the identifier of the data record this history record
+        /// refers to.
         /// </summary>
         string ReferenceId { get; set; }
 

@@ -13,10 +13,10 @@ namespace Cadmus.Archive.Parts
     /// <remarks>
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>counts.K where K is a key</term>
-    /// 		<description>value</description>
-    /// 	</item>
+    /// <item>
+    /// <term>counts.K where K is a key</term>
+    /// <description>value</description>
+    /// </item>
     /// </list>
     /// </remarks>
     [Tag("archive-counts")]
@@ -41,7 +41,7 @@ namespace Cadmus.Archive.Parts
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
-            if (Counts?.Count == 0) return new DataPin[0];
+            if (Counts?.Count == 0) return Array.Empty<DataPin>();
 
             return from p in Counts
                 select CreateDataPin($"counts.{p.Key}",
@@ -49,17 +49,17 @@ namespace Cadmus.Archive.Parts
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             if (Counts?.Count == 0) return nameof(ArchiveCountsPart);
 
             return nameof(ArchiveCountsPart) + ": " +
-                   String.Join(", ", from p in Counts
+                   string.Join(", ", from p in Counts
                        select $"{p.Key}={p.Value}");
         }
     }

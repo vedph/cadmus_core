@@ -61,9 +61,12 @@ namespace Cadmus.Philology.Parts.Layers
                         operations.Add(new MspOperation
                         {
                             Operator = MspOperator.Move,
-                            RangeA = new TextRange(block.DeleteStartA, block.DeleteCountA),
-                            RangeB = new TextRange(next.InsertStartB, next.InsertCountB),
-                            ValueA = a.Substring(block.DeleteStartA, block.DeleteCountA),
+                            RangeA = new TextRange(
+                                block.DeleteStartA, block.DeleteCountA),
+                            RangeB = new TextRange(
+                                next.InsertStartB, next.InsertCountB),
+                            ValueA = a.Substring(
+                                block.DeleteStartA, block.DeleteCountA),
                             ValueB = null
                         });
                         i += 2;
@@ -73,9 +76,12 @@ namespace Cadmus.Philology.Parts.Layers
                     operations.Add(new MspOperation
                     {
                         Operator = MspOperator.Delete,
-                        RangeA = new TextRange(block.DeleteStartA, block.DeleteCountA),
-                        RangeB = new TextRange(block.InsertStartB, block.InsertCountB),
-                        ValueA = a.Substring(block.DeleteStartA, block.DeleteCountA),
+                        RangeA = new TextRange(
+                            block.DeleteStartA, block.DeleteCountA),
+                        RangeB = new TextRange(
+                            block.InsertStartB, block.InsertCountB),
+                        ValueA = a.Substring(
+                            block.DeleteStartA, block.DeleteCountA),
                         ValueB = null
                     });
                     i++;
@@ -93,15 +99,19 @@ namespace Cadmus.Philology.Parts.Layers
                     if (next?.DeleteCountA > 0
                         && next.InsertCountB == 0
                         && Math.Abs(block.DeleteStartA - next.DeleteStartA) == 1
-                        && (inserted = b.Substring(block.InsertStartB, block.InsertCountB))
+                        && (inserted = b.Substring(
+                            block.InsertStartB, block.InsertCountB))
                         == a.Substring(next.DeleteStartA, next.DeleteCountA))
                     {
                         operations.Add(new MspOperation
                         {
                             Operator = MspOperator.Swap,
-                            RangeA = new TextRange(block.DeleteStartA, inserted.Length),
-                            RangeB = new TextRange(next.DeleteStartA, block.InsertCountB),
-                            ValueA = a.Substring(block.DeleteStartA, inserted.Length),
+                            RangeA = new TextRange(
+                                block.DeleteStartA, inserted.Length),
+                            RangeB = new TextRange(
+                                next.DeleteStartA, block.InsertCountB),
+                            ValueA = a.Substring(
+                                block.DeleteStartA, inserted.Length),
                             ValueB = inserted
                         });
                         i += 2;
@@ -111,10 +121,13 @@ namespace Cadmus.Philology.Parts.Layers
                     operations.Add(new MspOperation
                     {
                         Operator = MspOperator.Insert,
-                        RangeA = new TextRange(block.DeleteStartA, block.DeleteCountA),
-                        RangeB = new TextRange(block.InsertStartB, block.InsertCountB),
+                        RangeA = new TextRange(
+                            block.DeleteStartA, block.DeleteCountA),
+                        RangeB = new TextRange(
+                            block.InsertStartB, block.InsertCountB),
                         ValueA = null,
-                        ValueB = b.Substring(block.InsertStartB, block.InsertCountB)
+                        ValueB = b.Substring(
+                            block.InsertStartB, block.InsertCountB)
                     });
                     i++;
                     continue;

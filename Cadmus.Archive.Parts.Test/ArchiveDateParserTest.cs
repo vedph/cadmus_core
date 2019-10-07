@@ -47,10 +47,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -62,10 +62,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -77,10 +77,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -92,10 +92,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -107,10 +107,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.Beginning, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.Beginning, date.A.Approximation);
         }
 
         [Fact]
@@ -122,10 +122,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.FirstHalf, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.FirstHalf, date.A.Approximation);
         }
 
         [Fact]
@@ -137,10 +137,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.Mid, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.Mid, date.A.Approximation);
         }
 
         [Fact]
@@ -152,10 +152,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.SecondHalf, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.SecondHalf, date.A.Approximation);
         }
 
         [Fact]
@@ -167,10 +167,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.End, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.End, date.A.Approximation);
         }
 
         [Fact]
@@ -182,10 +182,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.Beginning, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.Beginning, date.A.Approximation);
         }
 
         [Fact]
@@ -197,10 +197,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.End, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.End, date.A.Approximation);
         }
 
         [Fact]
@@ -212,10 +212,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.Beginning, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.Beginning, date.A.Approximation);
         }
 
         [Fact]
@@ -227,10 +227,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.FirstHalf, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.FirstHalf, date.A.Approximation);
         }
 
         [Fact]
@@ -242,10 +242,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.Mid, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.Mid, date.A.Approximation);
         }
 
         [Fact]
@@ -257,10 +257,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.SecondHalf, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.SecondHalf, date.A.Approximation);
         }
 
         [Fact]
@@ -272,10 +272,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.End, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.End, date.A.Approximation);
         }
 
         [Fact]
@@ -287,10 +287,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.Beginning, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.Beginning, date.A.Approximation);
         }
 
         [Fact]
@@ -302,10 +302,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(20, date.Min.Value);
-            Assert.Equal(DateValueType.Century, date.Min.ValueType);
-            Assert.Equal(ApproximationType.End, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(20, date.A.Value);
+            Assert.Equal(DateValueType.Century, date.A.ValueType);
+            Assert.Equal(ApproximationType.End, date.A.Approximation);
         }
         #endregion
 
@@ -319,10 +319,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(191, date.Min.Value);
-            Assert.Equal(DateValueType.Decade, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(191, date.A.Value);
+            Assert.Equal(DateValueType.Decade, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -334,10 +334,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(191, date.Min.Value);
-            Assert.Equal(DateValueType.Decade, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(191, date.A.Value);
+            Assert.Equal(DateValueType.Decade, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -349,10 +349,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(191, date.Min.Value);
-            Assert.Equal(DateValueType.Decade, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(191, date.A.Value);
+            Assert.Equal(DateValueType.Decade, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
         #endregion
 
@@ -366,12 +366,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -383,12 +383,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -400,11 +400,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -416,10 +416,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -431,15 +431,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -451,15 +451,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -471,15 +471,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -491,15 +491,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -511,15 +511,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -531,15 +531,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -551,13 +551,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -569,13 +569,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -587,13 +587,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -605,11 +605,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -621,12 +621,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -638,11 +638,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -654,10 +654,10 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -671,12 +671,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -688,12 +688,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -705,11 +705,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -721,15 +721,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -741,15 +741,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -761,15 +761,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -781,15 +781,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -801,15 +801,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -821,15 +821,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -841,13 +841,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -859,13 +859,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -877,13 +877,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -895,12 +895,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -912,11 +912,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -930,12 +930,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -947,11 +947,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -963,11 +963,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(7, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(7, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -979,15 +979,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -999,15 +999,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1019,15 +1019,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1039,15 +1039,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1059,15 +1059,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1079,15 +1079,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1099,13 +1099,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1117,13 +1117,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1135,13 +1135,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1153,15 +1153,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -1173,13 +1173,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -1193,12 +1193,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1210,11 +1210,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1226,15 +1226,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1246,15 +1246,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1266,15 +1266,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1286,15 +1286,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1306,15 +1306,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1326,15 +1326,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1346,13 +1346,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1364,13 +1364,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1382,13 +1382,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1400,15 +1400,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -1420,13 +1420,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -1440,12 +1440,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1457,12 +1457,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1474,11 +1474,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1490,15 +1490,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1510,15 +1510,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1530,15 +1530,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1550,15 +1550,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1570,15 +1570,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1590,15 +1590,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1610,13 +1610,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1628,13 +1628,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1646,13 +1646,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1664,12 +1664,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -1681,11 +1681,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -1699,12 +1699,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1716,12 +1716,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1733,11 +1733,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1749,15 +1749,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1769,15 +1769,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1789,15 +1789,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1809,15 +1809,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1829,15 +1829,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1849,15 +1849,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1869,13 +1869,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1887,13 +1887,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1905,13 +1905,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1923,12 +1923,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -1940,11 +1940,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -1958,12 +1958,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1975,11 +1975,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -1991,11 +1991,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(7, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(7, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2007,15 +2007,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2027,15 +2027,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2047,15 +2047,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2067,15 +2067,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2087,15 +2087,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2107,15 +2107,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2127,13 +2127,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2145,13 +2145,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2163,13 +2163,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2181,15 +2181,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -2201,13 +2201,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -2221,12 +2221,12 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2238,11 +2238,11 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2254,15 +2254,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2274,15 +2274,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2294,15 +2294,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2314,15 +2314,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2334,15 +2334,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2354,15 +2354,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.True(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.True(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2374,13 +2374,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2392,13 +2392,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2410,13 +2410,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.True(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.True(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.True(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.True(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2428,15 +2428,15 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(30, date.Min.Day);
-            Assert.False(date.Min.IsDayInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(30, date.A.Day);
+            Assert.False(date.A.IsDayInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
 
         [Fact]
@@ -2448,13 +2448,13 @@ namespace Cadmus.Archive.Parts.Test
 
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.False(date.Min.IsYearInferred);
-            Assert.Equal(5, date.Min.Month);
-            Assert.False(date.Min.IsMonthInferred);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.About, date.Min.Approximation);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.False(date.A.IsYearInferred);
+            Assert.Equal(5, date.A.Month);
+            Assert.False(date.A.IsMonthInferred);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.About, date.A.Approximation);
         }
         #endregion
 
@@ -2469,11 +2469,11 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2486,13 +2486,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(30, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(30, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2505,12 +2505,12 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2523,13 +2523,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(30, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(30, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2542,12 +2542,12 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2560,13 +2560,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(30, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(30, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2579,13 +2579,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(30, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(30, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2598,13 +2598,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(30, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(30, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2617,13 +2617,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Min);
-            Assert.NotNull(date.Max);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(30, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.Null(date.A);
+            Assert.NotNull(date.B);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(30, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
         #endregion
 
@@ -2638,11 +2638,11 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2655,13 +2655,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2674,12 +2674,12 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2692,13 +2692,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2711,12 +2711,12 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2729,13 +2729,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2748,13 +2748,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2767,13 +2767,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
 
         [Fact]
@@ -2786,13 +2786,13 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.Null(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
+            Assert.Null(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
         }
         #endregion
 
@@ -2807,14 +2807,14 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(1980, date.Max.Value);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(1980, date.B.Value);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2827,14 +2827,14 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(1980, date.Max.Value);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(1980, date.B.Value);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2847,16 +2847,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2869,18 +2869,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2893,16 +2893,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2915,18 +2915,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2939,18 +2939,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
         #endregion
 
@@ -2965,18 +2965,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -2989,18 +2989,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(31, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(31, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3013,16 +3013,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3035,18 +3035,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3059,18 +3059,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(31, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(31, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3083,16 +3083,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3105,18 +3105,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3129,18 +3129,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(31, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(31, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3153,16 +3153,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3175,18 +3175,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3199,18 +3199,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(31, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(31, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3223,16 +3223,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3245,18 +3245,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3269,18 +3269,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(31, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(31, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3293,16 +3293,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3315,18 +3315,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(28, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(28, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3339,18 +3339,18 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(5, date.Max.Month);
-            Assert.Equal(31, date.Max.Day);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(5, date.B.Month);
+            Assert.Equal(31, date.B.Day);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
 
         [Fact]
@@ -3363,16 +3363,16 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(1, dates.Count);
             ArchiveDate date = dates[0];
             Assert.True(date.IsRange);
-            Assert.NotNull(date.Max);
-            Assert.NotNull(date.Min);
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(1970, date.Max.Value);
-            Assert.Equal(6, date.Max.Month);
-            Assert.Equal(DateValueType.Year, date.Min.ValueType);
-            Assert.Equal(ApproximationType.None, date.Min.Approximation);
-            Assert.Equal(DateValueType.Year, date.Max.ValueType);
-            Assert.Equal(ApproximationType.None, date.Max.Approximation);
+            Assert.NotNull(date.B);
+            Assert.NotNull(date.A);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(1970, date.B.Value);
+            Assert.Equal(6, date.B.Month);
+            Assert.Equal(DateValueType.Year, date.A.ValueType);
+            Assert.Equal(ApproximationType.None, date.A.Approximation);
+            Assert.Equal(DateValueType.Year, date.B.ValueType);
+            Assert.Equal(ApproximationType.None, date.B.Approximation);
         }
         #endregion
 
@@ -3386,14 +3386,14 @@ namespace Cadmus.Archive.Parts.Test
             Assert.Equal(2, dates.Count);
 
             ArchiveDate date = dates[0];
-            Assert.Equal(1970, date.Min.Value);
-            Assert.Equal(5, date.Min.Month);
-            Assert.Equal(30, date.Min.Day);
+            Assert.Equal(1970, date.A.Value);
+            Assert.Equal(5, date.A.Month);
+            Assert.Equal(30, date.A.Day);
 
             date = dates[1];
-            Assert.Equal(1973, date.Min.Value);
-            Assert.Equal(6, date.Min.Month);
-            Assert.Equal(1, date.Min.Day);
+            Assert.Equal(1973, date.A.Value);
+            Assert.Equal(6, date.A.Month);
+            Assert.Equal(1, date.A.Day);
         }
     }
 }

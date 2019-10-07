@@ -7,7 +7,8 @@ namespace Cadmus.Core.Blocks
     /// </summary>
     public class DataPin
     {
-        private static readonly Regex _keyRegex = new Regex(@"^[a-zA-Z0-9\-_\.]+$");
+        private static readonly Regex _keyRegex =
+            new Regex(@"^[a-zA-Z0-9\-_\.]+$");
 
         private string _name;
 

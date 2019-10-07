@@ -11,10 +11,10 @@ namespace Cadmus.Parts.General
     /// <remarks>
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>category name (multiple)</term>
-    /// 		<description>category value</description>
-    /// 	</item>
+    /// <item>
+    /// <term>category name (multiple)</term>
+    /// <description>category value</description>
+    /// </item>
     /// </list>
     /// </remarks>
     [Tag("categories")]

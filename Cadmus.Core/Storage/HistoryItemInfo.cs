@@ -32,7 +32,8 @@ namespace Cadmus.Core.Storage
         public string Facet { get; set; }
 
         /// <summary>
-        /// The sort key for the item. This is a value used to sort items in a list.
+        /// The sort key for the item. This is a value used to sort items in
+        /// a list.
         /// </summary>
         public string SortKey { get; set; }
 
@@ -63,8 +64,12 @@ namespace Cadmus.Core.Storage
         /// </summary>
         public EditStatus Status { get; set; }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return $"{Id}: {Title}";

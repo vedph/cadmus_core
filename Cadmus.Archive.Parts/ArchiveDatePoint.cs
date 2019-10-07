@@ -151,7 +151,7 @@ namespace Cadmus.Archive.Parts
                     break;
 
                 case DateValueType.Decade:
-                    sb.Append($"anni '{Value * 10}");
+                    sb.Append("anni '").Append(Value * 10);
                     break;
 
                 default:
@@ -177,8 +177,10 @@ namespace Cadmus.Archive.Parts
     {
         /// <summary>Year</summary>
         Year = 0,
+
         /// <summary>Decade</summary>
         Decade,
+
         /// <summary>Century</summary>
         Century
     }
@@ -190,16 +192,22 @@ namespace Cadmus.Archive.Parts
     {
         /// <summary>Not approximated. The date is exact.</summary>
         None = 0,
+
         /// <summary>Approximated in an unspecified way (about).</summary>
         About,
+
         /// <summary>At the beginning of the specified century.</summary>
         Beginning,
+
         /// <summary>In the first half of the specified century.</summary>
         FirstHalf,
+
         /// <summary>At the middle of the specified century.</summary>
         Mid,
+
         /// <summary>In the second half of the specified century.</summary>
         SecondHalf,
+
         /// <summary>At the end of the specified century.</summary>
         End
     }

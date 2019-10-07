@@ -39,9 +39,10 @@ namespace Cadmus.Core.Storage
         public DateTime? MaxModified { get; set; }
 
         /// <summary>
-        /// Gets or sets the optional custom sort expressions to be used to sort the filtered parts.
-        /// This can be useful when retrieving parts from several items, e.g. hierarchy parts
-        /// which usually are sorted by their Y and X values.
+        /// Gets or sets the optional custom sort expressions to be used to
+        /// sort the filtered parts.
+        /// This can be useful when retrieving parts from several items, e.g.
+        /// hierarchy parts which usually are sorted by their Y and X values.
         /// </summary>
         /// <value>Tuples where 1=field name and 2=true for ascending, false for descending</value>
         public Tuple<string,bool>[] SortExpressions { get; set; }

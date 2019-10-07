@@ -19,7 +19,7 @@ namespace Cadmus.Archive.Parts
         public static string Format(string template, params object[] args)
         {
             if (template == null) throw new ArgumentNullException(nameof(template));
-            return String.Format(Properties.Resources.Culture, template, args);
+            return string.Format(Properties.Resources.Culture, template, args);
         }
     }
 }

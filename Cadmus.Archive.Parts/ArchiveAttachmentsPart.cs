@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Core.Blocks;
 using Fusi.Tools.Config;
+using System;
 
 namespace Cadmus.Archive.Parts
 {
     /// <summary>
-    /// Archive document's attachments part. This list any number of attachments to a 
-    /// document, represented by a list of <see cref="ArchiveAttachment"/>'s.
+    /// Archive document's attachments part. This list any number of attachments
+    /// to a document, represented by a list of <see cref="ArchiveAttachment"/>'s.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>attachment.count</term>
-    /// 		<description>count of attachments</description>
-    /// 	</item>
+    /// <item>
+    /// <term>attachment.count</term>
+    /// <description>count of attachments</description>
+    /// </item>
     /// </list>
     /// </remarks>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
+    /// <seealso cref="PartBase" />
     [Tag("archive-attachments")]
     public sealed class ArchiveAttachmentsPart : PartBase
     {
@@ -42,15 +43,19 @@ namespace Cadmus.Archive.Parts
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
-            if (Attachments?.Count == 0) return new DataPin[0];
+            if (Attachments?.Count == 0) return Array.Empty<DataPin>();
 
             return from a in Attachments
                    select CreateDataPin("attachment.count",
                        a.Count.ToString(CultureInfo.InvariantCulture));
         }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return $"{nameof(ArchiveAttachmentsPart)}: {Attachments.Count}";
@@ -79,10 +84,10 @@ namespace Cadmus.Archive.Parts
         public ArchiveDate Date { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

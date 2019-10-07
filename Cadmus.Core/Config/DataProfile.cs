@@ -44,7 +44,7 @@ namespace Cadmus.Core.Config
 
         private static IFacet[] LoadFacets(XElement element)
         {
-            if (element == null) return new IFacet[0];
+            if (element == null) return Array.Empty<IFacet>();
 
             List<IFacet> facets = new List<IFacet>();
             foreach (XElement facetElement in element.Elements("facet"))
@@ -67,14 +67,20 @@ namespace Cadmus.Core.Config
                         facet.PartDefinitions.Add(new PartDefinition
                         {
                             TypeId = partElement.Attribute("type").Value,
-                            RoleId = partElement.ReadOptionalAttribute("role", null),
-                            Name = partElement.ReadOptionalAttribute("name", null),
-                            IsRequired = partElement.ReadOptionalAttribute("required", false),
-                            // IsTextLayer = xePart.ReadOptionalAttribute("layer", false),
-                            ColorKey = partElement.ReadOptionalAttribute("color", null),
-                            GroupKey = partElement.ReadOptionalAttribute("group", null),
-                            SortKey = partElement.ReadOptionalAttribute("sort", null),
-                            Description = partElement.Value.Length > 0 ? partElement.Value : null
+                            RoleId = partElement.ReadOptionalAttribute(
+                                "role", null),
+                            Name = partElement.ReadOptionalAttribute(
+                                "name", null),
+                            IsRequired = partElement.ReadOptionalAttribute(
+                                "required", false),
+                            ColorKey = partElement.ReadOptionalAttribute(
+                                "color", null),
+                            GroupKey = partElement.ReadOptionalAttribute(
+                                "group", null),
+                            SortKey = partElement.ReadOptionalAttribute(
+                                "sort", null),
+                            Description = partElement.Value.Length > 0
+                                ? partElement.Value : null
                         });
                     }
                 }
@@ -87,7 +93,7 @@ namespace Cadmus.Core.Config
 
         private static IFlagDefinition[] LoadFlags(XElement element)
         {
-            if (element == null) return new IFlagDefinition[0];
+            if (element == null) return Array.Empty<IFlagDefinition>();
 
             List<IFlagDefinition> flags = new List<IFlagDefinition>();
             foreach (XElement flagElement in element.Elements("flag"))
@@ -95,10 +101,12 @@ namespace Cadmus.Core.Config
                 // @id @label @color
                 IFlagDefinition flag = new FlagDefinition
                 {
-                    Id = int.Parse(flagElement.Attribute("id").Value, NumberStyles.HexNumber),
+                    Id = int.Parse(flagElement.Attribute("id").Value,
+                        NumberStyles.HexNumber),
                     Label = flagElement.Attribute("label").Value,
                     ColorKey = flagElement.Attribute("color").Value,
-                    Description = flagElement.Value.Length > 0 ? flagElement.Value : null
+                    Description = flagElement.Value.Length > 0
+                        ? flagElement.Value : null
                 };
                 flags.Add(flag);
             }
@@ -108,7 +116,7 @@ namespace Cadmus.Core.Config
 
         private static TagSet[] LoadTagSets(XElement element)
         {
-            if (element == null) return new TagSet[0];
+            if (element == null) return Array.Empty<TagSet>();
 
             List<TagSet> sets = new List<TagSet>();
             foreach (XElement setElement in element.Elements("set"))

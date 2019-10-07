@@ -53,7 +53,8 @@ namespace Cadmus.Parts.General
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(NotePart)} [{Tag}]: {(Text?.Length > 80? Text.Substring(0, 80) + "..." : Text)}";
+            return $"{nameof(NotePart)} [{Tag}]: " +
+                $"{(Text?.Length > 80? Text.Substring(0, 80) + "..." : Text)}";
         }
     }
 }

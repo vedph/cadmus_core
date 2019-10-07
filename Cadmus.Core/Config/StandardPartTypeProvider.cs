@@ -11,7 +11,8 @@ namespace Cadmus.Core.Config
         private readonly TagToTypeMap _map;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardPartTypeProvider"/> class.
+        /// Initializes a new instance of the <see cref="StandardPartTypeProvider"/>
+        /// class.
         /// </summary>
         /// <param name="map">The map.</param>
         /// <exception cref="ArgumentNullException">map</exception>

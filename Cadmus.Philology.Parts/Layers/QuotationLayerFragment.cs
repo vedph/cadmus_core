@@ -18,9 +18,9 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         /// <remarks>
         /// The location can be expressed in different ways according to the
-        /// text coordinates system being adopted. For instance, it might be a simple
-        /// token-based coordinates system (e.g. 1.2=second token of first block), or
-        /// a more complex system like an XPath expression.
+        /// text coordinates system being adopted. For instance, it might be a
+        /// simple token-based coordinates system (e.g. 1.2=second token of
+        /// first block), or a more complex system like an XPath expression.
         /// </remarks>
         public string Location { get; set; }
 
@@ -40,8 +40,8 @@ namespace Cadmus.Philology.Parts.Layers
         public string WorkLoc { get; set; }
 
         /// <summary>
-        /// Gets or sets the original quotation text, when the text this layer fragment
-        /// refers to  is a variant of it.
+        /// Gets or sets the original quotation text, when the text this layer
+        /// fragment refers to  is a variant of it.
         /// </summary>
         public string VariantOf { get; set; }
 
@@ -74,8 +74,12 @@ namespace Cadmus.Philology.Parts.Layers
             };
         }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return $"Quotation: {Location} {Author} {Work} {WorkLoc}".TrimEnd();

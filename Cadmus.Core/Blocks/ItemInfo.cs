@@ -32,7 +32,8 @@ namespace Cadmus.Core.Blocks
         public string Facet { get; set; }
 
         /// <summary>
-        /// The sort key for the item. This is a value used to sort items in a list.
+        /// The sort key for the item. This is a value used to sort items
+        /// in a list.
         /// </summary>
         public string SortKey { get; set; }
 
@@ -49,14 +50,15 @@ namespace Cadmus.Core.Blocks
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

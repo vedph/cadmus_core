@@ -12,19 +12,20 @@ namespace Cadmus.Archive.Parts
     /// <remarks>
     /// <para>Search pins:</para>
     /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>mark (multiple)</term>
-    /// 		<description>value</description>
-    /// 	</item>
+    /// <item>
+    /// <term>mark (multiple)</term>
+    /// <description>value</description>
+    /// </item>
     /// </list>
     /// </remarks>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
+    /// <seealso cref="PartBase" />
     [Tag("archive-marks")]
     public sealed class ArchiveMarksPart : PartBase
     {
         /// <summary>
-        /// Gets or sets the optional tag. This property can be used to provide several 
-        /// different marks to the same item, each reflecting a different classification.
+        /// Gets or sets the optional tag. This property can be used to provide
+        /// several different marks to the same item, each reflecting a different
+        /// classification.
         /// </summary>
         public string Tag { get; set; }
 
@@ -47,17 +48,17 @@ namespace Cadmus.Archive.Parts
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
-            if (Marks?.Count == 0) return new DataPin[0];
+            if (Marks?.Count == 0) return Array.Empty<DataPin>();
 
             return from s in Marks
                 select CreateDataPin("mark", s);
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

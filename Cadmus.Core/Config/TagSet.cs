@@ -6,11 +6,11 @@ using System.Text.RegularExpressions;
 namespace Cadmus.Core.Config
 {
     /// <summary>
-    /// A set of tags. Tags are generic id/name pairs used by some parts to represent
-    /// a set of selectable options. E.g. you might have a list of categories to be
-    /// selected for a categories part; each item in the list would be a tag from a
-    /// categories tags set, having a unique ID and a human-readable name representing
-    /// it.
+    /// A set of tags. Tags are generic id/name pairs used by some parts to
+    /// represent a set of selectable options. E.g. you might have a list of
+    /// categories to be selected for a categories part; each item in the list
+    /// would be a tag from a categories tags set, having a unique ID and a
+    /// human-readable name representing it.
     /// </summary>
     public sealed class TagSet : ITagSet
     {
@@ -115,10 +115,10 @@ namespace Cadmus.Core.Config
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

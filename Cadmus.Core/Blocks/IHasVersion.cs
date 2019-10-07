@@ -3,7 +3,8 @@
 namespace Cadmus.Core.Blocks
 {
     /// <summary>
-    /// Interface implemented by objects which are stored with version information.
+    /// Interface implemented by objects which are stored with version
+    /// information.
     /// </summary>
     public interface IHasVersion
     {
@@ -15,7 +16,8 @@ namespace Cadmus.Core.Blocks
         /// <summary>
         /// User ID.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.</remarks>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
         string UserId { get; set; }
     }
 }

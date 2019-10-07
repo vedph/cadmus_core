@@ -8,28 +8,33 @@ using Cadmus.Philology.Parts.Properties;
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// Misspelling operation. A misspelling operation defines a single modification
-    /// required to build an an output word form (B) from an input word form (A).
-    /// One or more of such operations describe the relationships between these forms
-    /// in terms of the transform operations required to generate B from A, and
-    /// are useful to express the details of such transformation. This is useful
-    /// when dealing with a misspelled form A vs its standard orthography version B.
+    /// Misspelling operation. A misspelling operation defines a single
+    /// modification required to build an an output word form (B) from an input
+    /// word form (A).
+    /// One or more of such operations describe the relationships between these
+    /// forms in terms of the transform operations required to generate B from A,
+    /// and are useful to express the details of such transformation. This is
+    /// useful when dealing with a misspelled form A vs its standard orthography
+    /// version B.
     /// </summary>
     /// <remarks>
     /// Operations types:
     /// <list type="bullet">
     /// <item>
     /// <term>delete</term>
-    /// <description>@2x1=: range A (whose length is always &gt; 0) without value B.
+    /// <description>@2x1=: range A (whose length is always &gt; 0) without
+    /// value B.
     /// </description>
     /// </item>
     /// <item>
     /// <term>insert</term>
-    /// <description>@2x0=b: range A (whose length is always 0) with value B.</description>
+    /// <description>@2x0=b: range A (whose length is always 0) with value B.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>replace</term>
-    /// <description>@2x1=b: range A (whose length is always &gt; 0) with value B.
+    /// <description>@2x1=b: range A (whose length is always &gt; 0)
+    /// with value B.
     /// </description>
     /// </item>
     /// <item>
@@ -43,9 +48,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// (whose length is always &gt; 0).</description>
     /// </item>
     /// </list>
-    /// All the operations also have the value A, which just labels the grabbed input
-    /// text (except when inserting), and optionally have a tag (in [] after the operation)
-    /// and a note (all what follows the tag, or the operation when there is no tag).
+    /// All the operations also have the value A, which just labels the grabbed
+    /// input text (except when inserting), and optionally have a tag (in []
+    /// after the operation) and a note (all what follows the tag, or the
+    /// operation when there is no tag).
     /// </remarks>
     public sealed class MspOperation
     {
@@ -112,14 +118,16 @@ namespace Cadmus.Philology.Parts.Layers
         public string ValueA { get; set; }
 
         /// <summary>
-        /// The portion of output text (if any) of this operation. This is required
-        /// only for insert and replace. It is present as a label for swap.
+        /// The portion of output text (if any) of this operation. This is
+        /// required only for insert and replace. It is present as a label
+        /// for swap.
         /// </summary>
         public string ValueB { get; set; }
 
         /// <summary>
         /// An optional tag used to group and categorize misspellings operations.
-        /// E.g. you might want to categorize an operation like <c>vowels.itacism</c>.
+        /// E.g. you might want to categorize an operation like
+        /// <c>vowels.itacism</c>.
         /// </summary>
         public string Tag { get; set; }
 
@@ -222,7 +230,8 @@ namespace Cadmus.Philology.Parts.Layers
         }
 
         /// <summary>
-        /// Parses the specified text representing a misspelling transform operation.
+        /// Parses the specified text representing a misspelling transform
+        /// operation.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns>operation, or null if invalid text</returns>

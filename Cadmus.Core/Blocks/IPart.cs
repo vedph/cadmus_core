@@ -24,9 +24,9 @@
         /// Gets or sets the role identifier.
         /// </summary>
         /// <remarks>Parts of the same type in the same item can have different
-        /// roles. For instance, two date parts may refer to the date of the original
-        /// text and to that of its later copy. In this case, a role ID helps
-        /// selecting the desired part from an item.</remarks>
+        /// roles. For instance, two date parts may refer to the date of the
+        /// original text and to that of its later copy. In this case, a role
+        /// ID helps selecting the desired part from an item.</remarks>
         string RoleId { get; set; }
     }
 }

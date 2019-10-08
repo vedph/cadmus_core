@@ -29,7 +29,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAACAAAAAQEgAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAACAAAAAQEgACAAgAAAAAAAIAAAAAgAAAAByA=</HashCode>
       <FileName>General\Keyword.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -40,7 +40,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAgAAAMAAAAAAAAAAAAAAAAAAAICAAAAAA=</HashCode>
       <FileName>General\NotePart.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -51,17 +51,17 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAggAAAAAAAAAAAAAAAAAAAAgAIAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAggAAAAAAAAAAAAAAAAAAAAgAIAAAAYAA=</HashCode>
       <FileName>General\HierarchyPart.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Cadmus.Parts.General.NumberingPart">
-    <Position X="5.25" Y="2.75" Width="1.5" />
+    <Position X="5.25" Y="3" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAFAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAgAAAEAFAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
       <FileName>General\NumberingPart.cs</FileName>
     </TypeIdentifier>
   </Class>

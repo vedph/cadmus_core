@@ -14,7 +14,7 @@ namespace Cadmus.Core.Config
         /// Gets or sets the tag's unique identifier.
         /// </summary>
         /// <value>The tag ID must not be null, and should contain only letters
-        /// (a-z or A-Z), digits (0-9), undercores, dashes, and dots (which can
+        /// (a-z or A-Z), digits (0-9), underscores, dashes, and dots (which can
         /// be used to represent a hierarchy, e.g. <c>inscription.funerary</c>).
         /// </value>
         /// <exception cref="ArgumentNullException">null value</exception>

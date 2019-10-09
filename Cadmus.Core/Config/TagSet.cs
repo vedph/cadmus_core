@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Cadmus.Core.Config
@@ -21,7 +20,7 @@ namespace Cadmus.Core.Config
         /// Gets or sets the tag's unique identifier.
         /// </summary>
         /// <value>The tag ID must not be null, and should contain only letters
-        /// (a-z or A-Z), digits (0-9), undercores, dashes, dots (which can
+        /// (a-z or A-Z), digits (0-9), underscores, dashes, dots (which can
         /// be used to represent a hierarchy), and end with a language suffix
         /// like in RDF, e.g. <c>@en</c> = English.</value>
         /// <exception cref="ArgumentNullException">null value</exception>
@@ -109,9 +108,8 @@ namespace Cadmus.Core.Config
                 Id = id,
                 Name = name
             };
-            Tag old = Tags.Find(t => t.Id == id);
-            if (old != null) Tags.Remove(old);
-            Tags.Add(tag);
+            if (_dct.ContainsKey(tag.Id)) _dct.Remove(tag.Id);
+            _dct[tag.Id] = tag;
         }
 
         /// <summary>

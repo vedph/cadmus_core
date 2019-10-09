@@ -75,7 +75,7 @@ namespace Cadmus.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            return $"Comment [{Tag}]: {(Text?.Length > 80 ? Text.Substring(0, 80) + "..." : "")}";
+            return $"Comment [{Tag}]: {(Text?.Length > 80 ? Text.Substring(0, 80) + "..." : Text)}";
         }
     }
 }

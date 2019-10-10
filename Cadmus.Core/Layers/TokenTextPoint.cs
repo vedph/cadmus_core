@@ -27,7 +27,7 @@ namespace Cadmus.Core.Layers
         private static readonly Regex _pointRegex = new Regex(
             @"^(?<y>\d+)\.(?<x>\d+)" +
             @"(?:@(?<at>\d+)" +
-            @"(?:x(?<run>\d+))?)?$", RegexOptions.IgnorePatternWhitespace);
+            @"(?:[x×](?<run>\d+))?)?$", RegexOptions.IgnorePatternWhitespace);
 
         #region Properties
         /// <summary>
@@ -141,6 +141,10 @@ namespace Cadmus.Core.Layers
                     short.Parse(m.Groups["run"].Value, CultureInfo.InvariantCulture) :
                     (short)1;
             }
+            else
+            {
+                At = Run = 0;
+            }
         }
 
         /// <summary>
@@ -169,7 +173,11 @@ namespace Cadmus.Core.Layers
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat(CultureInfo.InvariantCulture, "{0}.{1}", Y, X);
-            if (At > 0) sb.AppendFormat("@{0}x{1}", At, Run);
+            if (At > 0)
+            {
+                sb.AppendFormat("@{0}", At);
+                if (Run > 1) sb.AppendFormat("x", Run);
+            }
 
             return sb.ToString();
         }
@@ -202,6 +210,9 @@ namespace Cadmus.Core.Layers
         /// <exception cref="ArgumentNullException">null coords</exception>
         public int CompareTo(ITextPoint other)
         {
+            if (ReferenceEquals(this, other)) return 0;
+            if (other is null) return 1;
+
             if (!(other is TokenTextPoint o))
                 throw new ArgumentNullException(nameof(other));
 

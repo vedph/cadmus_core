@@ -9,16 +9,16 @@
         /// <summary>
         /// Gets or sets the primary point.
         /// </summary>
-        TPoint Primary { get; set; }
+        TPoint A { get; set; }
 
         /// <summary>
         /// Gets or sets the optional secondary point.
         /// </summary>
-        TPoint Secondary { get; set; }
+        TPoint B { get; set; }
 
         /// <summary>
         /// True if this location represents a range defined
-        /// by both <see cref="Primary"/> and <see cref="Secondary"/>
+        /// by both <see cref="A"/> and <see cref="B"/>
         /// points.
         /// </summary>
         bool IsRange { get; }

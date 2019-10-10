@@ -54,13 +54,13 @@ namespace Cadmus.Parts.General
             bool wholeToken, string begMarker, string endMarker, StringBuilder sb)
         {
             // is it partial?
-            if (location.Primary.At > 0)
+            if (location.A.At > 0)
             {
                 // if we must get the whole token get it and add markers if any
                 if (wholeToken)
                 {
                     // left part
-                    sb.Append(token, 0, location.Primary.At - 1);
+                    sb.Append(token, 0, location.A.At - 1);
 
                     // marker
                     if (!string.IsNullOrEmpty(begMarker)) sb.Append(begMarker);
@@ -68,23 +68,23 @@ namespace Cadmus.Parts.General
                     // right part (with end marker if not a range)
                     if (location.IsRange)
                     {
-                        sb.Append(token, location.Primary.At - 1,
-                            token.Length - location.Primary.At - 1);
+                        sb.Append(token, location.A.At - 1,
+                            token.Length - location.A.At - 1);
                     }
                     else
                     {
-                        sb.Append(token, location.Primary.At - 1,
-                            location.Primary.Run);
+                        sb.Append(token, location.A.At - 1,
+                            location.A.Run);
 
                         if (!string.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
 
-                        if (location.Primary.At - 1 + location.Primary.Run
+                        if (location.A.At - 1 + location.A.Run
                             < token.Length)
                         {
                             sb.Append(token,
-                                location.Primary.At - 1 + location.Primary.Run,
-                                token.Length - location.Primary.At - 1
-                                    + location.Primary.Run);
+                                location.A.At - 1 + location.A.Run,
+                                token.Length - location.A.At - 1
+                                    + location.A.Run);
                         }
                     }
                 }
@@ -93,9 +93,9 @@ namespace Cadmus.Parts.General
                 else
                 {
                     sb.Append(location.IsRange
-                        ? token.Substring(location.Primary.At - 1)
-                        : token.Substring(location.Primary.At - 1,
-                            location.Primary.Run));
+                        ? token.Substring(location.A.At - 1)
+                        : token.Substring(location.A.At - 1,
+                            location.A.Run));
                 }
             }
 
@@ -109,21 +109,21 @@ namespace Cadmus.Parts.General
         private static void ExtractRangeLastTokenText(ITextLocation<TokenTextPoint> location, string token,
             bool wholeToken, string endMarker, StringBuilder sb)
         {
-            if (location.Secondary.At > 0)
+            if (location.B.At > 0)
             {
                 // add token left portion
-                sb.Append(token, 0, location.Secondary.Run);
+                sb.Append(token, 0, location.B.Run);
 
                 // if we must get the whole token get also its right portion and add markers if any
                 if (wholeToken)
                 {
                     if (!string.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
 
-                    if (location.Secondary.At - 1 + location.Secondary.Run < token.Length)
+                    if (location.B.At - 1 + location.B.Run < token.Length)
                     {
                         sb.Append(token,
-                            location.Secondary.At - 1 + location.Secondary.Run,
-                            token.Length - location.Secondary.At - 1 + location.Secondary.Run);
+                            location.B.At - 1 + location.B.Run,
+                            token.Length - location.B.At - 1 + location.B.Run);
                     }
                 }
             }
@@ -155,17 +155,17 @@ namespace Cadmus.Parts.General
             if (location == null) throw new ArgumentNullException(nameof(location));
 
             StringBuilder sb = new StringBuilder();
-            int lastY = location.IsRange ? location.Secondary.Y : location.Primary.Y;
+            int lastY = location.IsRange ? location.B.Y : location.A.Y;
 
-            for (int y = location.Primary.Y; y <= lastY; y++)
+            for (int y = location.A.Y; y <= lastY; y++)
             {
                 string[] tokens = Lines[y - 1].GetTokens();
                 int start = 1;
 
                 // if it's the 1st line extract 1st token or its portion
-                if (y == location.Primary.Y)
+                if (y == location.A.Y)
                 {
-                    start = location.Primary.X;
+                    start = location.A.X;
                     ExtractFirstTokenText(location, tokens[start - 1], wholeToken, begMarker, endMarker, sb);
 
                     // if we have just 1 token selected return its text as extracted
@@ -181,12 +181,12 @@ namespace Cadmus.Parts.General
 
                 // range: set end token
                 Debug.Assert(location.IsRange);
-                int end = y == lastY ? location.Secondary.X : tokens.Length;
+                int end = y == lastY ? location.B.X : tokens.Length;
 
                 // copy tokens
                 for (int i = start; i <= end; i++)
                 {
-                    if (i > start || y == location.Primary.Y) sb.Append(' ');
+                    if (i > start || y == location.A.Y) sb.Append(' ');
 
                     if (y == lastY && i == end)
                         ExtractRangeLastTokenText(location, tokens[i - 1], wholeToken, endMarker, sb);

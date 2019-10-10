@@ -295,7 +295,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var result = repository.GetItemsPage(new ItemFilter
+            var result = repository.GetItems(new ItemFilter
             {
                 PageNumber = 1,
                 PageSize = 10
@@ -312,7 +312,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var result = repository.GetItemsPage(new ItemFilter
+            var result = repository.GetItems(new ItemFilter
             {
                 PageNumber = 2,
                 PageSize = 10
@@ -329,7 +329,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var result = repository.GetItemsPage(new ItemFilter
+            var result = repository.GetItems(new ItemFilter
             {
                 PageNumber = 10,
                 PageSize = 10
@@ -433,7 +433,7 @@ namespace Cadmus.TestBase
 
             repository.AddItem(item);
 
-            Assert.Equal(21, repository.GetItemsPage(new ItemFilter { PageSize = 30 }).Total);
+            Assert.Equal(21, repository.GetItems(new ItemFilter { PageSize = 30 }).Total);
         }
 
         protected void DoSetItemFlags_NotExisting_Nope()
@@ -443,7 +443,7 @@ namespace Cadmus.TestBase
 
             repository.SetItemFlags("NotExisting", 128);
 
-            Assert.Equal(0, repository.GetItemsPage(new ItemFilter {Flags = 128}).Total);
+            Assert.Equal(0, repository.GetItems(new ItemFilter {Flags = 128}).Total);
         }
 
         protected void DoSetItemFlags_Existing_Updated()
@@ -453,7 +453,7 @@ namespace Cadmus.TestBase
 
             repository.SetItemFlags("item-001", 128);
 
-            Assert.Equal(1, repository.GetItemsPage(new ItemFilter { Flags = 128 }).Total);
+            Assert.Equal(1, repository.GetItems(new ItemFilter { Flags = 128 }).Total);
         }
 
         protected void DoDeleteItem_NotExisting_Nope()
@@ -463,7 +463,7 @@ namespace Cadmus.TestBase
 
             repository.DeleteItem("NotExisting", "Odd");
 
-            Assert.Equal(20, repository.GetItemsPage(new ItemFilter { PageSize = 20 }).Total);
+            Assert.Equal(20, repository.GetItems(new ItemFilter { PageSize = 20 }).Total);
         }
 
         protected void DoDeleteItem_ExistingNoParts_Deleted()
@@ -477,7 +477,7 @@ namespace Cadmus.TestBase
             Assert.Null(item);
 
             // history
-            var result = repository.GetHistoryItemsPage(new HistoryItemFilter
+            var result = repository.GetHistoryItems(new HistoryItemFilter
             {
                 ReferenceId = "item-002"
             });
@@ -506,7 +506,7 @@ namespace Cadmus.TestBase
             Assert.Null(item);
 
             // history
-            var result = repository.GetHistoryItemsPage(new HistoryItemFilter
+            var result = repository.GetHistoryItems(new HistoryItemFilter
             {
                 ReferenceId = "item-002"
             });
@@ -523,7 +523,7 @@ namespace Cadmus.TestBase
             IItem item = repository.GetItem("item-001", false);
             Assert.Null(item);
 
-            var result = repository.GetHistoryPartsPage(new HistoryPartFilter
+            var result = repository.GetHistoryParts(new HistoryPartFilter
             {
                 ItemIds = new[] { "item-001" }
             });
@@ -558,7 +558,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var page = repository.GetPartsPage(new PartFilter());
+            var page = repository.GetParts(new PartFilter());
 
             Assert.Equal(3, page.Items.Count);
             Assert.Equal(3, page.Total);
@@ -587,7 +587,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var page = repository.GetPartsPage(new PartFilter {TypeId = "note"});
+            var page = repository.GetParts(new PartFilter {TypeId = "note"});
 
             Assert.Equal(1, page.Items.Count);
             Assert.Equal(1, page.Total);
@@ -604,7 +604,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var page = repository.GetPartsPage(new PartFilter { RoleId = "note" });
+            var page = repository.GetParts(new PartFilter { RoleId = "note" });
 
             Assert.Equal(1, page.Items.Count);
             Assert.Equal(1, page.Total);
@@ -656,7 +656,7 @@ namespace Cadmus.TestBase
             SeedHierarchyParts(repository);
 
             // act
-            var page = repository.GetPartsPage(new PartFilter
+            var page = repository.GetParts(new PartFilter
             {
                 TypeId = "hierarchy",
                 PageSize = 0,
@@ -681,7 +681,7 @@ namespace Cadmus.TestBase
             SeedHierarchyParts(repository);
 
             // act
-            var page = repository.GetPartsPage(new PartFilter
+            var page = repository.GetParts(new PartFilter
             {
                 ItemIds = new[] {"item-001"},
                 TypeId = "hierarchy",

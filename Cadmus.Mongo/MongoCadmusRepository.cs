@@ -359,7 +359,7 @@ namespace Cadmus.Mongo
         /// <param name="filter">The filter.</param>
         /// <returns>items page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<IItemInfo> GetItemsPage(ItemFilter filter)
+        public PagedData<IItemInfo> GetItems(ItemFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -617,7 +617,7 @@ namespace Cadmus.Mongo
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<IHistoryItemInfo> GetHistoryItemsPage(
+        public PagedData<IHistoryItemInfo> GetHistoryItems(
             HistoryItemFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
@@ -755,7 +755,7 @@ namespace Cadmus.Mongo
         /// <param name="filter">The parts filter.</param>
         /// <returns>parts page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<IPartInfo> GetPartsPage(PartFilter filter)
+        public PagedData<IPartInfo> GetParts(PartFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -1115,7 +1115,7 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
-        public PagedData<IHistoryPartInfo> GetHistoryPartsPage(
+        public PagedData<IHistoryPartInfo> GetHistoryParts(
             HistoryPartFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));

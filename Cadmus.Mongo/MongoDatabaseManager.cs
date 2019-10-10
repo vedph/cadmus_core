@@ -14,15 +14,15 @@ namespace Cadmus.Mongo
     /// <summary>
     /// MongoDB-based database manager.
     /// </summary>
-    public sealed class MongoCadmusManager : ICadmusManager
+    public sealed class MongoDatabaseManager : IDatabaseManager
     {
         private readonly Regex _dbAndParamsRegex;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoCadmusManager"/>
+        /// Initializes a new instance of the <see cref="MongoDatabaseManager"/>
         /// class.
         /// </summary>
-        public MongoCadmusManager()
+        public MongoDatabaseManager()
         {
             _dbAndParamsRegex = new Regex(@"^(mongodb://[^/]+)([^?]*)(\?.+)?$");
 

@@ -24,6 +24,11 @@ namespace Cadmus.Core.Blocks
         public string PartId { get; set; }
 
         /// <summary>
+        /// Gets or sets the optional role identifier.
+        /// </summary>
+        public string RoleId { get; set; }
+
+        /// <summary>
         /// Gets or sets the pin name.
         /// </summary>
         /// <value>The name.</value>

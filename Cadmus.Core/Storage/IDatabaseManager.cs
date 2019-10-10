@@ -1,9 +1,9 @@
 ﻿namespace Cadmus.Core.Storage
 {
     /// <summary>
-    /// Cadmus storage manager.
+    /// Cadmus database manager.
     /// </summary>
-    public interface ICadmusManager
+    public interface IDatabaseManager
     {
         /// <summary>
         /// Creates the database.

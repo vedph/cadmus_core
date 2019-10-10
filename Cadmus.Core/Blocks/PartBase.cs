@@ -77,6 +77,7 @@ namespace Cadmus.Core.Blocks
             {
                 ItemId = ItemId,
                 PartId = Id,
+                RoleId = RoleId,
                 Name = name,
                 Value = value
             };

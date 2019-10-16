@@ -658,6 +658,14 @@ namespace Cadmus.Mongo
         #endregion
 
         #region Parts
+        private IPart InstantiatePart(string typeId, string roleId, string content)
+        {
+            string reqTypeId = PartBase.BuildProviderId(typeId, roleId);
+            Type type = _partTypeProvider.Get(reqTypeId);
+            if (type == null) return null;
+
+            return (IPart)JsonSerializer.Deserialize(content, type, _jsonOptions);
+        }
 
         private IList<IPart> InstantiateParts(IEnumerable<MongoPart> parts,
             bool throwOnNull = true)
@@ -666,20 +674,17 @@ namespace Cadmus.Mongo
 
             foreach (MongoPart mongoPart in parts)
             {
-                string reqTypeId = PartBase.BuildProviderId(
-                    mongoPart.TypeId, mongoPart.RoleId);
-                Type type = _partTypeProvider.Get(reqTypeId);
+                IPart part = InstantiatePart(mongoPart.TypeId, mongoPart.RoleId,
+                    mongoPart.Content);
 
-                if (type == null)
+                if (part == null)
                 {
-                    string error = "Unable to instantiate part from ID " + reqTypeId;
+                    string error = $"Unable to instantiate part for type.role=" +
+                        $"{mongoPart.TypeId}.{mongoPart.RoleId}";
                     Debug.WriteLine(error);
                     if (throwOnNull) throw new ApplicationException(error);
-                    continue;
                 }
-                IPart part = (IPart)
-                    JsonSerializer.Deserialize(mongoPart.Content, type, _jsonOptions);
-                results.Add(part);
+                else results.Add(part);
             }
             return results;
         }
@@ -921,6 +926,25 @@ namespace Cadmus.Mongo
             parts.ReplaceOne(p => p.Id.Equals(part.Id),
                 mongoPart,
                 new UpdateOptions { IsUpsert = true });
+        }
+
+        /// <summary>
+        /// Adds or updates the specified part from its encoded content.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
+        /// <exception cref="ArgumentNullException">content</exception>
+        public void AddPartFromContent(string content, bool history = true)
+        {
+            if (content == null) throw new ArgumentNullException(nameof(content));
+
+            JsonDocument doc = JsonDocument.Parse(content);
+            string typeId = doc.RootElement.GetProperty("typeId").GetString();
+            string roleId = doc.RootElement.GetProperty("roleId").GetString();
+
+            IPart part = InstantiatePart(typeId, roleId, content);
+            AddPart(part, history);
         }
 
         /// <summary>

@@ -209,6 +209,15 @@ namespace Cadmus.Core.Storage
         void AddPart(IPart part, bool history = true);
 
         /// <summary>
+        /// Adds or updates the specified part from its encoded content.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="history">if set to <c>true</c>, the history should be
+        /// affected.</param>
+        /// <exception cref="ArgumentNullException">content</exception>
+        void AddPartFromContent(string content, bool history = true);
+
+        /// <summary>
         /// Deletes the specified part.
         /// </summary>
         /// <param name="id">The part's identifier.</param>

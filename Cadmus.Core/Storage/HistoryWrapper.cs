@@ -1,5 +1,4 @@
 ﻿using System;
-using Cadmus.Core.Blocks;
 
 namespace Cadmus.Core.Storage
 {
@@ -45,7 +44,7 @@ namespace Cadmus.Core.Storage
         /// <exception cref="ArgumentNullException">null content</exception>
         public HistoryWrapper(T content)
         {
-            Id = Guid.NewGuid().ToString("N");
+            Id = Guid.NewGuid().ToString();
             Content = content ?? throw new ArgumentNullException(nameof(content));
         }
     }
@@ -53,7 +52,7 @@ namespace Cadmus.Core.Storage
     /// <summary>
     /// Edit status.
     /// </summary>
-    public enum EditStatus : byte
+    public enum EditStatus
     {
         /// <summary>The item has been created.</summary>
         Created = 0,

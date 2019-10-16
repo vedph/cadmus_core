@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using Cadmus.Core.Storage;
 using Cadmus.Core.Config;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 
 namespace Cadmus.Mongo
@@ -14,71 +11,78 @@ namespace Cadmus.Mongo
     /// <summary>
     /// MongoDB-based database manager.
     /// </summary>
-    public sealed class MongoDatabaseManager : IDatabaseManager
+    public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
     {
-        private readonly Regex _dbAndParamsRegex;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MongoDatabaseManager"/>
-        /// class.
-        /// </summary>
-        public MongoDatabaseManager()
+        private void CreateIndexes(IMongoDatabase database)
         {
-            _dbAndParamsRegex = new Regex(@"^(mongodb://[^/]+)([^?]*)(\?.+)?$");
+            if (database == null) throw new ArgumentNullException(nameof(database));
 
-            // camel case everything:
-            // https://stackoverflow.com/questions/19521626/mongodb-convention-packs/19521784#19521784
-            ConventionPack pack = new ConventionPack
-            {
-                new CamelCaseElementNameConvention()
-            };
-            ConventionRegistry.Register("camel case", pack, _ => true);
+            // items
+            var itemCollection = database.GetCollection<MongoItem>
+                (MongoItem.COLLECTION);
+            itemCollection.Indexes.CreateOne(new CreateIndexModel<MongoItem>(
+                Builders<MongoItem>.IndexKeys.Ascending(i => i.Title)));
+            itemCollection.Indexes.CreateOne(new CreateIndexModel<MongoItem>(
+                Builders<MongoItem>.IndexKeys.Ascending(i => i.Description)));
+            itemCollection.Indexes.CreateOne(new CreateIndexModel<MongoItem>(
+                Builders<MongoItem>.IndexKeys.Ascending(i => i.FacetId)));
+            itemCollection.Indexes.CreateOne(new CreateIndexModel<MongoItem>(
+                Builders<MongoItem>.IndexKeys.Ascending(i => i.SortKey)));
+            itemCollection.Indexes.CreateOne(new CreateIndexModel<MongoItem>(
+                Builders<MongoItem>.IndexKeys.Ascending(i => i.Flags)));
+
+            // parts
+            var partCollection = database.GetCollection<MongoPart>
+                (MongoPart.COLLECTION);
+            partCollection.Indexes.CreateOne(new CreateIndexModel<MongoPart>(
+                Builders<MongoPart>.IndexKeys.Ascending(p => p.ItemId)));
+            partCollection.Indexes.CreateOne(new CreateIndexModel<MongoPart>(
+                Builders<MongoPart>.IndexKeys.Ascending(p => p.TypeId)));
+            partCollection.Indexes.CreateOne(new CreateIndexModel<MongoPart>(
+                Builders<MongoPart>.IndexKeys.Ascending(p => p.RoleId)));
+
+            // history-items
+            var historyItemCollection = database.GetCollection<MongoHistoryItem>
+                (MongoHistoryItem.COLLECTION);
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.Title)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.Description)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.FacetId)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.SortKey)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.Flags)));
+
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.TimeModified)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.UserId)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.ReferenceId)));
+            historyItemCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryItem>(
+                Builders<MongoHistoryItem>.IndexKeys.Ascending(i => i.Status)));
+
+            // history-parts
+            var historyPartCollection = database.GetCollection<MongoHistoryPart>
+                (MongoHistoryPart.COLLECTION);
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(p => p.ItemId)));
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(p => p.TypeId)));
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(p => p.RoleId)));
+
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(i => i.TimeModified)));
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(i => i.UserId)));
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(i => i.ReferenceId)));
+            historyPartCollection.Indexes.CreateOne(new CreateIndexModel<MongoHistoryPart>(
+                Builders<MongoHistoryPart>.IndexKeys.Ascending(i => i.Status)));
         }
-
-        private string GetDatabaseName(string connectionString)
-        {
-            Match m = _dbAndParamsRegex.Match(connectionString);
-            return m.Success ? m.Groups[2].Value.Trim('/') : null;
-        }
-
-        //private static void CreateIndexes(IMongoDatabase db)
-        //{
-        //    // items
-        //    var itemsCollection = db.GetCollection<StoredItem>(StoredItem.COLLECTION);
-        //    IndexKeysDefinitionBuilder<StoredItem> itemKdb = new IndexKeysDefinitionBuilder<StoredItem>();
-        //    itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(itemKdb.Ascending(i => i.Title)));
-        //    itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(itemKdb.Ascending(i => i.FacetId)));
-        //    itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(itemKdb.Ascending(i => i.SortKey)));
-        //    itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(itemKdb.Ascending(i => i.Flags)));
-        //    itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(itemKdb.Ascending(i => i.UserId)));
-
-        //    //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.Title));
-        //    //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.FacetId));
-        //    //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.SortKey));
-        //    //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.Flags));
-        //    //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.UserId));
-
-        //    // history-items
-        //    var historyCollection = db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
-        //    IndexKeysDefinitionBuilder<StoredHistoryItem> histKdb = new IndexKeysDefinitionBuilder<StoredHistoryItem>();
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.ReferenceId)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.Status)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.Title)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.FacetId)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.SortKey)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.Flags)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.UserId)));
-        //    historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(histKdb.Ascending(i => i.TimeModified)));
-
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.ReferenceId));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Status));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Title));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.FacetId));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.SortKey));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Flags));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.UserId));
-        //    //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.TimeModified));
-        //}
 
         /// <summary>
         /// Creates the database.
@@ -87,44 +91,42 @@ namespace Cadmus.Mongo
         /// <param name="profile">The database profile.</param>
         /// <exception cref="ArgumentNullException">null source or profile
         /// </exception>
-        public void CreateDatabase(string source, string profile)
+        public void CreateDatabase(string source, DataProfile profile)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (profile == null) throw new ArgumentNullException(nameof(profile));
 
-            // load profile
-            XElement profileElement = XElement.Parse(profile);
-            DataProfile p = new DataProfile(profileElement);
+            EnsureClientCreated(source);
 
             // store facets, flags, and tag sets
-            MongoClient client = new MongoClient(source);
-            IMongoDatabase db = client.GetDatabase(GetDatabaseName(source));
+            IMongoDatabase db = Client.GetDatabase(GetDatabaseName(source));
 
-            if (p.Facets.Length > 0)
+            if (profile.FacetDefinitions?.Length > 0)
             {
-                var collFacets = db.GetCollection<StoredItemFacet>(
-                    StoredItemFacet.COLLECTION);
-                collFacets.InsertMany(p.Facets.Select(
-                    f => new StoredItemFacet(f)));
+                var collFacets = db.GetCollection<MongoFacetDefinition>(
+                    MongoFacetDefinition.COLLECTION);
+                collFacets.InsertMany(profile.FacetDefinitions.Select(
+                    f => new MongoFacetDefinition(f)));
             }
 
-            if (p.Flags.Length > 0)
+            if (profile.FlagDefinitions?.Length > 0)
             {
-                var collFlags = db.GetCollection<StoredFlagDefinition>(
-                    StoredFlagDefinition.COLLECTION);
-                collFlags.InsertMany(p.Flags.Select(f => new StoredFlagDefinition(f)));
+                var collFlags = db.GetCollection<MongoFlagDefinition>(
+                    MongoFlagDefinition.COLLECTION);
+                collFlags.InsertMany(profile.FlagDefinitions
+                    .Select(f => new MongoFlagDefinition(f)));
             }
 
-            if (p.TagSets.Length > 0)
+            if (profile.Thesauri?.Length > 0)
             {
-                var collSets = db.GetCollection<StoredTagSet>(
-                    StoredTagSet.COLLECTION);
-                collSets.InsertMany(p.TagSets.Select(s => new StoredTagSet(s)));
+                var collSets = db.GetCollection<MongoThesaurus>(
+                    MongoThesaurus.COLLECTION);
+                collSets.InsertMany(profile.Thesauri
+                    .Select(s => new MongoThesaurus(s)));
             }
 
             // add indexes
-            MongoCadmusRepository.CreateIndexes(db);
-            // CreateIndexes(db);
+            CreateIndexes(db);
         }
 
         /// <summary>
@@ -136,8 +138,8 @@ namespace Cadmus.Mongo
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            MongoClient client = new MongoClient(source);
-            client.DropDatabase(GetDatabaseName(source));
+            EnsureClientCreated(source);
+            Client.DropDatabase(GetDatabaseName(source));
         }
 
         /// <summary>
@@ -148,23 +150,31 @@ namespace Cadmus.Mongo
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            MongoClient client = new MongoClient(source);
-            IMongoDatabase db = client.GetDatabase(GetDatabaseName(source));
+            EnsureClientCreated(source);
+            IMongoDatabase db = Client.GetDatabase(GetDatabaseName(source));
 
+            // parts
+            db.GetCollection<MongoPart>(MongoPart.COLLECTION)
+                .DeleteMany(_ => true);
             // items
-            db.GetCollection<StoredItem>(StoredItem.COLLECTION)
+            db.GetCollection<MongoItem>(MongoItem.COLLECTION)
+                .DeleteMany(_ => true);
+
+            // history-parts
+            db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
                 .DeleteMany(_ => true);
             // history-items
-            db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION)
+            db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION)
                 .DeleteMany(_ => true);
+
             // facets
-            db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION)
+            db.GetCollection<MongoFacetDefinition>(MongoFacetDefinition.COLLECTION)
                 .DeleteMany(_ => true);
             // flags
-            db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION)
+            db.GetCollection<MongoFlagDefinition>(MongoFlagDefinition.COLLECTION)
                 .DeleteMany(_ => true);
-            // sets
-            db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION)
+            // thesauri
+            db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
                 .DeleteMany(_ => true);
         }
 
@@ -187,11 +197,11 @@ namespace Cadmus.Mongo
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            MongoClient client = new MongoClient(source);
+            EnsureClientCreated(source);
             string databaseName = GetDatabaseName(source);
 
             // http://stackoverflow.com/questions/7049722/check-if-mongodb-database-exists
-            var dbList = Enumerate(client.ListDatabases())
+            var dbList = Enumerate(Client.ListDatabases())
                 .Select(db => db.GetValue("name").AsString);
             return dbList.Contains(databaseName);
         }

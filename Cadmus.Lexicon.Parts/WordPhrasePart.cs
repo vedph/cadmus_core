@@ -1,4 +1,4 @@
-﻿using Cadmus.Core.Blocks;
+﻿using Cadmus.Core;
 using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,6 @@ namespace Cadmus.Lexicon.Parts
     /// <summary>
     /// A phrase involving a special usage of a word.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
     [Tag("lexicon-word-phrase")]
     public sealed class WordPhrasePart : PartBase
     {

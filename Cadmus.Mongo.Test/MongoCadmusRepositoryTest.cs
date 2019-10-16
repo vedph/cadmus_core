@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Parts.General;
@@ -14,18 +16,23 @@ namespace Cadmus.Mongo.Test
     [CollectionDefinition(name: "Mongo repository", DisableParallelization = true)]
     public class MongoCadmusRepositoryTest : CadmusRepositoryTestBase
     {
-        private const string DB_NAME = "cadmustest";
+        private const string DB_NAME = "cadmus-test";
 
         private readonly MongoClient _client;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public MongoCadmusRepositoryTest()
         {
             _client = new MongoClient();
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
         }
 
         protected override ICadmusRepository GetRepository()
         {
-            TagToTypeMap map = new TagToTypeMap();
+            TagAttributeToTypeMap map = new TagAttributeToTypeMap();
             map.Add(new[]
             {
                 typeof(NotePart).Assembly
@@ -35,8 +42,7 @@ namespace Cadmus.Mongo.Test
             repository.Configure(new MongoCadmusRepositoryOptions
             {
                 // use the default ConnectionStringTemplate (local DB)
-                // ConnectionStringTemplate = ...
-                DatabaseName = DB_NAME
+                ConnectionString = "mongodb://localhost:27017/" + DB_NAME
             });
             return repository;
         }
@@ -44,17 +50,18 @@ namespace Cadmus.Mongo.Test
         #region Seeding
         private static void SeedFlags(IMongoDatabase db)
         {
-            var collection = db.GetCollection<StoredFlagDefinition>(StoredFlagDefinition.COLLECTION);
+            var collection = db.GetCollection<MongoFlagDefinition>(
+                MongoFlagDefinition.COLLECTION);
             collection.InsertMany(new[]
             {
-                new StoredFlagDefinition
+                new MongoFlagDefinition
                 {
                     Id = 1,
                     Label = "Alpha",
                     Description = "The alpha flag",
                     ColorKey = "FF0000"
                 },
-                new StoredFlagDefinition
+                new MongoFlagDefinition
                 {
                     Id = 2,
                     Label = "Beta",
@@ -66,9 +73,10 @@ namespace Cadmus.Mongo.Test
 
         private static void SeedFacets(IMongoDatabase db)
         {
-            var collection = db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
+            var collection = db.GetCollection<MongoFacetDefinition>(
+                MongoFacetDefinition.COLLECTION);
 
-            StoredItemFacet facetA = new StoredItemFacet
+            MongoFacetDefinition facetA = new MongoFacetDefinition
             {
                 Id = "alpha",
                 Label = "Alpha",
@@ -100,7 +108,7 @@ namespace Cadmus.Mongo.Test
                 }
             });
 
-            StoredItemFacet facetB = new StoredItemFacet
+            MongoFacetDefinition facetB = new MongoFacetDefinition
             {
                 Id = "beta",
                 Label = "Beta",
@@ -141,11 +149,11 @@ namespace Cadmus.Mongo.Test
 
         private static void SeedItems(IMongoDatabase db)
         {
-            var collection = db.GetCollection<StoredItem>(StoredItem.COLLECTION);
+            var collection = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             for (int i = 1; i <= 20; i++)
             {
-                StoredItem item = new StoredItem
+                MongoItem item = new MongoItem
                 {
                     Id = $"item-{i:000}",
                     Title = $"Item {i}",
@@ -160,12 +168,20 @@ namespace Cadmus.Mongo.Test
             }
         }
 
-        private static void SeedItemParts(IMongoDatabase db)
+        private MongoPart CreateMongoPart(IPart part)
         {
-            var collection = db.GetCollection<BsonDocument>(MongoCadmusRepository.COLL_PARTS);
+            return new MongoPart(part)
+            {
+                Content = JsonSerializer.Serialize(part, _jsonOptions)
+            };
+        }
+
+        private void SeedItemParts(IMongoDatabase db)
+        {
+            var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
 
             // categories
-            CategoriesPart partCategories = new CategoriesPart
+            CategoriesPart categoriesPart = new CategoriesPart
             {
                 Id = "part-001",
                 ItemId = "item-001",
@@ -174,10 +190,10 @@ namespace Cadmus.Mongo.Test
                 UserId = "Odd",
                 Categories = {"alpha", "beta"}
             };
-            collection.InsertOne(partCategories.ToBsonDocument());
+            collection.InsertOne(CreateMongoPart(categoriesPart));
 
             // note
-            NotePart partNote = new NotePart
+            NotePart notePart = new NotePart
             {
                 Id = "part-002",
                 ItemId = "item-001",
@@ -186,10 +202,10 @@ namespace Cadmus.Mongo.Test
                 UserId = "Odd",
                 Text = "Some notes."
             };
-            collection.InsertOne(partNote.ToBsonDocument());
+            collection.InsertOne(CreateMongoPart(notePart));
 
             // layer: comments
-            TokenTextLayerPart<CommentLayerFragment> partCommentLayer = 
+            TokenTextLayerPart<CommentLayerFragment> commentLayerPart =
                 new TokenTextLayerPart<CommentLayerFragment>
                 {
                 Id = "part-003",
@@ -197,7 +213,7 @@ namespace Cadmus.Mongo.Test
                 TimeModified = DateTime.UtcNow,
                 UserId = "Odd"
             };
-            partCommentLayer.Fragments.AddRange(new []
+            commentLayerPart.Fragments.AddRange(new []
             {
                 new CommentLayerFragment
                 {
@@ -210,16 +226,16 @@ namespace Cadmus.Mongo.Test
                     Text = "The comment to 1.3"
                 }
             });
-            collection.InsertOne(partCommentLayer.ToBsonDocument());
+            collection.InsertOne(CreateMongoPart(commentLayerPart));
         }
 
         private static void ClearHistory(IMongoDatabase db)
         {
-            var parts = db.GetCollection<BsonDocument>(MongoCadmusRepository.COLL_HISTORYPARTS);
-            parts.DeleteMany(new BsonDocument());
+            db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
+                .DeleteMany(new BsonDocument());
 
-            var items = db.GetCollection<BsonDocument>(StoredHistoryItem.COLLECTION);
-            items.DeleteMany(new BsonDocument());
+            db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION)
+                .DeleteMany(new BsonDocument());
         }
 
         protected override void PrepareDatabase()
@@ -230,7 +246,7 @@ namespace Cadmus.Mongo.Test
             {
                 new CamelCaseElementNameConvention()
             };
-            ConventionRegistry.Register("camel case", pack, t => true);
+            ConventionRegistry.Register("camel case", pack, _ => true);
 
             _client.DropDatabase(DB_NAME);
             IMongoDatabase db = _client.GetDatabase(DB_NAME);
@@ -248,7 +264,7 @@ namespace Cadmus.Mongo.Test
         public void GetDocumentsPage_NoFilterSortByKey_Ok()
         {
             IMongoDatabase db = _client.GetDatabase(DB_NAME);
-            var collection = db.GetCollection<BsonDocument>(StoredItem.COLLECTION);
+            var collection = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
 
             var page = MongoHelper.GetDocumentsPage(collection, 
                 "{}", "{\"sortKey\":1}", 1, 10);
@@ -261,7 +277,7 @@ namespace Cadmus.Mongo.Test
         public void GetDocumentsPage_UserIdSortByKey_Ok()
         {
             IMongoDatabase db = _client.GetDatabase(DB_NAME);
-            var collection = db.GetCollection<BsonDocument>(StoredItem.COLLECTION);
+            var collection = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
 
             var page = MongoHelper.GetDocumentsPage(collection,
                 "{\"userId\": \"Odd\"}", "{\"sortKey\":1}", 1, 10);

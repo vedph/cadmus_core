@@ -5,17 +5,12 @@ namespace Cadmus.Core.Storage
     /// <summary>
     /// Information about a history part record.
     /// </summary>
-    public class HistoryPartInfo : IHistoryPartInfo
+    public class HistoryPartInfo : IHasHistory
     {
         /// <summary>
         /// Gets or sets the history part identifier.
         /// </summary>
         public string Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the reference identifier.
-        /// </summary>
-        public string ReferenceId { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the item the parts belongs to.
@@ -49,6 +44,11 @@ namespace Cadmus.Core.Storage
         public string UserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the reference identifier.
+        /// </summary>
+        public string ReferenceId { get; set; }
+
+        /// <summary>
         /// Gets or sets the status.
         /// </summary>
         public EditStatus Status { get; set; }
@@ -61,7 +61,8 @@ namespace Cadmus.Core.Storage
         /// </returns>
         public override string ToString()
         {
-            return $"[{Status}] {TypeId}: {RoleId}";
+            return $"{ItemId}.{Id} {TypeId}" +
+                (RoleId != null ? $" ({RoleId})" : "");
         }
     }
 }

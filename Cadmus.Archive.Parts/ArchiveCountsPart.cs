@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Fusi.Tools.Config;
 
 namespace Cadmus.Archive.Parts

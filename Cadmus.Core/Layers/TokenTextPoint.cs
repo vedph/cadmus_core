@@ -78,17 +78,6 @@ namespace Cadmus.Core.Layers
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TokenTextPoint"/> class.
-        /// </summary>
-        /// <param name="y">The y.</param>
-        /// <param name="x">The x.</param>
-        public TokenTextPoint(int y, int x)
-        {
-            Y = y;
-            X = x;
-        }
-
-        /// <summary>
         /// Build a new coords structure from the specified Y, X, at and run values.
         /// </summary>
         /// <param name="y">Y value</param>
@@ -97,7 +86,7 @@ namespace Cadmus.Core.Layers
         /// <param name="run">run value (0 for whole token)</param>
         /// <exception cref="ArgumentOutOfRangeException">invalid at/run value
         /// </exception>
-        public TokenTextPoint(int y, int x, short at, short run)
+        public TokenTextPoint(int y, int x, short at = 0, short run = 0)
         {
             Y = y;
             X = x;

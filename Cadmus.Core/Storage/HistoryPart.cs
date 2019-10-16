@@ -1,5 +1,4 @@
 ﻿using System;
-using Cadmus.Core.Blocks;
 
 namespace Cadmus.Core.Storage
 {
@@ -7,7 +6,7 @@ namespace Cadmus.Core.Storage
     /// A history part wrapper.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class HistoryPart<T> : IHistoryPart<T> where T : class, IPart
+    public class HistoryPart<T> where T : class, IPart
     {
         /// <summary>
         /// Gets or sets the history record identifier.
@@ -17,7 +16,19 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Gets or sets the wrapped part.
         /// </summary>
-        public T Content { get; set; }
+        public T Part { get; set; }
+
+        /// <summary>
+        /// Last saved date and time (UTC).
+        /// </summary>
+        public DateTime TimeModified { get; set; }
+
+        /// <summary>
+        /// User ID.
+        /// </summary>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
+        public string UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the data record (part) this history
@@ -33,14 +44,17 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryPart{T}"/> class.
         /// </summary>
+        /// <param name="id">The history part ID, or null for a new ID.</param>
         /// <param name="part">The part.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public HistoryPart(T part)
+        public HistoryPart(string id, T part)
         {
             if (part == null) throw new ArgumentNullException(nameof(part));
 
+            Id = id ?? new Guid().ToString();
             ReferenceId = part.Id;
-            Content = part;
+            Part = part;
+            TimeModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -51,7 +65,7 @@ namespace Cadmus.Core.Storage
         /// </returns>
         public override string ToString()
         {
-            return Content?.ToString() ?? base.ToString();
+            return $"{Id} -> {ReferenceId}: {Status}";
         }
     }
 }

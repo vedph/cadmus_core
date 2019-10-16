@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Fusi.Tools.Config;
 using System;
 

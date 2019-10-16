@@ -3,12 +3,12 @@
 namespace Cadmus.Core.Config
 {
     /// <summary>
-    /// Standard part type provider, simply wrapping a <see cref="TagToTypeMap"/>.
+    /// Standard part type provider, simply wrapping a <see cref="TagAttributeToTypeMap"/>.
     /// </summary>
     /// <seealso cref="IPartTypeProvider" />
     public sealed class StandardPartTypeProvider : IPartTypeProvider
     {
-        private readonly TagToTypeMap _map;
+        private readonly TagAttributeToTypeMap _map;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StandardPartTypeProvider"/>
@@ -16,7 +16,7 @@ namespace Cadmus.Core.Config
         /// </summary>
         /// <param name="map">The map.</param>
         /// <exception cref="ArgumentNullException">map</exception>
-        public StandardPartTypeProvider(TagToTypeMap map)
+        public StandardPartTypeProvider(TagAttributeToTypeMap map)
         {
             _map = map ?? throw new ArgumentNullException(nameof(map));
         }

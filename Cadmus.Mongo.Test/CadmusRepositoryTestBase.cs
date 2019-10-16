@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Parts.General;
@@ -25,11 +25,11 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            List<IFlagDefinition> defs = repository.GetFlagDefinitions().ToList();
+            List<FlagDefinition> defs = repository.GetFlagDefinitions().ToList();
 
             Assert.Equal(2, defs.Count);
 
-            IFlagDefinition def = defs[0];
+            FlagDefinition def = defs[0];
             Assert.Equal(1, def.Id);
             Assert.Equal("Alpha", def.Label);
             Assert.Equal("The alpha flag", def.Description);
@@ -47,7 +47,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFlagDefinition def = repository.GetFlagDefinition(8);
+            FlagDefinition def = repository.GetFlagDefinition(8);
 
             Assert.Null(def);
         }
@@ -57,7 +57,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFlagDefinition def = repository.GetFlagDefinition(1);
+            FlagDefinition def = repository.GetFlagDefinition(1);
 
             Assert.NotNull(def);
             Assert.Equal(1, def.Id);
@@ -71,7 +71,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFlagDefinition def = new FlagDefinition
+            FlagDefinition def = new FlagDefinition
             {
                 Id = 1,
                 Label = "Alpha",
@@ -81,7 +81,7 @@ namespace Cadmus.TestBase
 
             repository.AddFlagDefinition(def);
 
-            IFlagDefinition def2 = repository.GetFlagDefinition(1);
+            FlagDefinition def2 = repository.GetFlagDefinition(1);
             Assert.Equal(1, def2.Id);
             Assert.Equal(def.Label, def2.Label);
             Assert.Equal(def.Description, def2.Description);
@@ -93,7 +93,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFlagDefinition def = new FlagDefinition
+            FlagDefinition def = new FlagDefinition
             {
                 Id = 4,
                 Label = "Gamma",
@@ -103,7 +103,7 @@ namespace Cadmus.TestBase
 
             repository.AddFlagDefinition(def);
 
-            IFlagDefinition def2 = repository.GetFlagDefinition(4);
+            FlagDefinition def2 = repository.GetFlagDefinition(4);
             Assert.Equal(def.Id, def2.Id);
             Assert.Equal(def.Label, def2.Label);
             Assert.Equal(def.Description, def2.Description);
@@ -139,11 +139,11 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IList<IFacet> facets = repository.GetFacets();
+            IList<FacetDefinition> facets = repository.GetFacetDefinitions();
 
             Assert.Equal(2, facets.Count);
 
-            IFacet facet = facets[0];
+            FacetDefinition facet = facets[0];
             Assert.Equal("alpha", facet.Id);
             Assert.Equal("Alpha", facet.Label);
             Assert.Equal("Alpha facet", facet.Description);
@@ -161,7 +161,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFacet facet = repository.GetFacet("NotExisting");
+            FacetDefinition facet = repository.GetFacetDefinition("NotExisting");
 
             Assert.Null(facet);
         }
@@ -171,7 +171,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFacet facet = repository.GetFacet("alpha");
+            FacetDefinition facet = repository.GetFacetDefinition("alpha");
 
             Assert.NotNull(facet);
             Assert.Equal("alpha", facet.Id);
@@ -185,7 +185,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFacet facet = new Facet
+            FacetDefinition facet = new FacetDefinition
             {
                 Id = "alpha",
                 Label = "Alpha",
@@ -217,9 +217,9 @@ namespace Cadmus.TestBase
                 }
             };
 
-            repository.AddFacet(facet);
+            repository.AddFacetDefinition(facet);
 
-            IFacet facet2 = repository.GetFacet(facet.Id);
+            FacetDefinition facet2 = repository.GetFacetDefinition(facet.Id);
             Assert.NotNull(facet2);
             Assert.Equal(facet.Id, facet2.Id);
             Assert.Equal(facet.Label, facet2.Label);
@@ -235,7 +235,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IFacet facet = new Facet
+            FacetDefinition facet = new FacetDefinition
             {
                 Id = "gamma",
                 Label = "Gamma",
@@ -256,16 +256,16 @@ namespace Cadmus.TestBase
                 }
             };
 
-            repository.AddFacet(facet);
+            repository.AddFacetDefinition(facet);
 
-            IFacet facet2 = repository.GetFacet(facet.Id);
+            FacetDefinition facet2 = repository.GetFacetDefinition(facet.Id);
             Assert.NotNull(facet2);
             Assert.Equal(facet.Id, facet2.Id);
             Assert.Equal(facet.Label, facet2.Label);
             Assert.Equal(facet.Description, facet2.Description);
             Assert.Equal(facet.PartDefinitions.Count, facet2.PartDefinitions.Count);
 
-            Assert.Equal(3, repository.GetFacets().Count);
+            Assert.Equal(3, repository.GetFacetDefinitions().Count);
         }
 
         protected void DoDeleteFacet_NotExisting_Nope()
@@ -273,9 +273,9 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            repository.DeleteFacet("NotExisting");
+            repository.DeleteFacetDefinition("NotExisting");
 
-            Assert.Equal(2, repository.GetFacets().Count);
+            Assert.Equal(2, repository.GetFacetDefinitions().Count);
         }
 
         protected void DoDeleteFacet_Existing_Deleted()
@@ -283,9 +283,9 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            repository.DeleteFacet("beta");
+            repository.DeleteFacetDefinition("beta");
 
-            Assert.Equal(1, repository.GetFacets().Count);
+            Assert.Equal(1, repository.GetFacetDefinitions().Count);
         }
         #endregion
 
@@ -362,7 +362,8 @@ namespace Cadmus.TestBase
             Assert.Equal("item001", item.SortKey);
             Assert.Equal(1, item.Flags);
             Assert.Equal("Odd", item.UserId);
-            Assert.Equal(new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc), item.TimeModified);
+            Assert.Equal(new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc),
+                item.TimeModified);
 
             // parts
             Assert.Equal(3, item.Parts.Count);
@@ -382,7 +383,8 @@ namespace Cadmus.TestBase
             Assert.Equal("item001", item.SortKey);
             Assert.Equal(1, item.Flags);
             Assert.Equal("Odd", item.UserId);
-            Assert.Equal(new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc), item.TimeModified);
+            Assert.Equal(new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc),
+                item.TimeModified);
             Assert.Empty(item.Parts);
         }
 
@@ -433,7 +435,8 @@ namespace Cadmus.TestBase
 
             repository.AddItem(item);
 
-            Assert.Equal(21, repository.GetItems(new ItemFilter { PageSize = 30 }).Total);
+            Assert.Equal(21, repository.GetItems(
+                new ItemFilter { PageSize = 30 }).Total);
         }
 
         protected void DoSetItemFlags_NotExisting_Nope()
@@ -441,9 +444,10 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            repository.SetItemFlags("NotExisting", 128);
+            repository.SetItemFlags(new[] { "NotExisting" }, 128);
 
-            Assert.Equal(0, repository.GetItems(new ItemFilter {Flags = 128}).Total);
+            Assert.Equal(0, repository.GetItems(
+                new ItemFilter {Flags = 128}).Total);
         }
 
         protected void DoSetItemFlags_Existing_Updated()
@@ -451,9 +455,10 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            repository.SetItemFlags("item-001", 128);
+            repository.SetItemFlags(new[] { "item-001" }, 128);
 
-            Assert.Equal(1, repository.GetItems(new ItemFilter { Flags = 128 }).Total);
+            Assert.Equal(1, repository.GetItems(
+                new ItemFilter { Flags = 128 }).Total);
         }
 
         protected void DoDeleteItem_NotExisting_Nope()
@@ -463,7 +468,8 @@ namespace Cadmus.TestBase
 
             repository.DeleteItem("NotExisting", "Odd");
 
-            Assert.Equal(20, repository.GetItems(new ItemFilter { PageSize = 20 }).Total);
+            Assert.Equal(20, repository.GetItems(
+                new ItemFilter { PageSize = 20 }).Total);
         }
 
         protected void DoDeleteItem_ExistingNoParts_Deleted()
@@ -483,12 +489,12 @@ namespace Cadmus.TestBase
             });
             Assert.Equal(1, result.Total);
 
-            IHistoryItemInfo historyItem = result.Items[0];
+            HistoryItemInfo historyItem = result.Items[0];
             Assert.NotEqual("item-002", historyItem.Id);
             Assert.Equal("item-002", historyItem.ReferenceId);
             Assert.Equal(EditStatus.Deleted, historyItem.Status);
             Assert.Equal("Item 2", historyItem.Title);
-            Assert.Equal("beta", historyItem.Facet);
+            Assert.Equal("beta", historyItem.FacetId);
             Assert.Equal("Description of item 2", historyItem.Description);
             Assert.Equal("item002", historyItem.SortKey);
             Assert.Equal(2, historyItem.Flags);
@@ -564,7 +570,7 @@ namespace Cadmus.TestBase
             Assert.Equal(3, page.Total);
 
             // categories
-            IPartInfo info = page.Items[0];
+            PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
             Assert.Equal("categories", info.TypeId);
             Assert.Equal("categories", info.RoleId);
@@ -593,7 +599,7 @@ namespace Cadmus.TestBase
             Assert.Equal(1, page.Total);
 
             // note
-            IPartInfo info = page.Items[0];
+            PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
             Assert.Equal("note", info.TypeId);
             Assert.Equal("note", info.RoleId);
@@ -610,7 +616,7 @@ namespace Cadmus.TestBase
             Assert.Equal(1, page.Total);
 
             // note
-            IPartInfo info = page.Items[0];
+            PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
             Assert.Equal("note", info.TypeId);
             Assert.Equal("note", info.RoleId);
@@ -702,18 +708,20 @@ namespace Cadmus.TestBase
 
             Assert.Equal(3, parts.Count);
 
-            CategoriesPart partCategories = parts.OfType<CategoriesPart>().FirstOrDefault();
-            Assert.NotNull(partCategories);
-            Assert.Equal(2, partCategories.Categories.Count);
+            CategoriesPart categoriesPart = parts.OfType<CategoriesPart>()
+                .FirstOrDefault();
+            Assert.NotNull(categoriesPart);
+            Assert.Equal(2, categoriesPart.Categories.Count);
 
-            NotePart partNote = parts.OfType<NotePart>().FirstOrDefault();
-            Assert.NotNull(partNote);
-            Assert.Equal("Some notes.", partNote.Text);
+            NotePart notePart = parts.OfType<NotePart>().FirstOrDefault();
+            Assert.NotNull(notePart);
+            Assert.Equal("Some notes.", notePart.Text);
 
-            TokenTextLayerPart<CommentLayerFragment> partCommentLayer = 
-                parts.OfType<TokenTextLayerPart<CommentLayerFragment>>().FirstOrDefault();
-            Assert.NotNull(partCommentLayer);
-            Assert.Equal(2, partCommentLayer.Fragments.Count);
+            TokenTextLayerPart<CommentLayerFragment> commentLayerPart =
+                parts.OfType<TokenTextLayerPart<CommentLayerFragment>>()
+                .FirstOrDefault();
+            Assert.NotNull(commentLayerPart);
+            Assert.Equal(2, commentLayerPart.Fragments.Count);
         }
 
         protected void DoGetItemParts_Items1And2_2()
@@ -725,18 +733,20 @@ namespace Cadmus.TestBase
 
             Assert.Equal(3, parts.Count);
 
-            CategoriesPart partCategories = parts.OfType<CategoriesPart>().FirstOrDefault();
-            Assert.NotNull(partCategories);
-            Assert.Equal(2, partCategories.Categories.Count);
+            CategoriesPart categoriesPart = parts.OfType<CategoriesPart>()
+                .FirstOrDefault();
+            Assert.NotNull(categoriesPart);
+            Assert.Equal(2, categoriesPart.Categories.Count);
 
-            NotePart partNote = parts.OfType<NotePart>().FirstOrDefault();
-            Assert.NotNull(partNote);
-            Assert.Equal("Some notes.", partNote.Text);
+            NotePart notePart = parts.OfType<NotePart>().FirstOrDefault();
+            Assert.NotNull(notePart);
+            Assert.Equal("Some notes.", notePart.Text);
 
-            TokenTextLayerPart<CommentLayerFragment> partCommentLayer = 
-                parts.OfType<TokenTextLayerPart<CommentLayerFragment>>().FirstOrDefault();
-            Assert.NotNull(partCommentLayer);
-            Assert.Equal(2, partCommentLayer.Fragments.Count);
+            TokenTextLayerPart<CommentLayerFragment> commentLayerPart =
+                parts.OfType<TokenTextLayerPart<CommentLayerFragment>>()
+                .FirstOrDefault();
+            Assert.NotNull(commentLayerPart);
+            Assert.Equal(2, commentLayerPart.Fragments.Count);
         }
 
         // TODO

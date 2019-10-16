@@ -1,4 +1,6 @@
-﻿namespace Cadmus.Core.Storage
+﻿using Cadmus.Core.Config;
+
+namespace Cadmus.Core.Storage
 {
     /// <summary>
     /// Cadmus database manager.
@@ -10,7 +12,7 @@
         /// </summary>
         /// <param name="source">The database source.</param>
         /// <param name="profile">The database profile.</param>
-        void CreateDatabase(string source, string profile);
+        void CreateDatabase(string source, DataProfile profile);
 
         /// <summary>
         /// Deletes the database.

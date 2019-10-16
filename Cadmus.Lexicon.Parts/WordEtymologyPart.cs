@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Fusi.Antiquity.Chronology;
 using Fusi.Tools.Config;
 using Fusi.Tools.Text;

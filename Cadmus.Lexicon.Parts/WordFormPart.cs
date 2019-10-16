@@ -1,4 +1,4 @@
-﻿using Cadmus.Core.Blocks;
+﻿using Cadmus.Core;
 using Fusi.Tools.Config;
 using System.Collections.Generic;
 
@@ -7,7 +7,6 @@ namespace Cadmus.Lexicon.Parts
     /// <summary>
     /// Word phonetic and graphic form part.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
     [Tag("lexicon-word-form")]
     public sealed class WordFormPart : PartBase
     {

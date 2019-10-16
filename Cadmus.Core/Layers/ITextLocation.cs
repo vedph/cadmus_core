@@ -24,18 +24,6 @@
         bool IsRange { get; }
 
         /// <summary>
-        /// Clears this instance.
-        /// </summary>
-        void Clear();
-
-        /// <summary>
-        /// Copies points values from the <paramref name="other"/> specified
-        /// location.
-        /// </summary>
-        /// <param name="other">The other location.</param>
-        void CopyFrom(ITextLocation<TPoint> other);
-
-        /// <summary>
         /// True if the <paramref name="other"/> specified location overlaps
         /// any part of this location.
         /// </summary>

@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Cadmus.Core.Blocks;
+using System.Text.Json;
+using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
-using TagSet = Cadmus.Core.Config.TagSet;
+using MongoDB.Driver.Linq;
+using Thesaurus = Cadmus.Core.Config.Thesaurus;
 
 namespace Cadmus.Mongo
 {
@@ -21,65 +18,15 @@ namespace Cadmus.Mongo
     /// MongoDB based repository for Cadmus data.
     /// Tag: <c>cadmus-repository.mongo</c>.
     /// </summary>
-    /// <remarks>The Mongo database has the following collections:
-    /// <list type="bullet">
-    /// <item>
-    /// <term>flags</term>
-    /// <description>collection of <see cref="StoredFlagDefinition"/>'s.
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <term>facets</term>
-    /// <description>collection of <see cref="StoredItemFacet"/>'s.</description>
-    /// </item>
-    /// <item>
-    /// <term>items</term>
-    /// <description>collection of <see cref="StoredItem"/>'s.</description>
-    /// </item>
-    /// <item>
-    /// <term>history-items</term>
-    /// <description>collection of <see cref="StoredHistoryItem"/>'s.</description>
-    /// </item>
-    /// <item>
-    /// <term>parts</term>
-    /// <description>collection of <see cref="BsonDocument"/>'s representing
-    /// objects implementing <see cref="IPart"/>, whose standard properties are
-    /// <c>Id</c>, <c>ItemId</c>, <c>TypeId</c>, <c>RoleId</c>,
-    /// <c>TimeModified</c>, <c>UserId</c>. Each part type then adds its own
-    /// properties.</description>
-    /// </item>
-    /// <item>
-    /// <term>history-parts</term>
-    /// <description>collection of <see cref="HistoryWrapper{BsonDocument}"/>'s:
-    /// its properties are <c>Id</c>, <c>TimeModified</c>, <c>UserId</c>,
-    /// <c>Status</c>, <c>Content</c>, which represents the objects implementing
-    /// <see cref="IPart"/>.
-    /// </description>
-    /// </item>
-    /// </list>
-    /// <para>As for parts, their models vary according to the part type, and
-    /// part types may not be known before runtime, as they may come from plugins.
-    /// When reading an item with its parts (<see cref="GetItem"/>), an instance
-    /// of <see cref="IPartTypeProvider"/> is used to get the C# type for each
-    /// part, and then this type information is used to instantiate the
-    /// corresponding object during BSON deserialization. When adding an item
-    /// (<see cref="AddItem"/>), no parts are added; each part is added
-    /// separately using <see cref="AddPart"/>, which just stores the part
-    /// object as a BSON document.</para>
-    /// </remarks>
     [Tag("cadmus-repository.mongo")]
-    public sealed class MongoCadmusRepository : ICadmusRepository,
+    public sealed class MongoCadmusRepository : MongoConsumerBase,
+        ICadmusRepository,
         IConfigurable<MongoCadmusRepositoryOptions>
     {
-        /// <summary>The name of the parts collection.</summary>
-        public const string COLL_PARTS = "parts";
-
-        /// <summary>The name of the history parts collection.</summary>
-        public const string COLL_HISTORYPARTS = "history-parts";
-
         private readonly IPartTypeProvider _partTypeProvider;
+        private readonly JsonSerializerOptions _jsonOptions;
         private MongoCadmusRepositoryOptions _options;
-        private MongoClient _client;
+        private string _databaseName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoCadmusRepository"/>
@@ -93,13 +40,10 @@ namespace Cadmus.Mongo
             _partTypeProvider = partTypeProvider ??
                 throw new ArgumentNullException(nameof(partTypeProvider));
 
-            // camel case everything:
-            // https://stackoverflow.com/questions/19521626/mongodb-convention-packs/19521784#19521784
-            ConventionPack pack = new ConventionPack
+            _jsonOptions = new JsonSerializerOptions
             {
-                new CamelCaseElementNameConvention()
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
-            ConventionRegistry.Register("camel case", pack, _ => true);
         }
 
         /// <summary>
@@ -110,9 +54,7 @@ namespace Cadmus.Mongo
         public void Configure(MongoCadmusRepositoryOptions options)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
-
-            _client = new MongoClient(string.Format(CultureInfo.InvariantCulture,
-                _options.ConnectionStringTemplate, _options.DatabaseName));
+            _databaseName = GetDatabaseName(_options.ConnectionString);
         }
 
         #region Flags
@@ -120,21 +62,18 @@ namespace Cadmus.Mongo
         /// Gets the flag definitions.
         /// </summary>
         /// <returns>definitions</returns>
-        public IList<IFlagDefinition> GetFlagDefinitions()
+        public IList<FlagDefinition> GetFlagDefinitions()
         {
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredFlagDefinition> collection =
-                db.GetCollection<StoredFlagDefinition>(
-                    StoredFlagDefinition.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            return (from d in collection.Find(_ => true).SortBy(f => f.Id).ToList()
-                select (IFlagDefinition) new FlagDefinition
-                {
-                    Id = d.Id,
-                    Label = d.Label,
-                    Description = d.Description,
-                    ColorKey = d.ColorKey
-                }).ToList();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var flags = db.GetCollection<MongoFlagDefinition>(
+                MongoFlagDefinition.COLLECTION);
+
+            return (from d in flags.Find(_ => true)
+                    .SortBy(f => f.Id).ToList()
+                    select d.ToFlagDefinition())
+                    .ToList();
         }
 
         /// <summary>
@@ -142,14 +81,16 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="id">The flag identifier.</param>
         /// <returns>definition or null if not found</returns>
-        public IFlagDefinition GetFlagDefinition(int id)
+        public FlagDefinition GetFlagDefinition(int id)
         {
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredFlagDefinition> collection =
-                db.GetCollection<StoredFlagDefinition>(
-                    StoredFlagDefinition.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            return collection.Find(f => f.Id.Equals(id)).FirstOrDefault();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var flags = db.GetCollection<MongoFlagDefinition>(
+                MongoFlagDefinition.COLLECTION);
+
+            return flags.Find(f => f.Id.Equals(id))
+                .FirstOrDefault()?.ToFlagDefinition();
         }
 
         /// <summary>
@@ -157,18 +98,18 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="definition">The definition.</param>
         /// <exception cref="ArgumentNullException">null definition</exception>
-        public void AddFlagDefinition(IFlagDefinition definition)
+        public void AddFlagDefinition(FlagDefinition definition)
         {
             if (definition == null)
                 throw new ArgumentNullException(nameof(definition));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredFlagDefinition> collection =
-                db.GetCollection<StoredFlagDefinition>(
-                    StoredFlagDefinition.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var flags = db.GetCollection<MongoFlagDefinition>(
+                MongoFlagDefinition.COLLECTION);
 
-            collection.ReplaceOne(f => f.Id.Equals(definition.Id),
-                new StoredFlagDefinition(definition),
+            flags.ReplaceOne(f => f.Id.Equals(definition.Id),
+                new MongoFlagDefinition(definition),
                 new UpdateOptions {IsUpsert = true});
         }
 
@@ -178,12 +119,12 @@ namespace Cadmus.Mongo
         /// <param name="id">The flag identifier.</param>
         public void DeleteFlagDefinition(int id)
         {
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredFlagDefinition> collection =
-                db.GetCollection<StoredFlagDefinition>(
-                    StoredFlagDefinition.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var flags = db.GetCollection<MongoFlagDefinition>(
+                MongoFlagDefinition.COLLECTION);
 
-            collection.DeleteOne(f => f.Id.Equals(id));
+            flags.DeleteOne(f => f.Id.Equals(id));
         }
         #endregion
 
@@ -192,21 +133,16 @@ namespace Cadmus.Mongo
         /// Gets the item's facets.
         /// </summary>
         /// <returns>facets</returns>
-        public IList<IFacet> GetFacets()
+        public IList<FacetDefinition> GetFacetDefinitions()
         {
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItemFacet> collection =
-                db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var facets = db.GetCollection<MongoFacetDefinition>(
+                MongoFacetDefinition.COLLECTION);
 
-            return (from f in collection.Find(_ => true)
+            return (from f in facets.Find(_ => true)
                     .SortBy(f => f.Label).ToList()
-                select (IFacet)new Facet
-                {
-                    Id = f.Id,
-                    Label = f.Label,
-                    Description = f.Description,
-                    PartDefinitions = f.PartDefinitions
-                }).ToList();
+                select f.ToFacetDefinition()).ToList();
         }
 
         /// <summary>
@@ -215,15 +151,17 @@ namespace Cadmus.Mongo
         /// <param name="id">The facet identifier.</param>
         /// <returns>facet or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public IFacet GetFacet(string id)
+        public FacetDefinition GetFacetDefinition(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItemFacet> collection =
-                db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var facets = db.GetCollection<MongoFacetDefinition>(
+                MongoFacetDefinition.COLLECTION);
 
-            return collection.Find(f => f.Id.Equals(id)).FirstOrDefault();
+            return facets.Find(f => f.Id.Equals(id)).FirstOrDefault()?
+                .ToFacetDefinition();
         }
 
         /// <summary>
@@ -231,17 +169,18 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="facet">The facet.</param>
         /// <exception cref="ArgumentNullException">null facet</exception>
-        public void AddFacet(IFacet facet)
+        public void AddFacetDefinition(FacetDefinition facet)
         {
             if (facet == null) throw new ArgumentNullException(nameof(facet));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItemFacet> collection =
-                db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var facets = db.GetCollection<MongoFacetDefinition>(
+                    MongoFacetDefinition.COLLECTION);
 
-            collection.ReplaceOne(f => f.Id.Equals(facet.Id),
-                new StoredItemFacet(facet),
-                new UpdateOptions {IsUpsert = true});
+            facets.ReplaceOne(f => f.Id.Equals(facet.Id),
+                new MongoFacetDefinition(facet),
+                new UpdateOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -249,177 +188,184 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="id">The facet identifier.</param>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public void DeleteFacet(string id)
+        public void DeleteFacetDefinition(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItemFacet> collection =
-                db.GetCollection<StoredItemFacet>(StoredItemFacet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var facets = db.GetCollection<MongoFacetDefinition>(
+                MongoFacetDefinition.COLLECTION);
 
-            collection.DeleteOne(f => f.Id.Equals(id));
+            facets.DeleteOne(f => f.Id.Equals(id));
         }
         #endregion
 
-        #region Tags
+        #region Thesauri
         /// <summary>
-        /// Gets the IDs of all the tags sets.
+        /// Gets the IDs of all the thesauri.
         /// </summary>
         /// <returns>IDs</returns>
-        public IList<string> GetTagSetIds()
+        public IList<string> GetThesaurusIds()
         {
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredTagSet> collection =
-                db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            return (from set in collection.AsQueryable()
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
+
+            return (from set in thesauri.AsQueryable()
                 orderby set.Id
                 select set.Id).ToList();
         }
 
         /// <summary>
-        /// Gets the tag set with the specified ID.
+        /// Gets the thesaurus with the specified ID.
         /// </summary>
-        /// <param name="id">The tag set ID.</param>
+        /// <param name="id">The thesaurus ID.</param>
         /// <returns>tag set, or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public TagSet GetTagSet(string id)
+        public Thesaurus GetThesaurus(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredTagSet> collection =
-                db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            StoredTagSet stored = collection.AsQueryable()
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
+
+            MongoThesaurus mongo = thesauri.AsQueryable()
                 .FirstOrDefault(set => set.Id == id);
-            return stored == null
-                ? null
-                : new TagSet
-                {
-                    Id = stored.Id,
-                    Tags = stored.Tags.ToList()
-                };
+            return mongo?.ToThesaurus();
         }
 
         /// <summary>
-        /// Adds or updates the specified tag set.
+        /// Adds or updates the specified thesaurus.
         /// </summary>
-        /// <param name="set">The set.</param>
-        /// <exception cref="ArgumentNullException">null set</exception>
-        public void AddTagSet(TagSet set)
+        /// <param name="thesaurus">The thesaurus.</param>
+        /// <exception cref="ArgumentNullException">null thesaurus</exception>
+        public void AddThesaurus(Thesaurus thesaurus)
         {
-            if (set == null) throw new ArgumentNullException(nameof(set));
+            if (thesaurus == null) throw new ArgumentNullException(nameof(thesaurus));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredTagSet> collection =
-                db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            collection.ReplaceOne(old => old.Id.Equals(set.Id),
-                new StoredTagSet(set),
-                new UpdateOptions {IsUpsert = true});
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
+
+            thesauri.ReplaceOne(old => old.Id.Equals(thesaurus.Id),
+                new MongoThesaurus(thesaurus),
+                new UpdateOptions { IsUpsert = true });
         }
 
         /// <summary>
-        /// Deletes the specified tag set.
+        /// Deletes the specified thesaurus.
         /// </summary>
-        /// <param name="id">The tag set ID.</param>
+        /// <param name="id">The thesaurus ID.</param>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public void DeleteTagSet(string id)
+        public void DeleteThesaurus(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredTagSet> collection =
-                db.GetCollection<StoredTagSet>(StoredTagSet.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            collection.DeleteOne(set => set.Id.Equals(id));
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
+
+            thesauri.DeleteOne(t => t.Id.Equals(id));
         }
         #endregion
 
         #region Items
-        private static IItemInfo CreateItemInfo(StoredItem item)
-        {
-            return new ItemInfo
-            {
-                Id = item.Id,
-                Title = item.Title,
-                Description = item.Description,
-                Facet = item.FacetId,
-                SortKey = item.SortKey,
-                Flags = item.Flags,
-                UserId = item.UserId,
-                TimeModified = item.TimeModified
-            };
-        }
-
         /// <summary>
         /// Gets a page of items.
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>items page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<IItemInfo> GetItems(ItemFilter filter)
+        public PagedData<ItemInfo> GetItems(ItemFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItem> collection =
-                db.GetCollection<StoredItem>(StoredItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            IQueryable<StoredItem> items = collection.AsQueryable();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
-            if (filter.Title != null)
-                items = items.Where(i => i.Title.Contains(filter.Title));
+            var builder = new FilterDefinitionBuilder<MongoItem>();
+            FilterDefinition<MongoItem> f = builder.Empty;
 
-            if (filter.Description != null)
-                items = items.Where(i => i.Description.Contains(filter.Description));
+            if (!string.IsNullOrEmpty(filter.Title))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.Title.Contains(filter.Title)));
+            }
 
-            if (filter.FacetId != null)
-                items = items.Where(i => i.FacetId.Equals(filter.FacetId));
+            if (!string.IsNullOrEmpty(filter.Description))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.Description.Contains(filter.Title)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.FacetId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.Description.Contains(filter.FacetId)));
+            }
 
             if (filter.Flags.HasValue)
-                items = items.Where(i => i.Flags.Equals(filter.Flags.Value));
+            {
+                f = builder.And(builder.BitsAllSet(i => i.Flags, filter.Flags.Value));
+            }
 
-            if (filter.UserId != null)
-                items = items.Where(i => i.UserId.Equals(filter.UserId));
+            if (!string.IsNullOrEmpty(filter.UserId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.UserId.Equals(filter.UserId)));
+            }
 
             if (filter.MinModified.HasValue)
-                items = items.Where(i => i.TimeModified >= filter.MinModified.Value);
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.TimeModified >= filter.MinModified.Value));
+            }
 
             if (filter.MaxModified.HasValue)
-                items = items.Where(i => i.TimeModified <= filter.MaxModified.Value);
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.TimeModified <= filter.MaxModified.Value));
+            }
 
-            int total = items.Count();
-            if (total == 0) return new PagedData<IItemInfo>(0, new List<IItemInfo>());
+            int total = (int)items.CountDocuments(f);
+            if (total == 0) return new PagedData<ItemInfo>(0, new List<ItemInfo>());
 
-            items = items.OrderBy(i => i.SortKey);
-            var page = items.Skip((filter.PageNumber - 1) * filter.PageSize)
-                .Take(filter.PageSize)
+            var mongoItems = items.Find(f)
+                .SortBy(i => i.SortKey)
+                .Skip(filter.GetSkipCount())
+                .Limit(filter.PageSize)
                 .ToList();
 
-            IList<IItemInfo> results = page.Select(CreateItemInfo).ToList();
-            return new PagedData<IItemInfo>(total, results);
+            IList<ItemInfo> results = mongoItems.Select(i => i.ToItemInfo()).ToList();
+            return new PagedData<ItemInfo>(total, results);
         }
 
-        private static string GetFrTypeFromRoleId(string roleId)
-        {
-            int i = roleId.IndexOf('.');
-            return i > -1 ? roleId.Substring(0, i) : roleId;
-        }
+        //private static string GetFrTypeFromRoleId(string roleId)
+        //{
+        //    int i = roleId.IndexOf('.');
+        //    return i > -1 ? roleId.Substring(0, i) : roleId;
+        //}
 
-        private static string BuildPartTypeProviderId(BsonDocument doc)
-        {
-            // the requested type ID should include the role ID when dealing with
-            // text layer parts, whose role ID is assumed to be equal to their
-            // fragment type ID, which always begin with "fr-", up to the 1st
-            // dot if any.
-            return doc["typeId"].AsString +
-                   (!doc["roleId"].IsBsonNull
-                     && Regex.IsMatch(doc["roleId"].AsString, "fr-.+")
-                       ? $":{GetFrTypeFromRoleId(doc["roleId"].AsString)}"
-                       : "");
-        }
+        //private static string BuildPartTypeProviderId(BsonDocument doc)
+        //{
+        //    // the requested type ID should include the role ID when dealing with
+        //    // text layer parts, whose role ID is assumed to be equal to their
+        //    // fragment type ID, which always begin with "fr-", up to the 1st
+        //    // dot if any.
+        //    return doc["typeId"].AsString +
+        //           (!doc["roleId"].IsBsonNull
+        //             && Regex.IsMatch(doc["roleId"].AsString, "fr-.+")
+        //               ? $":{GetFrTypeFromRoleId(doc["roleId"].AsString)}"
+        //               : "");
+        //}
 
         /// <summary>
         /// Gets the specified item.
@@ -433,50 +379,22 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItem> collection =
-                db.GetCollection<StoredItem>(StoredItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            StoredItem stored = collection.Find(
-                i => i.Id.Equals(id)).FirstOrDefault();
-            if (stored == null) return null;
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
-            Item item = new Item
-            {
-                Id = stored.Id,
-                Title = stored.Title,
-                Description = stored.Description,
-                FacetId = stored.FacetId,
-                SortKey = stored.SortKey,
-                Flags = stored.Flags,
-                UserId = stored.UserId,
-                TimeModified = stored.TimeModified
-            };
+            MongoItem mongoItem = items.Find(i => i.Id.Equals(id)).FirstOrDefault();
+            if (mongoItem == null) return null;
+
+            Item item = mongoItem.ToItem();
 
             // add parts if required
             if (includeParts)
             {
-                IMongoCollection<BsonDocument> parts =
-                    db.GetCollection<BsonDocument>(COLL_PARTS);
-                foreach (BsonDocument doc in parts.AsQueryable()
-                    .Where(p => p["itemId"].Equals(id)))
-                {
-                    // the requested type ID should include the role ID when
-                    // dealing with text layer parts, whose role ID is assumed
-                    // to be equal to their fragment type ID, which always begin
-                    // with "fr-"
-                    string reqTypeId = BuildPartTypeProviderId(doc);
-                    Type t = _partTypeProvider.Get(reqTypeId);
-
-                    if (t == null)
-                    {
-                        Debug.WriteLine("Unable to get part type from part ID " +
-                            $"{doc["typeId"].AsString}");
-                        continue;
-                    }
-                    IPart part = (IPart) BsonSerializer.Deserialize(doc, t);
-                    item.Parts.Add(part);
-                }
+                var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+                item.Parts.AddRange(InstantiateParts(
+                    parts.AsQueryable().Where(p => p.ItemId.Equals(id))));
             }
 
             return item;
@@ -495,31 +413,31 @@ namespace Cadmus.Mongo
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItem> items =
-                db.GetCollection<StoredItem>(StoredItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            item.TimeModified = DateTime.UtcNow;
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             if (history)
             {
                 // add the new item to the history, as newly created or updated
-                StoredItem old = items.Find(i => i.Id.Equals(item.Id))
-                    .FirstOrDefault();
-                StoredHistoryItem historyItem = new StoredHistoryItem(item)
+                bool exists = items.AsQueryable().Any(i => i.Id.Equals(item.Id));
+
+                // set time modified when updating
+                if (exists) item.TimeModified = DateTime.UtcNow;
+
+                MongoHistoryItem historyItem = new MongoHistoryItem(item)
                 {
-                    Status = old == null ? EditStatus.Created : EditStatus.Updated,
+                    Status = exists ? EditStatus.Updated : EditStatus.Created
                 };
 
-                IMongoCollection<StoredHistoryItem> historyItems =
-                    db.GetCollection<StoredHistoryItem>(
-                        StoredHistoryItem.COLLECTION);
-                historyItems.InsertOne(historyItem);
+                db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION)
+                    .InsertOne(historyItem);
             }
 
             items.ReplaceOne(i => i.Id.Equals(item.Id),
-                new StoredItem(item),
-                new UpdateOptions {IsUpsert = true});
+                new MongoItem(item),
+                new UpdateOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -537,38 +455,37 @@ namespace Cadmus.Mongo
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (userId == null) throw new ArgumentNullException(nameof(userId));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
 
             // find the item to delete
-            IMongoCollection<StoredItem> items =
-                db.GetCollection<StoredItem>(StoredItem.COLLECTION);
-            StoredItem stored = items.Find(i => i.Id.Equals(id)).FirstOrDefault();
-            if (stored == null) return;
+            var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
+            MongoItem mongoItem = items.Find(i => i.Id.Equals(id)).FirstOrDefault();
+            if (mongoItem == null) return;
 
-            // delete the item's parts (one at a time as we need to store them 
+            // delete the item's parts (one at a time, as we need to store them 
             // into history, too)
-            IMongoCollection<BsonDocument> partsCollection =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
+            var partsCollection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             var parts = (from p in partsCollection.AsQueryable()
-                where p["itemId"].Equals(id)
+                where p.ItemId.Equals(id)
                 select p).ToList();
-            foreach (var p in parts) DeletePart(p["_id"].AsString, userId, history);
+            foreach (var p in parts) DeletePart(p.Id, userId, history);
 
             // store the item being deleted into history, as deleted now by 
             // the specified user
             if (history)
             {
-                StoredHistoryItem historyItem = new StoredHistoryItem(stored)
+                MongoHistoryItem historyItem = new MongoHistoryItem(mongoItem)
                 {
-                    TimeModified = DateTime.UtcNow,
+                    // user deleted it now
                     UserId = userId,
-                    Status = EditStatus.Deleted
+                    Status = EditStatus.Deleted,
+                    TimeModified = DateTime.UtcNow
                 };
 
-                IMongoCollection<StoredHistoryItem> historyItems =
-                    db.GetCollection<StoredHistoryItem>(
-                        StoredHistoryItem.COLLECTION);
-                historyItems.InsertOne(historyItem);
+                db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION)
+                    .InsertOne(historyItem);
             }
 
             // delete the item
@@ -576,39 +493,24 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
-        /// Sets the item flags.
+        /// Set the flags of the item(s) with the specified ID(s).
+        /// Note that this operation never affects the item's history.
         /// </summary>
-        /// <param name="id">The item identifier.</param>
+        /// <param name="ids">The item identifier(s).</param>
         /// <param name="flags">The flags value.</param>
-        /// <exception cref="ArgumentNullException">null ID</exception>
-        public void SetItemFlags(string id, int flags)
+        /// <exception cref="ArgumentNullException">null ID(s)</exception>
+        public void SetItemFlags(IList<string> ids, int flags)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (ids == null) throw new ArgumentNullException(nameof(ids));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredItem> items =
-                db.GetCollection<StoredItem>(StoredItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            items.UpdateOne(i => i.Id.Equals(id),
-                Builders<StoredItem>.Update.Set("flags", flags));
-        }
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
-        private static IHistoryItemInfo CreateHistoryItemInfo(
-            StoredHistoryItem item)
-        {
-            return new HistoryItemInfo
-            {
-                Id = item.Id,
-                ReferenceId = item.ReferenceId,
-                Title = item.Title,
-                Description = item.Description,
-                Facet = item.FacetId,
-                SortKey = item.SortKey,
-                Flags = item.Flags,
-                UserId = item.UserId,
-                TimeModified = item.TimeModified,
-                Status = item.Status
-            };
+            items.UpdateMany(
+                Builders<MongoItem>.Filter.In(i => i.Id, ids),
+                Builders<MongoItem>.Update.Set(i => i.Flags, flags));
         }
 
         /// <summary>
@@ -617,66 +519,86 @@ namespace Cadmus.Mongo
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<IHistoryItemInfo> GetHistoryItems(
-            HistoryItemFilter filter)
+        public PagedData<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredHistoryItem> collection =
-                db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            IQueryable<StoredHistoryItem> items = collection.AsQueryable();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
-            if (filter.ReferenceId != null)
-                items = items.Where(i => i.ReferenceId.Equals(filter.ReferenceId));
+            var builder = new FilterDefinitionBuilder<MongoHistoryItem>();
+            FilterDefinition<MongoHistoryItem> f = builder.Empty;
 
-            if (filter.UserId != null)
-                items = items.Where(i => i.UserId.Equals(filter.UserId));
+            if (!string.IsNullOrEmpty(filter.Title))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Title.Contains(filter.Title)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Description))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Description.Contains(filter.Title)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.FacetId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Description.Contains(filter.FacetId)));
+            }
+
+            if (filter.Flags.HasValue)
+            {
+                f = builder.And(builder.BitsAllSet(i => i.Flags, filter.Flags.Value));
+            }
+
+            if (!string.IsNullOrEmpty(filter.ReferenceId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.ReferenceId.Equals(filter.ReferenceId)));
+            }
 
             if (filter.Status.HasValue)
-                items = items.Where(i => i.Status.Equals(filter.Status.Value));
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Status.Equals(filter.Status.Value)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.UserId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.UserId.Equals(filter.UserId)));
+            }
 
             if (filter.MinModified.HasValue)
             {
-                items = items.Where(i =>
-                    i.TimeModified.ToUniversalTime() >= filter.MinModified.Value);
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.TimeModified >= filter.MinModified.Value));
             }
 
             if (filter.MaxModified.HasValue)
             {
-                items = items.Where(i =>
-                    i.TimeModified.ToUniversalTime() >= filter.MaxModified.Value);
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.TimeModified <= filter.MaxModified.Value));
             }
 
-            int total = items.Count();
+            int total = (int)items.CountDocuments(f);
             if (total == 0)
-                return new PagedData<IHistoryItemInfo>(0, new List<IHistoryItemInfo>());
+            {
+                return new PagedData<HistoryItemInfo>(0,
+                    new List<HistoryItemInfo>());
+            }
 
-            items = items.OrderBy(i => i.TimeModified);
-            var page = items.Skip((filter.PageNumber - 1) * filter.PageSize)
-                .Take(filter.PageSize)
+            var mongoItems = items.Find(f)
+                .SortBy(i => i.SortKey)
+                .Skip(filter.GetSkipCount())
+                .Limit(filter.PageSize)
                 .ToList();
 
-            IList<IHistoryItemInfo> results = page.Select(CreateHistoryItemInfo).ToList();
-            return new PagedData<IHistoryItemInfo>(total, results);
-        }
-
-        private static IHistoryItem CreateHistoryItem(StoredHistoryItem item)
-        {
-            return new HistoryItem
-            {
-                Id = item.Id,
-                ReferenceId = item.ReferenceId,
-                Title = item.Title,
-                Description = item.Description,
-                FacetId = item.FacetId,
-                SortKey = item.SortKey,
-                Flags = item.Flags,
-                UserId = item.UserId,
-                TimeModified = item.TimeModified,
-                Status = item.Status
-            };
+            var results = mongoItems.Select(i => i.ToHistoryItemInfo()).ToList();
+            return new PagedData<HistoryItemInfo>(total, results);
         }
 
         /// <summary>
@@ -685,19 +607,18 @@ namespace Cadmus.Mongo
         /// <param name="id">The history item's identifier.</param>
         /// <returns>item or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public IHistoryItem GetHistoryItem(string id)
+        public HistoryItem GetHistoryItem(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredHistoryItem> items =
-                db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
 
-            StoredHistoryItem item = items.Find(
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
+
+            MongoHistoryItem item = items.Find(
                 i => i.Id.Equals(id)).FirstOrDefault();
-            if (item == null) return null;
-
-            return CreateHistoryItem(item);
+            return item?.ToHistoryItem();
         }
 
         /// <summary>
@@ -705,16 +626,17 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="item">The item.</param>
         /// <exception cref="ArgumentNullException">null item</exception>
-        public void AddHistoryItem(IHistoryItem item)
+        public void AddHistoryItem(HistoryItem item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredHistoryItem> items =
-                db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
             items.ReplaceOne(h => h.Id.Equals(item.Id),
-                new StoredHistoryItem(item));
+                new MongoHistoryItem(item));
         }
 
         /// <summary>
@@ -726,131 +648,124 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<StoredHistoryItem> items =
-                db.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
             items.DeleteOne(i => i.Id.Equals(id));
         }
         #endregion
 
         #region Parts
-        private static IPartInfo CreatePartInfo(BsonDocument doc)
+
+        private IList<IPart> InstantiateParts(IEnumerable<MongoPart> parts,
+            bool throwOnNull = true)
         {
-            return new PartInfo
+            List<IPart> results = new List<IPart>();
+
+            foreach (MongoPart mongoPart in parts)
             {
-                Id = doc["_id"].AsString,
-                ItemId = doc["itemId"].AsString,
-                TypeId = doc["typeId"].AsString,
-                RoleId = doc["roleId"].IsBsonNull ? null : doc["roleId"].AsString,
-                UserId = doc["userId"].AsString,
-                TimeModified = doc["timeModified"].ToUniversalTime()
-            };
+                string reqTypeId = PartBase.BuildProviderId(
+                    mongoPart.TypeId, mongoPart.RoleId);
+                Type type = _partTypeProvider.Get(reqTypeId);
+
+                if (type == null)
+                {
+                    string error = "Unable to instantiate part from ID " + reqTypeId;
+                    Debug.WriteLine(error);
+                    if (throwOnNull) throw new ApplicationException(error);
+                    continue;
+                }
+                IPart part = (IPart)
+                    JsonSerializer.Deserialize(mongoPart.Content, type, _jsonOptions);
+                results.Add(part);
+            }
+            return results;
+        }
+
+        private static IMongoQueryable<MongoPart> ApplyPartFilters(
+            IMongoQueryable<MongoPart> parts, string[] itemIds,
+            string typeId, string roleId)
+        {
+            if (itemIds?.Length > 0)
+            {
+                if (itemIds.Length == 1)
+                {
+                    parts = parts.Where(p => p.ItemId.Equals(itemIds[0]));
+                }
+                else
+                {
+                    parts = parts.Where(p => itemIds.Contains(p.ItemId));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(typeId))
+                parts = parts.Where(p => p.TypeId.Equals(typeId));
+
+            if (!string.IsNullOrEmpty(roleId))
+                parts = parts.Where(p => p.RoleId.Equals(roleId));
+
+            return parts;
         }
 
         /// <summary>
-        /// Gets the specified page of matching parts, or all the matching parts
-        /// when the page size is 0.
+        /// Gets the specified page of parts.
         /// </summary>
         /// <param name="filter">The parts filter.</param>
         /// <returns>parts page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<IPartInfo> GetParts(PartFilter filter)
+        public PagedData<PartInfo> GetParts(PartFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
+            EnsureClientCreated(_options.ConnectionString);
 
-            IQueryable<BsonDocument> parts = collection.AsQueryable();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var partCollection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+            IMongoQueryable<MongoPart> parts = partCollection.AsQueryable();
 
-            if (filter.ItemIds?.Length > 0)
-            {
-                if (filter.ItemIds.Length == 1)
-                {
-                    parts = parts.Where(d => d["itemId"].Equals(filter.ItemIds[0]));
-                }
-                else
-                {
-                    // http://stackoverflow.com/questions/39065424/mongodb-c-sharp-linq-contains-against-a-string-array-throws-argumentexception/39068513#39068513
-                    List<BsonValue> aValues = filter.ItemIds
-                        .Select(BsonValue.Create).ToList();
-                    parts = parts.Where(d => aValues.Contains(d["itemId"]));
-                }
-            }
-
-            if (filter.TypeId != null)
-                parts = parts.Where(d => d["typeId"].Equals(filter.TypeId));
-
-            if (filter.RoleId != null)
-                parts = parts.Where(d => d["roleId"].Equals(filter.RoleId));
+            parts = ApplyPartFilters(parts, filter.ItemIds, filter.TypeId, filter.RoleId);
 
             if (filter.UserId != null)
-                parts = parts.Where(d => d["userId"].Equals(filter.UserId));
+                parts = parts.Where(p => p.UserId.Equals(filter.UserId));
 
             if (filter.MinModified.HasValue)
             {
-                parts = parts.Where(d => d["timeModified"].ToUniversalTime()
-                    >= filter.MinModified.Value);
+                parts = parts.Where(p => p.TimeModified >= filter.MinModified.Value);
             }
 
             if (filter.MaxModified.HasValue)
             {
-                parts = parts.Where(d => d["timeModified"].ToUniversalTime()
-                    <= filter.MaxModified.Value);
+                parts = parts.Where(p => p.TimeModified <= filter.MaxModified.Value);
             }
 
             int total = parts.Count();
-            if (total == 0)
-                return new PagedData<IPartInfo>(0, new List<IPartInfo>());
+            if (total == 0) return new PagedData<PartInfo>(0, new List<PartInfo>());
 
-            List<BsonDocument> results;
-            if (filter.PageSize == 0)
+            List<MongoPart> results;
+
+            // if no sort order specified, sort by TypeId,RoleId
+            if (filter.SortExpressions == null)
             {
-                // if no sort order specified, sort by TypeId,RoleId
-                if (filter.SortExpressions == null)
-                {
-                    results = parts.OrderBy(d => d["typeId"])
-                        .ThenBy(d => d["roleId"])
-                        .ToList();
-                }
-                else
-                {
-                    // else apply the requested sort order
-                    foreach (Tuple<string,bool> t in filter.SortExpressions)
-                    {
-                        parts = t.Item2
-                            ? parts.OrderBy(d => d[t.Item1])
-                            : parts.OrderByDescending(d => d[t.Item1]);
-                    }
-                    results = parts.ToList();
-                }
+                parts = parts.OrderBy(p => p.TypeId)
+                    .ThenBy(p => p.RoleId);
             }
             else
             {
-                // if no sort order specified, sort by TypeId,RoleId
-                if (filter.SortExpressions == null)
+                foreach (Tuple<string, bool> t in filter.SortExpressions)
                 {
-                    parts = parts.OrderBy(d => d["typeId"])
-                        .ThenBy(d => d["roleId"]);
+                    parts = (IMongoQueryable<MongoPart>)(t.Item2
+                        ? parts.OrderBy(t.Item1)
+                        : parts.OrderByDescending(t.Item1));
                 }
-                else
-                {
-                    foreach (Tuple<string, bool> t in filter.SortExpressions)
-                    {
-                        parts = t.Item2
-                            ? parts.OrderBy(d => d[t.Item1])
-                            : parts.OrderByDescending(d => d[t.Item1]);
-                    }
-                }
-                results = parts.Skip((filter.PageNumber - 1) * filter.PageSize)
-                    .Take(filter.PageSize)
-                    .ToList();
             }
+            results = parts.Skip(filter.GetSkipCount())
+                .Take(filter.PageSize)
+                .ToList();
 
-            return new PagedData<IPartInfo>(total,
-                results.Select(CreatePartInfo).ToList());
+            return new PagedData<PartInfo>(total,
+                results.Select(p => p.ToPartInfo()).ToList());
         }
 
         /// <summary>
@@ -872,45 +787,17 @@ namespace Cadmus.Mongo
             if (itemIds.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(itemIds));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
+            EnsureClientCreated(_options.ConnectionString);
 
-            IQueryable<BsonDocument> parts = collection.AsQueryable();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+            IMongoQueryable<MongoPart> parts = collection.AsQueryable();
 
-            if (itemIds.Length == 1)
-            {
-                parts = parts.Where(d => d["itemId"].Equals(itemIds[0]));
-            }
-            else
-            {
-                // http://stackoverflow.com/questions/39065424/mongodb-c-sharp-linq-contains-against-a-string-array-throws-argumentexception/39068513#39068513
-                List<BsonValue> values = itemIds.Select(BsonValue.Create).ToList();
-                parts = parts.Where(d => values.Contains(d["itemId"]));
-            }
+            parts = ApplyPartFilters(parts, itemIds, typeId, roleId);
 
-            if (typeId != null)
-                parts = parts.Where(d => d["typeId"].Equals(typeId));
-
-            if (roleId != null)
-                parts = parts.Where(d => d["roleId"].Equals(roleId));
-
-            var results = parts.OrderBy(d => d["typeId"])
-                .ThenBy(d => d["roleId"])
-                .ToList();
             List<IPart> itemParts = new List<IPart>();
-            foreach (BsonDocument doc in results)
-            {
-                string reqTypeId = BuildPartTypeProviderId(doc);
-                Type t = _partTypeProvider.Get(reqTypeId);
-                if (t == null)
-                {
-                    Debug.WriteLine("Unable to get part type from part ID " +
-                        $"{doc["typeId"].AsString}");
-                    continue;
-                }
-                itemParts.Add((IPart)BsonSerializer.Deserialize(doc, t));
-            }
+            itemParts.AddRange(InstantiateParts(
+                parts.OrderBy(p => p.TypeId).ThenBy(p => p.RoleId)));
 
             return itemParts;
         }
@@ -921,37 +808,36 @@ namespace Cadmus.Mongo
         /// parts IDs (part ID and role ID) so that you can retrieve each of
         /// them separately.
         /// </summary>
-        /// <param name="id">The item's identifier.</param>
+        /// <param name="itemId">The item's identifier.</param>
         /// <returns>array of tuples where 1=role ID and 2=part ID</returns>
         /// <exception cref="ArgumentNullException">null item ID</exception>
-        public List<Tuple<string, string>> GetItemLayerPartIds(string id)
+        public List<Tuple<string, string>> GetItemLayerPartIds(string itemId)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (itemId == null) throw new ArgumentNullException(nameof(itemId));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
 
             // we assume that all the layer parts have their role ID equal to their
             // fragments ID, which by convention starts with "fr-".
-            var builder = new FilterDefinitionBuilder<BsonDocument>();
-            var filter = builder.And(
-                builder.Eq(d => d["itemId"], BsonValue.Create(id)),
-                builder.Regex(d => d["roleId"],
-                new BsonRegularExpression(new Regex("^fr-"))));
-
-            var a = db.GetCollection<BsonDocument>(COLL_PARTS)
-                .Find(filter)
-                .SortBy(d => d["roleId"])
+            var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
+                .Find(Builders<MongoPart>.Filter
+                    .And(
+                        Builders<MongoPart>.Filter.Eq(p => p.ItemId, itemId),
+                        Builders<MongoPart>.Filter.Where(
+                            p => p.RoleId.StartsWith(PartBase.FR_PREFIX))))
+                .SortBy(p => p.RoleId)
                 .ToList();
 
-            return (from d in a
-                    select Tuple.Create(d["roleId"].AsString, d["_id"].AsString))
-                .ToList();
+            return parts.Select(p => Tuple.Create(p.RoleId, p.Id)).ToList();
         }
 
         /// <summary>
         /// Gets the specified part.
         /// </summary>
-        /// <typeparam name="T">the type of the part to retrieve</typeparam>
+        /// <typeparam name="T">The type of the part to cast the result to.
+        /// </typeparam>
         /// <param name="id">The part identifier.</param>
         /// <returns>part or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
@@ -959,13 +845,18 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
-            BsonDocument doc = collection.Find(p => p["_id"].Equals(id))
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            MongoPart part = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
+                .Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
 
-            return doc == null ? null : BsonSerializer.Deserialize<T>(doc);
+            if (part == null) return null;
+
+            return (T)JsonSerializer.Deserialize(part.Content,
+                _partTypeProvider.Get(part.TypeId),
+                _jsonOptions);
         }
 
         /// <summary>
@@ -974,17 +865,18 @@ namespace Cadmus.Mongo
         /// <param name="id">The part identifier.</param>
         /// <returns>JSON code or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public string GetPartJson(string id)
+        public string GetPartContent(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
-            BsonDocument doc = collection.Find(p => p["_id"].Equals(id))
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            MongoPart part = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
+                .Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
 
-            return doc?.ToJson();
+            return part?.Content;
         }
 
         /// <summary>
@@ -999,73 +891,35 @@ namespace Cadmus.Mongo
         {
             if (part == null) throw new ArgumentNullException(nameof(part));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> parts =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
+            EnsureClientCreated(_options.ConnectionString);
 
-            part.TimeModified = DateTime.UtcNow;
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+            string json = JsonSerializer.Serialize(part, _jsonOptions);
+
+            MongoPart mongoPart = new MongoPart(part)
+            {
+                Content = json
+            };
 
             if (history)
             {
-                BsonDocument old = parts.Find(d => d["_id"].Equals(part.Id))
-                    .FirstOrDefault();
-                BsonDocument historyPart = new BsonDocument
+                bool exists = parts.AsQueryable().Any(p => p.Id.Equals(part.Id));
+
+                // set time modified when updating
+                if (exists) part.TimeModified = DateTime.UtcNow;
+
+                MongoHistoryPart historyPart = new MongoHistoryPart(part)
                 {
-                    new BsonElement("_id", Guid.NewGuid().ToString("N")),
-                    new BsonElement("timeModified", part.TimeModified),
-                    new BsonElement("userId", part.UserId),
-                    new BsonElement("status", old == null ?
-                        EditStatus.Created : EditStatus.Updated),
-                    new BsonElement("content", part.ToBsonDocument())
+                    Content = json
                 };
 
-                IMongoCollection<BsonDocument> historyParts =
-                    db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
-                historyParts.InsertOne(historyPart);
+                db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
+                    .InsertOne(historyPart);
             }
 
-            parts.ReplaceOne(d => d["_id"].Equals(part.Id),
-                part.ToBsonDocument(),
-                new UpdateOptions {IsUpsert = true});
-        }
-
-        /// <summary>
-        /// Adds or updates the part represented by the specified JSON code.
-        /// </summary>
-        /// <param name="json">The JSON code representing the part.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be
-        /// affected.</param>
-        /// <exception cref="ArgumentNullException">null JSON</exception>
-        public void AddPartJson(string json, bool history = true)
-        {
-            if (json == null) throw new ArgumentNullException(nameof(json));
-
-            BsonDocument part = BsonDocument.Parse(json);
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> parts =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
-
-            if (history)
-            {
-                BsonDocument old = parts.Find(
-                    d => d["_id"].Equals(part["_id"])).FirstOrDefault();
-                BsonDocument historyPart = new BsonDocument
-                {
-                    new BsonElement("_id", Guid.NewGuid().ToString("N")),
-                    new BsonElement("timeModified", part["timeModified"]),
-                    new BsonElement("userId", part["userId"]),
-                    new BsonElement("status", old == null ?
-                    EditStatus.Created : EditStatus.Updated),
-                    new BsonElement("content", part.ToBsonDocument())
-                };
-
-                IMongoCollection<BsonDocument> historyParts =
-                    db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
-                historyParts.InsertOne(historyPart);
-            }
-
-            parts.ReplaceOne(d => d["_id"].Equals(part["_id"]),
-                part.ToBsonDocument(),
+            parts.ReplaceOne(p => p.Id.Equals(part.Id),
+                mongoPart,
                 new UpdateOptions { IsUpsert = true });
         }
 
@@ -1084,30 +938,29 @@ namespace Cadmus.Mongo
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (userId == null) throw new ArgumentNullException(nameof(userId));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> parts =
-                db.GetCollection<BsonDocument>(COLL_PARTS);
+            EnsureClientCreated(_options.ConnectionString);
 
-            BsonDocument part = parts.Find(
-                d => d["_id"].Equals(id)).FirstOrDefault();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+
+            MongoPart part = parts.Find(p => p.Id.Equals(id)).FirstOrDefault();
             if (part == null) return;
 
             if (history)
             {
-                BsonDocument docHistory = new BsonDocument
+                MongoHistoryPart historyPart = new MongoHistoryPart(part)
                 {
-                    new BsonElement("_id", Guid.NewGuid().ToString("N")),
-                    new BsonElement("userId", userId),
-                    new BsonElement("timeModified", DateTime.UtcNow),
-                    new BsonElement("status", EditStatus.Deleted),
-                    new BsonElement("content", part)
+                    // user deleted it now
+                    UserId = userId,
+                    Status = EditStatus.Deleted,
+                    TimeModified = DateTime.UtcNow
                 };
-                IMongoCollection<BsonDocument> historyParts =
-                    db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
-                historyParts.InsertOne(docHistory);
+
+                db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
+                    .InsertOne(historyPart);
             }
 
-            parts.DeleteOne(d => d["_id"].Equals(id));
+            parts.DeleteOne(p => p.Id.Equals(id));
         }
 
         /// <summary>
@@ -1115,85 +968,73 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
-        public PagedData<IHistoryPartInfo> GetHistoryParts(
-            HistoryPartFilter filter)
+        public PagedData<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
+            EnsureClientCreated(_options.ConnectionString);
 
-            IQueryable<BsonDocument> parts = collection.AsQueryable();
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var collection = db.GetCollection<MongoHistoryPart>(
+                MongoHistoryPart.COLLECTION);
+
+            IQueryable<MongoHistoryPart> parts = collection.AsQueryable();
 
             if (filter.ItemIds?.Length > 0)
             {
                 if (filter.ItemIds.Length == 1)
                 {
-                    parts = parts.Where(d => d["content"]["itemId"]
-                        .Equals(filter.ItemIds[0]));
+                    parts = parts.Where(p => p.ItemId.Equals(filter.ItemIds[0]));
                 }
                 else
                 {
-                    List<BsonValue> aValues = filter.ItemIds
-                        .Select(BsonValue.Create).ToList();
-                    parts = parts
-                        .Where(d => aValues.Contains(d["content"]["itemId"]));
+                    parts = parts.Where(p => filter.ItemIds.Contains(p.ItemId));
                 }
             }
 
-            if (filter.ReferenceId != null)
+            if (!string.IsNullOrEmpty(filter.TypeId))
+                parts = parts.Where(p => p.TypeId.Equals(filter.TypeId));
+
+            if (!string.IsNullOrEmpty(filter.RoleId))
+                parts = parts.Where(p => p.RoleId.Equals(filter.RoleId));
+
+            if (!string.IsNullOrEmpty(filter.ReferenceId))
             {
-                parts = parts.Where(d => d["content"]["_id"]
-                    .Equals(filter.ReferenceId));
+                parts = parts.Where(p => p.ReferenceId.Equals(filter.ReferenceId));
             }
 
             if (filter.Status.HasValue)
             {
-                parts = parts.Where(d => d["status"]
-                    .Equals(filter.Status.Value));
+                parts = parts.Where(p => p.Status.Equals(filter.Status.Value));
             }
 
-            if (filter.UserId != null)
-                parts = parts.Where(d => d["userId"].Equals(filter.UserId));
+            if (!string.IsNullOrEmpty(filter.UserId))
+                parts = parts.Where(p => p.UserId.Equals(filter.UserId));
 
             if (filter.MinModified.HasValue)
             {
-                parts = parts.Where(d => d["timeModified"].ToUniversalTime()
-                    >= filter.MinModified.Value);
+                parts = parts.Where(p => p.TimeModified >= filter.MinModified.Value);
             }
 
             if (filter.MaxModified.HasValue)
             {
-                parts = parts.Where(d => d["timeModified"].ToUniversalTime()
-                    <= filter.MaxModified.Value);
+                parts = parts.Where(p => p.TimeModified <= filter.MaxModified.Value);
             }
 
             int total = parts.Count();
             if (total == 0)
             {
-                return new PagedData<IHistoryPartInfo>(0,
-                    new List<IHistoryPartInfo>());
+                return new PagedData<HistoryPartInfo>(0,
+                    new List<HistoryPartInfo>());
             }
 
-            var page = parts.OrderBy(d => d["timeModified"])
-                .Skip((filter.PageNumber - 1) * filter.PageSize)
+            var page = parts.OrderBy(p => p.TimeModified)
+                .Skip(filter.GetSkipCount())
                 .Take(filter.PageSize)
                 .ToList();
 
-            IList<IHistoryPartInfo> pageParts = (from p in page
-                select (IHistoryPartInfo) new HistoryPartInfo
-                {
-                    Id = p["_id"].AsString,
-                    UserId = p["userId"].AsString,
-                    Status = (EditStatus) p["status"].AsInt32,
-                    TimeModified = p["timeModified"].ToUniversalTime(),
-                    ReferenceId = p["content"]["_id"].AsString,
-                    TypeId = p["content"]["typeId"].AsString,
-                    ItemId = p["content"]["itemId"].AsString,
-                    RoleId = p["content"]["roleId"].AsString,
-                }).ToList();
-            return new PagedData<IHistoryPartInfo>(total, pageParts);
+            return new PagedData<HistoryPartInfo>(total,
+                parts.Select(p => p.ToHistoryPartInfo()).ToList());
         }
 
         /// <summary>
@@ -1202,52 +1043,27 @@ namespace Cadmus.Mongo
         /// <param name="id">The identifier.</param>
         /// <returns>part or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public IHistoryPart<T> GetHistoryPart<T>(string id)
+        public HistoryPart<T> GetHistoryPart<T>(string id)
             where T : class, IPart
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
-            BsonDocument doc = collection.Find(p => p["_id"].Equals(id))
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var collection = db.GetCollection<MongoHistoryPart>(
+                MongoHistoryPart.COLLECTION);
+
+            MongoHistoryPart part = collection.Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
+            if (part == null) return null;
 
-            if (doc == null) return null;
-
-            T part = BsonSerializer.Deserialize<T>(doc["content"].AsBsonDocument);
-            return new HistoryPart<T>(part)
+            T wrapped = JsonSerializer.Deserialize<T>(part.Content, _jsonOptions);
+            return new HistoryPart<T>(part.Id, wrapped)
             {
-                Id = doc["_id"].AsString,
-                ReferenceId = doc["content"]["_id"].AsString,
-                Status = (EditStatus) doc["status"].AsInt32
+                UserId = part.UserId,
+                Status = part.Status
             };
-        }
-
-        /// <summary>
-        /// Adds the specified history part.
-        /// </summary>
-        /// <param name="part">The part.</param>
-        /// <exception cref="ArgumentNullException">null part</exception>
-        public void AddHistoryPart<T>(IHistoryPart<T> part)
-            where T : class,IPart
-        {
-            if (part == null) throw new ArgumentNullException(nameof(part));
-
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
-
-            BsonDocument doc = new BsonDocument
-            {
-                new BsonElement("_id", BsonValue.Create(Guid.NewGuid().ToString("N"))),
-                new BsonElement("status", part.Status),
-                new BsonElement("timeModified", part.Content.TimeModified),
-                new BsonElement("userId", part.Content.UserId),
-                new BsonElement("content", part.Content.ToBsonDocument())
-            };
-
-            collection.InsertOne(doc);
         }
 
         /// <summary>
@@ -1259,73 +1075,11 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            IMongoDatabase db = _client.GetDatabase(_options.DatabaseName);
-            IMongoCollection<BsonDocument> collection =
-                db.GetCollection<BsonDocument>(COLL_HISTORYPARTS);
+            EnsureClientCreated(_options.ConnectionString);
 
-            collection.DeleteOne(d => d["_id"].Equals(id));
-        }
-        #endregion
-
-        #region Indexes
-        /// <summary>
-        /// Creates the required indexes in the specified database.
-        /// </summary>
-        /// <param name="database">The database.</param>
-        /// <exception cref="ArgumentNullException">null database</exception>
-        public static void CreateIndexes(IMongoDatabase database)
-        {
-            if (database == null) throw new ArgumentNullException(nameof(database));
-
-            var itemsCollection = database.GetCollection<StoredItem>(StoredItem.COLLECTION);
-            itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(
-                Builders<StoredItem>.IndexKeys.Ascending(i => i.Title)));
-            itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(
-                Builders<StoredItem>.IndexKeys.Ascending(i => i.SortKey)));
-            itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(
-                Builders<StoredItem>.IndexKeys.Ascending(i => i.FacetId)));
-            itemsCollection.Indexes.CreateOne(new CreateIndexModel<StoredItem>(
-                Builders<StoredItem>.IndexKeys.Ascending(i => i.Flags)));
-            //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.Title));
-            //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.SortKey));
-            //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.FacetId));
-            //itemsCollection.Indexes.CreateOne(Builders<StoredItem>.IndexKeys.Ascending(i => i.Flags));
-
-            IMongoCollection<BsonDocument> partsCollection = database.GetCollection<BsonDocument>(COLL_PARTS);
-            IndexKeysDefinitionBuilder<BsonDocument> bsonKdb = new IndexKeysDefinitionBuilder<BsonDocument>();
-            partsCollection.Indexes.CreateOne(new CreateIndexModel<BsonDocument>(
-                Builders<BsonDocument>.IndexKeys.Ascending("itemId")));
-            partsCollection.Indexes.CreateOne(new CreateIndexModel<BsonDocument>(
-                Builders<BsonDocument>.IndexKeys.Ascending("typeId")));
-            //partsCollection.Indexes.CreateOne(Builders<BsonDocument>.IndexKeys.Ascending("itemId"));
-            //partsCollection.Indexes.CreateOne(Builders<BsonDocument>.IndexKeys.Ascending("typeId"));
-
-            var historyCollection = database.GetCollection<StoredHistoryItem>(StoredHistoryItem.COLLECTION);
-            IndexKeysDefinitionBuilder<StoredHistoryItem> histKdb = new IndexKeysDefinitionBuilder<StoredHistoryItem>();
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.ReferenceId)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Status)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Title)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.SortKey)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.FacetId)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Flags)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.TimeModified)));
-            historyCollection.Indexes.CreateOne(new CreateIndexModel<StoredHistoryItem>(
-                Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.UserId)));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.ReferenceId));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Status));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Title));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.SortKey));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.FacetId));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.Flags));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.TimeModified));
-            //historyCollection.Indexes.CreateOne(Builders<StoredHistoryItem>.IndexKeys.Ascending(i => i.UserId));
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
+                .DeleteOne(p => p.Id.Equals(id));
         }
         #endregion
     }
@@ -1336,25 +1090,9 @@ namespace Cadmus.Mongo
     public sealed class MongoCadmusRepositoryOptions
     {
         /// <summary>
-        /// Gets or sets the MongoDB connection string template, where <c>{0}</c>
-        /// is a placeholder for the database name.
+        /// Gets or sets the MongoDB connection string, like e.g.
+        /// <c>mongodb://localhost:27017/cadmus</c>.
         /// </summary>
-        /// <value>The default value is <c>mongodb://localhost:27017/{0}</c>.
-        /// </value>
-        public string ConnectionStringTemplate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the MongoDB database name.
-        /// </summary>
-        public string DatabaseName { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the
-        /// <see cref="MongoCadmusRepositoryOptions"/> class.
-        /// </summary>
-        public MongoCadmusRepositoryOptions()
-        {
-            ConnectionStringTemplate = "mongodb://localhost:27017/{0}";
-        }
+        public string ConnectionString { get; set; }
     }
 }

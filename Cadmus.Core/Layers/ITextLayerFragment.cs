@@ -1,4 +1,4 @@
-﻿using Cadmus.Core.Blocks;
+﻿using Cadmus.Core;
 
 namespace Cadmus.Core.Layers
 {
@@ -12,7 +12,7 @@ namespace Cadmus.Core.Layers
     /// as a whole which contains all the comments layered on the base text.
     /// </para>
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Blocks.IHasDataPins" />
+    /// <seealso cref="IHasDataPins" />
     public interface ITextLayerFragment : IHasDataPins
     {
         /// <summary>

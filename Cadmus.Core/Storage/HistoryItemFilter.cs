@@ -4,17 +4,27 @@
     /// Filter for history items.
     /// </summary>
     /// <seealso cref="Cadmus.Core.Storage.ItemFilter" />
-    /// <seealso cref="Cadmus.Core.Storage.IHistoryFilter" />
-    public class HistoryItemFilter : ItemFilter, IHistoryFilter
+    /// <seealso cref="Cadmus.Core.Storage.HistoryFilter" />
+    public class HistoryItemFilter : HistoryFilter
     {
         /// <summary>
-        /// Gets or sets the item identifier.
+        /// Gets or sets the title filter.
         /// </summary>
-        public string ReferenceId { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the status filter.
+        /// Gets or sets the description filter.
         /// </summary>
-        public EditStatus? Status { get; set; }
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the facet ID filter.
+        /// </summary>
+        public string FacetId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the flags filter.
+        /// </summary>
+        public int? Flags { get; set; }
     }
 }

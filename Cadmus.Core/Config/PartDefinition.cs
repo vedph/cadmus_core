@@ -3,7 +3,7 @@
 namespace Cadmus.Core.Config
 {
     /// <summary>
-    /// Definition of a part in an <see cref="Facet"/>.
+    /// Definition of a part in an <see cref="FacetDefinition"/>.
     /// </summary>
     public class PartDefinition
     {

@@ -1,4 +1,4 @@
-﻿using Cadmus.Core.Blocks;
+﻿using Cadmus.Core;
 using Fusi.Antiquity.Chronology;
 using Fusi.Tools.Config;
 using System.Collections.Generic;

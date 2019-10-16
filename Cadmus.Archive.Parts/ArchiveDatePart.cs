@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Fusi.Tools.Config;
 
 namespace Cadmus.Archive.Parts
@@ -17,7 +17,6 @@ namespace Cadmus.Archive.Parts
     /// 	</item>
     /// </list>
     /// </remarks>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
     [Tag("archive-date")]
     public sealed class ArchiveDatePart : PartBase
     {

@@ -14,6 +14,7 @@ namespace Cadmus.Core.Layers
     public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>
     {
         private TokenTextPoint _a;
+        private TokenTextPoint _b;
 
         #region Properties
         /// <summary>
@@ -23,18 +24,26 @@ namespace Cadmus.Core.Layers
         public TokenTextPoint A
         {
             get => _a;
-            set => _a = value ?? throw new ArgumentNullException(nameof(value));
+            set
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value));
+                _a = (TokenTextPoint)value.Clone();
+            }
         }
 
         /// <summary>
         /// Gets or sets the secondary point.
         /// </summary>
-        public TokenTextPoint B { get; set; }
+        public TokenTextPoint B
+        {
+            get { return (TokenTextPoint)_b?.Clone(); }
+            set { _b = (TokenTextPoint)value?.Clone(); }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance is a range.
         /// </summary>
-        public bool IsRange => B != null;
+        public bool IsRange => _b != null;
         #endregion
 
         /// <summary>
@@ -43,37 +52,6 @@ namespace Cadmus.Core.Layers
         public TokenTextLocation()
         {
             _a = new TokenTextPoint();
-        }
-
-        /// <summary>
-        /// Clears this instance.
-        /// </summary>
-        public void Clear()
-        {
-            _a.Clear();
-            B = null;
-        }
-
-        /// <summary>
-        /// Copies data from the specified <paramref name="other"/> location.
-        /// </summary>
-        /// <param name="other">The location.</param>
-        /// <exception cref="ArgumentNullException">null location</exception>
-        public void CopyFrom(ITextLocation<TokenTextPoint> other)
-        {
-            if (other == null) throw new ArgumentNullException(nameof(other));
-
-            _a.CopyFrom(other.A);
-
-            if (other.B == null)
-            {
-                B = null;
-            }
-            else
-            {
-                if (B == null) B = new TokenTextPoint();
-                B.CopyFrom(other.B);
-            }
         }
 
         #region Equality
@@ -87,7 +65,7 @@ namespace Cadmus.Core.Layers
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(_a, other._a) && Equals(B, other.B);
+            return Equals(_a, other._a) && Equals(_b, other._b);
         }
 
         /// <summary>
@@ -116,6 +94,19 @@ namespace Cadmus.Core.Layers
         }
         #endregion
 
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns>New instance.</returns>
+        public TokenTextLocation Clone()
+        {
+            return new TokenTextLocation
+            {
+                _a = (TokenTextPoint)_a.Clone(),
+                _b = (TokenTextPoint)_b.Clone()
+            };
+        }
+
         #region Comparison
         /// <summary>
         /// Compares the current instance with another object of the same type 
@@ -139,9 +130,9 @@ namespace Cadmus.Core.Layers
             int pt1Comparison = _a.CompareTo(other._a);
             if (pt1Comparison != 0) return pt1Comparison;
 
-            if (B == null && other.B == null) return 0;
-            if (B == null) return -1;
-            return B.CompareTo(other.B);
+            if (_b == null && other._b == null) return 0;
+            if (_b == null) return -1;
+            return _b.CompareTo(other._b);
         }
 
         /// <summary>
@@ -189,13 +180,11 @@ namespace Cadmus.Core.Layers
             //  1.1. A is a point: A overlaps with B (both points) if they're equal.
             //  1.2. A is a range: A (range) overlaps with B (point) 
             //       when A-left is <= B-left and A-right is >= B-right.
-            if (other.B == null)
+            if (!other.IsRange)
             {
-                return B == null ?
-                    _a.IntegralCompareTo(other.A) == 0 :
-
-                    _a.CompareTo(other.A) <= 0
-                        && B.CompareTo(other.A) >= 0;
+                return !IsRange
+                    ? _a.IntegralCompareTo(other.A) == 0
+                    : _a.CompareTo(other.A) <= 0 && B.CompareTo(other.A) >= 0;
             }
 
             // 2) if B is a range, cases are:
@@ -203,12 +192,9 @@ namespace Cadmus.Core.Layers
             //		B-right >= A
             //	2.2. A is a range: A (range) overlaps with B (range) 
             //       when B-right >= A-left and B-left <= A-right
-            return B == null ?
-                other.A.CompareTo(_a) <= 0
-                && other.B.CompareTo(_a) >= 0 :
-
-                other.B.CompareTo(_a) >= 0
-                && other.A.CompareTo(B) <= 0;
+            return !IsRange ?
+                other.A.CompareTo(_a) <= 0 && other.B.CompareTo(_a) >= 0 :
+                other.B.CompareTo(_a) >= 0 && other.A.CompareTo(B) <= 0;
         }
 
         /// <summary>
@@ -231,29 +217,23 @@ namespace Cadmus.Core.Layers
         #endregion
 
         /// <summary>
-        /// Shift this location by the specified Y and/or X amount.
+        /// Shift this location by the specified Y and/or X amount, returning
+        /// the result into a new location.
         /// </summary>
         /// <param name="dy">amount to shift for Y (positive or negative, 0=no shift)</param>
         /// <param name="dx">amount to shift for X (positive or negative, 0=no shift)</param>
-        public void Shift(int dy, int dx)
+        /// <returns>The shifted location.</returns>
+        public TokenTextLocation Shift(int dy, int dx)
         {
-            if (_a.Y == 0) return;
-
-            _a.Y += dy;
-            _a.X += dx;
-
-            if (B != null)
-            {
-                B.Y += dy;
-                B.X += dx;
-            }
-        }
-
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override string ToString()
-        {
-            return IsRange ? $"{_a}-{B}" : _a.ToString();
+            return _a.Y == 0
+                ? Clone()
+                : new TokenTextLocation
+                {
+                    _a = new TokenTextPoint(_a.Y + dy, _a.X + dx, _a.At, _a.Run),
+                    _b = _b != null
+                    ? new TokenTextPoint(_b.Y + dy, _b.X + dx, _b.At, _b.Run)
+                    : null
+                };
         }
 
         /// <summary>
@@ -273,9 +253,20 @@ namespace Cadmus.Core.Layers
 
             return new TokenTextLocation
             {
-                A = TokenTextPoint.Parse(a[0]),
-                B = a.Length > 1 ? TokenTextPoint.Parse(a[1]) : null
+                _a = TokenTextPoint.Parse(a[0]),
+                _b = a.Length > 1 ? TokenTextPoint.Parse(a[1]) : null
             };
+        }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return IsRange ? $"{_a}-{_b}" : _a.ToString();
         }
     }
 }

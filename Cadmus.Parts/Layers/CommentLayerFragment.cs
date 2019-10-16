@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Cadmus.Core.Layers;
 using Fusi.Tools.Config;
 
@@ -12,7 +12,7 @@ namespace Cadmus.Parts.Layers
     /// to a specific text portion. The text format depends on the implementor.
     /// </summary>
     /// <seealso cref="Cadmus.Core.Layers.ITextLayerFragment" />
-    /// <seealso cref="Cadmus.Core.Blocks.IHasText" />
+    /// <seealso cref="Cadmus.Core.IHasText" />
     [Tag("fr-comment")]
     public sealed class CommentLayerFragment : ITextLayerFragment, IHasText
     {

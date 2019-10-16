@@ -10,21 +10,10 @@ namespace Cadmus.Core.Layers
         IComparable<ITextPoint>, IEquatable<ITextPoint>, IComparable
     {
         /// <summary>
-        /// Clear this location resetting all its values.
+        /// Clone this object.
         /// </summary>
-        void Clear();
-
-        /// <summary>
-        /// Read location values from the specified text into this point.
-        /// </summary>
-        /// <param name="text">text with location</param>
-        void Read(string text);
-
-        /// <summary>
-        /// Copy location values from the specified source point into this point.
-        /// </summary>
-        /// <param name="point">source point</param>
-        void CopyFrom(ITextPoint point);
+        /// <returns>new object</returns>
+        ITextPoint Clone();
 
         /// <summary>
         /// Compare this point to the specified one without taking into account
@@ -36,9 +25,9 @@ namespace Cadmus.Core.Layers
         int IntegralCompareTo(ITextPoint other);
 
         /// <summary>
-        /// Clone this object.
+        /// Read location values from the specified text into this point.
         /// </summary>
-        /// <returns>new object</returns>
-        ITextPoint Clone();
+        /// <param name="text">text with location</param>
+        void Read(string text);
     }
 }

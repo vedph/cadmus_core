@@ -1,4 +1,4 @@
-﻿using Cadmus.Core.Blocks;
+﻿using Cadmus.Core;
 using Fusi.Antiquity.Chronology;
 using Fusi.Tools.Config;
 using System;
@@ -10,7 +10,6 @@ namespace Cadmus.Lexicon.Parts
     /// <summary>
     /// Word sense part.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Blocks.PartBase" />
     [Tag("lexicon-word-sense")]
     public sealed class WordSensePart : PartBase
     {

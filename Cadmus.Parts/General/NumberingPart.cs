@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Fusi.Tools.Config;
 
 namespace Cadmus.Parts.General

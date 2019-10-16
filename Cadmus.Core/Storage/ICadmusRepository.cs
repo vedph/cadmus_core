@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cadmus.Core.Blocks;
 using Cadmus.Core.Config;
 using Fusi.Tools.Data;
 
@@ -16,20 +15,20 @@ namespace Cadmus.Core.Storage
         /// Gets the flag definitions.
         /// </summary>
         /// <returns>definitions</returns>
-        IList<IFlagDefinition> GetFlagDefinitions();
+        IList<FlagDefinition> GetFlagDefinitions();
 
         /// <summary>
         /// Gets the specified flag definition.
         /// </summary>
         /// <param name="id">The flag identifier.</param>
         /// <returns>definition or null if not found</returns>
-        IFlagDefinition GetFlagDefinition(int id);
+        FlagDefinition GetFlagDefinition(int id);
 
         /// <summary>
         /// Adds or updates the specified flag definition.
         /// </summary>
         /// <param name="definition">The definition.</param>
-        void AddFlagDefinition(IFlagDefinition definition);
+        void AddFlagDefinition(FlagDefinition definition);
 
         /// <summary>
         /// Deletes the specified flag definition.
@@ -43,53 +42,53 @@ namespace Cadmus.Core.Storage
         /// Gets the item's facets.
         /// </summary>
         /// <returns>facets</returns>
-        IList<IFacet> GetFacets();
+        IList<FacetDefinition> GetFacetDefinitions();
 
         /// <summary>
         /// Gets the specified item's facet.
         /// </summary>
         /// <param name="id">The facet identifier.</param>
         /// <returns>facet or null if not found</returns>
-        IFacet GetFacet(string id);
+        FacetDefinition GetFacetDefinition(string id);
 
         /// <summary>
         /// Adds or updates the specified facet.
         /// </summary>
         /// <param name="facet">The facet.</param>
-        void AddFacet(IFacet facet);
+        void AddFacetDefinition(FacetDefinition facet);
 
         /// <summary>
         /// Deletes the specified facet.
         /// </summary>
         /// <param name="id">The facet identifier.</param>
-        void DeleteFacet(string id);
+        void DeleteFacetDefinition(string id);
         #endregion
 
-        #region Tags
+        #region Thesaurus
         /// <summary>
-        /// Gets the IDs of all the tags sets.
+        /// Gets the IDs of all the thesauri.
         /// </summary>
         /// <returns>IDs</returns>
-        IList<string> GetTagSetIds();
+        IList<string> GetThesaurusIds();
 
         /// <summary>
         /// Gets the tag set with the specified ID.
         /// </summary>
         /// <param name="id">The tag set ID.</param>
         /// <returns>tag set, or null if not found</returns>
-        TagSet GetTagSet(string id);
+        Thesaurus GetThesaurus(string id);
 
         /// <summary>
         /// Adds or updates the specified tag set.
         /// </summary>
         /// <param name="set">The set.</param>
-        void AddTagSet(TagSet set);
+        void AddThesaurus(Thesaurus set);
 
         /// <summary>
         /// Deletes the specified tag set.
         /// </summary>
         /// <param name="id">The tag set ID.</param>
-        void DeleteTagSet(string id);
+        void DeleteThesaurus(string id);
         #endregion
 
         #region Items
@@ -98,7 +97,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>items page</returns>
-        PagedData<IItemInfo> GetItems(ItemFilter filter);
+        PagedData<ItemInfo> GetItems(ItemFilter filter);
 
         /// <summary>
         /// Gets the specified item.
@@ -127,31 +126,26 @@ namespace Cadmus.Core.Storage
         void DeleteItem(string id, string userId, bool history = true);
 
         /// <summary>
-        /// Sets the item flags.
+        /// Set the flags of the item(s) with the specified ID(s).
+        /// Note that this operation never affects the item's history.
         /// </summary>
-        /// <param name="id">The item identifier.</param>
+        /// <param name="ids">The item identifier(s).</param>
         /// <param name="flags">The flags value.</param>
-        void SetItemFlags(string id, int flags);
+        void SetItemFlags(IList<string> ids, int flags);
 
         /// <summary>
         /// Gets a pege of history for the specified item.
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
-        PagedData<IHistoryItemInfo> GetHistoryItems(HistoryItemFilter filter);
+        PagedData<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter);
 
         /// <summary>
         /// Gets the specified history item.
         /// </summary>
         /// <param name="id">The history item's identifier.</param>
         /// <returns>item or null if not found</returns>
-        IHistoryItem GetHistoryItem(string id);
-
-        /// <summary>
-        /// Adds the specified history item.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        void AddHistoryItem(IHistoryItem item);
+        HistoryItem GetHistoryItem(string id);
 
         /// <summary>
         /// Deletes the specified history item.
@@ -162,12 +156,11 @@ namespace Cadmus.Core.Storage
 
         #region Parts
         /// <summary>
-        /// Gets the specified page of matching parts, or all the matching
-        /// parts when page size=0.
+        /// Gets the specified page of parts.
         /// </summary>
         /// <param name="filter">The parts filter.</param>
-        /// <returns>parts page result</returns>
-        PagedData<IPartInfo> GetParts(PartFilter filter);
+        /// <returns>Parts page.</returns>
+        PagedData<PartInfo> GetParts(PartFilter filter);
 
         /// <summary>
         /// Gets the parts belonging to the specified item(s), eventually
@@ -178,7 +171,8 @@ namespace Cadmus.Core.Storage
         /// <param name="typeId">The optional type identifier.</param>
         /// <param name="roleId">The optional role identifier.</param>
         /// <returns>parts</returns>
-        IList<IPart> GetItemParts(string[] itemIds, string typeId = null, string roleId = null);
+        IList<IPart> GetItemParts(string[] itemIds, string typeId = null,
+            string roleId = null);
 
         /// <summary>
         /// Gets the layer parts role IDs and part IDs for the specified item.
@@ -186,10 +180,10 @@ namespace Cadmus.Core.Storage
         /// parts IDs (part ID and role ID) so that you can retrieve each of
         /// them separately.
         /// </summary>
-        /// <param name="id">The item's identifier.</param>
+        /// <param name="itemId">The item's identifier.</param>
         /// <returns>array of tuples where 1=role ID and 2=part ID</returns>
         /// <exception cref="ArgumentNullException">null item ID</exception>
-        List<Tuple<string, string>> GetItemLayerPartIds(string id);
+        List<Tuple<string, string>> GetItemLayerPartIds(string itemId);
 
         /// <summary>
         /// Gets the specified part.
@@ -200,11 +194,11 @@ namespace Cadmus.Core.Storage
         T GetPart<T>(string id) where T : class, IPart;
 
         /// <summary>
-        /// Gets the JSON code representing the part with the specified ID.
+        /// Gets the code representing the part with the specified ID.
         /// </summary>
         /// <param name="id">The part identifier.</param>
         /// <returns>JSON code or null if not found</returns>
-        string GetPartJson(string id);
+        string GetPartContent(string id);
 
         /// <summary>
         /// Adds or updates the specified part.
@@ -213,14 +207,6 @@ namespace Cadmus.Core.Storage
         /// <param name="history">if set to <c>true</c>, the history should be
         /// affected.</param>
         void AddPart(IPart part, bool history = true);
-
-        /// <summary>
-        /// Adds or updates the part represented by the specified JSON code.
-        /// </summary>
-        /// <param name="json">The JSON code representing the part.</param>
-        /// <param name="history">if set to <c>true</c>, the history should be
-        /// affected.</param>
-        void AddPartJson(string json, bool history = true);
 
         /// <summary>
         /// Deletes the specified part.
@@ -237,7 +223,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history parts result</returns>
-        PagedData<IHistoryPartInfo> GetHistoryParts(HistoryPartFilter filter);
+        PagedData<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter);
 
         /// <summary>
         /// Gets the specified history part.
@@ -245,14 +231,7 @@ namespace Cadmus.Core.Storage
         /// <typeparam name="T">The part type.</typeparam>
         /// <param name="id">The identifier.</param>
         /// <returns>part or null if not found</returns>
-        IHistoryPart<T> GetHistoryPart<T>(string id) where T : class, IPart;
-
-        /// <summary>
-        /// Adds the specified history part.
-        /// </summary>
-        /// <typeparam name="T">The part type.</typeparam>
-        /// <param name="part">The part.</param>
-        void AddHistoryPart<T>(IHistoryPart<T> part) where T : class, IPart;
+        HistoryPart<T> GetHistoryPart<T>(string id) where T : class, IPart;
 
         /// <summary>
         /// Deletes the specified history part.

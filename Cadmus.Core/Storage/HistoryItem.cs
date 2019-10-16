@@ -1,42 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using Cadmus.Core.Blocks;
 
 namespace Cadmus.Core.Storage
 {
     /// <summary>
     /// History item.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Storage.IHistoryItem" />
-    public sealed class HistoryItem : IHistoryItem
+    public sealed class HistoryItem
     {
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the identifier of the data record this history record
-        /// refers to.
-        /// </summary>
-        public string ReferenceId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the record status.
-        /// </summary>
-        public EditStatus Status { get; set; }
-
-        /// <summary>
-        /// Last saved date and time (UTC).
-        /// </summary>
-        public DateTime TimeModified { get; set; }
-
-        /// <summary>
-        /// User ID.
-        /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
-        public string UserId { get; set; }
+        public string Id { get; private set; }
 
         /// <summary>
         /// Item title.
@@ -68,9 +42,41 @@ namespace Cadmus.Core.Storage
         public int Flags { get; set; }
 
         /// <summary>
-        /// Gets the item's parts.
+        /// Last saved date and time (UTC).
         /// </summary>
-        public List<IPart> Parts { get; set; }
+        public DateTime TimeModified { get; set; }
+
+        /// <summary>
+        /// User ID.
+        /// </summary>
+        /// <remarks>This is the ID of the user who last modified the object.
+        /// </remarks>
+        public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of the data record this history record
+        /// refers to.
+        /// </summary>
+        public string ReferenceId { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the record status.
+        /// </summary>
+        public EditStatus Status { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HistoryItem"/> class.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="referenceId">The reference identifier.</param>
+        /// <exception cref="ArgumentNullException">id or referenceId</exception>
+        public HistoryItem(string id, string referenceId)
+        {
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            ReferenceId = referenceId
+                ?? throw new ArgumentNullException(nameof(referenceId));
+            TimeModified = DateTime.UtcNow;
+        }
 
         /// <summary>
         /// Converts to string.
@@ -80,7 +86,7 @@ namespace Cadmus.Core.Storage
         /// </returns>
         public override string ToString()
         {
-            return $"{Id}: {Title}";
+            return $"{Id}: {Title}" + (FacetId != null ? $" [{FacetId}]" : "");
         }
     }
 }

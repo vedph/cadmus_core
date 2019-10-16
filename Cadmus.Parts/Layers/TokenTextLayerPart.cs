@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Cadmus.Core.Blocks;
+using Cadmus.Core;
 using Cadmus.Core.Layers;
 using Fusi.Tools.Config;
 

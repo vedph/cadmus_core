@@ -7,7 +7,7 @@
     /// simple boolean tags to any item. It is just a bitfield where each bit
     /// has a different meaning, when used. The meaning of each bit is specified
     /// by this definition.</remarks>
-    public class FlagDefinition : IFlagDefinition
+    public class FlagDefinition
     {
         /// <summary>
         /// Gets or sets the bit value, representing the ID of the flag.
@@ -38,7 +38,7 @@
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{Id:X4}: {Label}";
+            return $"{Id:X4} {Label}";
         }
     }
 }

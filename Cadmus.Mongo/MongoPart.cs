@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Text;
 
@@ -18,6 +19,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets or sets the history record identifier.
         /// </summary>
+        [BsonId]
         public string Id { get; set; }
 
         /// <summary>

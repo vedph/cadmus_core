@@ -895,7 +895,7 @@ namespace Cadmus.Mongo
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
-            string json = JsonSerializer.Serialize(part, _jsonOptions);
+            string json = JsonSerializer.Serialize(part, part.GetType(), _jsonOptions);
 
             MongoPart mongoPart = new MongoPart(part)
             {
@@ -1034,7 +1034,7 @@ namespace Cadmus.Mongo
                 .ToList();
 
             return new PagedData<HistoryPartInfo>(total,
-                parts.Select(p => p.ToHistoryPartInfo()).ToList());
+                page.Select(p => p.ToHistoryPartInfo()).ToList());
         }
 
         /// <summary>

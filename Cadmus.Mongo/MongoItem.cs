@@ -28,6 +28,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Item short description.
         /// </summary>
+        [BsonIgnoreIfNull]
         public string Description { get; set; }
 
         /// <summary>

@@ -665,11 +665,10 @@ namespace Cadmus.TestBase
             var page = repository.GetParts(new PartFilter
             {
                 TypeId = "hierarchy",
-                PageSize = 0,
                 SortExpressions = new[]
                 {
-                    Tuple.Create("Y", true),
-                    Tuple.Create("X", true)
+                    Tuple.Create("RoleId", true),
+                    Tuple.Create("TypeId", false)
                 }
             });
 
@@ -690,8 +689,7 @@ namespace Cadmus.TestBase
             var page = repository.GetParts(new PartFilter
             {
                 ItemIds = new[] {"item-001"},
-                TypeId = "hierarchy",
-                PageSize = 0
+                TypeId = "hierarchy"
             });
 
             // assert

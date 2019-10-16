@@ -172,7 +172,7 @@ namespace Cadmus.Mongo.Test
         {
             return new MongoPart(part)
             {
-                Content = JsonSerializer.Serialize(part, _jsonOptions)
+                Content = JsonSerializer.Serialize(part, part.GetType(), _jsonOptions)
             };
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Cadmus.Core;
 using Cadmus.Core.Storage;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Cadmus.Mongo
 {
@@ -17,7 +18,8 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
-        public string Id { get; }
+        [BsonId]
+        public string Id { get; set; }
 
         /// <summary>
         /// Item title.
@@ -27,6 +29,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Item short description.
         /// </summary>
+        [BsonIgnoreIfNull]
         public string Description { get; set; }
 
         /// <summary>
@@ -64,7 +67,7 @@ namespace Cadmus.Mongo
         /// Gets or sets the identifier of the data record this history record
         /// refers to.
         /// </summary>
-        public string ReferenceId { get; }
+        public string ReferenceId { get; set; }
 
         /// <summary>
         /// Gets or sets the record status.

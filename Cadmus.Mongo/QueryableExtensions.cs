@@ -10,7 +10,7 @@ namespace Cadmus.Mongo
     /// runtime only.
     /// See https://stackoverflow.com/questions/41244/dynamic-linq-orderby-on-ienumerablet-iqueryablet.
     /// </summary>
-    public static class QueryableExtensions
+    internal static class QueryableExtensions
     {
         /// <summary>
         /// Orders by the specified property.

@@ -348,25 +348,6 @@ namespace Cadmus.Mongo
             return new PagedData<ItemInfo>(total, results);
         }
 
-        //private static string GetFrTypeFromRoleId(string roleId)
-        //{
-        //    int i = roleId.IndexOf('.');
-        //    return i > -1 ? roleId.Substring(0, i) : roleId;
-        //}
-
-        //private static string BuildPartTypeProviderId(BsonDocument doc)
-        //{
-        //    // the requested type ID should include the role ID when dealing with
-        //    // text layer parts, whose role ID is assumed to be equal to their
-        //    // fragment type ID, which always begin with "fr-", up to the 1st
-        //    // dot if any.
-        //    return doc["typeId"].AsString +
-        //           (!doc["roleId"].IsBsonNull
-        //             && Regex.IsMatch(doc["roleId"].AsString, "fr-.+")
-        //               ? $":{GetFrTypeFromRoleId(doc["roleId"].AsString)}"
-        //               : "");
-        //}
-
         /// <summary>
         /// Gets the specified item.
         /// </summary>
@@ -825,7 +806,7 @@ namespace Cadmus.Mongo
             IMongoDatabase db = Client.GetDatabase(_databaseName);
 
             // we assume that all the layer parts have their role ID equal to their
-            // fragments ID, which by convention starts with "fr-".
+            // fragments ID, which by convention starts with "fr."
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
                 .Find(Builders<MongoPart>.Filter
                     .And(

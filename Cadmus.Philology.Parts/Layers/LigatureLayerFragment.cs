@@ -26,7 +26,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// </item>
     /// </list>
     /// </remarks>
-    [Tag("fr-ligature")]
+    [Tag("fr.ligature")]
     public sealed class LigatureLayerFragment : ITextLayerFragment
     {
         private const string ABBREVIATIONS = "LIORGNCX";

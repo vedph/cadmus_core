@@ -10,7 +10,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// Metrics layer fragment, used to mark the text as part of a metrical verse.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr-metrics")]
+    [Tag("fr.metrics")]
     public sealed class MetricsLayerFragment : ITextLayerFragment
     {
         /// <summary>

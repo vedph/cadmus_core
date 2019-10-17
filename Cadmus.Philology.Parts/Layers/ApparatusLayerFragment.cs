@@ -50,7 +50,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// </list>
     /// </remarks>
     /// <seealso cref="T:Cadmus.Core.Layers.ITextLayerFragment" />
-    [Tag("fr-apparatus")]
+    [Tag("fr.apparatus")]
     public sealed class ApparatusLayerFragment : ITextLayerFragment
     {
         #region Properties

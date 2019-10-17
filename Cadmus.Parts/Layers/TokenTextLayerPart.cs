@@ -35,9 +35,9 @@ namespace Cadmus.Parts.Layers
         /// Note that the <see cref="PartBase.RoleId"/> property is set here
         /// to the tag value of the fragment type. For instance, a 
         /// <see cref="TokenTextLayerPart{TFragment}"/> with fragments whose
-        /// type has a <see cref="TagAttribute"/> value equal to <c>fr-comment</c>
+        /// type has a <see cref="TagAttribute"/> value equal to <c>fr.comment</c>
         /// will have its <see cref="PartBase.RoleId"/> property equal
-        /// to <c>fr-comment</c>. This effectively is the role played by this
+        /// to <c>fr.comment</c>. This effectively is the role played by this
         /// generic layer part in an item, as determined by the type of its
         /// fragments.
         /// </summary>

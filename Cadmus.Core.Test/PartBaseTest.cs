@@ -21,16 +21,16 @@ namespace Cadmus.Core.Test
         [Fact]
         public void BuildProviderId_RoleFr_EqualsTypeIdAndRoleId()
         {
-            string id = PartBase.BuildProviderId("token-text-layer", "fr-comment");
-            Assert.Equal("token-text-layer:fr-comment", id);
+            string id = PartBase.BuildProviderId("token-text-layer", "fr.comment");
+            Assert.Equal("token-text-layer:fr.comment", id);
         }
 
         [Fact]
         public void BuildProviderId_RoleFrPlusDot_EqualsTypeIdAndRoleId()
         {
             string id = PartBase.BuildProviderId("token-text-layer",
-                "fr-comment.scholarly");
-            Assert.Equal("token-text-layer:fr-comment", id);
+                "fr.comment.scholarly");
+            Assert.Equal("token-text-layer:fr.comment", id);
         }
     }
 }

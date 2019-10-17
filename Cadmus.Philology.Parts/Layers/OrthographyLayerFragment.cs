@@ -13,7 +13,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// orthographical norm.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr-orthography")]
+    [Tag("fr.orthography")]
     public sealed class OrthographyLayerFragment : ITextLayerFragment
     {
         /// <summary>

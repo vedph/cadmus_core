@@ -585,7 +585,7 @@ namespace Cadmus.TestBase
             info = page.Items[2];
             Assert.Equal("item-001", info.ItemId);
             Assert.Equal("token-text-layer", info.TypeId);
-            Assert.Equal("fr-comment", info.RoleId);
+            Assert.Equal("fr.comment", info.RoleId);
         }
 
         protected void DoGetPartsPage_1TypeId_1()

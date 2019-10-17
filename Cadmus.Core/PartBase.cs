@@ -16,9 +16,9 @@ namespace Cadmus.Core
         /// The prefix prepended to the ID of each part's fragment ID.
         /// All the part's fragments IDs must start with this prefix.
         /// For instance, a comment part's fragment might have its ID equal
-        /// to "fr-comment".
+        /// to "fr.comment".
         /// </summary>
-        public const string FR_PREFIX = "fr-";
+        public const string FR_PREFIX = "fr.";
 
         /// <summary>
         /// Gets or sets the part identifier.
@@ -108,13 +108,13 @@ namespace Cadmus.Core
         /// type ID (e.g. "token-text-layer:comment").
         /// 
         /// The convention underlying this method assumes that any fragment type ID
-        /// starts with the "fr-" prefix, and that a layer part has the fragment type
+        /// starts with the "fr." prefix, and that a layer part has the fragment type
         /// ID as its role ID. For instance, a token-based text layer part for
-        /// comments has type ID="token-text-layer", and role ID="fr-comment".
+        /// comments has type ID="token-text-layer", and role ID="fr.comment".
         /// So, each layer part has the corresponding fragment ID as its role.
         /// Should you want to use the same fragment type with different roles,
         /// add a new part type definition with role=fragment ID + dot + role ID,
-        /// e.g. "fr-comment.scholarly".
+        /// e.g. "fr.comment.scholarly".
         /// </remarks>
         /// <param name="typeId">The type identifier.</param>
         /// <param name="roleId">The role identifier.</param>
@@ -128,10 +128,10 @@ namespace Cadmus.Core
 
             if (roleId != null && roleId.StartsWith(FR_PREFIX, StringComparison.Ordinal))
             {
-                // get the fragment type from the initial fr- up to the 1st dot
+                // get the fragment type from the initial fr. up to the 1st dot
                 // (excluded) if any, as all what follows the dot does not belong
-                // to the fragment type ID (e.g. "fr-comment.scholarly")
-                int i = roleId.IndexOf('.');
+                // to the fragment type ID (e.g. "fr.comment.scholarly")
+                int i = roleId.IndexOf('.', FR_PREFIX.Length);
                 string frType = i > -1 ? roleId.Substring(0, i) : roleId;
                 result += ":" + frType;
             }

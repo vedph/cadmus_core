@@ -13,7 +13,7 @@ namespace Cadmus.Parts.Layers
     /// </summary>
     /// <seealso cref="Cadmus.Core.Layers.ITextLayerFragment" />
     /// <seealso cref="Cadmus.Core.IHasText" />
-    [Tag("fr-comment")]
+    [Tag("fr.comment")]
     public sealed class CommentLayerFragment : ITextLayerFragment, IHasText
     {
         /// <summary>

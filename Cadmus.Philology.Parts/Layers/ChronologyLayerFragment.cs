@@ -13,7 +13,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// specific portion of text.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr-chronology")]
+    [Tag("fr.chronology")]
     public sealed class ChronologyLayerFragment : ITextLayerFragment
     {
         /// <summary>

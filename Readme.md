@@ -49,9 +49,9 @@ For instance, you might want to add a short comment to a couple of words in a te
 The type of text layer part varies according to the text location system used to reference a portion of the text, and to the type of its fragments. Note that for reflection purposes a text layer part *must* comply with these naming conventions:
 
 - its class name must end with `LayerPart` (e.g. `CommentLayerPart`);
-- its role ID must be equal to its fragment's type ID, which by convention always starts with the prefix `fr-`. This is already implemented by the layer part's constructor using reflection.
+- its role ID must be equal to its fragment's type ID, which by convention always starts with the prefix `fr.`. This is already implemented by the layer part's constructor using reflection.
 
-Thus, you can tell that a part is a layer part by looking at its class name (in C#) or at its role ID (when it starts with `fr-` it's a layer part whose fragment type ID is equal to the layer part role ID).
+Thus, you can tell that a part is a layer part by looking at its class name (in C#) or at its role ID (when it starts with `fr.` it's a layer part whose fragment type ID is equal to the layer part role ID).
 
 In general, the location system is based on the `ITextPoint` interface, which represents a single point in the text. The `ITextLocation<TPoint>` interface contains 1 or 2 of such points, whose concrete type is the generic parameter.
 

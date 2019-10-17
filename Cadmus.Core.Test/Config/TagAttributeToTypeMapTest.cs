@@ -21,7 +21,7 @@ namespace Cadmus.Core.Test.Config
             TagAttributeToTypeMap map = new TagAttributeToTypeMap();
             map.Add(new[] { typeof(NotePart).Assembly });
 
-            Assert.NotNull(map.Get("token-text-layer:fr-comment"));
+            Assert.NotNull(map.Get("token-text-layer:fr.comment"));
         }
     }
 }

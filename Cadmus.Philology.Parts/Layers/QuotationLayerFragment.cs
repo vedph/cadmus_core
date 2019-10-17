@@ -10,7 +10,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// Quotation layer fragment, used to mark literary quotations in the text.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr-quotation")]
+    [Tag("fr.quotation")]
     public sealed class QuotationLayerFragment : ITextLayerFragment
     {
         /// <summary>

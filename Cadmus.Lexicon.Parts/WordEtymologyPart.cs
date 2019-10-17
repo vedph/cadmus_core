@@ -12,9 +12,10 @@ namespace Cadmus.Lexicon.Parts
     /// <summary>
     /// Word etymology. This can include detailed lineages and a generic
     /// textual discussion (or just one of them).
+    /// Tag: <c>net.fusisoft.lexicon.word-etymology</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("lexicon-word-etymology")]
+    [Tag("net.fusisoft.lexicon.word-etymology")]
     public sealed class WordEtymologyPart : PartBase
     {
         private static readonly TextCutterOptions _options =

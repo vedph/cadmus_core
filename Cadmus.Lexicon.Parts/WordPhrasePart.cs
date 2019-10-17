@@ -8,8 +8,9 @@ namespace Cadmus.Lexicon.Parts
 {
     /// <summary>
     /// A phrase involving a special usage of a word.
+    /// Tag: <c>net.fusisoft.lexicon.word-phrase</c>.
     /// </summary>
-    [Tag("lexicon-word-phrase")]
+    [Tag("net.fusisoft.lexicon.word-phrase")]
     public sealed class WordPhrasePart : PartBase
     {
         /// <summary>

@@ -9,8 +9,9 @@ namespace Cadmus.Lexicon.Parts
 {
     /// <summary>
     /// Word sense part.
+    /// Tag: <c>net.fusisoft.lexicon.word-sense</c>.
     /// </summary>
-    [Tag("lexicon-word-sense")]
+    [Tag("net.fusisoft.lexicon.word-sense")]
     public sealed class WordSensePart : PartBase
     {
         /// <summary>

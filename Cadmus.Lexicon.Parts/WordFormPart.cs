@@ -6,8 +6,9 @@ namespace Cadmus.Lexicon.Parts
 {
     /// <summary>
     /// Word phonetic and graphic form part.
+    /// Tag: <c>net.fusisoft.lexicon.word-form</c>.
     /// </summary>
-    [Tag("lexicon-word-form")]
+    [Tag("net.fusisoft.lexicon.word-form")]
     public sealed class WordFormPart : PartBase
     {
         /// <summary>

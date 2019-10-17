@@ -7,6 +7,7 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Hierarchy part.
+    /// Tag: <c>net.fusisoft.hierarchy</c>
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -24,7 +25,7 @@ namespace Cadmus.Parts.General
     /// </list>
     /// </remarks>
     /// <seealso cref="PartBase" />
-    [Tag("hierarchy")]
+    [Tag("net.fusisoft.hierarchy")]
     public sealed class HierarchyPart : PartBase
     {
         /// <summary>

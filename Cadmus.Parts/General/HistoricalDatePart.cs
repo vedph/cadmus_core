@@ -8,9 +8,10 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Historical date part. This part just wraps a <see cref="HistoricalDate"/>.
+    /// Tag: <c>net.fusisoft.historical-date</c>
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("historical-date")]
+    [Tag("net.fusisoft.historical-date")]
     public sealed class HistoricalDatePart : PartBase
     {
         /// <summary>

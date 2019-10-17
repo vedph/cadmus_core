@@ -8,9 +8,10 @@ namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
     /// Metrics layer fragment, used to mark the text as part of a metrical verse.
+    /// Tag: <c>fr.net.fusisoft.metrics</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.metrics")]
+    [Tag("fr.net.fusisoft.metrics")]
     public sealed class MetricsLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -64,7 +65,7 @@ namespace Cadmus.Philology.Parts.Layers
             {
                 new DataPin
                 {
-                    Name = "metre",
+                    Name = PartBase.FR_PREFIX + "metre",
                     Value = Metre
                 }
             };

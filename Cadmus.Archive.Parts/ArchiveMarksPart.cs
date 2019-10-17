@@ -8,6 +8,7 @@ namespace Cadmus.Archive.Parts
 {
     /// <summary>
     /// Archive marks part ("segnature").
+    /// Tag: <c>net.fusisoft.archive-marks</c>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -19,7 +20,7 @@ namespace Cadmus.Archive.Parts
     /// </list>
     /// </remarks>
     /// <seealso cref="PartBase" />
-    [Tag("archive-marks")]
+    [Tag("net.fusisoft.archive-marks")]
     public sealed class ArchiveMarksPart : PartBase
     {
         /// <summary>

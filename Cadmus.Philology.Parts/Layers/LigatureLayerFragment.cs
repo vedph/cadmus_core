@@ -12,6 +12,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// replacement ("sostituzione", <c>R</c>), graft ("innesto", <c>G</c>),
     /// inclusion ("inclusione", <c>N</c>), connection ("nesso", <c>C</c>),
     /// complex (<c>X</c>) (see Manzella 1987 149-151).
+    /// Tag: <c>fr.net.fusisoft.ligature</c>.
     /// </summary>
     /// <remarks>This part defines all the essential graphical connection types
     /// occurring among letters.
@@ -26,7 +27,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// </item>
     /// </list>
     /// </remarks>
-    [Tag("fr.ligature")]
+    [Tag("fr.net.fusisoft.ligature")]
     public sealed class LigatureLayerFragment : ITextLayerFragment
     {
         private const string ABBREVIATIONS = "LIORGNCX";
@@ -58,7 +59,7 @@ namespace Cadmus.Philology.Parts.Layers
             {
                 new DataPin
                 {
-                    Name = "ligature.type",
+                    Name = PartBase.FR_PREFIX + "ligature.type",
                     Value = new string(LigatureTypeToAbbreviation(Type), 1)
                 }
             };

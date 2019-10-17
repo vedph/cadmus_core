@@ -11,6 +11,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// <summary>
     /// Chronology layer fragment: a chronological indication linked to a
     /// specific portion of text.
+    /// Tag: <c>fr.net.fusisoft.chronology</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
     [Tag("fr.chronology")]
@@ -55,7 +56,7 @@ namespace Cadmus.Philology.Parts.Layers
             {
                 new DataPin
                 {
-                    Name = "date-value",
+                    Name = PartBase.FR_PREFIX + "date-value",
                     Value = Date.GetSortValue().ToString(CultureInfo.InvariantCulture)
                 }
             };

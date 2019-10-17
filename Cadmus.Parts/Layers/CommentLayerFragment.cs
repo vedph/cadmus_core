@@ -10,10 +10,11 @@ namespace Cadmus.Parts.Layers
     /// <summary>
     /// Generic comment fragment. This item contains a generic comment referred
     /// to a specific text portion. The text format depends on the implementor.
+    /// Tag: <c>fr.net.fusisoft.comment</c>
     /// </summary>
     /// <seealso cref="Cadmus.Core.Layers.ITextLayerFragment" />
     /// <seealso cref="Cadmus.Core.IHasText" />
-    [Tag("fr.comment")]
+    [Tag("fr.net.fusisoft.comment")]
     public sealed class CommentLayerFragment : ITextLayerFragment, IHasText
     {
         /// <summary>
@@ -60,7 +61,7 @@ namespace Cadmus.Parts.Layers
                 {
                     new DataPin
                     {
-                        Name = "tag",
+                        Name = PartBase.FR_PREFIX + "tag",
                         Value = Tag
                     }
                 }

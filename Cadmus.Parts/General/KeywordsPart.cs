@@ -6,7 +6,8 @@ using Fusi.Tools.Config;
 namespace Cadmus.Parts.General
 {
     /// <summary>
-    /// Keyword part.
+    /// Keywords part.
+    /// Tag: <c>net.fusisoft.keywords</c>.
     /// </summary>
     /// <remarks>This part contains any number of <see cref="Keyword"/>'s.
     /// <para>Search pins:</para>
@@ -18,7 +19,7 @@ namespace Cadmus.Parts.General
     /// </item>
     /// </list>
     /// </remarks>
-    [Tag("keywords")]
+    [Tag("net.fusisoft.keywords")]
     public sealed class KeywordsPart : PartBase
     {
         /// <summary>

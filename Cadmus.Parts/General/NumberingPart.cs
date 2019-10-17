@@ -8,6 +8,7 @@ namespace Cadmus.Parts.General
     /// Generic numbering part, providing the ordinal number representing the
     /// position of an item in the context of its "sibling" items, plus an
     /// optional arbitrarily defined number label.
+    /// Tag: <c>net.fusisoft.numbering</c>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -19,7 +20,7 @@ namespace Cadmus.Parts.General
     /// </list>
     /// </remarks>
     /// <seealso cref="PartBase" />
-    [Tag("numbering")]
+    [Tag("net.fusisoft.numbering")]
     public sealed class NumberingPart : PartBase
     {
         /// <summary>

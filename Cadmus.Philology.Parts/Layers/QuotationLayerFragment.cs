@@ -8,9 +8,10 @@ namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
     /// Quotation layer fragment, used to mark literary quotations in the text.
+    /// Tag: <c>fr.net.fusisoft.quotation</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.quotation")]
+    [Tag("fr.net.fusisoft.quotation")]
     public sealed class QuotationLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -63,12 +64,12 @@ namespace Cadmus.Philology.Parts.Layers
             {
                 new DataPin
                 {
-                    Name = "quote.author",
+                    Name = PartBase.FR_PREFIX + "quote.author",
                     Value = Author
                 },
                 new DataPin
                 {
-                    Name = "quote.work",
+                    Name = PartBase.FR_PREFIX + "quote.work",
                     Value = Work
                 }
             };

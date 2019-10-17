@@ -103,18 +103,23 @@ namespace Cadmus.Core
         /// given the specified part's type and role IDs.
         /// </summary>
         /// <remarks>
-        /// The result is either equal to the part's type ID (e.g. "note"), or,
-        /// for a layer part, equal to the part's type ID + ":" + the fragment's
-        /// type ID (e.g. "token-text-layer:comment").
-        /// 
+        /// <para>
+        /// The result is either equal to the part's type ID (e.g.
+        /// "net.fusisoft.note"), or, for a layer part, equal to the part's
+        /// type ID + ":" + the fragment's type ID (e.g.
+        /// "net.fusisoft.token-text-layer:fr.net.fusisoft.comment").
+        /// </para>
+        /// <para>
         /// The convention underlying this method assumes that any fragment type ID
         /// starts with the "fr." prefix, and that a layer part has the fragment type
         /// ID as its role ID. For instance, a token-based text layer part for
-        /// comments has type ID="token-text-layer", and role ID="fr.comment".
-        /// So, each layer part has the corresponding fragment ID as its role.
-        /// Should you want to use the same fragment type with different roles,
-        /// add a new part type definition with role=fragment ID + dot + role ID,
-        /// e.g. "fr.comment.scholarly".
+        /// comments has type ID="net.fusisoft.token-text-layer", and role
+        /// ID="fr.net.fusisoft.comment". So, each layer part has the
+        /// corresponding fragment ID as its role. Should you want to use the
+        /// same fragment type with different roles, add a new part type
+        /// definition with role=fragment ID + colon + role ID,
+        /// e.g. "fr.net.fusisoft.comment:scholarly".
+        /// </para>
         /// </remarks>
         /// <param name="typeId">The type identifier.</param>
         /// <param name="roleId">The role identifier.</param>
@@ -126,12 +131,12 @@ namespace Cadmus.Core
 
             string result = typeId;
 
-            if (roleId != null && roleId.StartsWith(FR_PREFIX, StringComparison.Ordinal))
+            if (roleId?.StartsWith(FR_PREFIX, StringComparison.Ordinal) == true)
             {
-                // get the fragment type from the initial fr. up to the 1st dot
+                // get the fragment type from the initial fr. up to the 1st colon
                 // (excluded) if any, as all what follows the dot does not belong
-                // to the fragment type ID (e.g. "fr.comment.scholarly")
-                int i = roleId.IndexOf('.', FR_PREFIX.Length);
+                // to the fragment type ID (e.g. "fr.comment:scholarly")
+                int i = roleId.IndexOf(':', FR_PREFIX.Length);
                 string frType = i > -1 ? roleId.Substring(0, i) : roleId;
                 result += ":" + frType;
             }

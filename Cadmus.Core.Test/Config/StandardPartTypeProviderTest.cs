@@ -2,25 +2,24 @@
 using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
 using System;
+using System.Reflection;
 using Xunit;
 
 namespace Cadmus.Core.Test.Config
 {
-    public sealed class TagAttributeToTypeMapTest
+    public sealed class StandardPartTypeProviderTest
     {
-        private TagAttributeToTypeMap GetMap()
+        private static IPartTypeProvider GetProvider()
         {
             TagAttributeToTypeMap map = new TagAttributeToTypeMap();
-            map.Add(new[] { typeof(NotePart).Assembly });
-            return map;
+            map.Add(new Assembly[] { typeof(NotePart).Assembly });
+            return new StandardPartTypeProvider(map);
         }
 
         [Fact]
         public void Get_NotExistingPart_Null()
         {
-            TagAttributeToTypeMap map = GetMap();
-
-            Type t = map.Get("not-existing");
+            Type t = GetProvider().Get("not-existing");
 
             Assert.Null(t);
         }
@@ -28,9 +27,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void Get_NotePart_Ok()
         {
-            TagAttributeToTypeMap map = GetMap();
-
-            Type t = map.Get("net.fusisoft.note");
+            Type t = GetProvider().Get("net.fusisoft.note");
 
             Assert.Equal(typeof(NotePart), t);
         }
@@ -38,9 +35,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void Get_CommentLayerPart_Ok()
         {
-            TagAttributeToTypeMap map = GetMap();
-
-            Type t = map.Get(
+            Type t = GetProvider().Get(
                 "net.fusisoft.token-text-layer:fr.net.fusisoft.comment");
 
             Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);

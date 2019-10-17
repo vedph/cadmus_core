@@ -11,9 +11,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// <summary>
     /// Orthography layer fragment, used to mark deviations from the
     /// orthographical norm.
+    /// Tag: <c>fr.net.fusisoft.orthography</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.orthography")]
+    [Tag("fr.net.fusisoft.orthography")]
     public sealed class OrthographyLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -60,7 +61,7 @@ namespace Cadmus.Philology.Parts.Layers
                 orderby g.Key
                 select new DataPin
                 {
-                    Name = $"msp.{g.Key}",
+                    Name = PartBase.FR_PREFIX + $"msp.{g.Key}",
                     Value = g.Count().ToString(CultureInfo.InvariantCulture)
                 };
         }

@@ -7,6 +7,7 @@ namespace Cadmus.Archive.Parts
 {
     /// <summary>
     /// Date assigned to any archive's content.
+    /// Tag: <c>net.fusisoft.archive-date</c>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -17,7 +18,7 @@ namespace Cadmus.Archive.Parts
     /// 	</item>
     /// </list>
     /// </remarks>
-    [Tag("archive-date")]
+    [Tag("net.fusisoft.archive-date")]
     public sealed class ArchiveDatePart : PartBase
     {
         /// <summary>

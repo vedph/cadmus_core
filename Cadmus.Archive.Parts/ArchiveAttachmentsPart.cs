@@ -10,6 +10,7 @@ namespace Cadmus.Archive.Parts
     /// <summary>
     /// Archive document's attachments part. This list any number of attachments
     /// to a document, represented by a list of <see cref="ArchiveAttachment"/>'s.
+    /// Tag: <c>net.fusisoft.archive-attachments</c>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -21,7 +22,7 @@ namespace Cadmus.Archive.Parts
     /// </list>
     /// </remarks>
     /// <seealso cref="PartBase" />
-    [Tag("archive-attachments")]
+    [Tag("net.fusisoft.archive-attachments")]
     public sealed class ArchiveAttachmentsPart : PartBase
     {
         /// <summary>

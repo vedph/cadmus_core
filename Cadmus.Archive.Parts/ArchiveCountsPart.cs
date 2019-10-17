@@ -9,6 +9,7 @@ namespace Cadmus.Archive.Parts
 {
     /// <summary>
     /// Archive units counts part ("consistenze").
+    /// Tag: <c>net.fusisoft.archive-counts</c>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -19,7 +20,7 @@ namespace Cadmus.Archive.Parts
     /// </item>
     /// </list>
     /// </remarks>
-    [Tag("archive-counts")]
+    [Tag("net.fusisoft.archive-counts")]
     public sealed class ArchiveCountsPart : PartBase
     {
         /// <summary>

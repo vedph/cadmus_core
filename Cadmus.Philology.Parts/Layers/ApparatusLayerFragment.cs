@@ -9,6 +9,7 @@ namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
     /// Critical apparatus layer fragment.
+    /// Tag: <c>fr.net.fusisoft.apparatus</c>.
     /// </summary>
     /// <remarks>Any apparatus fragment may define a textual variant which
     /// should be replaced to the lemma according to their proposers, or any
@@ -50,7 +51,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// </list>
     /// </remarks>
     /// <seealso cref="T:Cadmus.Core.Layers.ITextLayerFragment" />
-    [Tag("fr.apparatus")]
+    [Tag("fr.net.fusisoft.apparatus")]
     public sealed class ApparatusLayerFragment : ITextLayerFragment
     {
         #region Properties
@@ -117,7 +118,7 @@ namespace Cadmus.Philology.Parts.Layers
                 {
                     new DataPin
                     {
-                        Name = "adpar.entry.author",
+                        Name = PartBase.FR_PREFIX + "adpar.entry.author",
                         Value = string.Join("; ", Authors)
                     }
                 };

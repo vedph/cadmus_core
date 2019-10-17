@@ -10,6 +10,7 @@ namespace Cadmus.Archive.Parts
     /// An envelope including any number of items. This is not an archival unit
     /// entering the archive hierarchy, but only a physical container. Note that
     /// an envelope can never include other envelopes.
+    /// Tag: <c>net.fusisoft.archive-envelope</c>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -21,7 +22,7 @@ namespace Cadmus.Archive.Parts
     /// </list>
     /// </remarks>
     /// <seealso cref="PartBase" />
-    [Tag("archive-envelope")]
+    [Tag("net.fusisoft.archive-envelope")]
     public sealed class ArchiveEnvelopePart : PartBase
     {
         /// <summary>

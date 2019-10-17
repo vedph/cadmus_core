@@ -7,6 +7,7 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Categories part.
+    /// Tag: <code>net.fusisoft.categories</code>.
     /// </summary>
     /// <remarks>
     /// <para>Search pins:</para>
@@ -17,7 +18,7 @@ namespace Cadmus.Parts.General
     /// </item>
     /// </list>
     /// </remarks>
-    [Tag("categories")]
+    [Tag("net.fusisoft.categories")]
     public sealed class CategoriesPart : PartBase
     {
         /// <summary>

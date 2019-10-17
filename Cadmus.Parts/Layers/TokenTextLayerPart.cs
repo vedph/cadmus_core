@@ -10,17 +10,27 @@ namespace Cadmus.Parts.Layers
 {
     /// <summary>
     /// Text layer part class, based on token-referenced text.
+    /// Tag: <c>net.fusisoft.token-text-layer</c>.
     /// </summary>
-    /// <remarks>This class represents any text layer part. The text layer
-    /// item part is just a wrapper for a collection of such text layer items,
-    /// and adds no other piece of data to the part itself.
-    /// <para>A text layer part is like any other ordinary part, and derives
-    /// from the same base class; its only peculiarity is that it only contains
+    /// <remarks>This class represents any text layer part using token-based
+    /// coordinates. The text layer item part is just a wrapper for a collection
+    /// of text layer fragments, and adds no other piece of data to the part itself.
+    /// <para>
+    /// A text layer part is like any other ordinary part, and derives
+    /// from the same base class; its only peculiarity is that it just contains
     /// a collection of <see cref="ITextLayerFragment"/>-derived fragments,
     /// and exposes some utility methods to deal with them (e.g. adding a
-    /// fragment, or getting all the fragments at the specified location).</para>
+    /// fragment, or getting all the fragments at the specified location).
+    /// </para>
+    /// <para>
+    /// As a consequence, the pins exposed by this part is just the collection
+    /// of all the pins exposed by its fragments. Also, layer parts always have
+    /// their role ID equal to their fragments type ID; this effectively is the
+    /// role played by this generic layer part in an item, as determined by the
+    /// type of its fragments.
+    /// </para>
     /// </remarks>
-    [Tag("token-text-layer")]
+    [Tag("net.fusisoft.token-text-layer")]
     public sealed class TokenTextLayerPart<TFragment> : PartBase
         where TFragment : ITextLayerFragment, new()
     {
@@ -50,8 +60,7 @@ namespace Cadmus.Parts.Layers
 
         /// <summary>
         /// Add the specified layer fragment to this part. Any other existing
-        /// fragment (of the same type) eventually overlapping the new one will
-        /// be removed.
+        /// fragment eventually overlapping the new one will be removed.
         /// </summary>
         /// <param name="fragment">The new fragment.</param>
         /// <exception cref="ArgumentNullException">null item</exception>
@@ -60,12 +69,12 @@ namespace Cadmus.Parts.Layers
             if (fragment == null) throw new ArgumentNullException(nameof(fragment));
 
             if (Fragments == null) Fragments = new List<TFragment>();
-            Type t = fragment.GetType();
+
+            // remove all the existing overlapping fragments
             TokenTextLocation newLoc = TokenTextLocation.Parse(fragment.Location);
 
             for (int i = Fragments.Count - 1; i > -1; i--)
             {
-                if (Fragments[i].GetType() != t) continue;
                 TokenTextLocation loc =
                     TokenTextLocation.Parse(Fragments[i].Location);
                 if (newLoc.Overlaps(loc)) Fragments.RemoveAt(i);
@@ -75,18 +84,20 @@ namespace Cadmus.Parts.Layers
         }
 
         /// <summary>
-        /// Gets all the fragments touched by the specified location.
+        /// Gets all the fragments ovlerapping the specified location.
         /// </summary>
         /// <param name="location">The location.</param>
-        /// <returns>fragments</returns>
-        /// <exception cref="ArgumentNullException">null location</exception>
-        public IList<ITextLayerFragment> GetFragmentsAt(string location)
+        /// <returns>The fragments</returns>
+        /// <exception cref="ArgumentNullException">location</exception>
+        public IList<TFragment> GetFragmentsAt(string location)
         {
             if (location == null) throw new ArgumentNullException(nameof(location));
 
+            if (Fragments == null) return new List<TFragment>();
+
             TokenTextLocation requestedLoc = TokenTextLocation.Parse(location);
 
-            return (IList<ITextLayerFragment>) (from fr in Fragments
+            return (from fr in Fragments
                 where TokenTextLocation.Parse(fr.Location).Overlaps(requestedLoc)
                 select fr).ToList();
         }
@@ -98,21 +109,30 @@ namespace Cadmus.Parts.Layers
         public override IEnumerable<DataPin> GetDataPins()
         {
             List<DataPin> pins = new List<DataPin>();
-            foreach (TFragment fr in Fragments) pins.AddRange(fr.GetDataPins());
+            if (Fragments == null) return pins;
 
-            foreach (DataPin pin in pins)
+            // add pins from fragments
+            foreach (TFragment fr in Fragments)
             {
-                pin.ItemId = ItemId;
-                pin.PartId = Id;
+                foreach (DataPin frPin in fr.GetDataPins())
+                {
+                    DataPin pin = CreateDataPin(frPin.Name, frPin.Value);
+                    pins.Add(pin);
+                }
             }
+
             return pins;
         }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
-            return $"{GetType().Name}: {Fragments.Count}";
+            return $"{TypeId}.{RoleId}: {Fragments?.Count}";
         }
     }
 }

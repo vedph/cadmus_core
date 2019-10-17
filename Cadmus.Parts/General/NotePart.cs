@@ -9,8 +9,9 @@ namespace Cadmus.Parts.General
     /// <summary>
     /// Generic text note. A note just contains some text in any format chosen by
     /// the implementor, plus an optional tag to categorize notes where required.
+    /// Tag: <c>net.fusisoft.note</c>.
     /// </summary>
-    [Tag("note")]
+    [Tag("net.fusisoft.note")]
     public class NotePart : PartBase, IHasText
     {
         /// <summary>

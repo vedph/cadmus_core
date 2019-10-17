@@ -11,9 +11,10 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Token-based text part, to be used with text layers.
+    /// Tag: <c>net.fusisoft.token-text</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("token-text")]
+    [Tag("net.fusisoft.token-text")]
     public sealed class TokenTextPart : PartBase, IHasText
     {
         /// <summary>

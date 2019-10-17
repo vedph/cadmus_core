@@ -27,6 +27,7 @@ namespace Cadmus.Core.Config
     public sealed class Thesaurus
     {
         private readonly Dictionary<string, ThesaurusEntry> _entries;
+        private readonly List<string> _sortedKeys;
 
         /// <summary>
         /// Gets or sets the tag's unique identifier.
@@ -56,6 +57,7 @@ namespace Cadmus.Core.Config
             Id = id;
 
             _entries = new Dictionary<string, ThesaurusEntry>();
+            _sortedKeys = new List<string>();
         }
 
         /// <summary>
@@ -71,12 +73,12 @@ namespace Cadmus.Core.Config
         }
 
         /// <summary>
-        /// Gets the entries, sorted by their key.
+        /// Gets the entries, sorted by their original order.
         /// </summary>
         public IList<ThesaurusEntry> GetEntries()
         {
             List<ThesaurusEntry> entries = new List<ThesaurusEntry>();
-            foreach (string key in _entries.Keys.OrderBy(s => s))
+            foreach (string key in _sortedKeys)
                 entries.Add(_entries[key].Clone());
             return entries;
         }
@@ -91,6 +93,7 @@ namespace Cadmus.Core.Config
         {
             if (entry == null) throw new ArgumentNullException(nameof(entry));
 
+            if (!_entries.ContainsKey(entry.Id)) _sortedKeys.Add(entry.Id);
             _entries[entry.Id] = entry.Clone();
         }
 

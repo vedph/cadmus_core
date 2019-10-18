@@ -11,6 +11,9 @@ namespace Cadmus.Parts.General
         private static readonly char[] TOKENS_SEPARATORS =
             { ' ', '\t', '\r', '\n' };
 
+        private int _y;
+        private string _text;
+
         /// <summary>
         /// Line Y value.
         /// </summary>
@@ -18,34 +21,51 @@ namespace Cadmus.Parts.General
         /// function is not only defining its identity against all other lines
         /// in the text, but also to define its order in the sequence of lines.
         /// The number starts from 1.</remarks>
-        public int Y { get; set; }
+        /// <exception cref="ArgumentOutOfRangeException">Value less than 1.</exception>
+        public int Y
+        {
+            get { return _y; }
+            set
+            {
+                if (value < 1) throw new ArgumentOutOfRangeException(nameof(value));
+                _y = value;
+            }
+        }
 
         /// <summary>
         /// Text of this line.
         /// </summary>
-        public string Text { get; set; }
+        /// <exception cref="ArgumentNullException">value</exception>
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                _text = value ?? throw new ArgumentNullException(nameof(value));
+            }
+        }
 
         #region Tokens
         /// <summary>
         /// Get the number of the token whose character is at the specified column
         /// number in this line.
         /// </summary>
-        /// <param name="colNumber">column number (1-N)</param>
+        /// <param name="columnNumber">column number (1-N)</param>
         /// <returns>token number (1-N) or 0 if no token at this column</returns>
-        public int TokenFromColumn(int colNumber)
+        public int TokenFromColumn(int columnNumber)
         {
-            if (string.IsNullOrEmpty(Text)) return 0;
+            if (string.IsNullOrEmpty(_text)) return 0;
 
-            int tok = 1;
-            colNumber--;
-            for (int i = 0; i < Text.Length && i <= colNumber; i++)
+            int token = 1;
+            columnNumber--;
+            for (int i = 0; i < _text.Length && i <= columnNumber; i++)
             {
-                if (Text[i] != ' ') continue;
-                if (colNumber == i) return 0;
-                tok++;
+                if (_text[i] != ' ') continue;
+                if (columnNumber == i) return 0;
+                token++;
             }
 
-            return tok;
+            return token;
         }
 
         /// <summary>
@@ -56,15 +76,15 @@ namespace Cadmus.Parts.General
         /// <returns>column number (1-N or 0 if token not found)</returns>
         public int ColumnFromToken(int tokenNumber)
         {
-            if (string.IsNullOrEmpty(Text)) return 0;
+            if (string.IsNullOrEmpty(_text)) return 0;
             if (tokenNumber == 1) return 1;
 
-            int tok = 1;
-            for (int i = 0; i < Text.Length; i++)
+            int currentToken = 1;
+            for (int i = 0; i < _text.Length; i++)
             {
-                if (Array.IndexOf(TOKENS_SEPARATORS, Text[i]) > -1)
+                if (Array.IndexOf(TOKENS_SEPARATORS, _text[i]) > -1)
                 {
-                    if (++tok == tokenNumber) return i + 2;
+                    if (++currentToken == tokenNumber) return i + 2;
                 }
             }
 
@@ -79,12 +99,12 @@ namespace Cadmus.Parts.General
         /// last token char) in a tuple, or null if no text</returns>
         public Tuple<int,int> GetTokenBounds(int tokenNumber)
         {
-            if (string.IsNullOrEmpty(Text)) return null;
+            if (string.IsNullOrEmpty(_text)) return null;
             int left = 0, right, n = 1;
 
-            for (int i = 0; n < tokenNumber && i < Text.Length; i++)
+            for (int i = 0; n < tokenNumber && i < _text.Length; i++)
             {
-                if (Text[i] == ' ')
+                if (_text[i] == ' ')
                 {
                     left = i + 1;
                     n++;
@@ -94,7 +114,7 @@ namespace Cadmus.Parts.General
             if (n == tokenNumber)
             {
                 for (right = left;
-                    right < Text.Length && Text[right] != ' '; right++) ;
+                    right < _text.Length && _text[right] != ' '; right++) ;
             }
             else
             {
@@ -111,7 +131,7 @@ namespace Cadmus.Parts.General
         /// <returns>tokens count</returns>
         public int GetTokensCount()
         {
-            return Text?.Split(TOKENS_SEPARATORS).Length ?? 0;
+            return _text?.Split(TOKENS_SEPARATORS).Length ?? 0;
         }
 
         /// <summary>
@@ -120,8 +140,8 @@ namespace Cadmus.Parts.General
         /// <returns>array of tokens</returns>
         public string[] GetTokens()
         {
-            return Text != null ?
-                Text.Split(TOKENS_SEPARATORS) : Array.Empty<string>();
+            return _text != null ?
+                _text.Split(TOKENS_SEPARATORS) : Array.Empty<string>();
         }
 
         /// <summary>
@@ -144,7 +164,7 @@ namespace Cadmus.Parts.General
         /// </returns>
         public override string ToString()
         {
-            return $"{Y:00000}: {Text}";
+            return $"[{_y:00000}] {_text}";
         }
     }
 }

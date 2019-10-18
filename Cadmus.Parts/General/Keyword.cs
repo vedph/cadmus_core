@@ -10,16 +10,35 @@ namespace Cadmus.Parts.General
     public sealed class Keyword :
         IEquatable<Keyword>, IComparable, IComparable<Keyword>
     {
+        private string _language;
+        private string _value;
+
         #region Properties
         /// <summary>
         /// Language (usually an ISO 639 3-letters code).
         /// </summary>
-        public string Language { get; set; }
+        /// <exception cref="ArgumentNullException">null value</exception>
+        public string Language
+        {
+            get { return _language; }
+            set
+            {
+                _language = value ?? throw new ArgumentNullException(nameof(value));
+            }
+        }
 
         /// <summary>
         /// Keyword text value.
         /// </summary>
-        public string Value { get; set; }
+        /// <exception cref="ArgumentNullException">null value</exception>
+        public string Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value ?? throw new ArgumentNullException(nameof(value));
+            }
+        }
         #endregion
 
         /// <summary>

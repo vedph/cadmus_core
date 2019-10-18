@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Cadmus.Core;
 using Fusi.Tools.Config;
 
@@ -54,8 +55,17 @@ namespace Cadmus.Parts.General
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(NotePart)} [{Tag}]: " +
-                $"{(Text?.Length > 80? Text.Substring(0, 80) + "..." : Text)}";
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("[Note]");
+            if (Tag != null) sb.Append(" (").Append(Tag).Append(')');
+            if (Text != null)
+            {
+                sb.Append(Text.Length > 100
+                    ? Text.Substring(0, 100) + "..."
+                    : Text);
+            }
+            return sb.ToString();
         }
     }
 }

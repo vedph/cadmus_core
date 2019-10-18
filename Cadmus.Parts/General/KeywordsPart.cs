@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Core;
 using Fusi.Tools.Config;
@@ -9,15 +10,8 @@ namespace Cadmus.Parts.General
     /// Keywords part.
     /// Tag: <c>net.fusisoft.keywords</c>.
     /// </summary>
-    /// <remarks>This part contains any number of <see cref="Keyword"/>'s.
-    /// <para>Search pins:</para>
-    /// <list type="bullet">
-    /// <item>
-    /// <term>keyword.XXX</term>
-    /// <description>: a string containing the keyword for the language
-    /// specified by XXX, (ISO-639 3), e.g. <c>keyword.eng</c>.</description>
-    /// </item>
-    /// </list>
+    /// <remarks>This part contains any number of <see cref="Keyword"/>'s,
+    /// each with its own language and value.
     /// </remarks>
     [Tag("net.fusisoft.keywords")]
     public sealed class KeywordsPart : PartBase
@@ -36,14 +30,40 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
+        /// Adds a keyword with the specified language and value.
+        /// If such a keyword already exists, nothing is done.
+        /// </summary>
+        /// <param name="language">The language.</param>
+        /// <param name="value">The value.</param>
+        /// <exception cref="ArgumentNullException">language or value</exception>
+        public void AddKeyword(string language, string value)
+        {
+            if (language == null) throw new ArgumentNullException(nameof(language));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            if (Keywords.All(k => k.Language != language &&
+                             k.Value != value))
+            {
+                Keywords.Add(new Keyword
+                {
+                    Language = language,
+                    Value = value
+                });
+            }
+        }
+
+        /// <summary>
         /// Get all the key=value pairs exposed by the implementor. Each key is
-        /// <c>keyword.{lang}</c> where <c>{lang}</c> is its language value.
+        /// <c>keyword.{lang}</c> where <c>{lang}</c> is its language value,
+        /// e.g. <c>keyword.eng</c> as name and <c>sample</c> as value.
+        /// The pins are returned sorted by language and then by value.
         /// </summary>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
+            if (Keywords.Count == 0) return Enumerable.Empty<DataPin>();
+
             List<DataPin> pins = new List<DataPin>();
-            if (Keywords?.Count == 0) return pins;
 
             var keysByLang = from k in Keywords
                              group k by k.Language
@@ -53,24 +73,26 @@ namespace Cadmus.Parts.General
 
             foreach (var g in keysByLang)
             {
-                string[] keys = (from k in g
+                string[] values = (from k in g
                                   orderby k.Value
                                   select k.Value).ToArray();
 
-                pins.AddRange(from s in keys
-                               select CreateDataPin($"keyword.{g.Key}", s));
+                pins.AddRange(from value in values
+                              select CreateDataPin($"keyword.{g.Key}", value));
             }
 
             return pins;
         }
 
         /// <summary>
-        /// Textual representation of this part.
+        /// Converts to string.
         /// </summary>
-        /// <returns>count of keywords</returns>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
-            return $"{nameof(KeywordsPart)}: {Keywords.Count}";
+            return $"[Keywords] {Keywords.Count}";
         }
     }
 }

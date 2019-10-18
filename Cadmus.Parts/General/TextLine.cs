@@ -126,33 +126,13 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Count tokens in this line.
+        /// Get the tokens in this line.
         /// </summary>
-        /// <returns>tokens count</returns>
-        public int GetTokensCount()
-        {
-            return _text?.Split(TOKENS_SEPARATORS).Length ?? 0;
-        }
-
-        /// <summary>
-        /// Get tokens in this line.
-        /// </summary>
-        /// <returns>array of tokens</returns>
+        /// <returns>Array of tokens.</returns>
         public string[] GetTokens()
         {
             return _text != null ?
                 _text.Split(TOKENS_SEPARATORS) : Array.Empty<string>();
-        }
-
-        /// <summary>
-        /// Count the tokens in the specified text.
-        /// </summary>
-        /// <param name="text">text to analyze</param>
-        /// <returns>tokens count</returns>
-        public static int CountTokens(string text)
-        {
-            return string.IsNullOrEmpty(text) ?
-                0 : text.Split(TOKENS_SEPARATORS).Length;
         }
         #endregion
 

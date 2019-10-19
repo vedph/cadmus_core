@@ -10,7 +10,8 @@ using Fusi.Tools.Config;
 namespace Cadmus.Parts.General
 {
     /// <summary>
-    /// Token-based text part, to be used with text layers.
+    /// Token-based text part, to be used as the base text for token-based
+    /// text layers.
     /// Tag: <c>net.fusisoft.token-text</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
@@ -107,7 +108,8 @@ namespace Cadmus.Parts.General
             }
         }
 
-        private static void ExtractRangeLastTokenText(ITextLocation<TokenTextPoint> location, string token,
+        private static void ExtractRangeLastTokenText(
+            ITextLocation<TokenTextPoint> location, string token,
             bool wholeToken, string endMarker, StringBuilder sb)
         {
             if (location.B.At > 0)
@@ -115,7 +117,8 @@ namespace Cadmus.Parts.General
                 // add token left portion
                 sb.Append(token, 0, location.B.Run);
 
-                // if we must get the whole token get also its right portion and add markers if any
+                // if we must get the whole token get also its right portion
+                // and add markers if any
                 if (wholeToken)
                 {
                     if (!string.IsNullOrEmpty(endMarker)) sb.Append(endMarker);
@@ -137,23 +140,31 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Get a single string representing the text included in the specified coordinates.
+        /// Get a single string representing the text included in the specified
+        /// coordinates.
         /// </summary>
         /// <param name="location">coordinates</param>
-        /// <param name="wholeToken">true to extract the whole token, even if coordinates refer to a portion of it;
-        /// false to extract only the specified portion.</param>
-        /// <param name="begMarker">marker to be inserted at the beginning of the token portion specified by 
-        /// <see cref="TokenTextPoint.At"/>, when <paramref name="wholeToken"/> is true. Null or empty for no 
+        /// <param name="wholeToken">true to extract the whole token, even if
+        /// the coordinates refer to a portion of it; false to extract only the
+        /// specified portion.</param>
+        /// <param name="begMarker">marker to be inserted at the beginning of
+        /// the token portion specified by <see cref="TokenTextPoint.At"/>,
+        /// when <paramref name="wholeToken"/> is true. Null or empty for no 
         /// marker.</param>
-        /// <param name="endMarker">marker to be inserted at the end of the token portion specified by 
-        /// <see cref="TokenTextPoint.At"/> and <see cref="TokenTextPoint.Run"/>, when <paramref name="wholeToken"/> 
+        /// <param name="endMarker">marker to be inserted at the end of the
+        /// token portion specified by <see cref="TokenTextPoint.At"/> and
+        /// <see cref="TokenTextPoint.Run"/>, when <paramref name="wholeToken"/> 
         /// is true. Null or empty for no marker.</param>
-        /// <returns>multiline text</returns>
+        /// <returns>Multiline text.</returns>
         /// <exception cref="ArgumentNullException">null location</exception>
-        public string GetText(ITextLocation<TokenTextPoint> location, bool wholeToken = false,
+        public string GetText(ITextLocation<TokenTextPoint> location,
+            bool wholeToken = false,
             string begMarker = "[", string endMarker = "]")
         {
-            if (location == null) throw new ArgumentNullException(nameof(location));
+            if (location == null)
+                throw new ArgumentNullException(nameof(location));
+
+            if (Lines == null) return "";
 
             StringBuilder sb = new StringBuilder();
             int lastY = location.IsRange ? location.B.Y : location.A.Y;
@@ -167,7 +178,8 @@ namespace Cadmus.Parts.General
                 if (y == location.A.Y)
                 {
                     start = location.A.X;
-                    ExtractFirstTokenText(location, tokens[start - 1], wholeToken, begMarker, endMarker, sb);
+                    ExtractFirstTokenText(location, tokens[start - 1],
+                        wholeToken, begMarker, endMarker, sb);
 
                     // if we have just 1 token selected return its text as extracted
                     if (!location.IsRange) return sb.ToString();
@@ -190,7 +202,8 @@ namespace Cadmus.Parts.General
                     if (i > start || y == location.A.Y) sb.Append(' ');
 
                     if (y == lastY && i == end)
-                        ExtractRangeLastTokenText(location, tokens[i - 1], wholeToken, endMarker, sb);
+                        ExtractRangeLastTokenText(location, tokens[i - 1],
+                            wholeToken, endMarker, sb);
                     else
                         sb.Append(tokens[i - 1]);
                 }
@@ -207,7 +220,7 @@ namespace Cadmus.Parts.General
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(TokenTextPart)}: {Lines?.Count}";
+            return $"[TokenText] {Lines?.Count}";
         }
     }
 }

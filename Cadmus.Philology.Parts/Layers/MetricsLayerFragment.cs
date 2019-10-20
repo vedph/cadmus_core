@@ -79,7 +79,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            return $"Metrics: {Location} {Number} {Metre}" +
+            return $"[Metrics] {Location} {Number} {Metre}" +
                    (IsImperfect
                        ? "*"
                        : "");

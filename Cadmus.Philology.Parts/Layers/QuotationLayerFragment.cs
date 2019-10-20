@@ -83,7 +83,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            return $"Quotation: {Location} {Author} {Work} {WorkLoc}".TrimEnd();
+            return $"[Quotation] {Location} {Author} {Work} {WorkLoc}".TrimEnd();
         }
     }
 }

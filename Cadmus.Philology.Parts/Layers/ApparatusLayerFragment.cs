@@ -131,7 +131,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("[Apparatus] ");
 
             switch (Type)
             {

@@ -100,7 +100,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            return $"Ligature: {Location} {Enum.GetName(typeof(LigatureType), Type)}";
+            return $"[Ligature] {Location} {Enum.GetName(typeof(LigatureType), Type)}";
         }
     }
 

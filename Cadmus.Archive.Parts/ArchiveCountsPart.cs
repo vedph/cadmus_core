@@ -57,11 +57,11 @@ namespace Cadmus.Archive.Parts
         /// </returns>
         public override string ToString()
         {
-            if (Counts?.Count == 0) return nameof(ArchiveCountsPart);
+            if (Counts?.Count == 0) return "[ArchiveCounts] 0";
 
-            return nameof(ArchiveCountsPart) + ": " +
+            return $"[ArchiveCounts] {Counts.Count}: " +
                    string.Join(", ", from p in Counts
-                       select $"{p.Key}={p.Value}");
+                                     select $"{p.Key}={p.Value}");
         }
     }
 }

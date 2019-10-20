@@ -12,15 +12,6 @@ namespace Cadmus.Archive.Parts
     /// to a document, represented by a list of <see cref="ArchiveAttachment"/>'s.
     /// Tag: <c>net.fusisoft.archive-attachments</c>.
     /// </summary>
-    /// <remarks>
-    /// <para>Search pins:</para>
-    /// <list type="bullet">
-    /// <item>
-    /// <term>attachment.count</term>
-    /// <description>count of attachments</description>
-    /// </item>
-    /// </list>
-    /// </remarks>
     /// <seealso cref="PartBase" />
     [Tag("net.fusisoft.archive-attachments")]
     public sealed class ArchiveAttachmentsPart : PartBase
@@ -41,6 +32,15 @@ namespace Cadmus.Archive.Parts
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
+        /// <remarks>
+        /// <para>Search pins:</para>
+        /// <list type="bullet">
+        /// <item>
+        /// <term>attachment.count</term>
+        /// <description>count of attachments</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
@@ -59,7 +59,7 @@ namespace Cadmus.Archive.Parts
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(ArchiveAttachmentsPart)}: {Attachments.Count}";
+            return $"[ArchiveAttachments] {Attachments?.Count ?? 0}";
         }
     }
 

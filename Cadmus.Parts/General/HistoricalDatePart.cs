@@ -40,7 +40,7 @@ namespace Cadmus.Parts.General
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(HistoricalDatePart)}: {Date}";
+            return $"[HistoricalDate] {Date}";
         }
     }
 }

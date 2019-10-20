@@ -81,5 +81,16 @@ namespace Cadmus.Parts.General
                     CreateDataPin("x", X.ToString(CultureInfo.InvariantCulture))
                 };
         }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"[Hierarchy] {Y}.{X} {ParentId} ({ChildrenIds?.Count})";
+        }
     }
 }

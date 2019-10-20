@@ -12,15 +12,6 @@ namespace Cadmus.Archive.Parts
     /// an envelope can never include other envelopes.
     /// Tag: <c>net.fusisoft.archive-envelope</c>.
     /// </summary>
-    /// <remarks>
-    /// <para>Search pins:</para>
-    /// <list type="bullet">
-    /// <item>
-    /// <term>archive-envelope-nr</term>
-    /// <description>envelope number</description>
-    /// </item>
-    /// </list>
-    /// </remarks>
     /// <seealso cref="PartBase" />
     [Tag("net.fusisoft.archive-envelope")]
     public sealed class ArchiveEnvelopePart : PartBase
@@ -43,6 +34,14 @@ namespace Cadmus.Archive.Parts
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>
+        /// <term>archive-envelope-nr</term>
+        /// <description>envelope number</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
@@ -61,7 +60,7 @@ namespace Cadmus.Archive.Parts
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(ArchiveEnvelopePart)}: @{Level} {Number}";
+            return $"[ArchiveEnvelope] @{Level} {Number}";
         }
     }
 }

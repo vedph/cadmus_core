@@ -10,15 +10,6 @@ namespace Cadmus.Archive.Parts
     /// Archive marks part ("segnature").
     /// Tag: <c>net.fusisoft.archive-marks</c>.
     /// </summary>
-    /// <remarks>
-    /// <para>Search pins:</para>
-    /// <list type="bullet">
-    /// <item>
-    /// <term>mark (multiple)</term>
-    /// <description>value</description>
-    /// </item>
-    /// </list>
-    /// </remarks>
     /// <seealso cref="PartBase" />
     [Tag("net.fusisoft.archive-marks")]
     public sealed class ArchiveMarksPart : PartBase
@@ -46,6 +37,14 @@ namespace Cadmus.Archive.Parts
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>
+        /// <term>mark (multiple)</term>
+        /// <description>value</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
@@ -63,9 +62,10 @@ namespace Cadmus.Archive.Parts
         /// </returns>
         public override string ToString()
         {
-            return Marks?.Count == 0
-                ? nameof(ArchiveMarksPart)
-                : $"{nameof(ArchiveMarksPart)}: [{Tag ?? ""}] {String.Join(", ", Marks)}";
+            return "[ArchiveMarks] " +
+                (Marks?.Count == 0
+                ? "0"
+                : $"{Marks.Count} [{Tag ?? ""}]: {string.Join(", ", Marks)}");
         }
     }
 }

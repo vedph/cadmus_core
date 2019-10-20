@@ -9,15 +9,6 @@ namespace Cadmus.Archive.Parts
     /// Date assigned to any archive's content.
     /// Tag: <c>net.fusisoft.archive-date</c>.
     /// </summary>
-    /// <remarks>
-    /// <para>Search pins:</para>
-    /// <list type="bullet">
-    /// 	<item>
-    /// 		<term>date-sort-value</term>
-    /// 		<description>sort value</description>
-    /// 	</item>
-    /// </list>
-    /// </remarks>
     [Tag("net.fusisoft.archive-date")]
     public sealed class ArchiveDatePart : PartBase
     {
@@ -29,6 +20,14 @@ namespace Cadmus.Archive.Parts
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>
+        /// <term>date-sort-value</term>
+        /// <description>sort value</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
@@ -47,7 +46,7 @@ namespace Cadmus.Archive.Parts
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(ArchiveDatePart)}: {Date}";
+            return $"[ArchiveDate] {Date}";
         }
     }
 }

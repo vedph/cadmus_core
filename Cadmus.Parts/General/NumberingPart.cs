@@ -63,7 +63,7 @@ namespace Cadmus.Parts.General
         /// </returns>
         public override string ToString()
         {
-            return $"{nameof(NumberingPart)}: {Ordinal}: {Number}";
+            return $"[Numbering] {Ordinal}: {Number}";
         }
     }
 }

@@ -69,7 +69,7 @@ namespace Cadmus.Lexicon.Parts
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("[WordPhrase] ");
 
             // rank
             sb.Append("[").Append(Rank).Append("] ");

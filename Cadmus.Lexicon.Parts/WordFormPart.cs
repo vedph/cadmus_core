@@ -1,6 +1,7 @@
 ﻿using Cadmus.Core;
 using Fusi.Tools.Config;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Cadmus.Lexicon.Parts
 {
@@ -76,6 +77,25 @@ namespace Cadmus.Lexicon.Parts
         {
             // TODO pins
             return new DataPin[0];
+        }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("[WordForm]");
+
+            if (!string.IsNullOrEmpty(Prelemma)) sb.Append(Prelemma).Append(' ');
+            sb.Append(Lemma);
+            if (!string.IsNullOrEmpty(Postlemma)) sb.Append(Postlemma).Append(' ');
+
+            if (Homograph > 0) sb.AppendFormat(" ({0})", Homograph);
+
+            return sb.ToString();
         }
     }
 }

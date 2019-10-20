@@ -89,7 +89,7 @@ namespace Cadmus.Lexicon.Parts
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("[WordSense] ");
 
             sb.Append($"#{SenseId} | {Rank} {Pos}: {Explanation}");
 

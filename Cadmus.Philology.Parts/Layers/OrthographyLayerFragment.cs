@@ -75,7 +75,7 @@ namespace Cadmus.Philology.Parts.Layers
         public override string ToString()
         {
             return $"Orthography: {Location} {Standard} " +
-                   (Operations != null ? 
+                   (Operations != null ?
                    Operations.Count.ToString(CultureInfo.InvariantCulture) : "");
         }
     }

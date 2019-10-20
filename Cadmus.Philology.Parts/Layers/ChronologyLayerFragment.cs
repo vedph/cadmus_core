@@ -14,7 +14,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// Tag: <c>fr.net.fusisoft.chronology</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.chronology")]
+    [Tag("fr.net.fusisoft.chronology")]
     public sealed class ChronologyLayerFragment : ITextLayerFragment
     {
         /// <summary>

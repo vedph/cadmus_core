@@ -1,0 +1,191 @@
+﻿{
+  "facets": [
+    {
+      "id": "facet-default",
+      "label": "default",
+      "description": "The default facet",
+      "partDefinitions": [
+        {
+          "typeId": "net.fusisoft.categories",
+          "name": "categories",
+          "description": "Item's categories.",
+          "required": true,
+          "colorKey": "98F8F8",
+          "groupKey": "general",
+          "sortKey": "categories"
+        },
+        {
+          "typeId": "net.fusisoft.keywords",
+          "name": "keywords",
+          "description": "Item's keywords.",
+          "colorKey": "90C0F8",
+          "groupKey": "general",
+          "sortKey": "keywords"
+        },
+        {
+          "typeId": "net.fusisoft.note",
+          "name": "note",
+          "description": "A free text note about the document.",
+          "colorKey": "B0A0F8",
+          "groupKey": "general",
+          "sortKey": "note"
+        },
+        {
+          "typeId": "net.fusisoft.token-text",
+          "name": "text",
+          "description": "Item's token-based text.",
+          "colorKey": "31AB54",
+          "groupKey": "text",
+          "sortKey": "text"
+        },
+        {
+          "typeId": "net.fusisoft.token-text-layer",
+          "roleId": "fr.net.fusisoft.comment",
+          "name": "comments",
+          "description": "Comments on text.",
+          "colorKey": "F8D040",
+          "groupKey": "text",
+          "sortKey": "text-comments"
+        },
+        {
+          "typeId": "net.fusisoft.token-text-layer",
+          "roleId": "fr.net.fusisoft.quotation",
+          "name": "quotations",
+          "description": "Quotations in text.",
+          "colorKey": "863577",
+          "groupKey": "text",
+          "sortKey": "text-quotations"
+        },
+        {
+          "typeId": "net.fusisoft.token-text-layer",
+          "roleId": "fr.net.fusisoft.apparatus",
+          "name": "apparatus",
+          "description": "Critical apparatus.",
+          "colorKey": "4B18D7",
+          "groupKey": "text",
+          "sortKey": "text-apparatus"
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "id": 1,
+      "label": "to revise",
+      "description": "The item must be revised.",
+      "colorKey": "F08080"
+    }
+  ],
+  "thesauri": [
+    {
+      "id": "categories@en",
+      "entries": [
+        {
+          "id": "architecture",
+          "value": "architecture"
+        },
+        {
+          "id": "geography",
+          "value": "geography"
+        },
+        {
+          "id": "geography.cities",
+          "value": "geography: cities"
+        },
+        {
+          "id": "geography.regions",
+          "value": "geography: regions"
+        },
+        {
+          "id": "ethnography",
+          "value": "ethnography"
+        },
+        {
+          "id": "ethnography.death",
+          "value": "ethnography: death"
+        },
+        {
+          "id": "ethnography.food",
+          "value": "ethnography: food"
+        },
+        {
+          "id": "ethnography.peoples",
+          "value": "ethnography: peoples"
+        },
+        {
+          "id": "ethnography",
+          "value": "ethnography: religion"
+        },
+        {
+          "id": "ethnography.religion.deities",
+          "value": "ethnography: religion deities"
+        },
+        {
+          "id": "ethnography.religion.rites",
+          "value": "ethnography: religion rites"
+        },
+        {
+          "id": "history",
+          "value": "history"
+        },
+        {
+          "id": "language",
+          "value": "language"
+        },
+        {
+          "id": "language.phonology",
+          "value": "language: phonology"
+        },
+        {
+          "id": "language.morphology",
+          "value": "language: morphology"
+        },
+        {
+          "id": "language.syntax",
+          "value": "language: syntax"
+        },
+        {
+          "id": "literature",
+          "value": "literature"
+        }
+      ]
+    },
+    {
+      "id": "languages@en",
+      "entries": [
+        {
+          "id": "eng",
+          "value": "English"
+        },
+        {
+          "id": "fre",
+          "value": "French"
+        },
+        {
+          "id": "deu",
+          "value": "German"
+        },
+        {
+          "id": "grc",
+          "value": "Ancient Greek"
+        },
+        {
+          "id": "gre",
+          "value": "Modern Greek"
+        },
+        {
+          "id": "ita",
+          "value": "Italian"
+        },
+        {
+          "id": "lat",
+          "value": "Latin"
+        },
+        {
+          "id": "spa",
+          "value": "Spanish"
+        }
+      ]
+    }
+  ]
+}

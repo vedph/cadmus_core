@@ -1,0 +1,63 @@
+﻿using Cadmus.Core.Config;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Xunit;
+
+namespace Cadmus.Core.Test.Config
+{
+    public sealed class JsonDataProfileSerializerTest
+    {
+        private static string LoadProfile(string resourceName)
+        {
+            using (StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream($"Cadmus.Core.Test.Assets.{resourceName}"),
+                Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        [Fact]
+        public void Read_Profile_Ok()
+        {
+            string json = LoadProfile("SampleProfile.json");
+            IDataProfileSerializer serializer = new JsonDataProfileSerializer();
+
+            DataProfile profile = serializer.Read(json);
+
+            // facets
+            Assert.Single(profile.FacetDefinitions);
+            FacetDefinition facetDef = profile.FacetDefinitions[0];
+            Assert.Equal("facet-default", facetDef.Id);
+            Assert.Equal("default", facetDef.Label);
+            Assert.Equal("The default facet", facetDef.Description);
+            Assert.Equal(7, facetDef.PartDefinitions.Count);
+
+            // TODO: check each facet definition
+
+            // flags
+            Assert.Single(profile.FlagDefinitions);
+            FlagDefinition flagDef = profile.FlagDefinitions[0];
+            Assert.Equal(1, flagDef.Id);
+            Assert.Equal("to revise", flagDef.Label);
+            Assert.Equal("The item must be revised.", flagDef.Description);
+            Assert.Equal("F08080", flagDef.ColorKey);
+
+            // thesauri
+            Assert.Equal(2, profile.Thesauri.Length);
+            Thesaurus thesaurus = Array.Find(profile.Thesauri,
+                t => t.Id == "categories@en");
+            Assert.NotNull(thesaurus);
+            Assert.Equal(16, thesaurus.GetEntries().Count);
+            // TODO: check each entry
+
+            thesaurus = Array.Find(profile.Thesauri,
+                t => t.Id == "languages@en");
+            Assert.NotNull(thesaurus);
+            Assert.Equal(8, thesaurus.GetEntries().Count);
+            // TODO: check each entry
+        }
+    }
+}

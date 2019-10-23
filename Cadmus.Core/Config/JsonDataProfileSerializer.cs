@@ -36,11 +36,15 @@ namespace Cadmus.Core.Config
             // thesauri
             if (options.Thesauri != null)
             {
+                profile.Thesauri = new Thesaurus[options.Thesauri.Length];
+                int i = 0;
                 foreach (ThesaurusOptions to in options.Thesauri)
                 {
                     Thesaurus thesaurus = new Thesaurus(to.Id);
                     foreach (ThesaurusEntryOptions eo in to.Entries)
                         thesaurus.AddEntry(new ThesaurusEntry(eo.Id, eo.Value));
+
+                    profile.Thesauri[i++] = thesaurus;
                 }
             }
 

@@ -46,13 +46,15 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
+        /// When the date is specified, the pins are <c>fr.date-value</c>
+        /// and eventually <c>fr.tag</c> when the tag is set.
         /// </summary>
         public IEnumerable<DataPin> GetDataPins()
         {
             if (Date == null)
                 return Enumerable.Empty<DataPin>();
 
-            return new[]
+            List<DataPin> pins = new List<DataPin>
             {
                 new DataPin
                 {
@@ -60,13 +62,30 @@ namespace Cadmus.Philology.Parts.Layers
                     Value = Date.GetSortValue().ToString(CultureInfo.InvariantCulture)
                 }
             };
+
+            if (Tag != null)
+            {
+                pins.Add(new DataPin
+                {
+                    Name = PartBase.FR_PREFIX + "tag",
+                    Value = Tag
+                });
+            }
+
+            return pins;
         }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
-            return $"[Chronology] {Location} {Date}";
+            return $"[Chronology] {Location} "
+                + (Tag != null? $"({Tag}) " : "")
+                + Date;
         }
     }
 }

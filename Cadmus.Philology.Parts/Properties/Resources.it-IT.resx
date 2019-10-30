@@ -129,6 +129,9 @@
   <data name="MspInsertWithRalNon0" xml:space="preserve">
     <value>L'operazione di inserimento non deve includere caratteri</value>
   </data>
+  <data name="MspInsertWithVa" xml:space="preserve">
+    <value>L'operazione di inserimento non deve includere un valore A</value>
+  </data>
   <data name="MspMoveWithRal0" xml:space="preserve">
     <value>L'operazione di spostamento deve includere almeno 1 carattere</value>
   </data>

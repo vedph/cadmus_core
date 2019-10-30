@@ -1,5 +1,6 @@
 ﻿using Cadmus.Philology.Parts.Layers;
 using Fusi.Tools.Text;
+using System.Text;
 using Xunit;
 
 namespace Cadmus.Philology.Parts.Test.Layers
@@ -214,58 +215,243 @@ namespace Cadmus.Philology.Parts.Test.Layers
             Assert.Null(op);
         }
 
-        [Fact]
-        public void Parse_Delete_Ok()
+        private string AppendTagAndNote(string op, string tag, string note)
         {
-            MspOperation op = MspOperation.Parse("@2x1=");
+            StringBuilder sb = new StringBuilder(op);
+            if (tag != null) sb.Append(" [").Append(tag).Append(']');
+            if (note != null) sb.Append(" {").Append(note).Append('}');
+            return sb.ToString();
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_Delete_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("@2x1=", tag, note);
+            MspOperation op = MspOperation.Parse(text);
 
             // op: delete
             Assert.Equal(MspOperator.Delete, op.Operator);
-            // ranges: A, !B
+            // ranges: A
             Assert.Equal("2", op.RangeA.ToString());
             Assert.Equal(TextRange.Empty, op.RangeB);
             // values: none
             Assert.Null(op.ValueA);
             Assert.Null(op.ValueB);
-            // tag and notes: none
-            Assert.Null(op.Tag);
-            Assert.Null(op.Note);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
         }
 
-        [Fact]
-        public void Parse_DeleteWithEmptyValueB_Ok()
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_DeleteWithEmptyValueB_Ok(string tag, string note)
         {
-            MspOperation op = MspOperation.Parse("@2x1=\"\"");
+            string text = AppendTagAndNote("@2x1=\"\"", tag, note);
+            MspOperation op = MspOperation.Parse(text);
 
             // op: delete
             Assert.Equal(MspOperator.Delete, op.Operator);
-            // ranges: A, !B
+            // ranges: A
             Assert.Equal("2", op.RangeA.ToString());
             Assert.Equal(TextRange.Empty, op.RangeB);
             // values: none
             Assert.Null(op.ValueA);
             Assert.Null(op.ValueB);
-            // tag and notes: none
-            Assert.Null(op.Tag);
-            Assert.Null(op.Note);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
         }
 
-        [Fact]
-        public void Parse_DeleteWithValueA_Ok()
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_DeleteWithValueA_Ok(string tag, string note)
         {
-            MspOperation op = MspOperation.Parse("\"a\"@2x1=");
+            string text = AppendTagAndNote("\"a\"@2x1=", tag, note);
+            MspOperation op = MspOperation.Parse(text);
 
             // op: delete
             Assert.Equal(MspOperator.Delete, op.Operator);
-            // ranges: A, !B
+            // ranges: A
             Assert.Equal("2", op.RangeA.ToString());
             Assert.Equal(TextRange.Empty, op.RangeB);
             // values: A
             Assert.Equal("a", op.ValueA);
             Assert.Null(op.ValueB);
-            // tag and notes: none
-            Assert.Null(op.Tag);
-            Assert.Null(op.Note);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+
+        public void Parse_Insert_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("@2x0=\"s\"", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: delete
+            Assert.Equal(MspOperator.Insert, op.Operator);
+            // ranges: A
+            Assert.Equal("2×0", op.RangeA.ToString());
+            Assert.Equal(TextRange.Empty, op.RangeB);
+            // values: B
+            Assert.Equal("s", op.ValueB);
+            Assert.Null(op.ValueA);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_Replace_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("@2x1=\"b\"", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: replace
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            // ranges: A
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal(TextRange.Empty, op.RangeB);
+            // values: B
+            Assert.Equal("b", op.ValueB);
+            Assert.Null(op.ValueA);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_ReplaceWithValueA_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("\"a\"@2x1=\"b\"", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: replace
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            // ranges: A
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal(TextRange.Empty, op.RangeB);
+            // values: A B
+            Assert.Equal("a", op.ValueA);
+            Assert.Equal("b", op.ValueB);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_Move_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("@2x1>@4", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: move
+            Assert.Equal(MspOperator.Move, op.Operator);
+            // ranges: A
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal("4×0", op.RangeB.ToString());
+            // values: none
+            Assert.Null(op.ValueA);
+            Assert.Null(op.ValueB);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_MoveWithValueA_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("\"a\"@2x1>@4", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: move
+            Assert.Equal(MspOperator.Move, op.Operator);
+            // ranges: A
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal("4×0", op.RangeB.ToString());
+            // values: A
+            Assert.Equal("a", op.ValueA);
+            Assert.Null(op.ValueB);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_Swap_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("@2x1~@4x1", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: move
+            Assert.Equal(MspOperator.Swap, op.Operator);
+            // ranges: A
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal("4", op.RangeB.ToString());
+            // values: none
+            Assert.Null(op.ValueA);
+            Assert.Null(op.ValueB);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("tag", null)]
+        [InlineData(null, "note")]
+        [InlineData("tag", "note")]
+        public void Parse_SwapWithValuesAB_Ok(string tag, string note)
+        {
+            string text = AppendTagAndNote("\"a\"@2x1~\"b\"@4x1", tag, note);
+            MspOperation op = MspOperation.Parse(text);
+
+            // op: move
+            Assert.Equal(MspOperator.Swap, op.Operator);
+            // ranges: A
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal("4", op.RangeB.ToString());
+            // values: A B
+            Assert.Equal("a", op.ValueA);
+            Assert.Equal("b", op.ValueB);
+            // tag and notes
+            Assert.Equal(tag, op.Tag);
+            Assert.Equal(note, op.Note);
         }
         #endregion
     }

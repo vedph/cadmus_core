@@ -23,39 +23,43 @@ namespace Cadmus.Philology.Parts.Layers
     /// <para>Operations types:</para>
     /// <list type="bullet">
     /// <item>
-    /// <term>delete:</term>
-    /// <description> <c>"A"@NxN=</c> where <c>A</c> is optional: e.g.
+    /// <term>delete</term>
+    /// <description><c>"A"@NxN=</c> where <c>"A"</c> is optional: e.g.
     /// <c>@2x1=</c>: A-range (whose length is always &gt; 0), without
-    /// B-value (which by definition is zero). The A-value can be optionally
+    /// B-value (which by definition is zero). The A-value can optionally be
     /// provided.
     /// </description>
     /// </item>
     /// <item>
     /// <term>insert</term>
-    /// <description>@2x0=b: range A (whose length is always 0) with value B.
+    /// <description><c>@NxN="B"</c>: e.g. @2x0="b": A-range (whose length is
+    /// always 0) with B-value. The A-value is null by definition.
     /// </description>
     /// </item>
     /// <item>
     /// <term>replace</term>
-    /// <description>@2x1=b: range A (whose length is always &gt; 0)
-    /// with value B.
+    /// <description><c>"A"@NxN="B"</c> where <c>"A"</c> is optional: e.g.
+    /// "b"@1x1="v": A-range (whose length is always &gt; 0) with B-value.
+    /// The A-value can optionally be provided.
     /// </description>
     /// </item>
     /// <item>
     /// <term>move</term>
-    /// <description>@2x1>@4: range A (whose length is always &gt; 0), range B
-    /// (whose length is always 0).</description>
+    /// <description><c>"A"@NxN>@N</c> where <c>"A"</c> is optional, e.g.
+    /// <c>"r"@2x1>@4</c>: A-range (whose length is always &gt; 0), B-range
+    /// (whose length is always 0). The A-value can optionally be provided.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>swap</term>
-    /// <description>@2x1~@4x1: range A (whose length is always &gt; 0), range B
-    /// (whose length is always &gt; 0).</description>
+    /// <description><c>"A"@NxN~"B"@NxN</c> where both <c>"A"</c> and <c>"B"</c>
+    /// are optional, e.g. <c>"r"@2x1~"s"@4x1</c>: A-range (whose length is
+    /// always &gt; 0), B-range (whose length is always &gt; 0). The A and B
+    /// values can optionally be provided.</description>
     /// </item>
     /// </list>
-    /// All the operations also have the value A, which just labels the grabbed
-    /// input text (except when inserting), and optionally have a tag (in []
-    /// after the operation) and a note (all what follows the tag, or the
-    /// operation when there is no tag).
+    /// All the operations may optionally have a classification tag
+    /// (in <c>[]</c>), and a short note (in <c>{}</c>).
     /// </remarks>
     public sealed class MspOperation
     {
@@ -65,10 +69,10 @@ namespace Cadmus.Philology.Parts.Layers
             @"(?:""(?<va>[^""]+)"")?" +
             @"\@(?<ras>\d+)(?:[x×](?<ral>\d+))?" +
             @"(?<op>[=>~])" +
-            @"(?:""(?<vb>[^""]+)"")?" +
+            @"(?:""(?<vb>[^""]*)"")?" +
             @"(?:\@(?<rbs>\d+)(?:[x×](?<rbl>\d+))?)?" +
-            @"(?:\s*\[(?<tag>[^]]+)\])?" +
-            @"(?:\s*\{(?<note>[^)]+)\})?");
+            @"(?:\s*\[(?<tag>[^]{]+)\])?" +
+            @"(?:\s*\{(?<note>[^}]+)\})?");
 
         private MspOperator _operator;
         private string _tag;
@@ -78,7 +82,8 @@ namespace Cadmus.Philology.Parts.Layers
 
         #region Properties
         /// <summary>
-        /// Operator.
+        /// Operator. Note that when setting this property, incompatible
+        /// properties are coerced accordingly.
         /// </summary>
         public MspOperator Operator
         {
@@ -96,9 +101,10 @@ namespace Cadmus.Philology.Parts.Layers
                         ValueB = null;
                         break;
                     case MspOperator.Insert:
-                        // RAL=0, VB!=null
+                        // RAL=0, VA=null, VB!=null
                         if (RangeA.Length > 0)
                             RangeA = new TextRange(RangeA.Start, 0);
+                        ValueA = null;
                         break;
                     case MspOperator.Move:
                         // RAL>0, RBL=0, VB=null
@@ -231,7 +237,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Validates this instance.
         /// </summary>
-        /// <returns>Error message(s), or null if valid</returns>
+        /// <returns>Error message(s), or null if valid.</returns>
         public string[] Validate()
         {
             List<string> errors = new List<string>();
@@ -244,8 +250,9 @@ namespace Cadmus.Philology.Parts.Layers
                     if (ValueB != null) errors.Add(Resources.MspDeleteWithVb);
                     break;
                 case MspOperator.Insert:
-                    // RAL=0, VB!=null
+                    // RAL=0, VB!=null, VA=null
                     if (RangeA.Length > 0) errors.Add(Resources.MspInsertWithRalNon0);
+                    if (ValueA != null) errors.Add(Resources.MspInsertWithVa);
                     if (ValueB == null) errors.Add(Resources.MspInsertWithoutVb);
                     break;
                 case MspOperator.Replace:

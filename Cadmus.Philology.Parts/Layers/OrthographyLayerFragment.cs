@@ -37,13 +37,18 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Gets or sets the operations describing the relationship between the
         /// <see cref="Standard"/> form and the orthographically deviated form.
-        /// Each operation has the syntax of a <see cref="MspOperation"/>.
+        /// Each operation is a text representing a <see cref="MspOperation"/>,
+        /// to be parsed by <see cref="MspOperation.Parse(string)"/>.
         /// </summary>
         public List<string> Operations { get; set; }
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
         /// </summary>
+        /// <remarks>If operations have tags, the operations with tags are
+        /// grouped by them and a pin is returned for each group, with name
+        /// equal to the operations tag, and value equal to the count of
+        /// such operations.</remarks>
         /// <returns>pins</returns>
         public IEnumerable<DataPin> GetDataPins()
         {

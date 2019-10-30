@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Cadmus.Philology.Parts.Properties;
+using System.Text;
+using System;
 
 namespace Cadmus.Philology.Parts.Layers
 {
@@ -21,9 +23,11 @@ namespace Cadmus.Philology.Parts.Layers
     /// <para>Operations types:</para>
     /// <list type="bullet">
     /// <item>
-    /// <term>delete</term>
-    /// <description>@2x1=: range A (whose length is always &gt; 0) without
-    /// value B.
+    /// <term>delete:</term>
+    /// <description> <c>"A"@NxN=</c> where <c>A</c> is optional: e.g.
+    /// <c>@2x1=</c>: A-range (whose length is always &gt; 0), without
+    /// B-value (which by definition is zero). The A-value can be optionally
+    /// provided.
     /// </description>
     /// </item>
     /// <item>
@@ -55,17 +59,24 @@ namespace Cadmus.Philology.Parts.Layers
     /// </remarks>
     public sealed class MspOperation
     {
+        private static readonly Regex _tagRegex = new Regex("^[-0-9a-zA-Z_.]+$");
+
         private static readonly Regex _opRegex = new Regex(
-            "(?<va>[^@]+)?" +
-            @"@(?:(?<raa>\d+)(?:[x×](?<ral>\d+))?)" +
-            "(?<op>[=>~])" +
-            @"(?<vb>[^@\s]+)?" +
-            @"(?:@(?<rba>\d+)(?:[x×](?<rbl>\d+))?)?" +
-            @"(?:\s*\[(?<t>[^]]+)\])?" +
-            @"(?:\s*(?<n>[^[].*))?");
+            @"(?:""(?<va>[^""]+)"")?" +
+            @"\@(?<ras>\d+)(?:[x×](?<ral>\d+))?" +
+            @"(?<op>[=>~])" +
+            @"(?:""(?<vb>[^""]+)"")?" +
+            @"(?:\@(?<rbs>\d+)(?:[x×](?<rbl>\d+))?)?" +
+            @"(?:\s*\[(?<tag>[^]]+)\])?" +
+            @"(?:\s*\{(?<note>[^)]+)\})?");
 
         private MspOperator _operator;
+        private string _tag;
+        private string _note;
+        private string _valueA;
+        private string _valueB;
 
+        #region Properties
         /// <summary>
         /// Operator.
         /// </summary>
@@ -115,26 +126,107 @@ namespace Cadmus.Philology.Parts.Layers
         /// This is not an operational datum, but is used to label the grabbed
         /// input text, so that the operation is more readable for human users.
         /// </summary>
-        public string ValueA { get; set; }
+        /// <remarks>This value should include letters only; anyway, double-quotes
+        /// characters are removed if present as they are reserved to be used
+        /// as value delimiters. If empty, the value is coerced to null.</remarks>
+        public string ValueA
+        {
+            get { return _valueA; }
+            set
+            {
+                _valueA = string.IsNullOrEmpty(value) ? null : value.Replace("\"", "");
+            }
+        }
 
         /// <summary>
         /// The portion of output text (if any) of this operation. This is
         /// required only for insert and replace. It is present as a label
         /// for swap.
         /// </summary>
-        public string ValueB { get; set; }
+        /// <remarks>This value should include letters only; anyway, double-quotes
+        /// characters are removed if present as they are reserved to be used
+        /// as value delimiters. If empty, the value is coerced to null.</remarks>
+        public string ValueB
+        {
+            get { return _valueB; }
+            set
+            {
+                _valueB = string.IsNullOrEmpty(value) ? null : value.Replace("\"", "");
+            }
+        }
 
         /// <summary>
         /// An optional tag used to group and categorize misspellings operations.
         /// E.g. you might want to categorize an operation like
-        /// <c>vowels.itacism</c>.
+        /// <c>vowels.itacism</c>. A tag can include only letters A-Z or a-z,
+        /// digits 0-9, underscore, dash, and dot.
         /// </summary>
-        public string Tag { get; set; }
+        /// <exception cref="ArgumentException">Invalid tag.</exception>
+        public string Tag
+        {
+            get { return _tag; }
+            set
+            {
+                if (value != null && !_tagRegex.IsMatch(value))
+                    throw new ArgumentException(nameof(value));
+                _tag = value;
+            }
+        }
 
         /// <summary>
-        /// An optional free short note to this operation.
+        /// An optional free short note to this operation. The note should
+        /// not include braces, which are automatically dropped when setting
+        /// this property; also, note's spaces are normalized using
+        /// <see cref="SanitizeNote(string)"/>.
         /// </summary>
-        public string Note { get; set; }
+        public string Note
+        {
+            get { return _note; }
+            set { _note = SanitizeNote(value); }
+        }
+        #endregion
+
+        /// <summary>
+        /// Sanitizes the text representing a <see cref="Note"/> so
+        /// that it does not include braces (<c>{</c> and <c>}</c>).
+        /// Also, the whitespaces are all flattened to simple spaces, and
+        /// normalized (no whitespaces at start/end and no sequence of whitespaces).
+        /// If the resulting sanitized string is empty, or it was null when
+        /// received, null is returned.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <returns>The sanitized note, eventually null.</returns>
+        public static string SanitizeNote(string note)
+        {
+            if (string.IsNullOrWhiteSpace(note)) return null;
+
+            StringBuilder sb = new StringBuilder(note);
+            sb.Replace("{", "");
+            sb.Replace("}", "");
+
+            // flatten and normalize whitespaces
+            bool wsAtRight = true;
+            for (int i = sb.Length - 1; i > -1; i--)
+            {
+                if (char.IsWhiteSpace(sb[i]))
+                {
+                    if (wsAtRight)
+                    {
+                        sb.Remove(i, 1);
+                    }
+                    else
+                    {
+                        sb[i] = ' ';
+                        wsAtRight = true;
+                    }
+                    continue;
+                }
+                wsAtRight = false;
+            }
+            if (sb.Length > 0 && sb[0] == ' ') sb.Remove(0, 1);
+
+            return sb.Length > 0 ? sb.ToString() : null;
+        }
 
         /// <summary>
         /// Validates this instance.
@@ -184,21 +276,41 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
+            StringBuilder sb = new StringBuilder();
+            // ["A"]
+            if (ValueA != null) sb.Append('"').Append(ValueA).Append('"');
+            // @N[xN]
+            sb.Append('@').Append(RangeA);
+
+            // operator
             switch (_operator)
             {
                 case MspOperator.Delete:
-                    return $"{ValueA}@{RangeA}=";
+                    sb.Append('=');
+                    break;
+
                 case MspOperator.Replace:
-                    return $"{ValueA}@{RangeA}={ValueB}";
                 case MspOperator.Insert:
-                    return $"@{RangeA.Start}×0={ValueB}";
+                    sb.Append("=\"").Append(ValueB).Append('"');
+                    break;
+
                 case MspOperator.Move:
-                    return $"{ValueA}@{RangeA}>@{RangeB.Start}×0";
+                    sb.Append(">@").Append(RangeB);
+                    break;
+
                 case MspOperator.Swap:
-                    return $"{ValueA}@{RangeA}~{ValueB}@{RangeB}";
-                default:
-                    return "";
+                    sb.Append('~');
+                    if (ValueB != null) sb.Append('"').Append(ValueB).Append('"');
+                    sb.Append('@').Append(RangeB);
+                    break;
             }
+
+            // [tag]
+            if (_tag != null) sb.Append(" [").Append(_tag).Append(']');
+            // {note}
+            if (_note != null) sb.Append(" {").Append(_note).Append('}');
+
+            return sb.ToString();
         }
 
         private static int ParseRangeNumber(string text)
@@ -245,15 +357,15 @@ namespace Cadmus.Philology.Parts.Layers
             MspOperation operation = new MspOperation
             {
                 RangeA = new TextRange(
-                    ParseRangeNumber(m.Groups["raa"].Value),
+                    ParseRangeNumber(m.Groups["ras"].Value),
                     ParseRangeNumber(m.Groups["ral"].Value)),
                 ValueA = m.Groups["va"].Length > 0 ? m.Groups["va"].Value : null,
                 RangeB = new TextRange(
-                    ParseRangeNumber(m.Groups["rba"].Value),
+                    ParseRangeNumber(m.Groups["rbs"].Value),
                     ParseRangeNumber(m.Groups["rbl"].Value)),
                 ValueB = m.Groups["vb"].Length > 0 ? m.Groups["vb"].Value : null,
-                Tag = m.Groups["t"].Length > 0 ? m.Groups["t"].Value : null,
-                Note = m.Groups["n"].Length > 0 ? m.Groups["n"].Value : null
+                Tag = m.Groups["tag"].Length > 0 ? m.Groups["tag"].Value : null,
+                Note = m.Groups["note"].Length > 0 ? m.Groups["note"].Value : null
             };
             DetermineOperator(m.Groups["op"].Value, operation);
 

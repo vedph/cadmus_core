@@ -1,5 +1,4 @@
 ﻿using Fusi.Tools.Text;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -9,16 +8,17 @@ namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
     /// Misspelling operation. A misspelling operation defines a single
-    /// modification required to build an an output word form (B) from an input
-    /// word form (A).
+    /// modification required to build an an output word form B from an input
+    /// word form A.
+    /// </summary>
+    /// <remarks>
+    /// <para>
     /// One or more of such operations describe the relationships between these
     /// forms in terms of the transform operations required to generate B from A,
     /// and are useful to express the details of such transformation. This is
     /// useful when dealing with a misspelled form A vs its standard orthography
-    /// version B.
-    /// </summary>
-    /// <remarks>
-    /// Operations types:
+    /// version B.</para>
+    /// <para>Operations types:</para>
     /// <list type="bullet">
     /// <item>
     /// <term>delete</term>
@@ -56,9 +56,9 @@ namespace Cadmus.Philology.Parts.Layers
     public sealed class MspOperation
     {
         private static readonly Regex _opRegex = new Regex(
-            @"(?<va>[^@]+)?" +
+            "(?<va>[^@]+)?" +
             @"@(?:(?<raa>\d+)(?:[x×](?<ral>\d+))?)" +
-            @"(?<op>[=>~])" +
+            "(?<op>[=>~])" +
             @"(?<vb>[^@\s]+)?" +
             @"(?:@(?<rba>\d+)(?:[x×](?<rbl>\d+))?)?" +
             @"(?:\s*\[(?<t>[^]]+)\])?" +
@@ -177,10 +177,10 @@ namespace Cadmus.Philology.Parts.Layers
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
@@ -237,7 +237,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <returns>operation, or null if invalid text</returns>
         public static MspOperation Parse(string text)
         {
-            if (string.IsNullOrEmpty(text)) return null;
+            if (string.IsNullOrWhiteSpace(text)) return null;
 
             Match m = _opRegex.Match(text);
             if (!m.Success) return null;

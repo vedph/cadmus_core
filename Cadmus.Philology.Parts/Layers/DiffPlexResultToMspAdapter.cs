@@ -6,10 +6,10 @@ using Fusi.Tools.Text;
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// Simple adapter for diffing results, making use of higher level notions of
-    /// replacing, moving, and swapping characters in a word.
+    /// Simple adapter for DiffPlex results, making use of higher level notions
+    /// of replacing, moving, and swapping characters in a word.
     /// </summary>
-    public sealed class SimpleResultToMspAdapter : IDiffResultToMspAdapter
+    public sealed class DiffPlexResultToMspAdapter : IDiffResultToMspAdapter<DiffResult>
     {
         /// <summary>
         /// Adapt the result into a set of misspelling operations.

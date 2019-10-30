@@ -627,7 +627,7 @@ namespace Cadmus.TestBase
             HierarchyPart part1 = new HierarchyPart
             {
                 ItemId = "item-001",
-                ChildrenIds = new List<string> { "item-002", "item-003" },
+                ChildrenIds = new HashSet<string> { "item-002", "item-003" },
                 Y = 1,
                 X = 1,
                 UserId = "Alpha"

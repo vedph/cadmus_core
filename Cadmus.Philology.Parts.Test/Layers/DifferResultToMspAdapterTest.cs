@@ -121,5 +121,53 @@ namespace Cadmus.Philology.Parts.Test.Layers
             Assert.Equal("b", op.ValueA);
             Assert.Equal("v", op.ValueB);
         }
+
+        [Fact]
+        public void Adapt_RepInternal_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("gaudis", "gaudes"));
+
+            Assert.Single(ops);
+            // rep
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            Assert.Equal("5", op.RangeA.ToString());
+            Assert.Equal("i", op.ValueA);
+            Assert.Equal("e", op.ValueB);
+        }
+
+        [Fact]
+        public void Adapt_RepFinal_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("victo", "victu"));
+
+            Assert.Single(ops);
+            // rep
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            Assert.Equal("5", op.RangeA.ToString());
+            Assert.Equal("o", op.ValueA);
+            Assert.Equal("u", op.ValueB);
+        }
+
+        [Fact]
+        public void Adapt_RepWithShorter_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("vicsit", "vixit"));
+
+            Assert.Single(ops);
+            // rep
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            Assert.Equal("3×2", op.RangeA.ToString());
+            Assert.Equal("cs", op.ValueA);
+            Assert.Equal("x", op.ValueB);
+        }
     }
 }

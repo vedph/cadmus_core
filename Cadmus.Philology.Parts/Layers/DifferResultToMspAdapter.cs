@@ -25,6 +25,7 @@ namespace Cadmus.Philology.Parts.Layers
         private void MapDiffsWithReplacements(IList<Diff> diffs,
             IList<Tuple<Diff, MspOperation>> output)
         {
+            int start = 1;
             for (int i = 0; i < diffs.Count; i++)
             {
                 if (diffs[i].Operation == Operation.Delete
@@ -35,15 +36,21 @@ namespace Cadmus.Philology.Parts.Layers
                         Tuple.Create(diffs[i], new MspOperation
                         {
                             Operator = MspOperator.Replace,
-                            RangeA = new TextRange(i + 1, diffs[i].Text.Length),
+                            RangeA = new TextRange(start, diffs[i].Text.Length),
                             ValueA = diffs[i].Text,
                             ValueB = diffs[i + 1].Text
                         }));
+                    start += diffs[i].Text.Length;
                     i++;
                 }
                 else
                 {
                     output.Add(Tuple.Create(diffs[i], (MspOperation)null));
+                    if (diffs[i].Operation == Operation.Delete
+                        || diffs[i].Operation == Operation.Equal)
+                    {
+                        start += diffs[i].Text.Length;
+                    }
                 }
             }
         }

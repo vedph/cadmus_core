@@ -81,8 +81,8 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Adds or updates the specified tag set.
         /// </summary>
-        /// <param name="set">The set.</param>
-        void AddThesaurus(Thesaurus set);
+        /// <param name="thesaurus">The set.</param>
+        void AddThesaurus(Thesaurus thesaurus);
 
         /// <summary>
         /// Deletes the specified tag set.

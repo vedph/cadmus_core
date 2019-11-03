@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DiffMatchPatch" Version="1.0.0" />
     <PackageReference Include="DiffPlex" Version="1.4.4" />
     <PackageReference Include="Fusi.Antiquity" Version="1.1.21" />
   </ItemGroup>

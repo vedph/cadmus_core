@@ -333,8 +333,8 @@ namespace Cadmus.Philology.Parts.Test.Layers
             // swp
             MspOperation op = ops[0];
             Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("1×1", op.RangeA.ToString());
-            Assert.Equal("2×1", op.RangeB.ToString());
+            Assert.Equal("1", op.RangeA.ToString());
+            Assert.Equal("2", op.RangeB.ToString());
             Assert.Equal("X", op.ValueA);
             Assert.Equal("Y", op.ValueB);
         }
@@ -350,8 +350,8 @@ namespace Cadmus.Philology.Parts.Test.Layers
             // swp
             MspOperation op = ops[0];
             Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("3×1", op.RangeA.ToString());
-            Assert.Equal("4×1", op.RangeB.ToString());
+            Assert.Equal("3", op.RangeA.ToString());
+            Assert.Equal("4", op.RangeB.ToString());
             Assert.Equal("X", op.ValueA);
             Assert.Equal("Y", op.ValueB);
         }
@@ -367,8 +367,8 @@ namespace Cadmus.Philology.Parts.Test.Layers
             // swp
             MspOperation op = ops[0];
             Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("3×1", op.RangeA.ToString());
-            Assert.Equal("4×1", op.RangeB.ToString());
+            Assert.Equal("3", op.RangeA.ToString());
+            Assert.Equal("4", op.RangeB.ToString());
             Assert.Equal("X", op.ValueA);
             Assert.Equal("Y", op.ValueB);
         }
@@ -384,8 +384,8 @@ namespace Cadmus.Philology.Parts.Test.Layers
             // swp
             MspOperation op = ops[0];
             Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("1×1", op.RangeA.ToString());
-            Assert.Equal("3×1", op.RangeB.ToString());
+            Assert.Equal("1", op.RangeA.ToString());
+            Assert.Equal("3", op.RangeB.ToString());
             Assert.Equal("X", op.ValueA);
             Assert.Equal("Y", op.ValueB);
         }

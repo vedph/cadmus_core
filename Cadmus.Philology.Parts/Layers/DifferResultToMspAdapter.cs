@@ -3,6 +3,7 @@ using Fusi.Tools.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Cadmus.Philology.Parts.Layers
 {
@@ -125,40 +126,60 @@ namespace Cadmus.Philology.Parts.Layers
             }
         }
 
+        private static string GetReversedString(string s) =>
+            s.Aggregate(new StringBuilder(), (j, k) => j.Insert(0, k)).ToString();
+
         private void DetectSwaps(List<Tuple<Diff, MspOperation>> mspDiffs)
         {
-            // a swap is defined by a pair of REP's, where A/B
-            // text values are swapped
-            for (int i = 0; i < mspDiffs.Count; i++)
+            // -- In contact:
+            // XYab -> YXab
+            // [0] del "X" ()
+            // [1] equ "Y" (Y)
+            // [2] ins "X" (YX)
+            // [3] equ "ab" (YXab)
+            // -- Not in contact:
+            // XaYb -> YaXb
+            // [0] del "Xa" ()
+            // [1] equ "Y" (Y)
+            // [2] ins "aX" (YaX)
+            // [3] equ "b" (YaXb)
+            // Thus:
+            // find del, equ, ins
+            // where del.text==ins.text || del.text==rev(ins.text).
+
+            for (int i = 0; i < mspDiffs.Count - 2; i++)
             {
-                if (mspDiffs[i].Item2?.Operator == MspOperator.Replace)
+                if (mspDiffs[i].Item2?.Operator == MspOperator.Delete
+                    && mspDiffs[i + 1].Item1.Operation == Operation.Equal
+                    && mspDiffs[i + 2].Item2?.Operator == MspOperator.Insert)
                 {
-                    // this is the leftmost REP
-                    MspOperation rep1 = mspDiffs[i].Item2;
-
-                    var next = mspDiffs.Skip(i + 1).FirstOrDefault(t =>
-                        t.Item2?.Operator == MspOperator.Replace
-                        && t.Item2.ValueA == rep1.ValueB
-                        && t.Item2.ValueB == rep1.ValueA);
-
-                    if (next != null)
+                    // in contact (text is equal)
+                    if (mspDiffs[i].Item1.Text == mspDiffs[i + 2].Item1.Text)
                     {
-                        // this is the rightmost REP
-                        MspOperation rep2 = next.Item2;
-
-                        // leftmost REP becomes SWP
+                        // del=swp
                         mspDiffs[i] = Tuple.Create(mspDiffs[i].Item1,
                             new MspOperation
                             {
                                 Operator = MspOperator.Swap,
-                                RangeA = rep2.RangeA,
-                                RangeB = rep1.RangeB,
-                                ValueA = rep2.ValueA,
-                                ValueB = rep1.ValueB
+                                RangeA = mspDiffs[i].Item2.RangeA,
+                                RangeB = new TextRange(
+                                    mspDiffs[i + 2].Item2.RangeA.Start,
+                                    mspDiffs[i + 2].Item1.Text.Length),
+                                ValueA = mspDiffs[i].Item1.Text,
+                                ValueB = mspDiffs[i].Item1.Text
                             });
-
-                        // rightmost REP is removed
-                        mspDiffs.Remove(next);
+                        // remove ins
+                        mspDiffs.RemoveAt(i + 2);
+                    }
+                    // not in contact e.g. del "Xa", equ "Y", ins "aX"
+                    else
+                    {
+                        string revInsText = GetReversedString(
+                            mspDiffs[i + 2].Item1.Text);
+                        if (mspDiffs[i].Item1.Text == revInsText)
+                        {
+                            // TODO:
+                        }
                     }
                 }
             }

@@ -169,5 +169,37 @@ namespace Cadmus.Philology.Parts.Test.Layers
             Assert.Equal("cs", op.ValueA);
             Assert.Equal("x", op.ValueB);
         }
+
+        [Fact]
+        public void Adapt_MovInitial_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("Cabd", "abCd"));
+
+            Assert.Single(ops);
+            // mov
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Move, op.Operator);
+            Assert.Equal("1", op.RangeA.ToString());
+            Assert.Equal("C", op.ValueA);
+            Assert.Equal("4×0", op.RangeB.ToString());
+        }
+
+        [Fact]
+        public void Adapt_MovFinal_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("acdB", "aBcd"));
+
+            Assert.Single(ops);
+            // mov
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Move, op.Operator);
+            Assert.Equal("4", op.RangeA.ToString());
+            Assert.Equal("B", op.ValueA);
+            Assert.Equal("2×0", op.RangeB.ToString());
+        }
     }
 }

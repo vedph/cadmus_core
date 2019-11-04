@@ -65,17 +65,17 @@ namespace Cadmus.Philology.Parts.Layers
                 {
                     // find a DEL with the same value
                     MspOperation ins = mspDiffs[i].Item2;
-                    var next = mspDiffs
+                    var nextDel = mspDiffs
                         .Skip(i + 1)
                         .FirstOrDefault(t =>
                             t.Item2?.Operator == MspOperator.Delete
                             && t.Item2.ValueA == ins.ValueB);
 
                     // if found, assume a MOV from DEL to INS
-                    if (next != null)
+                    if (nextDel != null)
                     {
                         MspOperation del = mspDiffs[i].Item2;
-                        int nextIndex = mspDiffs.IndexOf(next);
+                        int nextIndex = mspDiffs.IndexOf(nextDel);
 
                         mspDiffs[nextIndex] = Tuple.Create(mspDiffs[nextIndex].Item1,
                             new MspOperation
@@ -99,17 +99,17 @@ namespace Cadmus.Philology.Parts.Layers
                 {
                     // find an INS with the same value
                     MspOperation del = mspDiffs[i].Item2;
-                    var next = mspDiffs
+                    var nextIns = mspDiffs
                         .Skip(i + 1)
                         .FirstOrDefault(t =>
                             t.Item2?.Operator == MspOperator.Insert
                             && t.Item2.ValueB == del.ValueA);
 
                     // if found, assume a MOV from DEL to INS
-                    if (next != null)
+                    if (nextIns != null)
                     {
-                        MspOperation ins = mspDiffs[i].Item2;
-                        int nextIndex = mspDiffs.IndexOf(next);
+                        MspOperation ins = nextIns.Item2;
+                        int nextIndex = mspDiffs.IndexOf(nextIns);
 
                         mspDiffs[i] = Tuple.Create(mspDiffs[i].Item1,
                             new MspOperation
@@ -185,7 +185,11 @@ namespace Cadmus.Philology.Parts.Layers
             int index = 0;
             for (int i = 0; i < mspDiffs.Count; i++)
             {
-                if (mspDiffs[i].Item2 != null) continue;
+                if (mspDiffs[i].Item2 != null)
+                {
+                    index += mspDiffs[i].Item2.RangeA.Length;
+                    continue;
+                }
 
                 Tuple<Diff, MspOperation> t = mspDiffs[i];
                 switch (t.Item1.Operation)

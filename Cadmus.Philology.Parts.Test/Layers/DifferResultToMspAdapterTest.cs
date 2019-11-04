@@ -62,6 +62,31 @@ namespace Cadmus.Philology.Parts.Test.Layers
         }
 
         [Fact]
+        public void Adapt_DelMultiple_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("XabYcdZ", "abcd"));
+
+            Assert.Equal(3, ops.Count);
+            // X
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Delete, op.Operator);
+            Assert.Equal("1", op.RangeA.ToString());
+            Assert.Equal("X", op.ValueA);
+            // Y
+            op = ops[1];
+            Assert.Equal(MspOperator.Delete, op.Operator);
+            Assert.Equal("4", op.RangeA.ToString());
+            Assert.Equal("Y", op.ValueA);
+            // Z
+            op = ops[2];
+            Assert.Equal(MspOperator.Delete, op.Operator);
+            Assert.Equal("7", op.RangeA.ToString());
+            Assert.Equal("Z", op.ValueA);
+        }
+
+        [Fact]
         public void Adapt_InsInitial_Ok()
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
@@ -104,6 +129,31 @@ namespace Cadmus.Philology.Parts.Test.Layers
             Assert.Equal(MspOperator.Insert, op.Operator);
             Assert.Equal("5×0", op.RangeA.ToString());
             Assert.Equal("m", op.ValueB);
+        }
+
+        [Fact]
+        public void Adapt_InsMultiple_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("abcd", "XabYcdZ"));
+
+            Assert.Equal(3, ops.Count);
+            // X
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Insert, op.Operator);
+            Assert.Equal("1×0", op.RangeA.ToString());
+            Assert.Equal("X", op.ValueB);
+            // Y
+            op = ops[1];
+            Assert.Equal(MspOperator.Insert, op.Operator);
+            Assert.Equal("3×0", op.RangeA.ToString());
+            Assert.Equal("Y", op.ValueB);
+            // Z
+            op = ops[2];
+            Assert.Equal(MspOperator.Insert, op.Operator);
+            Assert.Equal("5×0", op.RangeA.ToString());
+            Assert.Equal("Z", op.ValueB);
         }
 
         [Fact]
@@ -171,35 +221,31 @@ namespace Cadmus.Philology.Parts.Test.Layers
         }
 
         [Fact]
-        public void Adapt_MovInitial_Ok()
+        public void Adapt_RepMultiple_Ok()
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("Cabd", "abCd"));
+            var ops = adapter.Adapt(new Differ().Diffs("abcde", "XbYdZ"));
 
-            Assert.Single(ops);
-            // mov
+            Assert.Equal(3, ops.Count);
+            // X
             MspOperation op = ops[0];
-            Assert.Equal(MspOperator.Move, op.Operator);
+            Assert.Equal(MspOperator.Replace, op.Operator);
             Assert.Equal("1", op.RangeA.ToString());
-            Assert.Equal("C", op.ValueA);
-            Assert.Equal("4×0", op.RangeB.ToString());
-        }
-
-        [Fact]
-        public void Adapt_MovFinal_Ok()
-        {
-            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
-
-            var ops = adapter.Adapt(new Differ().Diffs("acdB", "aBcd"));
-
-            Assert.Single(ops);
-            // mov
-            MspOperation op = ops[0];
-            Assert.Equal(MspOperator.Move, op.Operator);
-            Assert.Equal("4", op.RangeA.ToString());
-            Assert.Equal("B", op.ValueA);
-            Assert.Equal("2×0", op.RangeB.ToString());
+            Assert.Equal("a", op.ValueA);
+            Assert.Equal("X", op.ValueB);
+            // Y
+            op = ops[1];
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            Assert.Equal("3", op.RangeA.ToString());
+            Assert.Equal("c", op.ValueA);
+            Assert.Equal("Y", op.ValueB);
+            // Z
+            op = ops[2];
+            Assert.Equal(MspOperator.Replace, op.Operator);
+            Assert.Equal("5", op.RangeA.ToString());
+            Assert.Equal("e", op.ValueA);
+            Assert.Equal("Z", op.ValueB);
         }
     }
 }

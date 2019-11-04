@@ -131,55 +131,28 @@ namespace Cadmus.Philology.Parts.Layers
 
         private void DetectSwaps(List<Tuple<Diff, MspOperation>> mspDiffs)
         {
-            // -- In contact:
-            // XYab -> YXab
-            // [0] del "X" ()
-            // [1] equ "Y" (Y)
-            // [2] ins "X" (YX)
-            // [3] equ "ab" (YXab)
-            // -- Not in contact:
-            // XaYb -> YaXb
-            // [0] del "Xa" ()
-            // [1] equ "Y" (Y)
-            // [2] ins "aX" (YaX)
-            // [3] equ "b" (YaXb)
-            // Thus:
-            // find del, equ, ins
-            // where del.text==ins.text || del.text==rev(ins.text).
-
-            for (int i = 0; i < mspDiffs.Count - 2; i++)
+            for (int i = 0; i < mspDiffs.Count - 1; i++)
             {
-                if (mspDiffs[i].Item2?.Operator == MspOperator.Delete
-                    && mspDiffs[i + 1].Item1.Operation == Operation.Equal
-                    && mspDiffs[i + 2].Item2?.Operator == MspOperator.Insert)
+                if (mspDiffs[i].Item2?.Operator == MspOperator.Move
+                    && mspDiffs[i + 1].Item1.Operation == Operation.Equal)
                 {
-                    // in contact (text is equal)
-                    if (mspDiffs[i].Item1.Text == mspDiffs[i + 2].Item1.Text)
+                    // e.g. XYab -> YXab using "X"@1>@3 can be interpreted as
+                    // "X"@1~"Y"@2
+                    MspOperation mov = mspDiffs[i].Item2;
+                    if (mov.RangeA.Start + 1 + mov.ValueA.Length == mov.RangeB.Start)
                     {
-                        // del=swp
+                        string nextText = mspDiffs[i + 1].Item1.Text;
+
                         mspDiffs[i] = Tuple.Create(mspDiffs[i].Item1,
                             new MspOperation
                             {
                                 Operator = MspOperator.Swap,
-                                RangeA = mspDiffs[i].Item2.RangeA,
-                                RangeB = new TextRange(
-                                    mspDiffs[i + 2].Item2.RangeA.Start,
-                                    mspDiffs[i + 2].Item1.Text.Length),
-                                ValueA = mspDiffs[i].Item1.Text,
-                                ValueB = mspDiffs[i].Item1.Text
+                                RangeA = mov.RangeA,
+                                RangeB = new TextRange(mov.RangeA.End + 1,
+                                    nextText.Length),
+                                ValueA = mov.ValueA,
+                                ValueB = nextText
                             });
-                        // remove ins
-                        mspDiffs.RemoveAt(i + 2);
-                    }
-                    // not in contact e.g. del "Xa", equ "Y", ins "aX"
-                    else
-                    {
-                        string revInsText = GetReversedString(
-                            mspDiffs[i + 2].Item1.Text);
-                        if (mspDiffs[i].Item1.Text == revInsText)
-                        {
-                            // TODO:
-                        }
                     }
                 }
             }

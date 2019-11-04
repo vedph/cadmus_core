@@ -273,5 +273,53 @@ namespace Cadmus.Philology.Parts.Test.Layers
             Assert.Equal("4", op.RangeA.ToString());
             Assert.Equal("f", op.ValueA);
         }
+
+        [Fact]
+        public void Adapt_MovFromStart_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("Xab", "abX"));
+
+            Assert.Single(ops);
+            // mov
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Move, op.Operator);
+            Assert.Equal("1", op.RangeA.ToString());
+            Assert.Equal("4×0", op.RangeB.ToString());
+            Assert.Equal("X", op.ValueA);
+        }
+
+        [Fact]
+        public void Adapt_MovFromInner_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("aXbc", "abcX"));
+
+            Assert.Single(ops);
+            // mov
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Move, op.Operator);
+            Assert.Equal("2", op.RangeA.ToString());
+            Assert.Equal("5×0", op.RangeB.ToString());
+            Assert.Equal("X", op.ValueA);
+        }
+
+        [Fact]
+        public void Adapt_MovFromEnd_Ok()
+        {
+            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+
+            var ops = adapter.Adapt(new Differ().Diffs("abX", "Xab"));
+
+            Assert.Single(ops);
+            // mov
+            MspOperation op = ops[0];
+            Assert.Equal(MspOperator.Move, op.Operator);
+            Assert.Equal("3", op.RangeA.ToString());
+            Assert.Equal("1×0", op.RangeB.ToString());
+            Assert.Equal("X", op.ValueA);
+        }
     }
 }

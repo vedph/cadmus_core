@@ -63,8 +63,9 @@ namespace Cadmus.Philology.Parts.Layers
                 // for each INS:
                 if (mspDiffs[i].Item2?.Operator == MspOperator.Insert)
                 {
-                    // find a DEL with the same value
                     MspOperation ins = mspDiffs[i].Item2;
+
+                    // find a DEL with the same value
                     var nextDel = mspDiffs
                         .Skip(i + 1)
                         .FirstOrDefault(t =>
@@ -74,17 +75,16 @@ namespace Cadmus.Philology.Parts.Layers
                     // if found, assume a MOV from DEL to INS
                     if (nextDel != null)
                     {
-                        MspOperation del = mspDiffs[i].Item2;
-                        int nextIndex = mspDiffs.IndexOf(nextDel);
+                        int nextDelIndex = mspDiffs.IndexOf(nextDel);
+                        MspOperation del = mspDiffs[nextDelIndex].Item2;
 
-                        mspDiffs[nextIndex] = Tuple.Create(mspDiffs[nextIndex].Item1,
+                        mspDiffs[nextDelIndex] = Tuple.Create(mspDiffs[nextDelIndex].Item1,
                             new MspOperation
                             {
                                 Operator = MspOperator.Move,
                                 RangeA = del.RangeA,
                                 RangeB = ins.RangeA,
-                                ValueA = del.ValueA,
-                                ValueB = ins.ValueA
+                                ValueA = del.ValueA
                             });
                         mspDiffs.RemoveAt(i--);
                     }
@@ -109,7 +109,7 @@ namespace Cadmus.Philology.Parts.Layers
                     if (nextIns != null)
                     {
                         MspOperation ins = nextIns.Item2;
-                        int nextIndex = mspDiffs.IndexOf(nextIns);
+                        int nextInsIndex = mspDiffs.IndexOf(nextIns);
 
                         mspDiffs[i] = Tuple.Create(mspDiffs[i].Item1,
                             new MspOperation
@@ -117,10 +117,9 @@ namespace Cadmus.Philology.Parts.Layers
                                 Operator = MspOperator.Move,
                                 RangeA = del.RangeA,
                                 RangeB = ins.RangeA,
-                                ValueA = del.ValueA,
-                                ValueB = ins.ValueA
+                                ValueA = del.ValueA
                             });
-                        mspDiffs.RemoveAt(nextIndex);
+                        mspDiffs.RemoveAt(nextInsIndex);
                     }
                 }
             }

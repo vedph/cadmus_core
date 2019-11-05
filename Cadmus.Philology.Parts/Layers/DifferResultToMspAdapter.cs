@@ -3,7 +3,6 @@ using Fusi.Tools.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Cadmus.Philology.Parts.Layers
 {
@@ -21,7 +20,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Gets or sets a value indicating whether swap operation is disabled.
         /// </summary>
-        public bool IsSwpDisabled { get; set; }
+        // public bool IsSwpDisabled { get; set; }
 
         private void MapDiffsWithReplacements(IList<Diff> diffs,
             IList<Tuple<Diff, MspOperation>> output)
@@ -126,37 +125,18 @@ namespace Cadmus.Philology.Parts.Layers
             }
         }
 
-        private static string GetReversedString(string s) =>
-            s.Aggregate(new StringBuilder(), (j, k) => j.Insert(0, k)).ToString();
+        //private static string GetReversedString(string s) =>
+        //    s.Aggregate(new StringBuilder(), (j, k) => j.Insert(0, k)).ToString();
 
-        private void DetectSwaps(List<Tuple<Diff, MspOperation>> mspDiffs)
-        {
-            for (int i = 0; i < mspDiffs.Count - 1; i++)
-            {
-                if (mspDiffs[i].Item2?.Operator == MspOperator.Move
-                    && mspDiffs[i + 1].Item1.Operation == Operation.Equal)
-                {
-                    // e.g. XYab -> YXab using "X"@1>@3 can be interpreted as
-                    // "X"@1~"Y"@2
-                    MspOperation mov = mspDiffs[i].Item2;
-                    if (mov.RangeA.Start + 1 + mov.ValueA.Length == mov.RangeB.Start)
-                    {
-                        string nextText = mspDiffs[i + 1].Item1.Text;
-
-                        mspDiffs[i] = Tuple.Create(mspDiffs[i].Item1,
-                            new MspOperation
-                            {
-                                Operator = MspOperator.Swap,
-                                RangeA = mov.RangeA,
-                                RangeB = new TextRange(mov.RangeA.End + 1,
-                                    nextText.Length),
-                                ValueA = mov.ValueA,
-                                ValueB = nextText
-                            });
-                    }
-                }
-            }
-        }
+        //private void DetectSwaps(List<Tuple<Diff, MspOperation>> mspDiffs)
+        //{
+        //    // TODO: eventually add swap. Cases are like this:
+        //    // XaYb -> YaXb
+        //    // del Xa ()
+        //    // equ Y (Y)
+        //    // ins aX (YaX)
+        //    // equ b (YaXb)
+        //}
 
         /// <summary>
         /// Adapt the result into a set of misspelling operations.
@@ -215,7 +195,7 @@ namespace Cadmus.Philology.Parts.Layers
             }
 
             if (!IsMovDisabled) DetectMoves(mspDiffs);
-            if (!IsSwpDisabled) DetectSwaps(mspDiffs);
+            // if (!IsSwpDisabled) DetectSwaps(mspDiffs);
 
             return mspDiffs.Where(t => t.Item2 != null)
                 .Select(t => t.Item2)

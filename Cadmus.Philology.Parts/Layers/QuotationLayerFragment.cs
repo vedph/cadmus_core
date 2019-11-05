@@ -36,7 +36,7 @@ namespace Cadmus.Philology.Parts.Layers
         public string Work { get; set; }
 
         /// <summary>
-        /// Gets or sets the work location (e.g. 3,24).
+        /// Gets or sets the work location (e.g. <c>3,24</c>).
         /// </summary>
         public string WorkLoc { get; set; }
 

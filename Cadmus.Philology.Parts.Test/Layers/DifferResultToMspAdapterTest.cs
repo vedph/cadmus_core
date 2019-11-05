@@ -322,72 +322,72 @@ namespace Cadmus.Philology.Parts.Test.Layers
             Assert.Equal("X", op.ValueA);
         }
 
-        [Fact]
-        public void Adapt_SwpAtStart_Ok()
-        {
-            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+        //[Fact]
+        //public void Adapt_SwpAtStart_Ok()
+        //{
+        //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("XYab", "YXab"));
+        //    var ops = adapter.Adapt(new Differ().Diffs("XYab", "YXab"));
 
-            Assert.Single(ops);
-            // swp
-            MspOperation op = ops[0];
-            Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("1", op.RangeA.ToString());
-            Assert.Equal("2", op.RangeB.ToString());
-            Assert.Equal("X", op.ValueA);
-            Assert.Equal("Y", op.ValueB);
-        }
+        //    Assert.Single(ops);
+        //    // swp
+        //    MspOperation op = ops[0];
+        //    Assert.Equal(MspOperator.Swap, op.Operator);
+        //    Assert.Equal("1", op.RangeA.ToString());
+        //    Assert.Equal("2", op.RangeB.ToString());
+        //    Assert.Equal("X", op.ValueA);
+        //    Assert.Equal("Y", op.ValueB);
+        //}
 
-        [Fact]
-        public void Adapt_SwpAtEnd_Ok()
-        {
-            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+        //[Fact]
+        //public void Adapt_SwpAtEnd_Ok()
+        //{
+        //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("abXY", "abYX"));
+        //    var ops = adapter.Adapt(new Differ().Diffs("abXY", "abYX"));
 
-            Assert.Single(ops);
-            // swp
-            MspOperation op = ops[0];
-            Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("3", op.RangeA.ToString());
-            Assert.Equal("4", op.RangeB.ToString());
-            Assert.Equal("X", op.ValueA);
-            Assert.Equal("Y", op.ValueB);
-        }
+        //    Assert.Single(ops);
+        //    // swp
+        //    MspOperation op = ops[0];
+        //    Assert.Equal(MspOperator.Swap, op.Operator);
+        //    Assert.Equal("3", op.RangeA.ToString());
+        //    Assert.Equal("4", op.RangeB.ToString());
+        //    Assert.Equal("X", op.ValueA);
+        //    Assert.Equal("Y", op.ValueB);
+        //}
 
-        [Fact]
-        public void Adapt_SwpAtInner_Ok()
-        {
-            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+        //[Fact]
+        //public void Adapt_SwpAtInner_Ok()
+        //{
+        //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("abXYcd", "abYXcd"));
+        //    var ops = adapter.Adapt(new Differ().Diffs("abXYcd", "abYXcd"));
 
-            Assert.Single(ops);
-            // swp
-            MspOperation op = ops[0];
-            Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("3", op.RangeA.ToString());
-            Assert.Equal("4", op.RangeB.ToString());
-            Assert.Equal("X", op.ValueA);
-            Assert.Equal("Y", op.ValueB);
-        }
+        //    Assert.Single(ops);
+        //    // swp
+        //    MspOperation op = ops[0];
+        //    Assert.Equal(MspOperator.Swap, op.Operator);
+        //    Assert.Equal("3", op.RangeA.ToString());
+        //    Assert.Equal("4", op.RangeB.ToString());
+        //    Assert.Equal("X", op.ValueA);
+        //    Assert.Equal("Y", op.ValueB);
+        //}
 
-        [Fact]
-        public void Adapt_SwpNotInContact_Ok()
-        {
-            DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
+        //[Fact]
+        //public void Adapt_SwpNotInContact_Ok()
+        //{
+        //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("XaYb", "YaXb"));
+        //    var ops = adapter.Adapt(new Differ().Diffs("XaYb", "YaXb"));
 
-            Assert.Single(ops);
-            // swp
-            MspOperation op = ops[0];
-            Assert.Equal(MspOperator.Swap, op.Operator);
-            Assert.Equal("1", op.RangeA.ToString());
-            Assert.Equal("3", op.RangeB.ToString());
-            Assert.Equal("X", op.ValueA);
-            Assert.Equal("Y", op.ValueB);
-        }
+        //    Assert.Single(ops);
+        //    // swp
+        //    MspOperation op = ops[0];
+        //    Assert.Equal(MspOperator.Swap, op.Operator);
+        //    Assert.Equal("1", op.RangeA.ToString());
+        //    Assert.Equal("3", op.RangeB.ToString());
+        //    Assert.Equal("X", op.ValueA);
+        //    Assert.Equal("Y", op.ValueB);
+        //}
     }
 }

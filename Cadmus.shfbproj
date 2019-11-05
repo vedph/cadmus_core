@@ -62,6 +62,7 @@
           <assemblyBinding />
           <ignoreIfUnresolved>
             <assemblyIdentity name="BusinessObjects.Licensing.KeycodeDecoder" />
+            <assemblyIdentity name="DiffMatchPatch" />
             <assemblyIdentity name="DiffPlex" />
             <assemblyIdentity name="Fusi.Antiquity" />
             <assemblyIdentity name="Fusi.Config" />
@@ -72,6 +73,7 @@
             <assemblyIdentity name="MongoDB.Driver.Core" />
             <assemblyIdentity name="netstandard" />
             <assemblyIdentity name="SimpleInjector" />
+            <assemblyIdentity name="System.Text.Json" />
           </ignoreIfUnresolved>
         </configuration>
       </PlugInConfig>

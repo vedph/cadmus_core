@@ -99,25 +99,6 @@ namespace Cadmus.Philology.Parts.Test.Layers
         }
 
         [Theory]
-        [InlineData(null, null, "\"old\"@2×0=\"new\"")]
-        [InlineData("tag", null, "\"old\"@2×0=\"new\" [tag]")]
-        [InlineData(null, "note", "\"old\"@2×0=\"new\" {note}")]
-        [InlineData("tag", "note", "\"old\"@2×0=\"new\" [tag] {note}")]
-        public void ToString_InsertWithValueA_Ok(string tag, string note, string expected)
-        {
-            MspOperation op = new MspOperation
-            {
-                Operator = MspOperator.Insert,
-                RangeA = TextRange.Parse("2x0"),
-                ValueA = "old",
-                ValueB = "new",
-                Tag = tag,
-                Note = note
-            };
-            Assert.Equal(expected, op.ToString());
-        }
-
-        [Theory]
         [InlineData(null, null, "@2×3>@6×0")]
         [InlineData("tag", null, "@2×3>@6×0 [tag]")]
         [InlineData(null, "note", "@2×3>@6×0 {note}")]

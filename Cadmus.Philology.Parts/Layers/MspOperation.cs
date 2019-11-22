@@ -20,6 +20,20 @@ namespace Cadmus.Philology.Parts.Layers
     /// and are useful to express the details of such transformation. This is
     /// useful when dealing with a misspelled form A vs its standard orthography
     /// version B.</para>
+    /// <para>Each character in the text form gets an ID, which is just its
+    /// ordinal number. For instance, in <c>bixit</c> <c>b</c>=1, <c>i</c>=2,
+    /// etc. It should be remarked that even if this ID is generated from
+    /// the position of each character in the original form, the ID has no
+    /// intrisic positional meaning; it is just a label, which uniquely
+    /// identifies the character. For instance, if we later insert a character,
+    /// e.g. <c>e</c> before <c>bixit</c> whence <c>ebixit</c>, the newly
+    /// inserted character would rather be identified by the next free numeric
+    /// value in the natural order, e.g. 6 (as <c>bixit</c> counts 5 characters);
+    /// yet, it would appear as first. At the misspelling level usually we are
+    /// not required to assign new IDs, as most of the operations refer to
+    /// the initial form; yet, this is how we would refer to newly added
+    /// character(s).
+    /// </para>
     /// <para>Operations types:</para>
     /// <list type="bullet">
     /// <item>
@@ -68,7 +82,7 @@ namespace Cadmus.Philology.Parts.Layers
         private static readonly Regex _opRegex = new Regex(
             @"(?:""(?<va>[^""]+)"")?" +
             @"\@(?<ras>\d+)(?:[x×](?<ral>\d+))?" +
-            @"(?<op>[=>~])" +
+            @"\s*(?<op>[=>~])\s*" +
             @"(?:""(?<vb>[^""]*)"")?" +
             @"(?:\@(?<rbs>\d+)(?:[x×](?<rbl>\d+))?)?" +
             @"(?:\s*\[(?<tag>[^]{]+)\])?" +

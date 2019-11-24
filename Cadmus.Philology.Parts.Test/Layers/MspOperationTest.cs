@@ -399,7 +399,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
             string text = AppendTagAndNote("@2x1~@4x1", tag, note);
             MspOperation op = MspOperation.Parse(text);
 
-            // op: move
+            // op: swap
             Assert.Equal(MspOperator.Swap, op.Operator);
             // ranges: A
             Assert.Equal("2", op.RangeA.ToString());
@@ -422,7 +422,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
             string text = AppendTagAndNote("\"a\"@2x1~\"b\"@4x1", tag, note);
             MspOperation op = MspOperation.Parse(text);
 
-            // op: move
+            // op: swap
             Assert.Equal(MspOperator.Swap, op.Operator);
             // ranges: A
             Assert.Equal("2", op.RangeA.ToString());

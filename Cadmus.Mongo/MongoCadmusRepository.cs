@@ -303,7 +303,7 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.Description))
             {
                 f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.Description.Contains(filter.Title)));
+                    i => i.Description.Contains(filter.Description)));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))

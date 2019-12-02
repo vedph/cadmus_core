@@ -25,7 +25,7 @@ namespace Cadmus.Mongo.Test
         /// sort</exception>
         /// <exception cref="ArgumentOutOfRangeException">number or size less
         /// than 1</exception>
-        public static PagedData<T> GetDocumentsPage<T>(IMongoCollection<T> collection,
+        public static DataPage<T> GetDocumentsPage<T>(IMongoCollection<T> collection,
             string query, string sort, int number, int size) where T : class
         {
             if (collection == null) throw new ArgumentNullException(nameof(collection));
@@ -39,7 +39,8 @@ namespace Cadmus.Mongo.Test
 
             int total = (int)collection.CountDocuments(docQuery);
 
-            return new PagedData<T>(total, collection.Find(docQuery)
+            return new DataPage<T>(number, size, total,
+                collection.Find(docQuery)
                 .Sort(docSort).Skip((number - 1) * size).Limit(size)
                 .ToList());
         }

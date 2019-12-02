@@ -97,7 +97,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>items page</returns>
-        PagedData<ItemInfo> GetItems(ItemFilter filter);
+        DataPage<ItemInfo> GetItems(ItemFilter filter);
 
         /// <summary>
         /// Gets the specified item.
@@ -138,7 +138,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
-        PagedData<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter);
+        DataPage<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter);
 
         /// <summary>
         /// Gets the specified history item.
@@ -160,7 +160,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The parts filter.</param>
         /// <returns>Parts page.</returns>
-        PagedData<PartInfo> GetParts(PartFilter filter);
+        DataPage<PartInfo> GetParts(PartFilter filter);
 
         /// <summary>
         /// Gets the parts belonging to the specified item(s), eventually
@@ -232,7 +232,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history parts result</returns>
-        PagedData<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter);
+        DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter);
 
         /// <summary>
         /// Gets the specified history part.

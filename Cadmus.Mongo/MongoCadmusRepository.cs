@@ -282,7 +282,7 @@ namespace Cadmus.Mongo
         /// <param name="filter">The filter.</param>
         /// <returns>items page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<ItemInfo> GetItems(ItemFilter filter)
+        public DataPage<ItemInfo> GetItems(ItemFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -336,7 +336,11 @@ namespace Cadmus.Mongo
             }
 
             int total = (int)items.CountDocuments(f);
-            if (total == 0) return new PagedData<ItemInfo>(0, new List<ItemInfo>());
+            if (total == 0)
+            {
+                return new DataPage<ItemInfo>(
+                    filter.PageNumber, filter.PageSize, 0, null);
+            }
 
             var mongoItems = items.Find(f)
                 .SortBy(i => i.SortKey)
@@ -344,8 +348,10 @@ namespace Cadmus.Mongo
                 .Limit(filter.PageSize)
                 .ToList();
 
-            IList<ItemInfo> results = mongoItems.Select(i => i.ToItemInfo()).ToList();
-            return new PagedData<ItemInfo>(total, results);
+            IList<ItemInfo> results =
+                mongoItems.Select(i => i.ToItemInfo()).ToList();
+            return new DataPage<ItemInfo>(
+                filter.PageNumber, filter.PageSize, total, results);
         }
 
         /// <summary>
@@ -500,7 +506,7 @@ namespace Cadmus.Mongo
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter)
+        public DataPage<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -568,8 +574,9 @@ namespace Cadmus.Mongo
             int total = (int)items.CountDocuments(f);
             if (total == 0)
             {
-                return new PagedData<HistoryItemInfo>(0,
-                    new List<HistoryItemInfo>());
+                return new DataPage<HistoryItemInfo>(
+                    filter.PageNumber, filter.PageSize, 0,
+                    null);
             }
 
             var mongoItems = items.Find(f)
@@ -579,7 +586,8 @@ namespace Cadmus.Mongo
                 .ToList();
 
             var results = mongoItems.Select(i => i.ToHistoryItemInfo()).ToList();
-            return new PagedData<HistoryItemInfo>(total, results);
+            return new DataPage<HistoryItemInfo>(
+                filter.PageNumber, filter.PageSize, total, results);
         }
 
         /// <summary>
@@ -660,12 +668,15 @@ namespace Cadmus.Mongo
 
                 if (part == null)
                 {
-                    string error = $"Unable to instantiate part for type.role=" +
+                    string error = "Unable to instantiate part for type.role=" +
                         $"{mongoPart.TypeId}.{mongoPart.RoleId}";
                     Debug.WriteLine(error);
                     if (throwOnNull) throw new ApplicationException(error);
                 }
-                else results.Add(part);
+                else
+                {
+                    results.Add(part);
+                }
             }
             return results;
         }
@@ -701,7 +712,7 @@ namespace Cadmus.Mongo
         /// <param name="filter">The parts filter.</param>
         /// <returns>parts page</returns>
         /// <exception cref="ArgumentNullException">null filter</exception>
-        public PagedData<PartInfo> GetParts(PartFilter filter)
+        public DataPage<PartInfo> GetParts(PartFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -727,7 +738,8 @@ namespace Cadmus.Mongo
             }
 
             int total = parts.Count();
-            if (total == 0) return new PagedData<PartInfo>(0, new List<PartInfo>());
+            if (total == 0) return new DataPage<PartInfo>(
+                filter.PageNumber, filter.PageSize, 0, null);
 
             List<MongoPart> results;
 
@@ -750,7 +762,8 @@ namespace Cadmus.Mongo
                 .Take(filter.PageSize)
                 .ToList();
 
-            return new PagedData<PartInfo>(total,
+            return new DataPage<PartInfo>(
+                filter.PageNumber, filter.PageSize, total,
                 results.Select(p => p.ToPartInfo()).ToList());
         }
 
@@ -973,7 +986,7 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>history items page</returns>
-        public PagedData<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
+        public DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -1029,8 +1042,8 @@ namespace Cadmus.Mongo
             int total = parts.Count();
             if (total == 0)
             {
-                return new PagedData<HistoryPartInfo>(0,
-                    new List<HistoryPartInfo>());
+                return new DataPage<HistoryPartInfo>(
+                    filter.PageNumber, filter.PageSize, 0, null);
             }
 
             var page = parts.OrderBy(p => p.TimeModified)
@@ -1038,7 +1051,8 @@ namespace Cadmus.Mongo
                 .Take(filter.PageSize)
                 .ToList();
 
-            return new PagedData<HistoryPartInfo>(total,
+            return new DataPage<HistoryPartInfo>(
+                filter.PageNumber, filter.PageSize, total,
                 page.Select(p => p.ToHistoryPartInfo()).ToList());
         }
 

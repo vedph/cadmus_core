@@ -572,20 +572,20 @@ namespace Cadmus.TestBase
             // categories
             PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("categories", info.TypeId);
+            Assert.Equal("net.fusisoft.categories", info.TypeId);
             Assert.Equal("categories", info.RoleId);
 
             // note
             info = page.Items[1];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("note", info.TypeId);
+            Assert.Equal("net.fusisoft.note", info.TypeId);
             Assert.Equal("note", info.RoleId);
 
             // layer
             info = page.Items[2];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("token-text-layer", info.TypeId);
-            Assert.Equal("fr.comment", info.RoleId);
+            Assert.Equal("net.fusisoft.token-text-layer", info.TypeId);
+            Assert.Equal("fr.net.fusisoft.comment", info.RoleId);
         }
 
         protected void DoGetPartsPage_1TypeId_1()
@@ -593,7 +593,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var page = repository.GetParts(new PartFilter {TypeId = "note"});
+            var page = repository.GetParts(new PartFilter {TypeId = "net.fusisoft.note" });
 
             Assert.Equal(1, page.Items.Count);
             Assert.Equal(1, page.Total);
@@ -601,7 +601,7 @@ namespace Cadmus.TestBase
             // note
             PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("note", info.TypeId);
+            Assert.Equal("net.fusisoft.note", info.TypeId);
             Assert.Equal("note", info.RoleId);
         }
 
@@ -618,7 +618,7 @@ namespace Cadmus.TestBase
             // note
             PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("note", info.TypeId);
+            Assert.Equal("net.fusisoft.note", info.TypeId);
             Assert.Equal("note", info.RoleId);
         }
 
@@ -664,7 +664,7 @@ namespace Cadmus.TestBase
             // act
             var page = repository.GetParts(new PartFilter
             {
-                TypeId = "hierarchy",
+                TypeId = "net.fusisoft.hierarchy",
                 SortExpressions = new[]
                 {
                     Tuple.Create("RoleId", true),
@@ -689,7 +689,7 @@ namespace Cadmus.TestBase
             var page = repository.GetParts(new PartFilter
             {
                 ItemIds = new[] {"item-001"},
-                TypeId = "hierarchy"
+                TypeId = "net.fusisoft.hierarchy"
             });
 
             // assert

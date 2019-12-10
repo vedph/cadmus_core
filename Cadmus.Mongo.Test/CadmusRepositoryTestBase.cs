@@ -201,7 +201,8 @@ namespace Cadmus.TestBase
                         IsRequired = true,
                         ColorKey = "FF00FF",
                         GroupKey = "General",
-                        SortKey = "categories"
+                        SortKey = "categories",
+                        EditorKey = "module1"
                     },
                     new PartDefinition
                     {
@@ -212,7 +213,8 @@ namespace Cadmus.TestBase
                         IsRequired = false,
                         ColorKey = "00FF00",
                         GroupKey = "General",
-                        SortKey = "keywords"
+                        SortKey = "keywords",
+                        EditorKey = "module2"
                     }
                 }
             };
@@ -251,7 +253,8 @@ namespace Cadmus.TestBase
                         IsRequired = false,
                         ColorKey = "00FF80",
                         GroupKey = "General",
-                        SortKey = "note"
+                        SortKey = "note",
+                        EditorKey = "module1"
                     }
                 }
             };

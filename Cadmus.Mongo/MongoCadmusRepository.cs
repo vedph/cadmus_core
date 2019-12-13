@@ -110,7 +110,7 @@ namespace Cadmus.Mongo
 
             flags.ReplaceOne(f => f.Id.Equals(definition.Id),
                 new MongoFlagDefinition(definition),
-                new UpdateOptions {IsUpsert = true});
+                new ReplaceOptions {IsUpsert = true});
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Cadmus.Mongo
 
             facets.ReplaceOne(f => f.Id.Equals(facet.Id),
                 new MongoFacetDefinition(facet),
-                new UpdateOptions { IsUpsert = true });
+                new ReplaceOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Cadmus.Mongo
 
             thesauri.ReplaceOne(old => old.Id.Equals(thesaurus.Id),
                 new MongoThesaurus(thesaurus),
-                new UpdateOptions { IsUpsert = true });
+                new ReplaceOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace Cadmus.Mongo
 
             items.ReplaceOne(i => i.Id.Equals(item.Id),
                 new MongoItem(item),
-                new UpdateOptions { IsUpsert = true });
+                new ReplaceOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -738,8 +738,11 @@ namespace Cadmus.Mongo
             }
 
             int total = parts.Count();
-            if (total == 0) return new DataPage<PartInfo>(
-                filter.PageNumber, filter.PageSize, 0, null);
+            if (total == 0)
+            {
+                return new DataPage<PartInfo>(
+                    filter.PageNumber, filter.PageSize, 0, null);
+            }
 
             List<MongoPart> results;
 
@@ -919,7 +922,7 @@ namespace Cadmus.Mongo
 
             parts.ReplaceOne(p => p.Id.Equals(part.Id),
                 mongoPart,
-                new UpdateOptions { IsUpsert = true });
+                new ReplaceOptions { IsUpsert = true });
         }
 
         /// <summary>

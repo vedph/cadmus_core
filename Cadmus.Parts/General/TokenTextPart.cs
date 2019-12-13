@@ -19,6 +19,13 @@ namespace Cadmus.Parts.General
     public sealed class TokenTextPart : PartBase, IHasText
     {
         /// <summary>
+        /// Gets or sets the citation. This is an optional arbitrary string,
+        /// used to virtually connect several text parts belonging to a bigger
+        /// unit.
+        /// </summary>
+        public string Citation { get; set; }
+
+        /// <summary>
         /// Gets the text lines.
         /// </summary>
         public List<TextLine> Lines { get; set; }
@@ -37,7 +44,12 @@ namespace Cadmus.Parts.General
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
-            return Enumerable.Empty<DataPin>();
+            return Citation != null ?
+                new[]
+                {
+                    CreateDataPin("citation", Citation)
+                }
+                : Enumerable.Empty<DataPin>();
         }
 
         /// <summary>

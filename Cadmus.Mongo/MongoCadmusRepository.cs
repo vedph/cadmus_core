@@ -938,7 +938,10 @@ namespace Cadmus.Mongo
 
             JsonDocument doc = JsonDocument.Parse(content);
             string typeId = doc.RootElement.GetProperty("typeId").GetString();
-            string roleId = doc.RootElement.GetProperty("roleId").GetString();
+
+            string roleId = null;
+            if (doc.RootElement.TryGetProperty("roleId", out JsonElement rid))
+                roleId = rid.GetString();
 
             IPart part = InstantiatePart(typeId, roleId, content);
             AddPart(part, history);

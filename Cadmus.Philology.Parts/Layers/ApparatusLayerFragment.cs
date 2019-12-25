@@ -55,7 +55,6 @@ namespace Cadmus.Philology.Parts.Layers
     public sealed class ApparatusLayerFragment : ITextLayerFragment
     {
         #region Properties
-        /// <inheritdoc />
         /// <summary>
         /// Gets or sets the location of this fragment.
         /// </summary>
@@ -73,7 +72,9 @@ namespace Cadmus.Philology.Parts.Layers
         public LemmaVariantType Type { get; set; }
 
         /// <summary>
-        /// Lemma variant text value.
+        /// Lemma variant text value, can be zero (null or empty) for a
+        /// deletion. When <see cref="Type"/> is <see cref="LemmaVariantType.Note"/>
+        /// this property has no meaning as it's not applicable.
         /// </summary>
         /// <value>Variant text.</value>
         public string Value { get; set; }
@@ -90,9 +91,8 @@ namespace Cadmus.Philology.Parts.Layers
         public List<string> Authors { get; set; }
 
         /// <summary>
-        /// Optional short note.
+        /// An optional short note.
         /// </summary>
-        /// <value>notes or empty string</value>
         public string Note { get; set; }
         #endregion
 
@@ -105,7 +105,6 @@ namespace Cadmus.Philology.Parts.Layers
             Authors = new List<string>();
         }
 
-        /// <inheritdoc />
         /// <summary>
         /// Get all the pins exposed by the implementor.
         /// </summary>

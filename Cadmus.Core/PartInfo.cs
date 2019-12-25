@@ -5,7 +5,7 @@ namespace Cadmus.Core
     /// <summary>
     /// Summary information about any type of part.
     /// </summary>
-    public class PartInfo
+    public class PartInfo : IHasVersion
     {
         /// <summary>
         /// Gets or sets the part identifier.
@@ -32,14 +32,24 @@ namespace Cadmus.Core
         public string RoleId { get; set; }
 
         /// <summary>
-        /// Gets or sets ID of the last user who modified the part.
+        /// Creation date and time (UTC).
         /// </summary>
-        public string UserId { get; set; }
+        public DateTime TimeCreated { get; set; }
 
         /// <summary>
-        /// Gets or sets the time the part was last modified.
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
+        /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
+
+        /// <summary>
+        /// ID of the user who last saved the resource.
+        /// </summary>
+        public string UserId { get; set; }
 
         /// <summary>
         /// Converts to string.

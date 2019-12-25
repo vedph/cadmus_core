@@ -5,12 +5,12 @@ namespace Cadmus.Core.Storage
     /// <summary>
     /// History item.
     /// </summary>
-    public sealed class HistoryItem
+    public sealed class HistoryItem : IHasHistory
     {
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
-        public string Id { get; private set; }
+        public string Id { get; }
 
         /// <summary>
         /// Item title.
@@ -42,22 +42,30 @@ namespace Cadmus.Core.Storage
         public int Flags { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
         /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
 
         /// <summary>
-        /// User ID.
+        /// ID of the user who last saved the resource.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the data record this history record
         /// refers to.
         /// </summary>
-        public string ReferenceId { get; private set; }
+        public string ReferenceId { get; }
 
         /// <summary>
         /// Gets or sets the record status.
@@ -75,14 +83,14 @@ namespace Cadmus.Core.Storage
             Id = id ?? throw new ArgumentNullException(nameof(id));
             ReferenceId = referenceId
                 ?? throw new ArgumentNullException(nameof(referenceId));
-            TimeModified = DateTime.UtcNow;
+            TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
         /// <summary>
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

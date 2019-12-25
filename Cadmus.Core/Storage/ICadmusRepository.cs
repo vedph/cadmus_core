@@ -247,6 +247,13 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The history part's identifier.</param>
         void DeleteHistoryPart(string id);
+
+        /// <summary>
+        /// Gets the ID of the creator of the part with the specified ID.
+        /// </summary>
+        /// <param name="id">The part ID.</param>
+        /// <returns>Creator ID, or null.</returns>
+        string GetPartCreatorId(string id);
         #endregion
     }
 }

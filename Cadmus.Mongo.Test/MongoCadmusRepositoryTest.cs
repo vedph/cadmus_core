@@ -153,6 +153,9 @@ namespace Cadmus.Mongo.Test
 
             for (int i = 1; i <= 20; i++)
             {
+                string userId = (i & 1) == 1 ? "Odd" : "Even";
+                DateTime dt = new DateTime(2015, 12, i, 0, 0, 0, DateTimeKind.Utc);
+
                 MongoItem item = new MongoItem
                 {
                     Id = $"item-{i:000}",
@@ -161,8 +164,10 @@ namespace Cadmus.Mongo.Test
                     FacetId = (i & 1) == 1 ? "alpha" : "beta",
                     SortKey = $"item{i:000}",
                     Flags = i,
-                    UserId = (i & 1) == 1 ? "Odd" : "Even",
-                    TimeModified = new DateTime(2015, 12, i, 0, 0, 0, DateTimeKind.Utc)
+                    CreatorId = userId,
+                    UserId = userId,
+                    TimeCreated = dt,
+                    TimeModified = dt
                 };
                 collection.InsertOne(item);
             }
@@ -186,7 +191,7 @@ namespace Cadmus.Mongo.Test
                 Id = "part-001",
                 ItemId = "item-001",
                 RoleId = "categories",
-                TimeModified = DateTime.UtcNow,
+                CreatorId = "Odd",
                 UserId = "Odd",
                 Categories = {"alpha", "beta"}
             };
@@ -198,7 +203,7 @@ namespace Cadmus.Mongo.Test
                 Id = "part-002",
                 ItemId = "item-001",
                 RoleId = "note",
-                TimeModified = DateTime.UtcNow,
+                CreatorId = "Odd",
                 UserId = "Odd",
                 Text = "Some notes."
             };
@@ -208,10 +213,10 @@ namespace Cadmus.Mongo.Test
             TokenTextLayerPart<CommentLayerFragment> commentLayerPart =
                 new TokenTextLayerPart<CommentLayerFragment>
                 {
-                Id = "part-003",
-                ItemId = "item-001",
-                TimeModified = DateTime.UtcNow,
-                UserId = "Odd"
+                    Id = "part-003",
+                    ItemId = "item-001",
+                    CreatorId = "Odd",
+                    UserId = "Odd"
             };
             commentLayerPart.Fragments.AddRange(new []
             {

@@ -358,15 +358,18 @@ namespace Cadmus.TestBase
             ICadmusRepository repository = GetRepository();
 
             IItem item = repository.GetItem("item-001");
+
+            DateTime expectedTime = new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc);
             Assert.NotNull(item);
             Assert.Equal("Item 1", item.Title);
             Assert.Equal("Description of item 1", item.Description);
             Assert.Equal("alpha", item.FacetId);
             Assert.Equal("item001", item.SortKey);
             Assert.Equal(1, item.Flags);
+            Assert.Equal("Odd", item.CreatorId);
             Assert.Equal("Odd", item.UserId);
-            Assert.Equal(new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc),
-                item.TimeModified);
+            Assert.Equal(expectedTime, item.TimeCreated);
+            Assert.Equal(expectedTime, item.TimeModified);
 
             // parts
             Assert.Equal(3, item.Parts.Count);
@@ -379,15 +382,17 @@ namespace Cadmus.TestBase
 
             IItem item = repository.GetItem("item-001", false);
 
+            DateTime expectedTime = new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc);
             Assert.NotNull(item);
             Assert.Equal("Item 1", item.Title);
             Assert.Equal("Description of item 1", item.Description);
             Assert.Equal("alpha", item.FacetId);
             Assert.Equal("item001", item.SortKey);
             Assert.Equal(1, item.Flags);
+            Assert.Equal("Odd", item.CreatorId);
+            Assert.Equal(expectedTime, item.TimeCreated);
             Assert.Equal("Odd", item.UserId);
-            Assert.Equal(new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc),
-                item.TimeModified);
+            Assert.Equal(expectedTime, item.TimeModified);
             Assert.Empty(item.Parts);
         }
 
@@ -403,8 +408,8 @@ namespace Cadmus.TestBase
                 FacetId = "alpha",
                 SortKey = "item100",
                 Flags = 0,
-                UserId = "Even",
-                TimeModified = DateTime.UtcNow
+                CreatorId = "Even",
+                UserId = "Even"
             };
 
             repository.AddItem(item);
@@ -416,6 +421,7 @@ namespace Cadmus.TestBase
             Assert.Equal(item2.FacetId, item.FacetId);
             Assert.Equal(item2.SortKey, item.SortKey);
             Assert.Equal(item2.Flags, item.Flags);
+            Assert.Equal(item2.CreatorId, item.CreatorId);
             Assert.Equal(item2.UserId, item.UserId);
             Assert.True(Math.Abs((item2.TimeModified - item.TimeModified).TotalSeconds) < 1);
         }
@@ -432,8 +438,8 @@ namespace Cadmus.TestBase
                 FacetId = "alpha",
                 SortKey = "item100",
                 Flags = 0,
-                UserId = "Even",
-                TimeModified = DateTime.UtcNow
+                CreatorId = "Even",
+                UserId = "Even"
             };
 
             repository.AddItem(item);
@@ -633,6 +639,7 @@ namespace Cadmus.TestBase
                 ChildrenIds = new HashSet<string> { "item-002", "item-003" },
                 Y = 1,
                 X = 1,
+                CreatorId = "Alpha",
                 UserId = "Alpha"
             };
             repository.AddPart(part1);
@@ -643,6 +650,7 @@ namespace Cadmus.TestBase
                 ParentId = "item-001",
                 Y = 2,
                 X = 1,
+                CreatorId = "Alpha",
                 UserId = "Alpha"
             };
             repository.AddPart(part2);
@@ -653,6 +661,7 @@ namespace Cadmus.TestBase
                 ParentId = "item-001",
                 Y = 2,
                 X = 2,
+                CreatorId = "Alpha",
                 UserId = "Alpha"
             };
             repository.AddPart(part3);

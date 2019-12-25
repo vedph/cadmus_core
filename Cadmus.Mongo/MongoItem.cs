@@ -7,7 +7,7 @@ namespace Cadmus.Mongo
     /// <summary>
     /// An item as stored in the Mongo database.
     /// </summary>
-    public class MongoItem
+    public class MongoItem : IHasVersion
     {
         /// <summary>
         /// The collection name.
@@ -51,15 +51,23 @@ namespace Cadmus.Mongo
         public int Flags { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
         /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
 
         /// <summary>
-        /// User ID.
+        /// ID of the user who last saved the resource.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
@@ -67,7 +75,7 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoItem()
         {
-            TimeModified = DateTime.UtcNow;
+            TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -85,6 +93,8 @@ namespace Cadmus.Mongo
             FacetId = item.FacetId;
             SortKey = item.SortKey;
             Flags = item.Flags;
+            TimeCreated = item.TimeCreated;
+            CreatorId = item.CreatorId;
             TimeModified = item.TimeModified;
             UserId = item.UserId;
         }
@@ -103,6 +113,8 @@ namespace Cadmus.Mongo
                 FacetId = FacetId,
                 SortKey = SortKey,
                 Flags = Flags,
+                TimeCreated = TimeCreated,
+                CreatorId = CreatorId,
                 TimeModified = TimeModified,
                 UserId = UserId
             };
@@ -122,6 +134,8 @@ namespace Cadmus.Mongo
                 FacetId = FacetId,
                 SortKey = SortKey,
                 Flags = Flags,
+                TimeCreated = TimeCreated,
+                CreatorId = CreatorId,
                 TimeModified = TimeModified,
                 UserId = UserId
             };

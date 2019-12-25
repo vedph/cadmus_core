@@ -47,15 +47,23 @@ namespace Cadmus.Mongo
         public string Content { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
         /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
 
         /// <summary>
-        /// User ID.
+        /// ID of the user who last saved the resource.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
@@ -74,6 +82,7 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoHistoryPart()
         {
+            TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -90,6 +99,8 @@ namespace Cadmus.Mongo
             TypeId = part.TypeId;
             RoleId = part.RoleId;
 
+            TimeCreated = part.TimeCreated;
+            CreatorId = part.CreatorId;
             TimeModified = part.TimeModified;
             UserId = part.UserId;
 
@@ -112,6 +123,8 @@ namespace Cadmus.Mongo
             RoleId = part.RoleId;
             Content = part.Content;
 
+            TimeCreated = part.TimeCreated;
+            CreatorId = part.CreatorId;
             TimeModified = part.TimeModified;
             UserId = part.UserId;
 
@@ -122,7 +135,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets a <see cref="HistoryPartInfo"/> from this object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Info.</returns>
         public HistoryPartInfo ToHistoryPartInfo()
         {
             return new HistoryPartInfo
@@ -132,6 +145,8 @@ namespace Cadmus.Mongo
                 TypeId = TypeId,
                 RoleId = RoleId,
 
+                TimeCreated = TimeCreated,
+                CreatorId = CreatorId,
                 TimeModified = TimeModified,
                 UserId = UserId,
 
@@ -141,10 +156,10 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

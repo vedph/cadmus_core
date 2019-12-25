@@ -47,15 +47,23 @@ namespace Cadmus.Mongo
         public string Content { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
         /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
 
         /// <summary>
-        /// User ID.
+        /// ID of the user who last saved the resource.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
@@ -63,6 +71,7 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoPart()
         {
+            TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -79,6 +88,8 @@ namespace Cadmus.Mongo
             TypeId = part.TypeId;
             RoleId = part.RoleId;
 
+            TimeCreated = part.TimeCreated;
+            CreatorId = part.CreatorId;
             TimeModified = part.TimeModified;
             UserId = part.UserId;
         }
@@ -95,8 +106,10 @@ namespace Cadmus.Mongo
                 ItemId = ItemId,
                 TypeId = TypeId,
                 RoleId = RoleId,
+                TimeCreated = TimeCreated,
+                CreatorId = CreatorId,
+                TimeModified = TimeModified,
                 UserId = UserId,
-                TimeModified = TimeModified
             };
         }
 
@@ -104,7 +117,7 @@ namespace Cadmus.Mongo
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

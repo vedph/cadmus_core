@@ -42,15 +42,23 @@ namespace Cadmus.Core.Storage
         public int Flags { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
         /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
 
         /// <summary>
-        /// User ID.
+        /// ID of the user who last saved the resource.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary> Gets or sets the identifier of the data record this 
@@ -74,13 +82,14 @@ namespace Cadmus.Core.Storage
             Id = id ?? throw new ArgumentNullException(nameof(id));
             ReferenceId = referenceId
                 ?? throw new ArgumentNullException(nameof(referenceId));
+            TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
         /// <summary>
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

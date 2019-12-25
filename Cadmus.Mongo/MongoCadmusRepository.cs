@@ -1106,6 +1106,24 @@ namespace Cadmus.Mongo
             db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
                 .DeleteOne(p => p.Id.Equals(id));
         }
+
+        /// <summary>
+        /// Gets the ID of the creator of the part with the specified ID.
+        /// </summary>
+        /// <param name="id">The part ID.</param>
+        /// <returns>Creator ID, or null.</returns>
+        public string GetPartCreatorId(string id)
+        {
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+            var filter = Builders<MongoPart>.Filter.Eq(p => p.Id, id);
+            var fields = Builders<MongoPart>.Projection.Include(p => p.CreatorId);
+            return collection
+                .Find(filter)
+                .Project<MongoPart>(fields)
+                .FirstOrDefault()
+                ?.CreatorId;
+        }
         #endregion
     }
 

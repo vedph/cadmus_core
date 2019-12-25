@@ -38,15 +38,23 @@ namespace Cadmus.Core
         public string SortKey { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
         /// Last saved date and time (UTC).
         /// </summary>
         public DateTime TimeModified { get; set; }
 
         /// <summary>
-        /// User ID.
+        /// ID of the user who last saved the resource.
         /// </summary>
-        /// <remarks>This is the ID of the user who last modified the object.
-        /// </remarks>
         public string UserId { get; set; }
 
         /// <summary>
@@ -65,7 +73,7 @@ namespace Cadmus.Core
         public Item()
         {
             Id = Guid.NewGuid().ToString();
-            TimeModified = DateTime.UtcNow;
+            TimeCreated = TimeModified = DateTime.UtcNow;
             Parts = new List<IPart>();
         }
 

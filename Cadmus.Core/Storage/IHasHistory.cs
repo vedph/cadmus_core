@@ -16,4 +16,20 @@
         /// </summary>
         EditStatus Status { get; set; }
     }
+
+    /// <summary>
+    /// Edit status.
+    /// </summary>
+    public enum EditStatus
+    {
+        /// <summary>The item has been created.</summary>
+        Created = 0,
+
+        /// <summary>The item was existing and has been updated.</summary>
+        Updated = 1,
+
+        /// <summary>The item has been deleted. This is a status typically
+        /// used in history.</summary>
+        Deleted = 2
+    }
 }

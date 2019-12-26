@@ -24,6 +24,7 @@ namespace Cadmus.Mongo
         IConfigurable<MongoCadmusRepositoryOptions>
     {
         private readonly IPartTypeProvider _partTypeProvider;
+        private readonly IItemSortKeyBuilder _itemSortKeyBuilder;
         private readonly JsonSerializerOptions _jsonOptions;
         private MongoCadmusRepositoryOptions _options;
         private string _databaseName;
@@ -33,12 +34,17 @@ namespace Cadmus.Mongo
         /// class.
         /// </summary>
         /// <param name="partTypeProvider">The part type provider.</param>
+        /// <param name="itemSortKeyBuilder">The item sort key builder.</param>
         /// <exception cref="ArgumentNullException">null options or part type
         /// provider</exception>
-        public MongoCadmusRepository(IPartTypeProvider partTypeProvider)
+        public MongoCadmusRepository(
+            IPartTypeProvider partTypeProvider,
+            IItemSortKeyBuilder itemSortKeyBuilder)
         {
             _partTypeProvider = partTypeProvider ??
                 throw new ArgumentNullException(nameof(partTypeProvider));
+            _itemSortKeyBuilder = itemSortKeyBuilder ??
+                throw new ArgumentNullException(nameof(itemSortKeyBuilder));
 
             _jsonOptions = new JsonSerializerOptions
             {
@@ -344,6 +350,7 @@ namespace Cadmus.Mongo
 
             var mongoItems = items.Find(f)
                 .SortBy(i => i.SortKey)
+                .ThenBy(i => i.Id)
                 .Skip(filter.GetSkipCount())
                 .Limit(filter.PageSize)
                 .ToList();
@@ -401,6 +408,9 @@ namespace Cadmus.Mongo
             if (item == null) throw new ArgumentNullException(nameof(item));
 
             EnsureClientCreated(_options.ConnectionString);
+
+            // update sort key
+            item.SortKey = _itemSortKeyBuilder.BuildKey(item, this);
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
@@ -581,6 +591,7 @@ namespace Cadmus.Mongo
 
             var mongoItems = items.Find(f)
                 .SortBy(i => i.SortKey)
+                .ThenBy(i => i.ReferenceId)
                 .Skip(filter.GetSkipCount())
                 .Limit(filter.PageSize)
                 .ToList();

@@ -66,6 +66,7 @@
             <assemblyIdentity name="DiffPlex" />
             <assemblyIdentity name="Fusi.Antiquity" />
             <assemblyIdentity name="Fusi.Config" />
+            <assemblyIdentity name="Fusi.Text" />
             <assemblyIdentity name="Fusi.Tools" />
             <assemblyIdentity name="Microsoft.VisualStudio.TestTools.UITest.Playback" />
             <assemblyIdentity name="MongoDB.Bson" />

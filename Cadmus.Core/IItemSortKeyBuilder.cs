@@ -1,4 +1,6 @@
-﻿namespace Cadmus.Core
+﻿using Cadmus.Core.Storage;
+
+namespace Cadmus.Core
 {
     /// <summary>
     /// Item's sort key builder.
@@ -9,7 +11,8 @@
         /// Builds the sort key from the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <returns>sort key</returns>
-        string BuildKey(IItem item);
+        /// <param name="repository">The repository.</param>
+        /// <returns>Sort key.</returns>
+        string BuildKey(IItem item, ICadmusRepository repository);
     }
 }

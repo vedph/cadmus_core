@@ -38,7 +38,8 @@ namespace Cadmus.Mongo.Test
                 typeof(NotePart).Assembly
             });
             MongoCadmusRepository repository = new MongoCadmusRepository(
-                new StandardPartTypeProvider(map));
+                new StandardPartTypeProvider(map),
+                new StandardItemSortKeyBuilder());
             repository.Configure(new MongoCadmusRepositoryOptions
             {
                 // use the default ConnectionStringTemplate (local DB)

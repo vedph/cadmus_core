@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core.Storage;
 using Fusi.Text.Unicode;
+using Fusi.Tools.Config;
 using System;
 using System.Text;
 
@@ -7,6 +8,7 @@ namespace Cadmus.Core
 {
     /// <summary>
     /// Standard item sort key builder.
+    /// Tag: <c>item-sort-key-builder.standard</c>.
     /// </summary>
     /// <remarks>The standard item sort key builder just relies on item's
     /// title, which is normalized by flattening any whitespace to a single
@@ -14,6 +16,7 @@ namespace Cadmus.Core
     /// and removing any diacritics from them, and keeping only letters,
     /// digits, and apostrophe.</remarks>
     /// <seealso cref="IItemSortKeyBuilder" />
+    [Tag("item-sort-key-builder.standard")]
     public sealed class StandardItemSortKeyBuilder : IItemSortKeyBuilder
     {
         private static UniData _ud;

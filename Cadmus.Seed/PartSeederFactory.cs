@@ -23,7 +23,9 @@ namespace Cadmus.Seed
     /// </item>
     /// <item>
     /// <term>ItemSortKeyBuilder</term>
-    /// <description>the item sort key builder ID and eventual options.
+    /// <description>the optional item sort key builder ID and its eventual
+    /// options. When not specified, the <see cref="StandardItemSortKeyBuilder"/>
+    /// is used.
     /// </description>
     /// </item>
     /// <item>

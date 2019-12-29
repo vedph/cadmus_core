@@ -20,6 +20,16 @@ namespace Cadmus.Seed
         public string[] Users { get; set; }
 
         /// <summary>
+        /// Gets or sets the optional part roles to pick from.
+        /// </summary>
+        public string[] PartRoles { get; set; }
+
+        /// <summary>
+        /// Gets or sets the optional fragment roles to pick from.
+        /// </summary>
+        public string[] FragmentRoles { get; set; }
+
+        /// <summary>
         /// Gets or sets the facets definitions to be used.
         /// </summary>
         public FacetDefinition[] FacetDefinitions { get; set; }

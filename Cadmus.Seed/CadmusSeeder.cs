@@ -14,7 +14,6 @@ namespace Cadmus.Seed
     public sealed class CadmusSeeder
     {
         private readonly PartSeederFactory _factory;
-        private readonly IItemSortKeyBuilder _itemSortKeyBuilder;
         private readonly SeedOptions _options;
         private Random _random;
         private Dictionary<string, IPartSeeder> _partSeeders;
@@ -28,8 +27,6 @@ namespace Cadmus.Seed
         {
             _factory = factory
                 ?? throw new ArgumentNullException(nameof(factory));
-
-            _itemSortKeyBuilder = _factory.GetItemSortKeyBuilder();
             _options = _factory.GetSeedOptions();
         }
 
@@ -56,8 +53,10 @@ namespace Cadmus.Seed
             // init
             _random = _options.Seed.HasValue ?
                 new Random(_options.Seed.Value) : new Random();
+
             ItemSeeder itemSeeder = _factory.GetItemSeeder();
             _partSeeders = _factory.GetPartSeeders();
+            IItemSortKeyBuilder sortKeyBuilder = _factory.GetItemSortKeyBuilder();
 
             // generate items
             for (int n = 1; n <= count; n++)
@@ -83,6 +82,15 @@ namespace Cadmus.Seed
                     if (_random.Next(0, 2) == 0) continue;
                     IPart part = GetPart(item, partDef);
                     if (part != null) item.Parts.Add(part);
+                }
+
+                // override the sort key if requested in the config.
+                // Note that we do not provide a repository, as while seeding
+                // there might be no database, and all the item's parts are
+                // in the item itself.
+                if (sortKeyBuilder != null)
+                {
+                    item.SortKey = sortKeyBuilder.BuildKey(item, null);
                 }
 
                 yield return item;

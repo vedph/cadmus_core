@@ -3,11 +3,7 @@
 namespace Cadmus.Seed
 {
     /// <summary>
-    /// Cadmus part seeder. This is used to seed a part with
-    /// random data. Each implementor should get injected in its constructor
-    /// an instance of <see cref="IPartTypeProvider"/>, which allows it
-    /// to instantiate the part, and get a <see cref="TagAttribute"/> with
-    /// value equal to <c>seed.</c> plus the part type ID.
+    /// Cadmus part seeder. This is used to seed a part with random data.
     /// </summary>
     public interface IPartSeeder
     {

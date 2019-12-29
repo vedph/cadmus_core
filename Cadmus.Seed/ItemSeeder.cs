@@ -10,23 +10,19 @@ namespace Cadmus.Seed
     /// </summary>
     public sealed class ItemSeeder
     {
-        private readonly IItemSortKeyBuilder _itemSortKeyBuilder;
-        private SeedOptions _options;
+        private readonly SeedOptions _options;
+        private readonly IItemSortKeyBuilder _sortKeyBuilder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemSeeder"/> class.
         /// </summary>
-        /// <param name="itemSortKeyBuilder">The item sort key builder.</param>
         /// <param name="options">The seed options.</param>
-        /// <exception cref="ArgumentNullException">itemSortKeyBuilder or
-        /// options</exception>
-        public ItemSeeder(IItemSortKeyBuilder itemSortKeyBuilder,
-            SeedOptions options)
+        /// <exception cref="ArgumentNullException">options</exception>
+        public ItemSeeder(SeedOptions options)
         {
-            _itemSortKeyBuilder = itemSortKeyBuilder
-                ?? throw new ArgumentNullException(nameof(itemSortKeyBuilder));
             _options = options
                 ?? throw new ArgumentNullException(nameof(options));
+            _sortKeyBuilder = new StandardItemSortKeyBuilder();
         }
 
         /// <summary>
@@ -53,6 +49,10 @@ namespace Cadmus.Seed
                 .RuleFor(i => i.CreatorId, f => f.PickRandom(_options.Users))
                 .RuleFor(i => i.UserId, f => f.PickRandom(_options.Users))
                 .RuleFor(i => i.Flags, (number & 1) == 1 ? 1 : 0);
+
+            // use a standard sort key; you can override it later,
+            // e.g. when parts have been added to the item.
+            item.SortKey = _sortKeyBuilder.BuildKey(item, null);
 
             return item;
         }

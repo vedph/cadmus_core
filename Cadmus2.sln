@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Philology.Parts.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed", "Cadmus.Seed\Cadmus.Seed.csproj", "{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed.Parts", "Cadmus.Seed.Parts\Cadmus.Seed.Parts.csproj", "{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

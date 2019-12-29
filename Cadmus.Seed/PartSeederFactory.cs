@@ -104,7 +104,8 @@ namespace Cadmus.Seed
         }
 
         /// <summary>
-        /// Gets the item sort key builder.
+        /// Gets the optional item sort key builder. If not specified, the
+        /// <see cref="StandardItemSortKeyBuilder"/> will be used.
         /// </summary>
         /// <returns>Item sort key builder.</returns>
         public IItemSortKeyBuilder GetItemSortKeyBuilder()
@@ -112,7 +113,7 @@ namespace Cadmus.Seed
             return GetComponent<IItemSortKeyBuilder>(
                 Configuration["ItemSortKeyBuilder:Id"],
                 "ItemSortKeyBuilder:Options",
-                true);
+                false);
         }
 
         /// <summary>
@@ -185,9 +186,7 @@ namespace Cadmus.Seed
         /// <returns>The item seeder.</returns>
         public ItemSeeder GetItemSeeder()
         {
-            return new ItemSeeder(
-                GetItemSortKeyBuilder(),
-                GetSeedOptions());
+            return new ItemSeeder(GetSeedOptions());
         }
     }
 }

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Daniele Fusi</Authors>
+    <Company>Fusi</Company>
+    <Product>Cadmus</Product>
+    <Description>Cadmus fake data seed core components.</Description>
+    <Copyright>by Daniele Fusi</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="28.4.4" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cadmus.Core\Cadmus.Core.csproj" />
+  </ItemGroup>
+
+</Project>

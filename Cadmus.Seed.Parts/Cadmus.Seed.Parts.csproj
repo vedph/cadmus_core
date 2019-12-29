@@ -9,8 +9,4 @@
     <ProjectReference Include="..\Cadmus.Seed\Cadmus.Seed.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="General\" />
-  </ItemGroup>
-
 </Project>

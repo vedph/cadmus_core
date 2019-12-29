@@ -97,9 +97,10 @@ namespace Cadmus.Seed
         /// Sets the part metadata: item ID, creator and user ID, role ID.
         /// </summary>
         /// <param name="part">The part.</param>
+        /// <param name="roleId">The part's role ID or null.</param>
         /// <param name="item">The item.</param>
         /// <exception cref="ArgumentNullException">part or item</exception>
-        protected void SetPartMetadata(IPart part, IItem item)
+        protected void SetPartMetadata(IPart part, string roleId, IItem item)
         {
             if (part == null) throw new ArgumentNullException(nameof(part));
             if (item == null) throw new ArgumentNullException(nameof(item));
@@ -107,9 +108,11 @@ namespace Cadmus.Seed
             part.ItemId = item.Id;
             part.CreatorId = item.CreatorId;
             part.UserId = item.UserId;
+            part.RoleId = string.IsNullOrEmpty(roleId) ? null : roleId;
 
             // 1 out of 10 cases can have a role
-            if (Options.PartRoles?.Length > 0
+            if (string.IsNullOrEmpty(roleId)
+                && Options.PartRoles?.Length > 0
                 && Random.Next(0, 10) == 1)
             {
                 part.RoleId = RandomPickOf(Options.PartRoles, (string[])null);
@@ -120,9 +123,11 @@ namespace Cadmus.Seed
         /// Creates and seeds a new part.
         /// </summary>
         /// <param name="item">The item this part should belong to.</param>
+        /// <param name="roleId">The optional part role ID.</param>
         /// <param name="factory">The part seeder factory. This is used
         /// for layer parts, which need to seed a set of fragments.</param>
         /// <returns>A new part.</returns>
-        public abstract IPart GetPart(IItem item, PartSeederFactory factory);
+        public abstract IPart GetPart(IItem item, string roleId,
+            PartSeederFactory factory);
     }
 }

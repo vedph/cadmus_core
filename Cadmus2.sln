@@ -35,6 +35,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed", "Cadmus.Seed\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed.Parts", "Cadmus.Seed.Parts\Cadmus.Seed.Parts.csproj", "{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{461AF59A-C6B8-45C3-A5AF-E94F0DECFB48}"
+	ProjectSection(SolutionItems) = preProject
+		Doc\seeding.md = Doc\seeding.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +97,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{461AF59A-C6B8-45C3-A5AF-E94F0DECFB48} = {2B5ECE5C-C394-4FE1-B8E6-C941A3F7C3BA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6900EE97-AB1F-4042-8E61-0F999CE7C746}

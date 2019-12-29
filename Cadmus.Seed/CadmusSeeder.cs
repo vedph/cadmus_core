@@ -33,7 +33,24 @@ namespace Cadmus.Seed
         private IPart GetPart(IItem item, PartDefinition definition)
         {
             if (!_partSeeders.ContainsKey(definition.TypeId)) return null;
-            return _partSeeders[definition.TypeId].GetPart(item, _factory);
+
+            return _partSeeders[definition.TypeId]
+                ?.GetPart(item, definition.RoleId, _factory);
+        }
+
+        private static bool IsLayerPart(PartDefinition def) =>
+            def.RoleId?.StartsWith(PartBase.FR_PREFIX) == true;
+
+        private void AddParts(IEnumerable<PartDefinition> partDefinitions,
+            IItem item, bool optional)
+        {
+            foreach (PartDefinition partDef in partDefinitions)
+            {
+                if (optional && _random.Next(0, 2) == 0) continue;
+
+                IPart part = GetPart(item, partDef);
+                if (part != null) item.Parts.Add(part);
+            }
         }
 
         /// <summary>
@@ -65,26 +82,39 @@ namespace Cadmus.Seed
                 FacetDefinition facet = _options.FacetDefinitions[
                     _random.Next(0, _options.FacetDefinitions.Length)];
 
+                // get item
                 IItem item = itemSeeder.GetItem(n, facet);
 
-                // generate its required parts
-                foreach (PartDefinition partDef in facet.PartDefinitions
-                    .Where(p => p.IsRequired))
-                {
-                    IPart part = GetPart(item, partDef);
-                    if (part != null) item.Parts.Add(part);
-                }
+                // add parts: first non layer parts, then the others.
+                // This ensures that the item already has the base text part
+                // before adding the layer parts, which refer to it.
 
-                // eventually generate its optional parts
-                foreach (PartDefinition partDef in facet.PartDefinitions
-                    .Where(p => !p.IsRequired))
-                {
-                    if (_random.Next(0, 2) == 0) continue;
-                    IPart part = GetPart(item, partDef);
-                    if (part != null) item.Parts.Add(part);
-                }
+                // 1) non-layer parts, required
+                AddParts(facet.PartDefinitions
+                    .Where(def => !IsLayerPart(def) && def.IsRequired),
+                    item,
+                    false);
 
-                // override the sort key if requested in the config.
+                // 2) non-layer parts, optional
+                AddParts(facet.PartDefinitions
+                    .Where(def => !IsLayerPart(def) && !def.IsRequired),
+                    item,
+                    true);
+
+                // 3) layer parts, required
+                AddParts(facet.PartDefinitions
+                    .Where(def => IsLayerPart(def) && def.IsRequired),
+                    item,
+                    false);
+
+                // 4) layer parts, optional
+                AddParts(facet.PartDefinitions
+                    .Where(def => IsLayerPart(def) && !def.IsRequired),
+                    item,
+                    true);
+
+                // once all the parts are in place, override the item's sort key
+                // if requested in the config.
                 // Note that we do not provide a repository, as while seeding
                 // there might be no database, and all the item's parts are
                 // in the item itself.

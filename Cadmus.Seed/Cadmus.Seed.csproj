@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="28.4.4" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.8" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>

@@ -119,35 +119,26 @@ namespace Cadmus.Seed
         }
 
         /// <summary>
-        /// Gets the fragment seeders.
+        /// Gets the fragment seeder for the specified fragment type ID.
         /// </summary>
-        /// <returns>Dictionary where each key is a fragment type ID, and each
-        /// value is the corresponding seeder.</returns>
-        public Dictionary<string, IFragmentSeeder> GetFragmentSeeders()
+        /// <returns>Seeder, or null if not found.</returns>
+        /// <exception cref="ArgumentNullException">typeId</exception>
+        public IFragmentSeeder GetFragmentSeeder(string typeId)
         {
-            IList<ComponentFactoryConfigEntry> entries =
-                ComponentFactoryConfigEntry.ReadComponentEntries(
-                Configuration, "FragmentSeeders");
+            if (typeId == null) throw new ArgumentNullException(nameof(typeId));
+
+            var entry = ComponentFactoryConfigEntry.ReadComponentEntry(
+                Configuration, "FragmentSeeders", "seed." + typeId);
+            if (entry == null) return null;
 
             SeedOptions options = GetSeedOptions();
 
-            IList<IFragmentSeeder> seeders =
-                GetComponents<IFragmentSeeder>(entries, false, true);
+            IFragmentSeeder seeder = GetComponent<IFragmentSeeder>(
+                typeId, entry.OptionsPath, false);
+            if (seeder == null) return null;
 
-            int i = 0;
-            Dictionary<string, IFragmentSeeder> result =
-                new Dictionary<string, IFragmentSeeder>();
-
-            foreach (IFragmentSeeder seeder in seeders)
-            {
-                string id = entries[i++].Id;
-                id = id.Substring("seed.".Length);
-
-                seeder.Configure(options);
-                result[id] = seeder;
-            }
-
-            return result;
+            seeder.Configure(options);
+            return seeder;
         }
 
         /// <summary>

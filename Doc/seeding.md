@@ -221,7 +221,7 @@ As each part has its own schema, each part also has its own seeder. Each part se
 
 Also, each part seeder has a `TagAttribute` whose value is equal to the corresponding part's type ID, prefixed by `seed.`. For instance, the seeder ID for the part type ID `net.fusisoft.categories` is `seed.net.fusisoft.categories`.
 
-Part seeders requiring parameters can have them specified in the `options` property in the configuration. This property has a free schema, fit to each seeder's task and part.
+Part seeders requiring parameters can have them specified in the `options` property in the configuration. This property has a free schema, fit to each seeder's task and part. Note that if required options are not supplied, or are invalid, the seeder will return `null` and thus no part will be added.
 
 ## Fragments
 
@@ -235,6 +235,8 @@ For instance, consider these part's IDs:
 - `roleId`: `fr.net.fusisoft.comment`
 
 This is a text layer part for comment fragments. The comment fragment ID is given by the `roleId`. Should this have a role, like e.g. `fr.net.fusisoft.comment:scholarly`, the role and its colon prefix would be ignored for the sake of instantiating the seeder.
+
+Fragment seeders requiring parameters can have them specified in the `options` property in the configuration. This property has a free schema, fit to each seeder's task and fragment. Note that if required options are not supplied, or are invalid, the seeder will return `null` and thus no fragment will be added.
 
 ## Seeder
 

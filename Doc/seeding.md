@@ -50,8 +50,6 @@ Seeding data essentially means providing items, parts, and eventually fragments 
 
     PartSeederBase : #SeedOptions Options
     PartSeederBase : +Configure(SeedOptions options)
-    PartSeederBase : #{static} T RandomPickOf<T>(IList<T> entries, IList<T> excluded = null)
-    PartSeederBase : #{static} T RandomPickOf<T>(IList<T> entries, HashSet<T> excluded = null)
     PartSeederBase : #SetPartMetadata(IPart part, string roleId, IItem item)
 
     abstract class IFragmentSeeder

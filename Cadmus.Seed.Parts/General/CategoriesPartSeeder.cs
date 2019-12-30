@@ -55,11 +55,10 @@ namespace Cadmus.Seed.Parts.General
 
             // pick from 1 to 3 categories, all different
             int count = Randomizer.Seed.Next(1, _options.MaxCategoriesPerItem + 1);
-            while (count > 0)
+            foreach (string category in SeedHelper.RandomPickOf(
+                _options.Categories, count))
             {
-                part.Categories.Add(
-                    RandomPickOf(_options.Categories, part.Categories));
-                count--;
+                part.Categories.Add(category);
             }
 
             return part;

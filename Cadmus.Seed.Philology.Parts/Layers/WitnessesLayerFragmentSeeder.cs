@@ -5,7 +5,7 @@ using Cadmus.Philology.Parts.Layers;
 using Fusi.Tools.Config;
 using System;
 
-namespace Cadmus.Seed.Philology.Part.Layers
+namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="WitnessesLayerFragment"/>.

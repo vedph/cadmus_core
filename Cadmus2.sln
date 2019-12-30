@@ -40,7 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{461AF59A-C6B
 		Doc\seeding.md = Doc\seeding.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed.Philology.Part", "Cadmus.Seed.Philology.Part\Cadmus.Seed.Philology.Part.csproj", "{9582D03A-7088-4058-BCE7-492E0B036945}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed.Philology.Parts", "Cadmus.Seed.Philology.Parts\Cadmus.Seed.Philology.Parts.csproj", "{9582D03A-7088-4058-BCE7-492E0B036945}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

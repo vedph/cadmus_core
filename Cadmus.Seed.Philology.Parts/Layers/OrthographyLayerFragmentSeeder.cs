@@ -6,7 +6,7 @@ using Fusi.Tools.Text;
 using System;
 using System.Text;
 
-namespace Cadmus.Seed.Philology.Part.Layers
+namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="OrthographyLayerFragment"/>.

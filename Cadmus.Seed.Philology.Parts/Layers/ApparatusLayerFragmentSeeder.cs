@@ -6,7 +6,7 @@ using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
 
-namespace Cadmus.Seed.Philology.Part.Layers
+namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="ApparatusLayerFragment"/>'s.

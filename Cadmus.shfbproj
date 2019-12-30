@@ -40,7 +40,7 @@
 <DocumentationSource sourceFile="Cadmus.Seed\bin\Debug\netstandard2.0\Cadmus.Seed.xml" />
 <DocumentationSource sourceFile="Cadmus.Seed.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Parts.dll" />
 <DocumentationSource sourceFile="Cadmus.Seed.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Parts.xml" />
-<DocumentationSource sourceFile="Cadmus.Seed.Philology.Part\bin\Debug\netstandard2.0\Cadmus.Seed.Philology.Part.dll" /></DocumentationSources>
+<DocumentationSource sourceFile="Cadmus.Seed.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Philology.Parts.dll" /></DocumentationSources>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
@@ -98,7 +98,7 @@
 <NamespaceSummaryItem name="Cadmus.Seed" isDocumented="True">Cadmus data seed core infrastructure.</NamespaceSummaryItem>
 <NamespaceSummaryItem name="Cadmus.Seed.Parts.General" isDocumented="True">Cadmus general parts seeders.</NamespaceSummaryItem>
 <NamespaceSummaryItem name="Cadmus.Seed.Parts.Layers" isDocumented="True">Cadmus general layer parts seeders.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Cadmus.Seed.Philology.Part.Layers" isDocumented="True">Cadmus philology parts seeders.</NamespaceSummaryItem></NamespaceSummaries>
+<NamespaceSummaryItem name="Cadmus.Seed.Philology.Parts.Layers" isDocumented="True">Cadmus philology parts seeders.</NamespaceSummaryItem></NamespaceSummaries>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->

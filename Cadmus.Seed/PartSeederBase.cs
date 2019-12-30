@@ -11,6 +11,9 @@ namespace Cadmus.Seed
     /// <seealso cref="IPartSeeder" />
     public abstract class PartSeederBase : IPartSeeder
     {
+        // assign a role in 1 case out of 10
+        private const int ASSIGN_ROLE_MAX = 10;
+
         /// <summary>
         /// Gets the options.
         /// </summary>
@@ -110,12 +113,24 @@ namespace Cadmus.Seed
             part.UserId = item.UserId;
             part.RoleId = string.IsNullOrEmpty(roleId) ? null : roleId;
 
-            // 1 out of 10 cases can have a role
-            if (string.IsNullOrEmpty(roleId)
-                && Options.PartRoles?.Length > 0
-                && Random.Next(0, 10) == 1)
+            // eventually assign a role
+            if (roleId?.StartsWith(PartBase.FR_PREFIX) == true)
             {
-                part.RoleId = RandomPickOf(Options.PartRoles, (string[])null);
+                if (roleId.IndexOf(':') == -1
+                    && Options.FragmentRoles?.Length > 0
+                    && Random.Next(0, ASSIGN_ROLE_MAX) == 1)
+                {
+                    part.RoleId += ":" + RandomPickOf(Options.FragmentRoles, (string[])null);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(roleId)
+                    && Options.PartRoles?.Length > 0
+                    && Random.Next(0, ASSIGN_ROLE_MAX) == 1)
+                {
+                    part.RoleId = RandomPickOf(Options.PartRoles, (string[])null);
+                }
             }
         }
 

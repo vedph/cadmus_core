@@ -21,11 +21,13 @@ namespace Cadmus.Seed
 
         /// <summary>
         /// Gets or sets the optional part roles to pick from.
+        /// Do not set if you don't want part roles.
         /// </summary>
         public string[] PartRoles { get; set; }
 
         /// <summary>
         /// Gets or sets the optional fragment roles to pick from.
+        /// Do not set if you don't want fragment roles.
         /// </summary>
         public string[] FragmentRoles { get; set; }
 

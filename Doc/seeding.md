@@ -6,6 +6,85 @@ The core assembly for the infrastructure is `Cadmus.Seed`; then, each part/fragm
 
 Seeding data essentially means providing items, parts, and eventually fragments (in layer parts).
 
+## Cadmus.Seed Overview
+
+```plantuml
+@startuml
+    skinparam backgroundColor #EEEBDC
+    skinparam handwritten true
+
+    SeedOptions "1"*--"0..*" FacetDefinition
+
+    SeedOptions : +int? Seed
+    SeedOptions : +string[] Users
+    SeedOptions : +string[] PartRoles
+    SeedOptions : +string[] FragmentRoles
+    SeedOptions : +FacetDefinition[] FacetDefinitions
+
+    ComponentFactoryBase <|-- PartSeederFactory
+
+    PartSeederFactory : +PartSeederFactory(Container container, IConfiguration configuration)
+    PartSeederFactory : +{static} ConfigureServices(Container container, IPartTypeProvider partTypeProvider, params Assembly[] additionalAssemblies)
+    PartSeederFactory : +SeedOptions GetSeedOptions()
+    PartSeederFactory : +IItemSortKeyBuilder GetItemSortKeyBuilder()
+    PartSeederFactory : +IFragmentSeeder GetFragmentSeeder(string typeId)
+    PartSeederFactory : +Dictionary<string, IPartSeeder> GetPartSeeders()
+    PartSeederFactory : +ItemSeeder GetItemSeeder()
+
+    ItemSeeder "1"*--"1" SeedOptions
+    ItemSeeder "1"*--"1" IItemSortKeyBuilder
+
+    ItemSeeder : -SeedOptions _options
+    ItemSeeder : -IItemSortKeyBuilder _sortKeyBuilder
+    ItemSeeder : +ItemSeeder(SeedOptions options)
+    ItemSeeder : +IItem GetItem(int number, FacetDefinition facet)
+
+    abstract class IPartSeeder
+
+    IPartSeeder : +Configure(SeedOptions options)
+    IPartSeeder : +IPart GetPart(IItem item, string roleId, PartSeederFactory factory)
+
+    IPartSeeder <|-- PartSeederBase
+
+    PartSeederBase "1"*--"1" SeedOptions
+
+    PartSeederBase : #SeedOptions Options
+    PartSeederBase : #Random Random
+    PartSeederBase : +Configure(SeedOptions options)
+    PartSeederBase : #T RandomPickOf<T>(IList<T> entries, IList<T> excluded = null)
+    PartSeederBase : #T RandomPickOf<T>(IList<T> entries, HashSet<T> excluded = null)
+    PartSeederBase : #SetPartMetadata(IPart part, string roleId, IItem item)
+
+    abstract class IFragmentSeeder
+
+    IFragmentSeeder : +Configure(SeedOptions options)
+    IFragmentSeeder : +Type GetFragmentType()
+    IFragmentSeeder : +ITextLayerFragment GetFragment(IItem item, string location, string baseText)
+
+    IFragmentSeeder <|-- FragmentSeederBase
+
+    FragmentSeederBase "1"*--"1" SeedOptions
+
+    FragmentSeederBase : #SeedOptions Options
+    FragmentSeederBase : #Random Random
+    FragmentSeederBase : +Configure(SeedOptions options)
+
+    CadmusSeeder "1"*--"1" PartSeederFactory
+    CadmusSeeder "1"*--"1" SeedOptions
+    CadmusSeeder "1"*--"0.." IPartSeeder
+
+    CadmusSeeder : -PartSeederFactory _factory
+    CadmusSeeder : -SeedOptions _options
+    CadmusSeeder : -Random _random
+    CadmusSeeder : -Dictionary<string, IPartSeeder> _partSeeders
+    CadmusSeeder : +CadmusSeeder(PartSeederFactory factory)
+    CadmusSeeder : -IPart GetPart(IItem item, PartDefinition definition)
+    CadmusSeeder : -bool IsLayerPart(PartDefinition def)
+    CadmusSeeder : -void AddParts(IEnumerable<PartDefinition> partDefinitions, IItem item, bool optional)
+    CadmusSeeder : +IEnumerable<IItem> GetItems(int count)
+@enduml
+```
+
 ## Configuration
 
 All the seeders rely on a shared configuration. This is consumed by a factory (`PartSeederFactory`) to build and configure the required seeder objects.
@@ -77,8 +156,33 @@ A JSON template for the seeder configuration follows:
           "some": "option"
       }
   },
-  "partSeeders": [],
-  "fragmentSeeders": []
+  "partSeeders": [
+      {
+          "id": "seed.net.fusisoft.categories",
+          "options": {
+              "maxCategoriesPerItem": 3,
+              "categories": [
+                  "language.phonology",
+                  "language.morphology",
+                  "language.syntax",
+                  "literature",
+                  "geography"
+              ]
+          }
+      }
+  ],
+  "fragmentSeeders": [
+      {
+          "id": "seed.fr.net.fusisoft.comment",
+          "options": {
+              "tags": [
+                  "linguistic",
+                  "historic",
+                  "prosopographic"
+              ]
+          }
+      }
+  ]
 }
 ```
 

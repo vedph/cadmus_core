@@ -102,14 +102,18 @@ namespace Cadmus.Seed.Parts.Layers
             if (textPart == null) return null;
 
             // get the seeder; nothing to do if none
+            string frTypeId = StripColonSuffix(roleId);
             IFragmentSeeder seeder =
-                factory.GetFragmentSeeder("seed." + StripColonSuffix(roleId));
+                factory.GetFragmentSeeder("seed." + frTypeId);
             if (seeder == null) return null;
 
             // get the layer part for the specified fragment type
             Type constructedType = typeof(TokenTextLayerPart<>)
                 .MakeGenericType(seeder.GetFragmentType());
             IPart part = (IPart)Activator.CreateInstance(constructedType);
+
+            // seed metadata
+            SetPartMetadata(part, frTypeId, item);
 
             // seed by adding fragments
             int count = Random.Next(1, _options.MaxFragmentCount);

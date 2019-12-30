@@ -7,6 +7,7 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Categories part seeder.
+    /// Tag: <c>seed.net.fusisoft.categories</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
     [Tag("seed.net.fusisoft.categories")]

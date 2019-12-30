@@ -329,7 +329,6 @@ namespace Cadmus.Seed.Parts.General
 using Bogus;
 using Cadmus.Core;
 using Cadmus.Core.Layers;
-using Cadmus.Parts.Layers;
 using Fusi.Tools.Config;
 using System;
 

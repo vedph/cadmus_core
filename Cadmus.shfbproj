@@ -19,24 +19,27 @@
     <Language>en-US</Language>
     <DocumentationSources>
       <DocumentationSource sourceFile="Cadmus.Core\bin\Debug\netstandard2.0\Cadmus.Core.dll" />
-      <DocumentationSource sourceFile="Cadmus.Core\bin\Debug\netstandard2.0\Cadmus.Core.xml" />
-      <DocumentationSource sourceFile="Cadmus.Archive.Parts\bin\Debug\netstandard2.0\Cadmus.Archive.Parts.dll" />
-      <DocumentationSource sourceFile="Cadmus.Archive.Parts\bin\Debug\netstandard2.0\Cadmus.Archive.Parts.xml" />
-      <DocumentationSource sourceFile="Cadmus.Mongo\bin\Debug\netstandard2.0\Cadmus.Mongo.dll" />
-      <DocumentationSource sourceFile="Cadmus.Mongo\bin\Debug\netstandard2.0\Cadmus.Mongo.xml" />
-      <DocumentationSource sourceFile="Cadmus.Parts\bin\Debug\netstandard2.0\Cadmus.Parts.dll" />
-      <DocumentationSource sourceFile="Cadmus.Parts\bin\Debug\netstandard2.0\Cadmus.Parts.xml" />
-      <DocumentationSource sourceFile="Cadmus.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Philology.Parts.dll" />
-      <DocumentationSource sourceFile="Cadmus.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Philology.Parts.xml" />
-      <DocumentationSource sourceFile="..\Antiquity\Fusi.Antiquity\bin\Debug\netstandard2.0\Fusi.Antiquity.dll" />
-      <DocumentationSource sourceFile="..\Antiquity\Fusi.Antiquity\bin\Debug\netstandard2.0\Fusi.Antiquity.xml" />
-      <DocumentationSource sourceFile="..\Tools\Fusi.Tools\bin\Debug\netstandard2.0\Fusi.Tools.dll" />
-      <DocumentationSource sourceFile="..\Tools\Fusi.Tools\bin\Debug\netstandard2.0\Fusi.Tools.xml" />
-      <DocumentationSource sourceFile="..\Tools\Fusi.Tools.Config\bin\Debug\netstandard2.0\Fusi.Tools.Config.dll" />
-      <DocumentationSource sourceFile="..\Tools\Fusi.Tools.Config\bin\Debug\netstandard2.0\Fusi.Tools.Config.xml" />
-      <DocumentationSource sourceFile="Cadmus.Lexicon.Parts\bin\Debug\netstandard2.0\Cadmus.Lexicon.Parts.dll" />
-      <DocumentationSource sourceFile="Cadmus.Lexicon.Parts\bin\Debug\netstandard2.0\Cadmus.Lexicon.Parts.xml" />
-    </DocumentationSources>
+<DocumentationSource sourceFile="Cadmus.Core\bin\Debug\netstandard2.0\Cadmus.Core.xml" />
+<DocumentationSource sourceFile="Cadmus.Archive.Parts\bin\Debug\netstandard2.0\Cadmus.Archive.Parts.dll" />
+<DocumentationSource sourceFile="Cadmus.Archive.Parts\bin\Debug\netstandard2.0\Cadmus.Archive.Parts.xml" />
+<DocumentationSource sourceFile="Cadmus.Mongo\bin\Debug\netstandard2.0\Cadmus.Mongo.dll" />
+<DocumentationSource sourceFile="Cadmus.Mongo\bin\Debug\netstandard2.0\Cadmus.Mongo.xml" />
+<DocumentationSource sourceFile="Cadmus.Parts\bin\Debug\netstandard2.0\Cadmus.Parts.dll" />
+<DocumentationSource sourceFile="Cadmus.Parts\bin\Debug\netstandard2.0\Cadmus.Parts.xml" />
+<DocumentationSource sourceFile="Cadmus.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Philology.Parts.dll" />
+<DocumentationSource sourceFile="Cadmus.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Philology.Parts.xml" />
+<DocumentationSource sourceFile="..\Antiquity\Fusi.Antiquity\bin\Debug\netstandard2.0\Fusi.Antiquity.dll" />
+<DocumentationSource sourceFile="..\Antiquity\Fusi.Antiquity\bin\Debug\netstandard2.0\Fusi.Antiquity.xml" />
+<DocumentationSource sourceFile="..\Tools\Fusi.Tools\bin\Debug\netstandard2.0\Fusi.Tools.dll" />
+<DocumentationSource sourceFile="..\Tools\Fusi.Tools\bin\Debug\netstandard2.0\Fusi.Tools.xml" />
+<DocumentationSource sourceFile="..\Tools\Fusi.Tools.Config\bin\Debug\netstandard2.0\Fusi.Tools.Config.dll" />
+<DocumentationSource sourceFile="..\Tools\Fusi.Tools.Config\bin\Debug\netstandard2.0\Fusi.Tools.Config.xml" />
+<DocumentationSource sourceFile="Cadmus.Lexicon.Parts\bin\Debug\netstandard2.0\Cadmus.Lexicon.Parts.dll" />
+<DocumentationSource sourceFile="Cadmus.Lexicon.Parts\bin\Debug\netstandard2.0\Cadmus.Lexicon.Parts.xml" />
+<DocumentationSource sourceFile="Cadmus.Seed\bin\Debug\netstandard2.0\Cadmus.Seed.dll" />
+<DocumentationSource sourceFile="Cadmus.Seed\bin\Debug\netstandard2.0\Cadmus.Seed.xml" />
+<DocumentationSource sourceFile="Cadmus.Seed.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Parts.dll" />
+<DocumentationSource sourceFile="Cadmus.Seed.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Parts.xml" /></DocumentationSources>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
@@ -61,6 +64,7 @@
         <configuration useGAC="false">
           <assemblyBinding />
           <ignoreIfUnresolved>
+            <assemblyIdentity name="Bogus" />
             <assemblyIdentity name="BusinessObjects.Licensing.KeycodeDecoder" />
             <assemblyIdentity name="DiffMatchPatch" />
             <assemblyIdentity name="DiffPlex" />
@@ -81,16 +85,18 @@
     </PlugInConfigurations>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="Cadmus.Archive.Parts" isDocumented="True">Parts for archives</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Core.Blocks" isDocumented="True">Data building blocks</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Core.Config" isDocumented="True">Configuration</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Core.Layers" isDocumented="True">Text layers</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Core.Storage" isDocumented="True">Storage</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Mongo" isDocumented="True">MongoDB repository</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Parts.General" isDocumented="True">General purpose parts</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Parts.Layers" isDocumented="True">General purpose text layer parts</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Philology.Parts.Layers" isDocumented="True">Philological text layer parts</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="Cadmus.Lexicon.Parts" isDocumented="True">Parts for lexicon</NamespaceSummaryItem>
-    </NamespaceSummaries>
+<NamespaceSummaryItem name="Cadmus.Core.Blocks" isDocumented="True">Data building blocks</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Core.Config" isDocumented="True">Configuration</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Core.Layers" isDocumented="True">Text layers</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Core.Storage" isDocumented="True">Storage</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Mongo" isDocumented="True">MongoDB repository</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Parts.General" isDocumented="True">General purpose parts</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Parts.Layers" isDocumented="True">General purpose text layer parts</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Philology.Parts.Layers" isDocumented="True">Philological text layer parts</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Lexicon.Parts" isDocumented="True">Parts for lexicon</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Seed" isDocumented="True">Cadmus data seed core infrastructure.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Seed.Parts.General" isDocumented="True">Cadmus general parts seeders.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Cadmus.Seed.Parts.Layers" isDocumented="True">Cadmus general layer parts seeders.</NamespaceSummaryItem></NamespaceSummaries>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->

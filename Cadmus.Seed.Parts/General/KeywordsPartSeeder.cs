@@ -7,21 +7,22 @@ using System;
 namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
-    /// Categories part seeder.
-    /// Tag: <c>seed.net.fusisoft.categories</c>.
+    /// Seeder for <see cref="KeywordsPart"/>.
+    /// Tag: <c>seed.net.fusisoft.keywords</c>.
     /// </summary>
-    /// <seealso cref="Cadmus.Seed.PartSeederBase" />
-    [Tag("seed.net.fusisoft.categories")]
-    public sealed class CategoriesPartSeeder : PartSeederBase,
-        IConfigurable<CategoriesPartSeederOptions>
+    /// <seealso cref="PartSeederBase" />
+    /// <seealso cref="IConfigurable{KeywordsPartSeederOptions}" />
+    [Tag("seed.net.fusisoft.keywords")]
+    public sealed class KeywordsPartSeeder : PartSeederBase,
+        IConfigurable<KeywordsPartSeederOptions>
     {
-        private CategoriesPartSeederOptions _options;
+        private KeywordsPartSeederOptions _options;
 
         /// <summary>
         /// Configures the object with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
-        public void Configure(CategoriesPartSeederOptions options)
+        public void Configure(KeywordsPartSeederOptions options)
         {
             _options = options;
         }
@@ -43,23 +44,21 @@ namespace Cadmus.Seed.Parts.General
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
 
-            CategoriesPart part = new CategoriesPart();
+            if (_options.Languages == null || _options.Languages.Length == 0)
+                return null;
+
+            KeywordsPart part = new KeywordsPart();
             SetPartMetadata(part, roleId, item);
 
-            if (_options?.Categories != null
-                || _options.Categories.Length == 0
-                || _options.MaxCategoriesPerItem < 1)
-            {
-                return part;
-            }
-
-            // pick from 1 to 3 categories, all different
-            int count = Randomizer.Seed.Next(1, _options.MaxCategoriesPerItem + 1);
+            int count = Randomizer.Seed.Next(1, 4);
             while (count > 0)
             {
-                part.Categories.Add(
-                    RandomPickOf(_options.Categories, part.Categories));
-                count--;
+                Keyword keyword = new Faker<Keyword>()
+                    .RuleFor(k => k.Language, f => f.PickRandom(_options.Languages))
+                    .RuleFor(k => k.Value, f => f.Lorem.Word())
+                    .Generate();
+
+                part.AddKeyword(keyword.Language, keyword.Value);
             }
 
             return part;
@@ -67,18 +66,13 @@ namespace Cadmus.Seed.Parts.General
     }
 
     /// <summary>
-    /// Options for <see cref="CategoriesPartSeeder"/>.
+    /// Options for <see cref="KeywordsPartSeeder"/>.
     /// </summary>
-    public sealed class CategoriesPartSeederOptions
+    public sealed class KeywordsPartSeederOptions
     {
         /// <summary>
-        /// Gets or sets the maximum categories per item.
+        /// Gets or sets the languages codes to pick from.
         /// </summary>
-        public int MaxCategoriesPerItem { get; set; }
-
-        /// <summary>
-        /// Gets or sets the categories to pick from.
-        /// </summary>
-        public string[] Categories { get; set; }
+        public string[] Languages { get; set; }
     }
 }

@@ -16,11 +16,6 @@ namespace Cadmus.Seed
         protected SeedOptions Options { get; private set; }
 
         /// <summary>
-        /// Gets the random number generator.
-        /// </summary>
-        protected Random Random { get; private set; }
-
-        /// <summary>
         /// Configures this seeder with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
@@ -29,9 +24,6 @@ namespace Cadmus.Seed
         {
             Options = options ??
                 throw new ArgumentNullException(nameof(options));
-            Random = options.Seed != null
-                ? new Random(options.Seed.Value)
-                : new Random();
         }
 
         /// <summary>

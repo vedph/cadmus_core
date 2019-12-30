@@ -1,4 +1,5 @@
-﻿using Cadmus.Core;
+﻿using Bogus;
+using Cadmus.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,6 @@ namespace Cadmus.Seed
         protected SeedOptions Options { get; private set;}
 
         /// <summary>
-        /// Gets the random number generator.
-        /// </summary>
-        protected Random Random { get; private set; }
-
-        /// <summary>
         /// Configures this seeder with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
@@ -33,9 +29,6 @@ namespace Cadmus.Seed
         {
             Options = options ??
                 throw new ArgumentNullException(nameof(options));
-            Random = options.Seed != null
-                ? new Random(options.Seed.Value)
-                : new Random();
         }
 
         /// <summary>
@@ -46,7 +39,7 @@ namespace Cadmus.Seed
         /// <param name="excluded">The optional entries to be excluded.</param>
         /// <returns>Entry, or default value for T if entries is null or empty.
         /// </returns>
-        protected T RandomPickOf<T>(IList<T> entries, IList<T> excluded = null)
+        protected static T RandomPickOf<T>(IList<T> entries, IList<T> excluded = null)
         {
             if (entries == null || entries.Count == 0) return default;
 
@@ -54,7 +47,7 @@ namespace Cadmus.Seed
             int maxAttempts = 10;
             while (maxAttempts > 0)
             {
-                pick = entries[Random.Next(0, entries.Count)];
+                pick = entries[Randomizer.Seed.Next(0, entries.Count)];
                 if (excluded.Any(e => e.Equals(pick)))
                 {
                     if (--maxAttempts == 0) break;
@@ -75,7 +68,7 @@ namespace Cadmus.Seed
         /// <param name="excluded">The optional entries to be excluded.</param>
         /// <returns>Entry, or default value for T if entries is null or empty.
         /// </returns>
-        protected T RandomPickOf<T>(IList<T> entries, HashSet<T> excluded = null)
+        protected static T RandomPickOf<T>(IList<T> entries, HashSet<T> excluded = null)
         {
             if (entries == null || entries.Count == 0) return default;
 
@@ -83,7 +76,7 @@ namespace Cadmus.Seed
             int maxAttempts = 10;
             while (maxAttempts > 0)
             {
-                pick = entries[Random.Next(0, entries.Count)];
+                pick = entries[Randomizer.Seed.Next(0, entries.Count)];
                 if (excluded.Contains(pick))
                 {
                     if (--maxAttempts == 0) break;
@@ -118,7 +111,7 @@ namespace Cadmus.Seed
             {
                 if (roleId.IndexOf(':') == -1
                     && Options.FragmentRoles?.Length > 0
-                    && Random.Next(0, ASSIGN_ROLE_MAX) == 1)
+                    && Randomizer.Seed.Next(0, ASSIGN_ROLE_MAX) == 1)
                 {
                     part.RoleId += ":" + RandomPickOf(Options.FragmentRoles, (string[])null);
                 }
@@ -127,7 +120,7 @@ namespace Cadmus.Seed
             {
                 if (string.IsNullOrEmpty(roleId)
                     && Options.PartRoles?.Length > 0
-                    && Random.Next(0, ASSIGN_ROLE_MAX) == 1)
+                    && Randomizer.Seed.Next(0, ASSIGN_ROLE_MAX) == 1)
                 {
                     part.RoleId = RandomPickOf(Options.PartRoles, (string[])null);
                 }

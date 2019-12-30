@@ -1,4 +1,5 @@
-﻿using Cadmus.Core;
+﻿using Bogus;
+using Cadmus.Core;
 using Cadmus.Core.Config;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,6 @@ namespace Cadmus.Seed
     {
         private readonly PartSeederFactory _factory;
         private readonly SeedOptions _options;
-        private Random _random;
         private Dictionary<string, IPartSeeder> _partSeeders;
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Cadmus.Seed
         {
             foreach (PartDefinition partDef in partDefinitions)
             {
-                if (optional && _random.Next(0, 2) == 0) continue;
+                if (optional && Randomizer.Seed.Next(0, 2) == 0) continue;
 
                 IPart part = GetPart(item, partDef);
                 if (part != null) item.Parts.Add(part);
@@ -68,8 +68,8 @@ namespace Cadmus.Seed
             }
 
             // init
-            _random = _options.Seed.HasValue ?
-                new Random(_options.Seed.Value) : new Random();
+            if (_options.Seed.HasValue)
+                Randomizer.Seed = new Random(_options.Seed.Value);
 
             ItemSeeder itemSeeder = _factory.GetItemSeeder();
             _partSeeders = _factory.GetPartSeeders();
@@ -80,7 +80,7 @@ namespace Cadmus.Seed
             {
                 // pick a facet
                 FacetDefinition facet = _options.FacetDefinitions[
-                    _random.Next(0, _options.FacetDefinitions.Length)];
+                    Randomizer.Seed.Next(0, _options.FacetDefinitions.Length)];
 
                 // get item
                 IItem item = itemSeeder.GetItem(n, facet);

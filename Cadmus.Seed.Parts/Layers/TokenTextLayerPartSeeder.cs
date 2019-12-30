@@ -1,4 +1,5 @@
-﻿using Cadmus.Core;
+﻿using Bogus;
+using Cadmus.Core;
 using Cadmus.Core.Layers;
 using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
@@ -47,12 +48,12 @@ namespace Cadmus.Seed.Parts.Layers
                 for (int attempt = 0; attempt < 10; attempt++)
                 {
                     // pick a line
-                    int y = Random.Next(1, part.Lines.Count + 1);
+                    int y = Randomizer.Seed.Next(1, part.Lines.Count + 1);
 
                     // pick a token in that line
                     if (!tokens.ContainsKey(y))
                         tokens[y] = part.Lines[y - 1].GetTokens();
-                    int x = Random.Next(1, tokens[y].Length + 1);
+                    int x = Randomizer.Seed.Next(1, tokens[y].Length + 1);
 
                     // select if not already used
                     Tuple<int, int> yx = Tuple.Create(y, x);
@@ -116,7 +117,7 @@ namespace Cadmus.Seed.Parts.Layers
             SetPartMetadata(part, frTypeId, item);
 
             // seed by adding fragments
-            int count = Random.Next(1, _options.MaxFragmentCount);
+            int count = Randomizer.Seed.Next(1, _options.MaxFragmentCount);
             IList<Tuple<string, string>> locAndTexts =
                 PickLocAndTexts(textPart, count);
 

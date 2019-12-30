@@ -1,5 +1,7 @@
 ﻿using Cadmus.Core;
+using Cadmus.Core.Config;
 using Cadmus.Core.Layers;
+using Fusi.Tools.Config;
 using System;
 
 namespace Cadmus.Seed

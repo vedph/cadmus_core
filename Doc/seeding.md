@@ -49,10 +49,9 @@ Seeding data essentially means providing items, parts, and eventually fragments 
     PartSeederBase "1"*--"1" SeedOptions
 
     PartSeederBase : #SeedOptions Options
-    PartSeederBase : #Random Random
     PartSeederBase : +Configure(SeedOptions options)
-    PartSeederBase : #T RandomPickOf<T>(IList<T> entries, IList<T> excluded = null)
-    PartSeederBase : #T RandomPickOf<T>(IList<T> entries, HashSet<T> excluded = null)
+    PartSeederBase : #{static} T RandomPickOf<T>(IList<T> entries, IList<T> excluded = null)
+    PartSeederBase : #{static} T RandomPickOf<T>(IList<T> entries, HashSet<T> excluded = null)
     PartSeederBase : #SetPartMetadata(IPart part, string roleId, IItem item)
 
     abstract class IFragmentSeeder
@@ -66,7 +65,6 @@ Seeding data essentially means providing items, parts, and eventually fragments 
     FragmentSeederBase "1"*--"1" SeedOptions
 
     FragmentSeederBase : #SeedOptions Options
-    FragmentSeederBase : #Random Random
     FragmentSeederBase : +Configure(SeedOptions options)
 
     CadmusSeeder "1"*--"1" PartSeederFactory
@@ -75,7 +73,6 @@ Seeding data essentially means providing items, parts, and eventually fragments 
 
     CadmusSeeder : -PartSeederFactory _factory
     CadmusSeeder : -SeedOptions _options
-    CadmusSeeder : -Random _random
     CadmusSeeder : -Dictionary<string, IPartSeeder> _partSeeders
     CadmusSeeder : +CadmusSeeder(PartSeederFactory factory)
     CadmusSeeder : -IPart GetPart(IItem item, PartDefinition definition)

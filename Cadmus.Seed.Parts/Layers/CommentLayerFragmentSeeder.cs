@@ -29,7 +29,6 @@ namespace Cadmus.Seed.Parts.Layers
         /// Configures the object with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
-        /// <exception cref="System.NotImplementedException"></exception>
         public void Configure(CommentLayerFragmentSeederOptions options)
         {
             _options = options;

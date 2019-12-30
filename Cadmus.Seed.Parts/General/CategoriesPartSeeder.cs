@@ -43,15 +43,15 @@ namespace Cadmus.Seed.Parts.General
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
 
-            CategoriesPart part = new CategoriesPart();
-            SetPartMetadata(part, roleId, item);
-
             if (_options?.Categories != null
                 || _options.Categories.Length == 0
                 || _options.MaxCategoriesPerItem < 1)
             {
-                return part;
+                return null;
             }
+
+            CategoriesPart part = new CategoriesPart();
+            SetPartMetadata(part, roleId, item);
 
             // pick from 1 to 3 categories, all different
             int count = Randomizer.Seed.Next(1, _options.MaxCategoriesPerItem + 1);

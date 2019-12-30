@@ -239,3 +239,165 @@ This is a text layer part for comment fragments. The comment fragment ID is give
 ## Seeder
 
 All these pieces converge into the Cadmus seeder (`CadmusSeeder`). This is constructed with a seeder factory (`PartSeederFactory`), and provides a `GetItems` method, which gets the desired number of items and outputs all the requested items with their parts.
+
+## Adding Part Seeders
+
+The following recipe refers to a non-layer part.
+
+1. if not already present, create a project to host the seeders, adding to its dependencies the corresponding part/fragment project.
+
+2. add a `<NAME>PartSeeder.cs` for the seeder, using this template (replace `__NAME__` with the part name, using the proper case, and adjust the namespace):
+
+```cs
+using Bogus;
+using Cadmus.Core;
+using Cadmus.Parts.General;
+using Fusi.Tools.Config;
+using System;
+
+namespace Cadmus.Seed.Parts.General
+{
+    /// <summary>
+    /// __NAME__ part seeder.
+    /// Tag: <c>seed.net.fusisoft.__NAME__</c>.
+    /// </summary>
+    /// <seealso cref="Cadmus.Seed.PartSeederBase" />
+    [Tag("seed.net.fusisoft.__NAME__")]
+    public sealed class __NAME__PartSeeder : PartSeederBase,
+        IConfigurable<__NAME__PartSeederOptions>
+    {
+        private __NAME__PartSeederOptions _options;
+
+        /// <summary>
+        /// Configures the object with the specified options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        public void Configure(__NAME__PartSeederOptions options)
+        {
+            _options = options;
+        }
+
+        /// <summary>
+        /// Creates and seeds a new part.
+        /// </summary>
+        /// <param name="item">The item this part should belong to.</param>
+        /// <param name="roleId">The optional part role ID.</param>
+        /// <param name="factory">The part seeder factory. This is used
+        /// for layer parts, which need to seed a set of fragments.</param>
+        /// <returns>A new part.</returns>
+        /// <exception cref="ArgumentNullException">item or factory</exception>
+        public override IPart GetPart(IItem item, string roleId,
+            PartSeederFactory factory)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+            if (factory == null)
+                throw new ArgumentNullException(nameof(factory));
+
+            // TODO: add more options validation check; if invalid, ret null
+            if (_options == null)
+            {
+                return null;
+            }
+
+            __NAME__Part part = new __NAME__Part();
+            SetPartMetadata(part, roleId, item);
+
+            // TODO: add seed code here...
+
+            return part;
+        }
+    }
+
+    /// <summary>
+    /// Options for <see cref="__NAME__PartSeeder"/>.
+    /// </summary>
+    public sealed class __NAME__PartSeederOptions
+    {
+        // TODO: add options here...
+    }
+}
+```
+
+## Adding Fragment Seeders
+
+1. if not already present, create a project to host the seeders, adding to its dependencies the corresponding part/fragment project.
+
+2. add a `<NAME>LayerFragmentSeeder.cs` for the seeder, using this template (replace `__NAME__` with the fragment name, using the proper case, and adjust the namespace):
+
+```cs
+using Bogus;
+using Cadmus.Core;
+using Cadmus.Core.Layers;
+using Cadmus.Parts.Layers;
+using Fusi.Tools.Config;
+using System;
+
+namespace Cadmus.Seed.Parts.Layers
+{
+    /// <summary>
+    /// Seeder for <see cref="__NAME__LayerFragment"/>'s.
+    /// Tag: <c>seed.fr.net.fusisoft.__NAME__</c>.
+    /// </summary>
+    /// <seealso cref="FragmentSeederBase" />
+    /// <seealso cref="IConfigurable{__NAME__LayerFragmentSeederOptions}" />
+    [Tag("seed.fr.net.fusisoft.__NAME__")]
+    public sealed class __NAME__LayerFragmentSeeder : FragmentSeederBase,
+        IConfigurable<__NAME__LayerFragmentSeederOptions>
+    {
+        private __NAME__LayerFragmentSeederOptions _options;
+
+        /// <summary>
+        /// Gets the type of the fragment.
+        /// </summary>
+        /// <returns>Type.</returns>
+        public override Type GetFragmentType() => typeof(__NAME__LayerFragment);
+
+        /// <summary>
+        /// Configures the object with the specified options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        public void Configure(__NAME__LayerFragmentSeederOptions options)
+        {
+            _options = options;
+        }
+
+        /// <summary>
+        /// Creates and seeds a new part.
+        /// </summary>
+        /// <param name="item">The item this part should belong to.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="baseText">The base text.</param>
+        /// <returns>A new fragment.</returns>
+        /// <exception cref="ArgumentNullException">item or location or
+        /// baseText</exception>
+        public override ITextLayerFragment GetFragment(
+            IItem item, string location, string baseText)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+            if (location == null)
+                throw new ArgumentNullException(nameof(location));
+            if (baseText == null)
+                throw new ArgumentNullException(nameof(baseText));
+
+            // TODO: use faker to create fragment object, like:
+            // return new Faker<__NAME__LayerFragment>()
+            //     .RuleFor(fr => fr.Location, location)
+            //     .RuleFor(fr => fr.Text, f => f.Lorem.Sentences())
+            //     .RuleFor(fr => fr.Tag,
+            //         f => _options.Tags?.Length > 0
+            //         ? f.PickRandom(_options.Tags) : null)
+            //     .Generate();
+        }
+    }
+
+    /// <summary>
+    /// Options for <see cref="__NAME__LayerFragmentSeeder"/>.
+    /// </summary>
+    public sealed class __NAME__LayerFragmentSeederOptions
+    {
+        // TODO: set options
+    }
+}
+```

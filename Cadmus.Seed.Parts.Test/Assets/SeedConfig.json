@@ -79,6 +79,9 @@
       }
     },
     {
+      "id": "seed.net.fusisoft.historical-date"
+    },
+    {
       "id": "seed.net.fusisoft.keywords",
       "options": {
         "languages": [

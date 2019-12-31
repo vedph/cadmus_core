@@ -16,10 +16,10 @@ namespace Cadmus.Seed
     public interface IFragmentSeeder
     {
         /// <summary>
-        /// Configures this seeder with the specified options.
+        /// Set the general seed options.
         /// </summary>
         /// <param name="options">The options.</param>
-        void Configure(SeedOptions options);
+        void SetSeedOptions(SeedOptions options);
 
         /// <summary>
         /// Gets the type of the fragment.

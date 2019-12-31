@@ -1,9 +1,4 @@
-using Cadmus.Core;
-using Cadmus.Core.Config;
-using Cadmus.Parts.General;
 using Cadmus.Seed.Parts.General;
-using SimpleInjector;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -28,7 +23,35 @@ namespace Cadmus.Seed.Parts.Test
             Dictionary<string, IPartSeeder> seeders = _factory.GetPartSeeders();
 
             Assert.NotNull(seeders);
-            Assert.Equal(4, seeders.Count);
+            Assert.Equal(5, seeders.Count);
+
+            string key = "net.fusisoft.categories";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as CategoriesPartSeeder);
+
+            key = "net.fusisoft.historical-date";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as HistoricalDatePartSeeder);
+
+            key = "net.fusisoft.keywords";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as KeywordsPartSeeder);
+
+            key = "net.fusisoft.note";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as NotePartSeeder);
+
+            key = "net.fusisoft.token-text";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as TokenTextPartSeeder);
+        }
+
+        [Fact]
+        public void GetFragmentSeeder_Comment_Ok()
+        {
+            IFragmentSeeder seeder = _factory.GetFragmentSeeder(
+                "seed.fr.net.fusisoft.comment");
+            Assert.NotNull(seeder);
         }
     }
 }

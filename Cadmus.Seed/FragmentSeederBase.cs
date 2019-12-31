@@ -16,11 +16,11 @@ namespace Cadmus.Seed
         protected SeedOptions Options { get; private set; }
 
         /// <summary>
-        /// Configures this seeder with the specified options.
+        /// Set the general seed options.
         /// </summary>
         /// <param name="options">The options.</param>
         /// <exception cref="ArgumentNullException">options</exception>
-        public void Configure(SeedOptions options)
+        public void SetSeedOptions(SeedOptions options)
         {
             Options = options ??
                 throw new ArgumentNullException(nameof(options));

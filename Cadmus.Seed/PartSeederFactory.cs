@@ -93,6 +93,7 @@ namespace Cadmus.Seed
             container.RegisterInstance(partTypeProvider);
             container.Collection.Register<IItemSortKeyBuilder>(assemblies);
             container.Collection.Register<IPartSeeder>(assemblies);
+            container.Collection.Register<IFragmentSeeder>(assemblies);
         }
 
         /// <summary>
@@ -121,6 +122,7 @@ namespace Cadmus.Seed
         /// <summary>
         /// Gets the fragment seeder for the specified fragment type ID.
         /// </summary>
+        /// <param name="typeId">The fragment seeder type ID.</param>
         /// <returns>Seeder, or null if not found.</returns>
         /// <exception cref="ArgumentNullException">typeId</exception>
         public IFragmentSeeder GetFragmentSeeder(string typeId)
@@ -128,7 +130,7 @@ namespace Cadmus.Seed
             if (typeId == null) throw new ArgumentNullException(nameof(typeId));
 
             var entry = ComponentFactoryConfigEntry.ReadComponentEntry(
-                Configuration, "FragmentSeeders", "seed." + typeId);
+                Configuration, "FragmentSeeders", typeId);
             if (entry == null) return null;
 
             SeedOptions options = GetSeedOptions();
@@ -137,7 +139,7 @@ namespace Cadmus.Seed
                 typeId, entry.OptionsPath, false);
             if (seeder == null) return null;
 
-            seeder.Configure(options);
+            seeder.SetSeedOptions(options);
             return seeder;
         }
 

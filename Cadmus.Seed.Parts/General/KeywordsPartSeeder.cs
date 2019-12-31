@@ -44,7 +44,7 @@ namespace Cadmus.Seed.Parts.General
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
 
-            if (_options.Languages == null || _options.Languages.Length == 0)
+            if (_options?.Languages == null || _options.Languages.Length == 0)
                 return null;
 
             KeywordsPart part = new KeywordsPart();
@@ -59,6 +59,7 @@ namespace Cadmus.Seed.Parts.General
                     .Generate();
 
                 part.AddKeyword(keyword.Language, keyword.Value);
+                count--;
             }
 
             return part;

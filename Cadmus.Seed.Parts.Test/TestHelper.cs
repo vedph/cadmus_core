@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Xunit;
 
 namespace Cadmus.Seed.Parts.Test
 {
@@ -56,6 +57,14 @@ namespace Cadmus.Seed.Parts.Test
             var configuration = builder.Build();
 
             return new PartSeederFactory(container, configuration);
+        }
+
+        static public void AssertPartMetadata(IPart part)
+        {
+            Assert.NotNull(part.Id);
+            Assert.NotNull(part.ItemId);
+            Assert.NotNull(part.UserId);
+            Assert.NotNull(part.CreatorId);
         }
     }
 }

@@ -83,7 +83,7 @@ namespace Cadmus.Seed
                     Randomizer.Seed.Next(0, _options.FacetDefinitions.Length)];
 
                 // get item
-                IItem item = itemSeeder.GetItem(n, facet);
+                IItem item = itemSeeder.GetItem(n, facet.Id);
 
                 // add parts: first non layer parts, then the others.
                 // This ensures that the item already has the base text part

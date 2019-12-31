@@ -43,7 +43,7 @@ namespace Cadmus.Seed.Parts.General
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
 
-            if (_options?.Categories != null
+            if (_options?.Categories == null
                 || _options.Categories.Length == 0
                 || _options.MaxCategoriesPerItem < 1)
             {

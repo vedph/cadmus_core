@@ -31,13 +31,10 @@ namespace Cadmus.Seed
         /// <param name="number">The item number. This is just the ordinal
         /// number of the requested item, and can be used by the seeder
         /// to populate item's data.</param>
-        /// <param name="facet">The item's facet.</param>
+        /// <param name="facetId">The optional item's facet ID.</param>
         /// <returns>A new item.</returns>
-        /// <exception cref="ArgumentNullException">facet</exception>
-        public IItem GetItem(int number, FacetDefinition facet)
+        public IItem GetItem(int number, string facetId)
         {
-            if (facet == null) throw new ArgumentNullException(nameof(facet));
-
             string oddEven = (number & 1) == 1 ? "odd" : "even";
 
             Item item = new Faker<Item>()
@@ -45,7 +42,7 @@ namespace Cadmus.Seed
                 .RuleFor(i => i.Description,
                     $"Description for {oddEven} " +
                     $"item number {NumberToWords.Convert(number)}.")
-                .RuleFor(i => i.FacetId, facet.Id)
+                .RuleFor(i => i.FacetId, facetId)
                 .RuleFor(i => i.CreatorId, f => f.PickRandom(_options.Users))
                 .RuleFor(i => i.UserId, f => f.PickRandom(_options.Users))
                 .RuleFor(i => i.Flags, (number & 1) == 1 ? 1 : 0);

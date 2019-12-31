@@ -37,7 +37,7 @@ Seeding data essentially means providing items, parts, and eventually fragments 
     ItemSeeder : -SeedOptions _options
     ItemSeeder : -IItemSortKeyBuilder _sortKeyBuilder
     ItemSeeder : +ItemSeeder(SeedOptions options)
-    ItemSeeder : +IItem GetItem(int number, FacetDefinition facet)
+    ItemSeeder : +IItem GetItem(int number, string facetId)
 
     abstract class IPartSeeder
 

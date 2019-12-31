@@ -41,7 +41,7 @@ Seeding data essentially means providing items, parts, and eventually fragments 
 
     abstract class IPartSeeder
 
-    IPartSeeder : +Configure(SeedOptions options)
+    IPartSeeder : +SetSeedOptions(SeedOptions options)
     IPartSeeder : +IPart GetPart(IItem item, string roleId, PartSeederFactory factory)
 
     IPartSeeder <|-- PartSeederBase

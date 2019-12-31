@@ -166,7 +166,7 @@ namespace Cadmus.Seed
                 string id = entries[i++].Id;
                 id = id.Substring("seed.".Length);
 
-                seeder.Configure(options);
+                seeder.SetSeedOptions(options);
                 result[id] = seeder;
             }
 

@@ -1,8 +1,6 @@
 ﻿using Bogus;
 using Cadmus.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Cadmus.Seed
 {
@@ -21,11 +19,11 @@ namespace Cadmus.Seed
         protected SeedOptions Options { get; private set;}
 
         /// <summary>
-        /// Configures this seeder with the specified options.
+        /// Set the general options for seeding.
         /// </summary>
         /// <param name="options">The options.</param>
         /// <exception cref="ArgumentNullException">options</exception>
-        public void Configure(SeedOptions options)
+        public void SetSeedOptions(SeedOptions options)
         {
             Options = options ??
                 throw new ArgumentNullException(nameof(options));

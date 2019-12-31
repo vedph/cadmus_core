@@ -8,10 +8,10 @@ namespace Cadmus.Seed
     public interface IPartSeeder
     {
         /// <summary>
-        /// Configures this seeder with the specified options.
+        /// Set the general options for seeding.
         /// </summary>
         /// <param name="options">The options.</param>
-        void Configure(SeedOptions options);
+        void SetSeedOptions(SeedOptions options);
 
         /// <summary>
         /// Creates and seeds a new part.

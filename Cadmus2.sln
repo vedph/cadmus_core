@@ -42,7 +42,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{461AF59A-C6B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Philology.Parts", "Cadmus.Seed.Philology.Parts\Cadmus.Seed.Philology.Parts.csproj", "{9582D03A-7088-4058-BCE7-492E0B036945}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed.Parts.Test", "Cadmus.Seed.Parts.Test\Cadmus.Seed.Parts.Test.csproj", "{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Parts.Test", "Cadmus.Seed.Parts.Test\Cadmus.Seed.Parts.Test.csproj", "{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Seed.Philology.Parts.Test", "Cadmus.Seed.Philology.Parts.Test\Cadmus.Seed.Philology.Parts.Test.csproj", "{3D097ECE-8572-411F-B4DB-16A08E2DBC39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,6 +108,10 @@ Global
 		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

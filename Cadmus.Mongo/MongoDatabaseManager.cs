@@ -101,19 +101,19 @@ namespace Cadmus.Mongo
             // store facets, flags, and tag sets
             IMongoDatabase db = Client.GetDatabase(GetDatabaseName(source));
 
-            if (profile.FacetDefinitions?.Length > 0)
+            if (profile.Facets?.Length > 0)
             {
                 var collFacets = db.GetCollection<MongoFacetDefinition>(
                     MongoFacetDefinition.COLLECTION);
-                collFacets.InsertMany(profile.FacetDefinitions.Select(
+                collFacets.InsertMany(profile.Facets.Select(
                     f => new MongoFacetDefinition(f)));
             }
 
-            if (profile.FlagDefinitions?.Length > 0)
+            if (profile.Flags?.Length > 0)
             {
                 var collFlags = db.GetCollection<MongoFlagDefinition>(
                     MongoFlagDefinition.COLLECTION);
-                collFlags.InsertMany(profile.FlagDefinitions
+                collFlags.InsertMany(profile.Flags
                     .Select(f => new MongoFlagDefinition(f)));
             }
 

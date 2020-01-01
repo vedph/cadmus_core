@@ -19,18 +19,19 @@ namespace Cadmus.Core.Config
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
 
-            DataProfileOptions options = JsonSerializer.Deserialize<DataProfileOptions>
-                (text, new JsonSerializerOptions
+            DataProfileOptions options = JsonSerializer.Deserialize
+                <DataProfileOptions>(text, new JsonSerializerOptions
                 {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
                 });
 
             DataProfile profile = new DataProfile
             {
                 // facets
-                FacetDefinitions = options.Facets,
+                Facets = options.Facets,
                 // flags
-                FlagDefinitions = options.Flags
+                Flags = options.Flags
             };
 
             // thesauri

@@ -9,12 +9,12 @@
         /// <summary>
         /// Gets the facets.
         /// </summary>
-        public FacetDefinition[] FacetDefinitions { get; set; }
+        public FacetDefinition[] Facets { get; set; }
 
         /// <summary>
         /// Gets the flags definitions.
         /// </summary>
-        public FlagDefinition[] FlagDefinitions { get; set; }
+        public FlagDefinition[] Flags { get; set; }
 
         /// <summary>
         /// Gets the thesauri.

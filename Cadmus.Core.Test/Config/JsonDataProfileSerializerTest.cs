@@ -11,8 +11,10 @@ namespace Cadmus.Core.Test.Config
     {
         private static string LoadProfile(string resourceName)
         {
-            using (StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream($"Cadmus.Core.Test.Assets.{resourceName}"),
+            using (StreamReader reader = new StreamReader(
+                Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream(
+                    $"Cadmus.Core.Test.Assets.{resourceName}"),
                 Encoding.UTF8))
             {
                 return reader.ReadToEnd();
@@ -28,8 +30,8 @@ namespace Cadmus.Core.Test.Config
             DataProfile profile = serializer.Read(json);
 
             // facets
-            Assert.Single(profile.FacetDefinitions);
-            FacetDefinition facetDef = profile.FacetDefinitions[0];
+            Assert.Single(profile.Facets);
+            FacetDefinition facetDef = profile.Facets[0];
             Assert.Equal("facet-default", facetDef.Id);
             Assert.Equal("default", facetDef.Label);
             Assert.Equal("The default facet", facetDef.Description);
@@ -38,8 +40,8 @@ namespace Cadmus.Core.Test.Config
             // TODO: check each facet definition
 
             // flags
-            Assert.Single(profile.FlagDefinitions);
-            FlagDefinition flagDef = profile.FlagDefinitions[0];
+            Assert.Single(profile.Flags);
+            FlagDefinition flagDef = profile.Flags[0];
             Assert.Equal(1, flagDef.Id);
             Assert.Equal("to revise", flagDef.Label);
             Assert.Equal("The item must be revised.", flagDef.Description);

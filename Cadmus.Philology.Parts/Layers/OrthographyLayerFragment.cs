@@ -43,6 +43,14 @@ namespace Cadmus.Philology.Parts.Layers
         public List<string> Operations { get; set; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="OrthographyLayerFragment"/> class.
+        /// </summary>
+        public OrthographyLayerFragment()
+        {
+            Operations = new List<string>();
+        }
+
+        /// <summary>
         /// Get all the pins exposed by the implementor.
         /// </summary>
         /// <remarks>If operations have tags, the operations with tags are

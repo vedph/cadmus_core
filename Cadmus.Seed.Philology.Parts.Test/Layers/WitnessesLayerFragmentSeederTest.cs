@@ -6,15 +6,15 @@ using Cadmus.Seed.Philology.Parts.Layers;
 using System;
 using Xunit;
 
-namespace Cadmus.Seed.Philology.Parts.Test
+namespace Cadmus.Seed.Philology.Parts.Test.Layers
 {
-    public sealed class ApparatusLayerFragmentSeederTest
+    public sealed class WitnessesLayerFragmentSeederTest
     {
         private static readonly PartSeederFactory _factory;
         private static readonly SeedOptions _seedOptions;
         private static readonly IItem _item;
 
-        static ApparatusLayerFragmentSeederTest()
+        static WitnessesLayerFragmentSeederTest()
         {
             _factory = TestHelper.GetFactory();
             _seedOptions = _factory.GetSeedOptions();
@@ -24,20 +24,20 @@ namespace Cadmus.Seed.Philology.Parts.Test
         [Fact]
         public void Seed_NoOptions_Null()
         {
-            ApparatusLayerFragmentSeeder seeder = new ApparatusLayerFragmentSeeder();
+            WitnessesLayerFragmentSeeder seeder = new WitnessesLayerFragmentSeeder();
             seeder.SetSeedOptions(_seedOptions);
 
             Assert.Null(seeder.GetFragment(_item, "1.1", "alpha"));
         }
 
         [Fact]
-        public void Seed_NoAuthors_Null()
+        public void Seed_NoIds_Null()
         {
-            ApparatusLayerFragmentSeeder seeder = new ApparatusLayerFragmentSeeder();
+            WitnessesLayerFragmentSeeder seeder = new WitnessesLayerFragmentSeeder();
             seeder.SetSeedOptions(_seedOptions);
-            seeder.Configure(new ApparatusLayerFragmentSeederOptions
+            seeder.Configure(new WitnessesLayerFragmentSeederOptions
             {
-                Authors = Array.Empty<string>()  // invalid
+                Ids = Array.Empty<string>()  // invalid
             });
 
             Assert.Null(seeder.GetFragment(_item, "1.1", "alpha"));
@@ -46,29 +46,34 @@ namespace Cadmus.Seed.Philology.Parts.Test
         [Fact]
         public void Seed_ValidOptions_Ok()
         {
-            ApparatusLayerFragmentSeeder seeder = new ApparatusLayerFragmentSeeder();
+            WitnessesLayerFragmentSeeder seeder = new WitnessesLayerFragmentSeeder();
             seeder.SetSeedOptions(_seedOptions);
-            seeder.Configure(new ApparatusLayerFragmentSeederOptions
-            {
-                Authors = new[]
+            string[] ids = new[]
                 {
                     "alpha",
                     "beta",
                     "gamma"
-                }
+                };
+            seeder.Configure(new WitnessesLayerFragmentSeederOptions
+            {
+                Ids = ids
             });
 
             ITextLayerFragment fragment = seeder.GetFragment(_item, "1.1", "alpha");
 
             Assert.NotNull(fragment);
 
-            ApparatusLayerFragment fr = fragment as ApparatusLayerFragment;
+            WitnessesLayerFragment fr = fragment as WitnessesLayerFragment;
             Assert.NotNull(fr);
 
             Assert.Equal("1.1", fr.Location);
-            Assert.NotEmpty(fr.Authors);
-            if (fr.Type != LemmaVariantType.Note)
-                Assert.NotNull(fr.Value);
+            Assert.NotEmpty(fr.Witnesses);
+            foreach (Witness witness in fr.Witnesses)
+            {
+                Assert.True(Array.IndexOf(ids, witness.Id) > -1);
+                Assert.NotNull(witness.Citation);
+                Assert.NotNull(witness.Text);
+            }
         }
     }
 }

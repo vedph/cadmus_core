@@ -1,122 +1,124 @@
 {
-  "seedOptions": {
-    "seed": 1,
-    "users": [ "zeus" ],
-    "partRoles": [],
-    "fragmentRoles": [],
-    "facetDefinitions": [
-      {
-        "typeId": "net.fusisoft.categories",
-        "name": "categories",
-        "description": "Item's categories.",
-        "required": true,
-        "colorKey": "98F8F8",
-        "groupKey": "general",
-        "sortKey": "categories",
-        "editorKey": "general"
-      },
-      {
-        "typeId": "net.fusisoft.historical-date",
-        "name": "date",
-        "description": "Historical date.",
-        "required": false,
-        "colorKey": "F898F8",
-        "groupKey": "general",
-        "sortKey": "date",
-        "editorKey": "general"
-      },
-      {
-        "typeId": "net.fusisoft.keywords",
-        "name": "keywords",
-        "description": "Item's keywords.",
-        "colorKey": "90C0F8",
-        "groupKey": "general",
-        "sortKey": "keywords",
-        "editorKey": "general"
-      },
-      {
-        "typeId": "net.fusisoft.note",
-        "name": "note",
-        "description": "A free text note about the document.",
-        "colorKey": "B0A0F8",
-        "groupKey": "general",
-        "sortKey": "note",
-        "editorKey": "general"
-      },
-      {
-        "typeId": "net.fusisoft.token-text",
-        "name": "text",
-        "description": "Item's token-based text.",
-        "colorKey": "31AB54",
-        "groupKey": "text",
-        "sortKey": "text",
-        "editorKey": "general"
-      },
-      {
-        "typeId": "net.fusisoft.token-text-layer",
-        "roleId": "fr.net.fusisoft.comment",
-        "name": "comments",
-        "description": "Comments on text.",
-        "colorKey": "F8D040",
-        "groupKey": "text",
-        "sortKey": "text-comments",
-        "editorKey": "general"
-      }
-    ]
-  },
-  "partSeeders": [
+  "facets": [
     {
-      "id": "seed.net.fusisoft.categories",
-      "options": {
-        "maxCategoriesPerItem": 3,
-        "categories": [
-          "language.phonology",
-          "language.morphology",
-          "language.syntax",
-          "literature",
-          "geography"
-        ]
-      }
+      "typeId": "net.fusisoft.categories",
+      "name": "categories",
+      "description": "Item's categories.",
+      "required": true,
+      "colorKey": "98F8F8",
+      "groupKey": "general",
+      "sortKey": "categories",
+      "editorKey": "general"
     },
     {
-      "id": "seed.net.fusisoft.historical-date"
+      "typeId": "net.fusisoft.historical-date",
+      "name": "date",
+      "description": "Historical date.",
+      "required": false,
+      "colorKey": "F898F8",
+      "groupKey": "general",
+      "sortKey": "date",
+      "editorKey": "general"
     },
     {
-      "id": "seed.net.fusisoft.keywords",
-      "options": {
-        "languages": [
-          "eng",
-          "deu",
-          "ita",
-          "fra",
-          "spa"
-        ]
-      }
+      "typeId": "net.fusisoft.keywords",
+      "name": "keywords",
+      "description": "Item's keywords.",
+      "colorKey": "90C0F8",
+      "groupKey": "general",
+      "sortKey": "keywords",
+      "editorKey": "general"
     },
     {
-      "id": "seed.net.fusisoft.note",
-      "options": {
-        "tags": [
-          "language",
-          "history",
-          "geography"
-        ]
-      }
+      "typeId": "net.fusisoft.note",
+      "name": "note",
+      "description": "A free text note about the document.",
+      "colorKey": "B0A0F8",
+      "groupKey": "general",
+      "sortKey": "note",
+      "editorKey": "general"
     },
     {
-      "id": "seed.net.fusisoft.token-text"
+      "typeId": "net.fusisoft.token-text",
+      "name": "text",
+      "description": "Item's token-based text.",
+      "colorKey": "31AB54",
+      "groupKey": "text",
+      "sortKey": "text",
+      "editorKey": "general"
+    },
+    {
+      "typeId": "net.fusisoft.token-text-layer",
+      "roleId": "fr.net.fusisoft.comment",
+      "name": "comments",
+      "description": "Comments on text.",
+      "colorKey": "F8D040",
+      "groupKey": "text",
+      "sortKey": "text-comments",
+      "editorKey": "general"
     }
   ],
-  "fragmentSeeders": [
-    {
-      "id": "seed.fr.net.fusisoft.comment",
-      "options": {
-        "tags": [
-          "language",
-          "history",
-          "geography"
-        ]
+  "seed": {
+    "options": {
+      "seed": 1,
+      "users": [ "zeus" ],
+      "partRoles": [],
+      "fragmentRoles": []
+    },
+    "partSeeders": [
+      {
+        "id": "seed.net.fusisoft.categories",
+        "options": {
+          "maxCategoriesPerItem": 3,
+          "categories": [
+            "language.phonology",
+            "language.morphology",
+            "language.syntax",
+            "literature",
+            "geography"
+          ]
+        }
+      },
+      {
+        "id": "seed.net.fusisoft.historical-date"
+      },
+      {
+        "id": "seed.net.fusisoft.keywords",
+        "options": {
+          "languages": [
+            "eng",
+            "deu",
+            "ita",
+            "fra",
+            "spa"
+          ]
+        }
+      },
+      {
+        "id": "seed.net.fusisoft.note",
+        "options": {
+          "tags": [
+            "language",
+            "history",
+            "geography"
+          ]
+        }
+      },
+      {
+        "id": "seed.net.fusisoft.token-text"
       }
-    }
-  ]
+    ],
+    "fragmentSeeders": [
+      {
+        "id": "seed.fr.net.fusisoft.comment",
+        "options": {
+          "tags": [
+            "language",
+            "history",
+            "geography"
+          ]
+        }
+      }
+    ]
+  }
 }

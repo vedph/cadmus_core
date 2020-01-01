@@ -14,27 +14,28 @@ namespace Cadmus.Seed
     /// Parts seeders factory based on a configuration.
     /// </summary>
     /// <remarks>
-    /// The configuration has these sections:
+    /// The seed configuration is added under a <c>seed</c> property to a
+    /// standard Cadmus profile; this property has the following sections:
     /// <list type="bullet">
     /// <item>
-    /// <term>SeedOptions</term>
+    /// <term>options</term>
     /// <description>general seed options (see <see cref="SeedOptions"/>).
     /// </description>
     /// </item>
     /// <item>
-    /// <term>ItemSortKeyBuilder</term>
+    /// <term>itemSortKeyBuilder</term>
     /// <description>the optional item sort key builder ID and its eventual
     /// options. When not specified, the <see cref="StandardItemSortKeyBuilder"/>
     /// is used.
     /// </description>
     /// </item>
     /// <item>
-    /// <term>PartSeeders</term>
+    /// <term>partSeeders</term>
     /// <description>the part seeders. Array with <c>Id</c> and eventual
     /// <c>Options</c>.</description>
     /// </item>
     /// <item>
-    /// <term>FragmentSeeders</term>
+    /// <term>fragmentSeeders</term>
     /// <description>the fragment seeders. Array with <c>Id</c> and eventual
     /// <c>Options</c>.</description>
     /// </item>
@@ -97,30 +98,33 @@ namespace Cadmus.Seed
         }
 
         /// <summary>
-        /// Gets the seed options.
+        /// Gets the seed options from <c>/seed/options</c>.
         /// </summary>
         /// <returns>The seed options</returns>
         public SeedOptions GetSeedOptions()
         {
-            IConfigurationSection section = Configuration.GetSection("SeedOptions");
+            IConfigurationSection section =
+                Configuration.GetSection("seed")?.GetSection("options");
             return section.Get<SeedOptions>();
         }
 
         /// <summary>
-        /// Gets the optional item sort key builder. If not specified, the
+        /// Gets the optional item sort key builder from
+        /// <c>seed/itemSortKeyBuilder</c>. If not specified, the
         /// <see cref="StandardItemSortKeyBuilder"/> will be used.
         /// </summary>
         /// <returns>Item sort key builder.</returns>
         public IItemSortKeyBuilder GetItemSortKeyBuilder()
         {
             return GetComponent<IItemSortKeyBuilder>(
-                Configuration["ItemSortKeyBuilder:Id"],
-                "ItemSortKeyBuilder:Options",
+                Configuration["seed:itemSortKeyBuilder:id"],
+                "itemSortKeyBuilder:options",
                 false);
         }
 
         /// <summary>
-        /// Gets the fragment seeder for the specified fragment type ID.
+        /// Gets the fragment seeder for the specified fragment type ID,
+        /// which is located in <c>seed:fragmentSeeders</c>.
         /// </summary>
         /// <param name="typeId">The fragment seeder type ID.</param>
         /// <returns>Seeder, or null if not found.</returns>
@@ -130,7 +134,7 @@ namespace Cadmus.Seed
             if (typeId == null) throw new ArgumentNullException(nameof(typeId));
 
             var entry = ComponentFactoryConfigEntry.ReadComponentEntry(
-                Configuration, "FragmentSeeders", typeId);
+                Configuration, "seed:fragmentSeeders", typeId);
             if (entry == null) return null;
 
             SeedOptions options = GetSeedOptions();
@@ -144,7 +148,7 @@ namespace Cadmus.Seed
         }
 
         /// <summary>
-        /// Gets the part seeders.
+        /// Gets the part seeders from <c>seed/partSeeders</c>.
         /// </summary>
         /// <returns>Dictionary where each key is a part type ID, and each
         /// value is the corresponding seeder.</returns>
@@ -152,7 +156,7 @@ namespace Cadmus.Seed
         {
             IList<ComponentFactoryConfigEntry> entries =
                 ComponentFactoryConfigEntry.ReadComponentEntries(
-                Configuration, "PartSeeders");
+                Configuration, "seed:partSeeders");
 
             SeedOptions options = GetSeedOptions();
 

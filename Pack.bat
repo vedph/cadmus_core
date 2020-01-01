@@ -23,11 +23,9 @@ dotnet pack -c Debug --include-symbols
 cd..
 cd .\Cadmus.Mongo
 dotnet pack -c Debug --include-symbols
-pause
 cd..
 cd .\Cadmus.Seed
 dotnet pack -c Debug --include-symbols
-pause
 cd..
 cd .\Cadmus.Seed.Parts
 dotnet pack -c Debug --include-symbols

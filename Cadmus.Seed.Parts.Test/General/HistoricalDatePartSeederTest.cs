@@ -3,15 +3,15 @@ using Cadmus.Parts.General;
 using Cadmus.Seed.Parts.General;
 using Xunit;
 
-namespace Cadmus.Seed.Parts.Test
+namespace Cadmus.Seed.Parts.Test.General
 {
-    public sealed class TokenTextPartSeederTest
+    public sealed class HistoricalDatePartSeederTest
     {
         private static readonly PartSeederFactory _factory;
         private static readonly SeedOptions _seedOptions;
         private static readonly IItem _item;
 
-        static TokenTextPartSeederTest()
+        static HistoricalDatePartSeederTest()
         {
             _factory = TestHelper.GetFactory();
             _seedOptions = _factory.GetSeedOptions();
@@ -19,25 +19,19 @@ namespace Cadmus.Seed.Parts.Test
         }
 
         [Fact]
-        public void Seed_Options_Tag()
+        public void Seed_Optionless_Ok()
         {
-            TokenTextPartSeeder seeder = new TokenTextPartSeeder();
+            HistoricalDatePartSeeder seeder = new HistoricalDatePartSeeder();
             seeder.SetSeedOptions(_seedOptions);
 
             IPart part = seeder.GetPart(_item, null, _factory);
 
             Assert.NotNull(part);
 
-            TokenTextPart tp = part as TokenTextPart;
-            Assert.NotNull(tp);
+            HistoricalDatePart hp = part as HistoricalDatePart;
+            Assert.NotNull(hp);
 
-            TestHelper.AssertPartMetadata(tp);
-            Assert.NotEmpty(tp.Lines);
-
-            for (int y = 1; y <= tp.Lines.Count; y++)
-            {
-                Assert.Equal(y, tp.Lines[y - 1].Y);
-            }
+            TestHelper.AssertPartMetadata(hp);
         }
     }
 }

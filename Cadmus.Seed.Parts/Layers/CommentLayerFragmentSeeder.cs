@@ -57,7 +57,7 @@ namespace Cadmus.Seed.Parts.Layers
                 .RuleFor(fr => fr.Location, location)
                 .RuleFor(fr => fr.Text, f => f.Lorem.Sentences())
                 .RuleFor(fr => fr.Tag,
-                    f => _options.Tags?.Length > 0
+                    f => _options?.Tags?.Length > 0
                     ? f.PickRandom(_options.Tags) : null)
                 .Generate();
         }

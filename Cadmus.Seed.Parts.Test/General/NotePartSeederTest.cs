@@ -3,7 +3,7 @@ using Cadmus.Parts.General;
 using Cadmus.Seed.Parts.General;
 using Xunit;
 
-namespace Cadmus.Seed.Parts.Test
+namespace Cadmus.Seed.Parts.Test.General
 {
     public sealed class NotePartSeederTest
     {

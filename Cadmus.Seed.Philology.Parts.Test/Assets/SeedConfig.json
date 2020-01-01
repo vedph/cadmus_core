@@ -1,44 +1,6 @@
 {
   "facets": [
     {
-      "typeId": "net.fusisoft.categories",
-      "name": "categories",
-      "description": "Item's categories.",
-      "required": true,
-      "colorKey": "98F8F8",
-      "groupKey": "general",
-      "sortKey": "categories",
-      "editorKey": "general"
-    },
-    {
-      "typeId": "net.fusisoft.historical-date",
-      "name": "date",
-      "description": "Historical date.",
-      "required": false,
-      "colorKey": "F898F8",
-      "groupKey": "general",
-      "sortKey": "date",
-      "editorKey": "general"
-    },
-    {
-      "typeId": "net.fusisoft.keywords",
-      "name": "keywords",
-      "description": "Item's keywords.",
-      "colorKey": "90C0F8",
-      "groupKey": "general",
-      "sortKey": "keywords",
-      "editorKey": "general"
-    },
-    {
-      "typeId": "net.fusisoft.note",
-      "name": "note",
-      "description": "A free text note about the document.",
-      "colorKey": "B0A0F8",
-      "groupKey": "general",
-      "sortKey": "note",
-      "editorKey": "general"
-    },
-    {
       "typeId": "net.fusisoft.token-text",
       "name": "text",
       "description": "Item's token-based text.",
@@ -49,13 +11,33 @@
     },
     {
       "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.comment",
-      "name": "comments",
-      "description": "Comments on text.",
-      "colorKey": "F8D040",
+      "roleId": "fr.net.fusisoft.apparatus",
+      "name": "apparatus",
+      "description": "Critical apparatus.",
+      "colorKey": "D4E0A4",
       "groupKey": "text",
-      "sortKey": "text-comments",
-      "editorKey": "general"
+      "sortKey": "text-apparatus",
+      "editorKey": "philology"
+    },
+    {
+      "typeId": "net.fusisoft.token-text-layer",
+      "roleId": "fr.net.fusisoft.orthography",
+      "name": "orthography",
+      "description": "Standard orthography.",
+      "colorKey": "E0D4A4",
+      "groupKey": "text",
+      "sortKey": "text-apparatus",
+      "editorKey": "philology"
+    },
+    {
+      "typeId": "net.fusisoft.token-text-layer",
+      "roleId": "fr.net.fusisoft.witnesses",
+      "name": "witnesses",
+      "description": "Witnesses list.",
+      "colorKey": "A4E0D4",
+      "groupKey": "text",
+      "sortKey": "text-apparatus",
+      "editorKey": "philology"
     }
   ],
   "seed": {
@@ -67,55 +49,37 @@
     },
     "partSeeders": [
       {
-        "id": "seed.net.fusisoft.categories",
-        "options": {
-          "maxCategoriesPerItem": 3,
-          "categories": [
-            "language.phonology",
-            "language.morphology",
-            "language.syntax",
-            "literature",
-            "geography"
-          ]
-        }
-      },
-      {
-        "id": "seed.net.fusisoft.historical-date"
-      },
-      {
-        "id": "seed.net.fusisoft.keywords",
-        "options": {
-          "languages": [
-            "eng",
-            "deu",
-            "ita",
-            "fra",
-            "spa"
-          ]
-        }
-      },
-      {
-        "id": "seed.net.fusisoft.note",
-        "options": {
-          "tags": [
-            "language",
-            "history",
-            "geography"
-          ]
-        }
-      },
-      {
         "id": "seed.net.fusisoft.token-text"
       }
     ],
     "fragmentSeeders": [
       {
-        "id": "seed.fr.net.fusisoft.comment",
+        "id": "seed.fr.net.fusisoft.apparatus",
+        "options": {
+          "authors": [
+            "Wil.",
+            "Cobet",
+            "Steph."
+          ]
+        }
+      },
+      {
+        "id": "seed.fr.net.fusisoft.orthography",
         "options": {
           "tags": [
-            "language",
-            "history",
-            "geography"
+            "ph.c.occl.",
+            "ph.c.liq.",
+            "ph.c.nas."
+          ]
+        }
+      },
+      {
+        "id": "seed.fr.net.fusisoft.witnesses",
+        "options": {
+          "ids": [
+            "Fest.",
+            "Diac.",
+            "Isid."
           ]
         }
       }

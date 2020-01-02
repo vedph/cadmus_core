@@ -105,7 +105,12 @@ namespace Cadmus.Seed
         {
             IConfigurationSection section =
                 Configuration.GetSection("seed")?.GetSection("options");
-            return section.Get<SeedOptions>();
+            SeedOptions options = section.Get<SeedOptions>();
+
+            options.FacetDefinitions = Configuration.GetSection("facets")
+                .Get<FacetDefinition[]>();
+
+            return options;
         }
 
         /// <summary>

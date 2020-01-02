@@ -3,7 +3,9 @@ using Cadmus.Core.Layers;
 using Cadmus.Philology.Parts.Layers;
 using Cadmus.Seed.Parts.Test;
 using Cadmus.Seed.Philology.Parts.Layers;
+using Fusi.Tools.Config;
 using System;
+using System.Reflection;
 using Xunit;
 
 namespace Cadmus.Seed.Philology.Parts.Test.Layers
@@ -19,6 +21,15 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             _factory = TestHelper.GetFactory();
             _seedOptions = _factory.GetSeedOptions();
             _item = _factory.GetItemSeeder().GetItem(1, "facet");
+        }
+
+        [Fact]
+        public void TypeHasTagAttribute()
+        {
+            Type t = typeof(ApparatusLayerFragmentSeeder);
+            TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
+            Assert.NotNull(attr);
+            Assert.Equal("seed.fr.net.fusisoft.apparatus", attr.Tag);
         }
 
         [Fact]

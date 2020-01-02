@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Cadmus.Core.Layers;
+using System.Runtime.Loader;
 
 namespace Cadmus.Core.Config
 {
@@ -116,27 +117,36 @@ namespace Cadmus.Core.Config
 
         /// <summary>
         /// Adds to the map all the types decorated with <see cref="TagAttribute"/>
-        /// found in the assemblies inside the files in the specified directory,
-        /// matching <paramref name="fileMask"/>, and additionally in all the
-        /// explicitly received <paramref name="assemblies"/>.
+        /// found in the assemblies inside the assembly files in the specified
+        /// load context, and additionally in all the explicitly received
+        /// <paramref name="assemblies"/>.
         /// </summary>
-        /// <param name="directory">The directory.</param>
-        /// <param name="fileMask">The file mask.</param>
+        /// <param name="context">The assembly load context. See e.g.
+        /// https://github.com/dotnet/samples/blob/master/core/extensions/AppWithPlugin/AppWithPlugin/Program.cs
+        /// </param>
+        /// <param name="directory">The plugins directory.</param>
+        /// <param name="fileMask">The plugin file mask.</param>
         /// <param name="assemblies">The optional additional assemblies
         /// to be scanned.</param>
         /// <returns>map</returns>
-        /// <exception cref="ArgumentNullException">directory</exception>
-        public void Add(string directory,
-            string fileMask = "*.dll",
-            params Assembly[] assemblies)
+        /// <exception cref="ArgumentNullException">directory or fileMask
+        /// or context</exception>
+        public void Add(string directory, string fileMask,
+            AssemblyLoadContext context, params Assembly[] assemblies)
         {
             if (directory == null)
                 throw new ArgumentNullException(nameof(directory));
+            if (fileMask == null)
+                throw new ArgumentNullException(nameof(fileMask));
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
-            foreach (FileInfo file in new DirectoryInfo(directory).GetFiles(fileMask))
+            foreach (FileInfo file in new DirectoryInfo(directory)
+                .GetFiles(fileMask))
             {
-                Assembly assembly = Assembly.Load(
-                    AssemblyName.GetAssemblyName(file.FullName));
+                Assembly assembly = context.LoadFromAssemblyPath(file.FullName);
+                //Assembly assembly = Assembly.Load(
+                //    AssemblyName.GetAssemblyName(file.FullName));
                 ScanAssembly(assembly);
             }
             if (assemblies.Length > 0) Add(assemblies);

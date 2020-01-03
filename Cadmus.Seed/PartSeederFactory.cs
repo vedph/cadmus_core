@@ -57,7 +57,8 @@ namespace Cadmus.Seed
 
         /// <summary>
         /// Configures the container services to use components from
-        /// <c>Pythia.Core</c>.
+        /// <c>Cadmus.Core</c> and <c>Cadmus.Seed</c>, plus the assemblies
+        /// specified by <paramref name="additionalAssemblies"/>.
         /// This is just a helper method: at any rate, the configuration of
         /// the container is external to the VSM factory. You could use this
         /// method as a model and create your own, or call this method to
@@ -121,8 +122,12 @@ namespace Cadmus.Seed
         /// <returns>Item sort key builder.</returns>
         public IItemSortKeyBuilder GetItemSortKeyBuilder()
         {
+            IConfigurationSection section =
+                Configuration.GetSection("seed:itemSortKeyBuilder");
+            if (!section.Exists()) return null;
+
             return GetComponent<IItemSortKeyBuilder>(
-                Configuration["seed:itemSortKeyBuilder:id"],
+                section["id"],
                 "itemSortKeyBuilder:options",
                 false);
         }

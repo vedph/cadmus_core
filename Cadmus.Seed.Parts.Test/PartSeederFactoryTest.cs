@@ -18,6 +18,12 @@ namespace Cadmus.Seed.Parts.Test
         }
 
         [Fact]
+        public void GetItemSortKeyBuilder_NoEntry_Null()
+        {
+            Assert.Null(_factory.GetItemSortKeyBuilder());
+        }
+
+        [Fact]
         public void GetPartSeeders_Ok()
         {
             Dictionary<string, IPartSeeder> seeders = _factory.GetPartSeeders();

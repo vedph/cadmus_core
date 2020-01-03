@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using Cadmus.Core.Layers;
 using System.Runtime.Loader;
+using System.Diagnostics;
 
 namespace Cadmus.Core.Config
 {
@@ -49,6 +50,32 @@ namespace Cadmus.Core.Config
             _frMap.Clear();
         }
 
+        private static string GetTag(Type t)
+        {
+            TagAttribute attr = t.GetTypeInfo()
+                .GetCustomAttributes<TagAttribute>()
+                .FirstOrDefault();
+            if (attr != null) return attr.Tag;
+
+            // This hack is used to issue a warning when you load an assembly
+            // more than once. When this happens, even if the assembly is the
+            // same but is loaded from different sources, all the types will
+            // be considered different; so that the preceding code will fail
+            // finding the type TagAttribute, whence a null tag. The code
+            // below will just check for type names, so it will not fail;
+            // yet, other parts of the system will do, as soon as you are going
+            // to compare types.
+            var tag = t.CustomAttributes.FirstOrDefault(
+                a => a.AttributeType.FullName == "Fusi.Tools.Config.TagAttribute")
+                ?.ConstructorArguments[0].Value as string;
+            if (tag != null)
+            {
+                Debug.WriteLine(
+                    $"WARNING: assembly {t.Assembly} loaded multiple times!");
+            }
+            return tag;
+        }
+
         private void SupplyFragments()
         {
             // first collect all the exported text layer part fragments types
@@ -70,18 +97,20 @@ namespace Cadmus.Core.Config
                 if (type.Name.EndsWith("LayerPart`1",
                     StringComparison.OrdinalIgnoreCase))
                 {
-                    TagAttribute attr = type.GetTypeInfo()
-                        .GetCustomAttributes<TagAttribute>()
-                        .FirstOrDefault();
+                    //TagAttribute attr = type.GetTypeInfo()
+                    //    .GetCustomAttributes<TagAttribute>()
+                    //    .FirstOrDefault();
+                    string attrTag = GetTag(type);
 
                     foreach (Type fragmentType in dctFragmentTypes.Values)
                     {
-                        TagAttribute attrFr = fragmentType.GetTypeInfo()
-                            .GetCustomAttributes<TagAttribute>()
-                            .FirstOrDefault();
-                        if (attrFr != null)
+                        //TagAttribute attrFr = fragmentType.GetTypeInfo()
+                        //    .GetCustomAttributes<TagAttribute>()
+                        //    .FirstOrDefault();
+                        string attrFrTag = GetTag(fragmentType);
+                        if (attrFrTag != null)
                         {
-                            _frMap[$"{attr.Tag}:{attrFr.Tag}"] =
+                            _frMap[$"{attrTag}:{attrFrTag}"] =
                                 type.MakeGenericType(fragmentType);
                         }
                     }
@@ -94,8 +123,9 @@ namespace Cadmus.Core.Config
         {
             foreach (Type t in assembly.ExportedTypes)
             {
-                string tag = t.GetTypeInfo()
-                    .GetCustomAttribute<TagAttribute>()?.Tag;
+                //string tag = t.GetTypeInfo()
+                //    .GetCustomAttribute<TagAttribute>()?.Tag;
+                string tag = GetTag(t);
                 if (tag != null) _map[tag] = t;
             }
         }

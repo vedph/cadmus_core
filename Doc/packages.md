@@ -91,3 +91,14 @@ package CadmusApi {
 }
 @enduml
 ```
+
+## NuGet Dependencies
+
+According to the above overview, these are the NuGet dependencies for Cadmus:
+
+- `Fusi.Tools`
+- `Fusi.Tools.Config`
+- `Fusi.Text`
+- `Fusi.Antiquity`
+- `MessagingApi`
+- `MessagingApi.SendGrid`

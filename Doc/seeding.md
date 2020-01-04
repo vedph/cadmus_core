@@ -97,87 +97,138 @@ IConfiguration config = builder.Build();
 
 As for the container, you just create one, and configure it via the seeder factory method `ConfigureServices`; this configures all the essential dependencies, plus those found in any additional assemblies you pass to it. You should pass all the assemblies containing the parts you want to use.
 
+The seed configuration represents an extension of the regular Cadmus data profile, which defines 3 sections for `facets`, `flags`, and `thesauri`. The seed configuration requires the `facets` section, which should include at least 1 facet and contain all the definitions for the parts you want to seed. Besides these sections, a `seed` section is added, which includes:
+
+- general options for the seed task (`options`).
+- part seeders (`partSeeders`): one for each part type you want to seed.
+- fragment seeders (`fragmentSeeders`): one for each fragment you want to seed.
+
 A JSON template for the seeder configuration follows:
 
 ```json
 {
-  "seedOptions": {
-    "seed": 1,
-    "users": ["zeus"],
-    "partRoles": [],
-    "fragmentRoles": [],
-    "facetDefinitions": [
+  "facets": [
+    {
+      "typeId": "net.fusisoft.categories",
+      "name": "categories",
+      "description": "Item's categories.",
+      "required": true,
+      "colorKey": "98F8F8",
+      "groupKey": "general",
+      "sortKey": "categories",
+      "editorKey": "general"
+    },
+    {
+      "typeId": "net.fusisoft.historical-date",
+      "name": "date",
+      "description": "Historical date.",
+      "required": false,
+      "colorKey": "F898F8",
+      "groupKey": "general",
+      "sortKey": "date",
+      "editorKey": "general"
+    },
+    {
+      "typeId": "net.fusisoft.keywords",
+      "name": "keywords",
+      "description": "Item's keywords.",
+      "colorKey": "90C0F8",
+      "groupKey": "general",
+      "sortKey": "keywords",
+      "editorKey": "general"
+    },
+    {
+      "typeId": "net.fusisoft.note",
+      "name": "note",
+      "description": "A free text note about the document.",
+      "colorKey": "B0A0F8",
+      "groupKey": "general",
+      "sortKey": "note",
+      "editorKey": "general"
+    },
+    {
+      "typeId": "net.fusisoft.token-text",
+      "name": "text",
+      "description": "Item's token-based text.",
+      "colorKey": "31AB54",
+      "groupKey": "text",
+      "sortKey": "text",
+      "editorKey": "general"
+    },
+    {
+      "typeId": "net.fusisoft.token-text-layer",
+      "roleId": "fr.net.fusisoft.comment",
+      "name": "comments",
+      "description": "Comments on text.",
+      "colorKey": "F8D040",
+      "groupKey": "text",
+      "sortKey": "text-comments",
+      "editorKey": "general"
+    }
+  ],
+  "seed": {
+    "options": {
+      "seed": 1,
+      "users": [ "zeus" ],
+      "partRoles": [],
+      "fragmentRoles": []
+    },
+    "partSeeders": [
       {
-        "id": "facet-default",
-        "label": "default",
-        "description": "The default facet",
-        "partDefinitions": [
-          {
-            "typeId": "net.fusisoft.categories",
-            "name": "categories",
-            "description": "Item's categories.",
-            "required": true,
-            "colorKey": "98F8F8",
-            "groupKey": "general",
-            "sortKey": "categories",
-            "editorKey": "general"
-          },
-          {
-            "typeId": "net.fusisoft.token-text",
-            "name": "text",
-            "description": "Item's token-based text.",
-            "colorKey": "31AB54",
-            "groupKey": "text",
-            "sortKey": "text",
-            "editorKey": "general"
-          },
-          {
-            "typeId": "net.fusisoft.token-text-layer",
-            "roleId": "fr.net.fusisoft.comment",
-            "name": "comments",
-            "description": "Comments on text.",
-            "colorKey": "F8D040",
-            "groupKey": "text",
-            "sortKey": "text-comments",
-            "editorKey": "general"
-          }
-        ]
+        "id": "seed.net.fusisoft.categories",
+        "options": {
+          "maxCategoriesPerItem": 3,
+          "categories": [
+            "language.phonology",
+            "language.morphology",
+            "language.syntax",
+            "literature",
+            "geography"
+          ]
+        }
+      },
+      {
+        "id": "seed.net.fusisoft.historical-date"
+      },
+      {
+        "id": "seed.net.fusisoft.keywords",
+        "options": {
+          "languages": [
+            "eng",
+            "deu",
+            "ita",
+            "fra",
+            "spa"
+          ]
+        }
+      },
+      {
+        "id": "seed.net.fusisoft.note",
+        "options": {
+          "tags": [
+            "language",
+            "history",
+            "geography"
+          ]
+        }
+      },
+      {
+        "id": "seed.net.fusisoft.token-text"
+      }
+    ],
+    "fragmentSeeders": [
+      {
+        "id": "seed.fr.net.fusisoft.comment",
+        "options": {
+          "tags": [
+            "language",
+            "history",
+            "geography"
+          ]
+        }
       }
     ]
-  },
-  "itemSortKeyBuilder": {
-      "id": "sort-key-builder.someid",
-      "options": {
-          "some": "option"
-      }
-  },
-  "partSeeders": [
-      {
-          "id": "seed.net.fusisoft.categories",
-          "options": {
-              "maxCategoriesPerItem": 3,
-              "categories": [
-                  "language.phonology",
-                  "language.morphology",
-                  "language.syntax",
-                  "literature",
-                  "geography"
-              ]
-          }
-      }
-  ],
-  "fragmentSeeders": [
-      {
-          "id": "seed.fr.net.fusisoft.comment",
-          "options": {
-              "tags": [
-                  "linguistic",
-                  "historic",
-                  "prosopographic"
-              ]
-          }
-      }
-  ]
+  }
 }
 ```
 
@@ -400,3 +451,13 @@ namespace Cadmus.Seed.Parts.Layers
     }
 }
 ```
+
+## Seed Usage
+
+In the API layer, the seed infrastructure is used at startup. As the system is designed for dockerization, the provided API layer must be capable of creating and seeding all the databases it requires from the database layer. In this way, we can just fire up the API layer and let it create the required databases before starting.
+
+These databases are 3:
+
+- authentication database: for authenticating users and defining their authorizations.
+- log database: for logging and auditing.
+- Cadmus database: for storing Cadmus data.

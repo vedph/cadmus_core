@@ -234,10 +234,14 @@ A JSON template for the seeder configuration follows:
 
 The main sections are:
 
-- `seedOptions`: this includes an optional `seed` value to seed the randomizer (set it to get repeatable results); sets of user names (`users`) and optional part/fragment role IDs (`partRoles`, `fragmentRoles`), used when you want to assign non-null roles; and a set of part definitions, representing all the part types in your database.
+- `facets`: the facets definitions, as in the Cadmus data profile.
+- `seed/options`: this includes:
+  - an optional `seed` value to seed the randomizer (set it to get repeatable results);
+  - a set of user names (`users`) to pick from;
+  - optional part/fragment role IDs sets (`partRoles`, `fragmentRoles`), used when you want to assign non-null roles.
 - `itemSortKeyBuilder`: the optional item sort key builder. If not specified, the default is `StandardItemSortKeyBuilder`.
-- `partSeeders`: an array of part seeders, one for each part type in the part definitions. Each seeder has an `id` and eventual `options`.
-- `fragmentSeeders`: an array of fragment seeders, one for each fragment type in the layer part definitions. Each seeder has an `id` and eventual `options`.
+- `partSeeders`: an array of part seeders, one for each part type in the part definitions. Each seeder has an `id` (which must be equal to the value of the `TagAttribute` decorating the part seeder), and eventual `options` (with a free schema).
+- `fragmentSeeders`: an array of fragment seeders, one for each fragment type in the layer part definitions. Each seeder has an `id` (which must be equal to the value of the `TagAttribute` decorating the fragment seeder) and eventual `options` (with a free schema).
 
 ## Seeder Factory
 
@@ -454,10 +458,18 @@ namespace Cadmus.Seed.Parts.Layers
 
 ## Seed Usage
 
-In the API layer, the seed infrastructure is used at startup. As the system is designed for dockerization, the provided API layer must be capable of creating and seeding all the databases it requires from the database layer. In this way, we can just fire up the API layer and let it create the required databases before starting.
+In the API layer, the seed infrastructure is used at startup. As the system is designed for dockerization, the provided API layer must be capable of creating and seeding all the databases it requires from the database layer. This way, we can just fire up the API layer, and let it create the required databases if not found.
 
 These databases are 3:
 
-- authentication database: for authenticating users and defining their authorizations.
-- log database: for logging and auditing.
-- Cadmus database: for storing Cadmus data.
+- *authentication* database: for authenticating users and defining their authorizations.
+- *log* database: for logging and auditing.
+- *Cadmus* database: for storing Cadmus data.
+
+When the API layer starts, it checks for the existence of these databases. If they don't exist, they get created, and seeded according to these parameters:
+
+- the authentication database is seeded with 1 or more default users. These are defined in the API configuration file (`appsettings.json`), under `StockUsers`. Note that the credentials you may find in these files are just mock values; in production, they get replaced with values coming from environment variables.
+- the log database does not require seeding.
+- the Cadmus database is seeded with the various collections and their indexes. If specified, a number of mock items with their parts are also created and seeded. To specify this option, you must add a `Seed` section with a `ProfilePath` and an `ItemCount` property. The former specifies the path to the JSON file containing the seed profile. The latter specifies the count of items desired. If 0, or in any case if the database was not created on startup, no item will be seeded.
+
+To allow for some resiliency at startup, the database check and seed procedure described above is retried up to 3 times, after an increasing interval of time (10, 30, and then 60 seconds). This allows Docker composer starting all the services, including the MongoDB service, even if their start time is not synchronized. The API layer might spin up before the data layer is ready, but we don't want it to crash immediately in this case; rather, it should wait and retry.

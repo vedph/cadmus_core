@@ -102,3 +102,15 @@ According to the above overview, these are the NuGet dependencies for Cadmus:
 - `Fusi.Antiquity`
 - `MessagingApi`
 - `MessagingApi.SendGrid`
+
+Cadmus-specific:
+
+- Cadmus.Core
+- Cadmus.Mongo
+- Cadmus.Seed
+- Cadmus.Parts
+- Cadmus.Seed.Parts
+- Cadmus.Philology.Parts
+- Cadmus.Seed.Philology.Parts
+- Cadmus.Archive.Parts
+- Cadmus.Lexicon.Parts

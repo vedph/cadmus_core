@@ -96,6 +96,7 @@ package CadmusApi {
 
 According to the above overview, these are the NuGet dependencies for Cadmus:
 
+- `DiffMatchPatch`
 - `Fusi.Tools`
 - `Fusi.Tools.Config`
 - `Fusi.Text`

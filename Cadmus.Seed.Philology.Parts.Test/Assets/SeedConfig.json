@@ -51,6 +51,12 @@
     "partSeeders": [
       {
         "id": "seed.net.fusisoft.token-text"
+      },
+      {
+        "id": "seed.net.fusisoft.token-text-layer",
+        "options": {
+          "maxFragmentCount": 3
+        }
       }
     ],
     "fragmentSeeders": [

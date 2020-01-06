@@ -96,7 +96,9 @@ namespace Cadmus.Seed
             {
                 // pick a facet
                 FacetDefinition facet = _options.FacetDefinitions[
-                    Randomizer.Seed.Next(0, _options.FacetDefinitions.Length)];
+                    _options.FacetDefinitions.Length == 1
+                    ? 0
+                    : Randomizer.Seed.Next(0, _options.FacetDefinitions.Length)];
 
                 // get item
                 IItem item = itemSeeder.GetItem(n, facet.Id);

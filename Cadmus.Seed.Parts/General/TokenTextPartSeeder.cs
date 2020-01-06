@@ -3,6 +3,7 @@ using Cadmus.Core;
 using Cadmus.Parts.General;
 using Fusi.Tools.Config;
 using System;
+using System.Globalization;
 
 namespace Cadmus.Seed.Parts.General
 {
@@ -33,6 +34,10 @@ namespace Cadmus.Seed.Parts.General
 
             TokenTextPart part = new TokenTextPart();
             SetPartMetadata(part, roleId, item);
+
+            // citation
+            part.Citation = Randomizer.Seed.Next(1, 100)
+                .ToString(CultureInfo.InvariantCulture);
 
             // from 2 to 10 lines
             string text = new Faker().Lorem.Sentences(

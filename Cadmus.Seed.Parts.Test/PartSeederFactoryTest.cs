@@ -1,4 +1,5 @@
 using Cadmus.Seed.Parts.General;
+using Cadmus.Seed.Parts.Layers;
 using System.Collections.Generic;
 using Xunit;
 
@@ -29,7 +30,7 @@ namespace Cadmus.Seed.Parts.Test
             Dictionary<string, IPartSeeder> seeders = _factory.GetPartSeeders();
 
             Assert.NotNull(seeders);
-            Assert.Equal(5, seeders.Count);
+            Assert.Equal(6, seeders.Count);
 
             string key = "net.fusisoft.categories";
             Assert.True(seeders.ContainsKey(key));
@@ -50,6 +51,10 @@ namespace Cadmus.Seed.Parts.Test
             key = "net.fusisoft.token-text";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TokenTextPartSeeder);
+
+            key = "net.fusisoft.token-text-layer";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as TokenTextLayerPartSeeder);
         }
 
         [Fact]

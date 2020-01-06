@@ -44,6 +44,7 @@ namespace Cadmus.Seed.Parts.Test.General
             Assert.NotNull(tp);
 
             TestHelper.AssertPartMetadata(tp);
+            Assert.NotNull(tp.Citation);
             Assert.NotEmpty(tp.Lines);
 
             for (int y = 1; y <= tp.Lines.Count; y++)

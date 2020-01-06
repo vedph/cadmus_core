@@ -38,7 +38,7 @@ namespace Cadmus.Seed
             string oddEven = (number & 1) == 1 ? "odd" : "even";
 
             Item item = new Faker<Item>()
-                .RuleFor(i => i.Title, $"Item #{number}")
+                .RuleFor(i => i.Title, $"Item #{number:00000}")
                 .RuleFor(i => i.Description,
                     $"Description for {oddEven} " +
                     $"item number {NumberToWords.Convert(number)}.")

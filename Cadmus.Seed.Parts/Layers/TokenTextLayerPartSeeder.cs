@@ -13,8 +13,10 @@ namespace Cadmus.Seed.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="TokenTextLayerPart{TFragment}"/>.
+    /// Tag: <c>seed.net.fusisoft.token-text-layer</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
+    [Tag("seed.net.fusisoft.token-text-layer")]
     public sealed class TokenTextLayerPartSeeder : PartSeederBase,
         IConfigurable<TokenTextLayerPartSeederOptions>
     {
@@ -132,7 +134,7 @@ namespace Cadmus.Seed.Parts.Layers
                 if (fr != null)
                 {
                     t.InvokeMember("AddFragment",
-                        BindingFlags.Public | BindingFlags.Instance,
+                        BindingFlags.InvokeMethod,
                         null,
                         part,
                         new[] { fr });

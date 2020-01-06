@@ -53,6 +53,17 @@ namespace Cadmus.Seed
             }
         }
 
+        private PartDefinition GetBaseTextPartDefinition(string typeId)
+        {
+            foreach (FacetDefinition facet in _options.FacetDefinitions)
+            {
+                PartDefinition def = facet.PartDefinitions
+                    .Find(d => d.TypeId == typeId);
+                if (def != null) return def;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Gets the items.
         /// </summary>
@@ -74,6 +85,11 @@ namespace Cadmus.Seed
             ItemSeeder itemSeeder = _factory.GetItemSeeder();
             _partSeeders = _factory.GetPartSeeders();
             IItemSortKeyBuilder sortKeyBuilder = _factory.GetItemSortKeyBuilder();
+
+            PartDefinition baseTextDef =
+                string.IsNullOrEmpty(_options.BaseTextPartTypeId)
+                ? null
+                : GetBaseTextPartDefinition(_options.BaseTextPartTypeId);
 
             // generate items
             for (int n = 1; n <= count; n++)
@@ -101,17 +117,36 @@ namespace Cadmus.Seed
                     item,
                     true);
 
-                // 3) layer parts, required
-                AddParts(facet.PartDefinitions
-                    .Where(def => IsLayerPart(def) && def.IsRequired),
-                    item,
-                    false);
+                // layers
+                if (baseTextDef != null && Randomizer.Seed.Next(0, 2) == 1)
+                {
+                    // ensure there is a base text. This is required for
+                    // the text layer part seeder, which must rely on a base text.
+                    IPart baseTextPart = item.Parts.Find(
+                        p => p.TypeId == _options.BaseTextPartTypeId);
 
-                // 4) layer parts, optional
-                AddParts(facet.PartDefinitions
-                    .Where(def => IsLayerPart(def) && !def.IsRequired),
-                    item,
-                    true);
+                    if (baseTextPart == null)
+                    {
+                        baseTextPart = GetPart(item, baseTextDef);
+                        if (baseTextPart != null) item.Parts.Add(baseTextPart);
+                    }
+
+                    // once we have one, eventually add layer(s)
+                    if (baseTextPart != null)
+                    {
+                        // 3) layer parts, required
+                        AddParts(facet.PartDefinitions
+                            .Where(def => IsLayerPart(def) && def.IsRequired),
+                            item,
+                            false);
+
+                        // 4) layer parts, optional
+                        AddParts(facet.PartDefinitions
+                            .Where(def => IsLayerPart(def) && !def.IsRequired),
+                            item,
+                            true);
+                    }
+                }
 
                 // once all the parts are in place, override the item's sort key
                 // if requested in the config.

@@ -43,6 +43,7 @@
   "seed": {
     "options": {
       "seed": 1,
+      "baseTextPartTypeId": "net.fusisoft.token-text",
       "users": [ "zeus" ],
       "partRoles": [],
       "fragmentRoles": []

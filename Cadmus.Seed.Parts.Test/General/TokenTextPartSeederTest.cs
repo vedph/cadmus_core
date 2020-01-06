@@ -6,7 +6,7 @@ using System;
 using System.Reflection;
 using Xunit;
 
-namespace Cadmus.Seed.Parts.Test.Layers
+namespace Cadmus.Seed.Parts.Test.General
 {
     public sealed class TokenTextPartSeederTest
     {

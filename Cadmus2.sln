@@ -37,6 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Parts", "Cadmus
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{461AF59A-C6B8-45C3-A5AF-E94F0DECFB48}"
 	ProjectSection(SolutionItems) = preProject
+		Doc\core.md = Doc\core.md
 		Doc\index.md = Doc\index.md
 		Doc\packages.md = Doc\packages.md
 		Doc\seeding.md = Doc\seeding.md

@@ -1,6 +1,6 @@
 # Cadmus Core
 
-This is the core package for the Cadmus system. The package includes the following sub-packages:
+This is the core namespace for the Cadmus system. It includes the following namespaces:
 
 - `config`: components related to the system configuration.
 - `layers`: components related to the text layers. These are a type of parts specialized in handling metatextual data, i.e. data strictly connected to a specific portion of a base text.
@@ -297,7 +297,7 @@ This coordinates system has the advantage of being very simple, yet both machine
 
 ## (C) Configuration
 
-TODO:
+This namespace contains configuration-specific components, used to define the Cadmus data model and provide additional resources.
 
 ```plantuml
 @startuml
@@ -342,194 +342,118 @@ TODO:
     FlagDefinition : +string Label
     FlagDefinition : +string Description
     FlagDefinition : +string ColorKey
+
+    ThesaurusEntry : +string Id
+    ThesaurusEntry : +string Value
+    ThesaurusEntry : +ThesaurusEntry(string id, string value)
+    ThesaurusEntry : +ThesaurusEntry Clone()
+
+    Thesaurus : -Dictionary<string, ThesaurusEntry> _entries
+    Thesaurus : -List<string> _sortedIds
+    Thesaurus : +string Id
+    Thesaurus : +Thesaurus(string id)
+    Thesaurus : +string GetLanguage()
+    Thesaurus : +IList<ThesaurusEntry> GetEntries()
+    Thesaurus : +AddEntry(ThesaurusEntry entry)
+    Thesaurus : +string GetEntryValue(string id)
+    Thesaurus "1"*--"0.." ThesaurusEntry
+
+    DataProfile : +FacetDefinition[] Facets
+    DataProfile : +FlagDefinition[] Flags
+    DataProfile : +Thesaurus[] Thesauri
+    DataProfile "1"*--"0.." FacetDefinition
+    DataProfile "1"*--"0.." FlagDefinition
+    DataProfile "1"*--"0.." Thesaurus
+
+    abstract class IDataProfileSerializer
+    IDataProfileSerializer : +DataProfile Read(string text)
+
+    IDataProfileSerializer <|-- JsonDataProfileSerializer
+    JsonDataProfileSerializer : +DataProfile Read(string text)
 @enduml
 ```
 
-This package contains configuration-specific components, used to define the Cadmus data model and provide additional resources.
+A Cadmus database has a data profile defined by three main components:
 
-A Cadmus database has a data profile defined by three main components items facets definitions, items flags definitions, and thesauri. This profile can be defined in a text-based format, which currently is JSON. A `DataProfileSerializer` implementation is used to deserialize the profile from any format; its JSON implementation is `JsonDataProfileSerializer`.
+- items **facets** definitions: there must be at least 1 facet. Each facet is a set of parts definitions, and lists all the parts which can appear in an item of a given "type".
+- items **flags** definitions: the optional 32 flags assignable to each item are defined here.
+- **thesauri**: a set of taxonomies, flat and/or hierarchical, used to provide closed sets of predefined values to the user.
 
-A fake JSON profile is sampled here
-
-```json
-{
-  facets [
-    {
-      id facet-default,
-      label default,
-      description The default facet,
-      partDefinitions [
-        {
-          typeId net.fusisoft.categories,
-          name categories,
-          description Item's categories.,
-          required true,
-          colorKey 98F8F8,
-          groupKey general,
-          sortKey categories
-        },
-        {
-          typeId net.fusisoft.keywords,
-          name keywords,
-          description Item's keywords.,
-          colorKey 90C0F8,
-          groupKey general,
-          sortKey keywords
-        },
-        {
-          typeId net.fusisoft.note,
-          name note,
-          description A free text note about the document.,
-          colorKey B0A0F8,
-          groupKey general,
-          sortKey note
-        },
-        {
-          typeId net.fusisoft.token-text,
-          name text,
-          description Item's token-based text.,
-          colorKey 31AB54,
-          groupKey text,
-          sortKey text
-        },
-        {
-          typeId net.fusisoft.token-text-layer,
-          roleId fr.net.fusisoft.comment,
-          name comments,
-          description Comments on text.,
-          colorKey F8D040,
-          groupKey text,
-          sortKey text-comments
-        },
-        {
-          typeId net.fusisoft.token-text-layer,
-          roleId fr.net.fusisoft.quotation,
-          name quotations,
-          description Quotations in text.,
-          colorKey 863577,
-          groupKey text,
-          sortKey text-quotations
-        },
-        {
-          typeId net.fusisoft.token-text-layer,
-          roleId fr.net.fusisoft.apparatus,
-          name apparatus,
-          description Critical apparatus.,
-          colorKey 4B18D7,
-          groupKey text,
-          sortKey text-apparatus
-        }
-      ]
-    }
-  ],
-  flags [
-    {
-      id 1,
-      label to revise,
-      description The item must be revised.,
-      colorKey F08080
-    }
-  ],
-  thesauri [
-    {
-      id languages@en,
-      entries [
-        {
-          id eng,
-          value English
-        },
-        {
-          id fre,
-          value French
-        },
-        {
-          id deu,
-          value German
-        },
-        {
-          id grc,
-          value Ancient Greek
-        },
-        {
-          id gre,
-          value Modern Greek
-        },
-        {
-          id ita,
-          value Italian
-        },
-        {
-          id lat,
-          value Latin
-        },
-        {
-          id spa,
-          value Spanish
-        }
-      ]
-    }
-  ]
-}
-```
+This profile can be defined in a text file. An `IDataProfileSerializer` implementation is used to deserialize the profile from its format; its JSON implementation is `JsonDataProfileSerializer`.
 
 ### C.1. Item Facets
 
-Items have a dynamic model, defined by the parts they contain. Each part has its own definition, which includes a set of metadata essentially used for presentational or editing purposes. This definition is the `PartDefinition` class.
+Items have a dynamic model, defined by the parts they contain.
 
-The definition includes part type and role, a human readable name and description, a flag specifying whether the part is required, and further presentational aspects like a color key, a group key, and a sort key. These are used to present parts with different colors, group them, and sort them in a UI.
+Each part has its own definition (`PartDefinition`), which includes a set of metadata essentially used for presentational or editing purposes.
 
-A set of parts definitions determines an item's facet, defined for presentational and validation purposes during editing. A facet definition (`FacetDefinition`) has a number of fixed metadata (ID, label, description), and a collection of part definitions. These facets are stored in the database, and used for validation and presentation.
+The **part definition** includes:
+
+- part *type ID* and (optional) *role ID*;
+- a human readable *name* and *description*;
+- a flag specifying whether the part is *required*;
+- further presentational aspects: a *color key*, a *group key*, a *sort key*, and an *editor key*. These are used to present parts with different colors, group them, and sort them in a UI.
+
+Note: the **editor key** can be used to group parts according to the frontend editors organization. Whereas `GroupKey` is a purely presentational feature, `EditorKey` is related to how the frontend organizes its editing components in different modules.
+
+For instance, the same frontend module might include two parts whose definitions have different `GroupKey`'s, so that they get displayed in different groups, but their editors are found in the same component. This is a property used by frontend only, and has no usage in the database or in the backend.
+
+A set of parts definitions determines an item's facet, defined for presentational and validation purposes during editing. A **facet definition** (`FacetDefinition`) has a number of fixed metadata (ID, label, description), and a collection of part definitions.
 
 ### C.2. Flag Definitions
 
-Also, the meaning of each item's flag can be defined using `FlagDefinition`'s, which are stored in the database, too. A flag being just a bit, the definition just links its numeric value with a label and a description, plus a color key.
+The meaning of each item's flag can be defined using `FlagDefinition`'s.
+
+A flag being just a bit, the definition simply links its numeric value with a label and a description, plus a color key.
 
 ### C.3. Thesauri
 
-Often, a common requirement for data is having some shared terminology to be used for the whole content. For instance, think of a collection of inscriptions a typical requirement would be a set of categories, which are traditionally used to group them according to their type (e.g. funerary, votive, honorary, etc.). In fact, there are a number of such sets of tags, which vary according to the content being handled categories, languages, metres, etc.
+Often, a common requirement for data is having some shared terminology and taxonomies to be used for the whole content. For instance, think of a collection of inscriptions a typical requirement would be a set of categories, which are traditionally used to group them according to their type (e.g. funerary, votive, honorary, etc.). In fact, there are a number of such sets of tags, which vary according to the content being handled categories, languages, metres, etc.
 
 In such cases, usually we also want our editing UI to provide these entries as a closed set of lookup values, so that users can pick them from a list, rather than typing them (which would be more difficult, and error-prone).
 
-Thus, Cadmus provides a generic solution to these scenarios in the form of thesauri, each including any number of entries. An entry (`ThesaurusEntry`) are generic idvalue pairs used by some parts to represent a set of selectable options. The entries are logically organized into thesauri (e.g. categories, languages, etc.).
+Cadmus provides a generic solution to these scenarios in the form of **thesauri**, each including any number of entries.
 
-Note that each thesaurus has its own language, so that you can provide the same entries in different languages.
+A **thesaurus entry** (`ThesaurusEntry`) is a generic id/value pair used by some parts or fragments to represent a set of selectable options.
+
+Note that each thesaurus has its own language, so that you can provide the same entries in different languages. If the client requests an undefined language, the system falls back to the default language, which is English (`en`).
 
 ### C.4. Part Providers
 
-The configuration profile of a Cadmus database is represented by a `DataProfile` class, which includes `PartDefinition`'s, `FlagDefinition`'s, and a set of thesauri (`Thesaurus`).
+Some helper components are implemented to provide a better experience in using and adding parts and fragments.
 
-Each profile can be deserialized from a text-based format via an implementation of `DataProfileSerializer` interface. Currently, the builtin implementation uses JSON (`JsonDataProfileSerializer`).
+The `PartProvider` interface defines a service which can be used to instantiate any part or part fragment object from its type ID, as defined in its `TagAttribute` value. The service can then be used to materialize the part (or part fragment) data into structured objects, each with its own type.
 
-Some helper components are implemented to provide a better experience in using and adding parts. The `PartProvider` interface defines a service which can be used to instantiate any part or part fragment object from its type ID, as defined in its `TagAnnotation` value. The service can then be used to materialize the part (or part fragment) data into structured objects, each with its own type.
+The type ID is a simple arbitrary string, which should be unique across the system. It is not directly the class name, to provide a further level of abstraction and frendlier IDs. This ensures a more maintenable system, and does not tie it to the underpinnings of a specific implementation; also, IDs are less verbose, and more human-friendly.
 
-The type ID is a simple arbitrary string, which should be unique across the system. It is not directly the Java class name, to provide a further level of abstraction, which ensures a more maintenable system, and does not tie it to the underpinnings of a specific implementation; also, names are less verbose and more human-friendly.
+A type ID, used for parts and part fragments, should include only letters `a-z`, digits, dashes and dots.
 
-A type ID, used for parts and part fragments, should include only letters a-z, digits, dashes and dots. Dashes are used to represent spaces, while dots define a naming hierarchy. As a convention, an ID should be modeled after a reversed URI domain, and prefixed with `fr.` in the case of part fragments. For instance, a note part ID might be `net.fusisoft.note`, and a comment layer fragment ID might be `fr.net.fusisoft.comment`.
+Dashes are used to represent spaces, while dots define a naming hierarchy.
 
-These IDs are used in configuration profiles to define the parts used in a Cadmus database.
+As a convention, an ID should be modeled after a reversed URI domain, and prefixed with `fr.` in the case of part fragments. For instance, a note part ID might be `net.fusisoft.note`, and a comment layer fragment ID might be `fr.net.fusisoft.comment`.
 
-The standard implementation of the part provider (`StandardPartProvider`) uses an implementation of `TagAnnotationMap`, which defines a map between the ID of each part type (or part fragment) to a Java class name; thanks to this map, it is able to instantiate it from its ID. Usually, scanning via reflection the loaded packages from a specific root namespace is all what is needed to get this map. In this case, you can use the `ReflectingTagAnnotationMap`, which looks for all the types annotated with `TagAnnotation` and maps the value of this annotation to their Java class name.
+These IDs are used in configuration profiles to define the parts and fragments types used in a Cadmus database.
+
+The standard implementation of the part provider (`StandardPartProvider`) uses an implementation of `TagAttributeToTypeMap`, which defines a map between the type ID of each part/fragment to a C# class `Type`; thanks to this map, it is able to instantiate it from its ID.
+
+This mapping can be provided from statically linking the desired parts/fragments, or by dynamically linking them (via reflection, by scanning a set of plugin assemblies). These different approaches are fit to different environments: the API layer uses static linking, as it is targeted to a Docker image, while the CLI tool uses dynamic linking.
 
 #### Note on Part Instantiation
 
-The instantiation of parts objects is the area where the original C# code and its Java counterpart differ the most, so that their API is different. This is essentially due to the different implementation of generics in these two languages.
+In this discussion, for brevity I use the term *type ID* for the value of the attribute (in C#) decorating the corresponding part or fragment class, and the term *class type* for the C# class types.
 
-In this discussion, for brevity I use the term type ID for the value of the attribute (in C#) or annotation (in Java) decorating the corresponding part or fragment class, and the term class type for the C# or Java class types.
+The type ID is provided by the `TagAttribute` attribute.
 
-##### Part Instantiation in C-Sharp
+The provider is represented by an `IPartTypeProvider` interface, which returns a class `Type` from a given type ID. In turn, the returned `Type` will be used to instantiate the part, either when deserializing it from its JSON representation (the part content as stored in the database), or when creating a new part object.
 
-In C#, the type ID is provided by the `TagAttribute` attribute. In Java, the type ID is provided by the `TagAnnotation` annotation.
-
-In C#, the provider is represented by an `IPartTypeProvider` interface, which returns a class `Type` from a given type ID. In turn, the returned `Type` will be used to instantiate the part, either when deserializing it from its JSON representation (the part content as stored in the database), or when creating a new part object.
-
-The standard implementation of this interface, `StandardPartTypeProvider`, is a simple wrapper around a `TagAttributeToTypeMap`. This represents a set of mappings between attributes of type `TagAttribute` and the types they decorate. The mappings are built via reflection from a set of preloaded assemblies, andor by loading assemblies from a specified directory.
+The standard implementation of this interface, `StandardPartTypeProvider`, is a simple wrapper around a `TagAttributeToTypeMap`. This represents a set of mappings between attributes of type `TagAttribute` and the types they decorate. The mappings are built via reflection from a set of preloaded assemblies, and/or by loading assemblies from a specified directory.
 
 In this map, for those classes implementing `ITextLayerFragment` (and decorated with the `TagAttribute`), a mapping is inferred by combining the generic layer part `TokenTextLayerPartTFragment` with each of these fragment classes. This way, we have a mapping for all the closed generic types representing the various text layers.
 
 In this case, in the map the type ID results by combining the part's type ID with the fragment's type ID, as follows
 
 1. part type ID (e.g. `net.fusisoft.token-text-layer`, decorating the part representing a text layer using token-based text coordinates);
-2. colon (``);
+2. colon (`:`);
 3. part role ID, which for text layer parts is equal to the fragment's type ID (e.g. `fr.net.fusisoft.comment`), optionally followed by a role for the layer part, prefixed by colon.
 
 For instance, `net.fusisoft.token-text-layerfr.net.fusisoft.comment` is the inferred type ID for a fragment with type ID `fr.net.fusisoft.comment`, combined with a layer part with type ID `net.fusisoft.token-text-layer`.
@@ -540,7 +464,7 @@ An apposite function in `PartBase`, `BuildProviderId`, is used to build the type
 
 The result of this function is either equal to the part's type ID (e.g. `net.fusisoft.note`), or, for a layer part, equal to the part's type ID + `` + the fragment's type ID (e.g. `net.fusisoft.token-text-layerfr.net.fusisoft.comment`).
 
-The convention underlying this method assumes that any fragment type ID starts with the `fr.` prefix, and that a layer part has the fragment type ID as its role ID.
+The convention underlying this method assumes that any fragment type ID starts with the `fr.` prefix (defined as a constant in `PartBase`), and that a layer part has the fragment type ID as its role ID.
 
 For instance, a token-based text layer part for comments has type ID=`net.fusisoft.token-text-layer`, and role ID=`fr.net.fusisoft.comment`.
 So, each layer part has the corresponding fragment ID as its role. Should we want to use the same fragment type with different roles, we add a new part type definition with role=fragment ID + colon + role ID, e.g. `fr.net.fusisoft.commentscholarly`.
@@ -551,7 +475,8 @@ A couple of unit tests should make this discussion more concrete
 [Fact]
 public void Get_NotePart_Ok()
 {
-    Type t = GetProvider().Get(net.fusisoft.note);
+    Type t = GetProvider().Get("net.fusisoft.note");
+
     Assert.Equal(typeof(NotePart), t);
 }
 
@@ -559,12 +484,13 @@ public void Get_NotePart_Ok()
 public void Get_CommentLayerPart_Ok()
 {
     Type t = GetProvider().Get(
-        net.fusisoft.token-text-layerfr.net.fusisoft.comment);
-    Assert.Equal(typeof(TokenTextLayerPartCommentLayerFragment), t);
+        "net.fusisoft.token-text-layer:fr.net.fusisoft.comment");
+
+    Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);
 }
 ```
 
-As you can see, when requesting a comment layer part we get a closed generic type combining the generic token-based text layer part (`TokenTextLayerPartT`) with the comment layer fragment (`CommentLayerFragment`).
+As you can see, when requesting a comment layer part we get a closed generic type, combining the generic token-based text layer part (`TokenTextLayerPartT`) with the comment layer fragment (`CommentLayerFragment`).
 
 For instance, the MongoDB repository instantiates parts from a JSON text representing them (`content`) like this
 
@@ -585,13 +511,26 @@ As the part provider works also for closed generic types representing text layer
 
 ## (D) Storage
 
-The storage package contains the components used to work with the underlying storage, like:
+```plantuml
+@startuml
+    skinparam backgroundColor #EEEBDC
+    skinparam handwritten true
 
-- **filters** for browsing items and parts (`ItemFilter`, `PartFilter`);
-- wrappers for **virtual pages** of retrieved data (`PagedData`);
-- objects representing the **editing history** (`HistoryItem`, `HistoryPart`, `HistoryItemFilter`, `HistoryPartFilter`);
-- a **database management** interface (`DatabaseManager`), used to represent an admin service to create and delete databases, mainly used for testing purposes;
-- a **repository** (`CadmusRepository`), which connects any consumer code from upper layers to the lower data storage layer. The repository is the only access to data in the whole system. The implementation of this storage is found in separate packages, each related to a specific technology (e.g. MongoDB).
+    abstract class IHasHistory
+    IHasVersion <|-- IHasHistory
+    IHasHistory : +string ReferenceId
+    IHasHistory : +EditStatus Status
+@enduml
+```
+
+TODO: complete diagram
+
+The storage namespace contains the components used to work with the underlying storage, like:
+
+- **filters** for browsing items and parts (`ItemFilter`, `PartFilter`, `VersionFilter`);
+- objects representing the **editing history** (`HistoryItem`, `HistoryPart`, `HistoryItemFilter`, `HistoryPartFilter`, `HistoryItemInfo`, `HistoryPartInfo`);
+- a **database management** interface (`IDatabaseManager`), used to represent an admin service to create and delete databases, mainly used for testing purposes;
+- a **repository** (`ICadmusRepository`), which connects any consumer code from upper layers to the lower data storage layer. The repository is the only access to data in the whole system. The implementation of this storage is found in separate packages, each related to a specific technology (e.g. MongoDB).
 
 ### History
 
@@ -605,10 +544,10 @@ As for items and parts, creating, updating, or deleting them affects history. Th
 
 Thus, there are only 4 repository methods affecting history:
 
-- `addItem`: adds or updates an item (not its parts).
-- `deleteItem`: deletes an item with all its parts.
-- `addPart`: adds or updates a part.
-- `deletePart`: deletes a part.
+- `AddItem`: adds or updates an item (not its parts).
+- `DeleteItem`: deletes an item with all its parts.
+- `AddPart`: adds or updates a part.
+- `DeletePart`: deletes a part.
 
 History records are just wrappers, which include a copy of the original record, plus some additional data, i.e.:
 
@@ -617,6 +556,8 @@ History records are just wrappers, which include a copy of the original record, 
 - status: the new status of the original record: either "created", "updated", or "deleted".
 - date and time of modification.
 - ID of user who modified the record.
+- date and time of creation.
+- ID of user who created the record.
 
 For instance, when editing items with history, this is what happens:
 

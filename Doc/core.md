@@ -313,10 +313,35 @@ TODO:
     TagAttributeToTypeMap : -bool _frDirty
     TagAttributeToTypeMap : +void Clear()
     TagAttributeToTypeMap : +void Add(Assembly[] assemblies)
-    TagAttributeToTypeMap : +void Add(string directory, string fileMask,
+    TagAttributeToTypeMap : +void Add(string directory, string fileMask, AssemblyLoadContext context, params Assembly[] assemblies)
     TagAttributeToTypeMap : +Type Get(string tag)
 
     IPartTypeProvider <|-- StandardPartTypeProvider
+    StandardPartTypeProvider "1"*--"1" TagAttributeToTypeMap
+    StandardPartTypeProvider : -TagAttributeToTypeMap _map
+    StandardPartTypeProvider : +StandardPartTypeProvider(TagAttributeToTypeMap map)
+    StandardPartTypeProvider : +Type Get(string id)
+
+    PartDefinition : +string TypeId
+    PartDefinition : +string RoleId
+    PartDefinition : +string Name
+    PartDefinition : +string Description
+    PartDefinition : +bool IsRequired
+    PartDefinition : +string ColorKey
+    PartDefinition : +string GroupKey
+    PartDefinition : +string SortKey
+    PartDefinition : +string EditorKey
+
+    FacetDefinition : +string Id
+    FacetDefinition : +string Label
+    FacetDefinition : +string Description
+    FacetDefinition : +List<PartDefinition> PartDefinitions
+    FacetDefinition "1"*--"0.." PartDefinition
+
+    FlagDefinition : +int Id
+    FlagDefinition : +string Label
+    FlagDefinition : +string Description
+    FlagDefinition : +string ColorKey
 @enduml
 ```
 

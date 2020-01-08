@@ -1,4 +1,5 @@
 # Cadmus Conceptual Documentation
 
-1. [backend packages](packages.md)
-2. [seeding](seeding.md)
+- [core](core.md)
+- [backend packages](packages.md)
+- [seeding](seeding.md)

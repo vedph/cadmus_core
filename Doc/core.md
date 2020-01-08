@@ -450,7 +450,7 @@ The standard implementation of this interface, `StandardPartTypeProvider`, is a 
 
 In this map, for those classes implementing `ITextLayerFragment` (and decorated with the `TagAttribute`), a mapping is inferred by combining the generic layer part `TokenTextLayerPartTFragment` with each of these fragment classes. This way, we have a mapping for all the closed generic types representing the various text layers.
 
-In this case, in the map the type ID results by combining the part's type ID with the fragment's type ID, as follows
+In this case, in the map the type ID results by combining the part's type ID with the fragment's type ID, as follows:
 
 1. part type ID (e.g. `net.fusisoft.token-text-layer`, decorating the part representing a text layer using token-based text coordinates);
 2. colon (`:`);
@@ -458,11 +458,11 @@ In this case, in the map the type ID results by combining the part's type ID wit
 
 For instance, `net.fusisoft.token-text-layerfr.net.fusisoft.comment` is the inferred type ID for a fragment with type ID `fr.net.fusisoft.comment`, combined with a layer part with type ID `net.fusisoft.token-text-layer`.
 
-Should this layer part have a role, this appears at the end of the type ID, e.g. `net.fusisoft.token-text-layerfr.net.fusisoft.commentscholarly` for scholarly comments.
+Should this layer part have a role, this appears at the end of the type ID, e.g. `net.fusisoft.token-text-layer:fr.net.fusisoft.comment:scholarly` for scholarly comments.
 
 An apposite function in `PartBase`, `BuildProviderId`, is used to build the type ID to instantiate a part via a part provider, given a specified part type ID and role ID.
 
-The result of this function is either equal to the part's type ID (e.g. `net.fusisoft.note`), or, for a layer part, equal to the part's type ID + `` + the fragment's type ID (e.g. `net.fusisoft.token-text-layerfr.net.fusisoft.comment`).
+The result of this function is either equal to the part's type ID (e.g. `net.fusisoft.note`), or, for a layer part, equal to the part's type ID + `:` + the fragment's type ID (e.g. `net.fusisoft.token-text-layer:fr.net.fusisoft.comment`).
 
 The convention underlying this method assumes that any fragment type ID starts with the `fr.` prefix (defined as a constant in `PartBase`), and that a layer part has the fragment type ID as its role ID.
 
@@ -490,7 +490,7 @@ public void Get_CommentLayerPart_Ok()
 }
 ```
 
-As you can see, when requesting a comment layer part we get a closed generic type, combining the generic token-based text layer part (`TokenTextLayerPartT`) with the comment layer fragment (`CommentLayerFragment`).
+As you can see, when requesting a comment layer part we get a closed generic type, combining the generic token-based text layer part (`TokenTextLayerPart<T>`) with the comment layer fragment (`CommentLayerFragment`).
 
 For instance, the MongoDB repository instantiates parts from a JSON text representing them (`content`) like this
 
@@ -507,7 +507,7 @@ private IPart InstantiatePart(string typeId, string roleId, string content)
 
 In this function, the requested type ID is built via `PartBase.BuildProviderId` from the part's type ID and role ID. Then, the type provider is used to get the `Type` for that ID. Finally, the JSON text representing the stored part is deserialized into that `Type`.
 
-As the part provider works also for closed generic types representing text layer parts, this allows to create a single class representing a text layer part, and reuse it with whatever type of fragment. You just need a single class for each text layer coordinates system; in our case, this is the `TokenTextLayerPartT` class, based on token-related coordinates.
+As the part provider works also for closed generic types representing text layer parts, this allows to create a single class representing a text layer part, and reuse it with whatever type of fragment. You just need a single class for each text layer coordinates system; in our case, this is the `TokenTextLayerPart<T>` class, based on token-related coordinates.
 
 ## (D) Storage
 
@@ -520,6 +520,102 @@ As the part provider works also for closed generic types representing text layer
     IHasVersion <|-- IHasHistory
     IHasHistory : +string ReferenceId
     IHasHistory : +EditStatus Status
+
+    VersionFilter : +string UserId
+    VersionFilter : +DateTime? MinModified
+    VersionFilter : +DateTime? MaxModified
+
+    VersionFilter <|-- HistoryFilter
+    HistoryFilter : +string ReferenceId
+    HistoryFilter : +EditStatus? Status
+
+    HistoryFilter <|-- HistoryItemFilter
+    HistoryItemFilter : +string Title
+    HistoryItemFilter : +string Description
+    HistoryItemFilter : +string FacetId
+    HistoryItemFilter : +int? Flags
+
+    HistoryFilter <|-- HistoryPartFilter
+    HistoryPartFilter : +string[] ItemIds
+    HistoryPartFilter : +string TypeId
+    HistoryPartFilter : +string RoleId
+    HistoryPartFilter : +Tuple<string, bool>[] SortExpressions
+
+    VersionFilter <|-- ItemFilter
+    ItemFilter : +string Title
+    ItemFilter : +string Description
+    ItemFilter : +string FacetId
+    ItemFilter : +int? Flags
+
+    VersionFilter <|-- PartFilter
+    PartFilter : +string[] ItemIds
+    PartFilter : +string TypeId
+    PartFilter : +string RoleId
+    PartFilter : +Tuple<string,bool>[] SortExpressions
+
+    IHasHistory <|-- HistoryItem
+    HistoryItem : +string Id
+    HistoryItem : +string Title
+    HistoryItem : +string Description
+    HistoryItem : +string FacetId
+    HistoryItem : +string SortKey
+    HistoryItem : +int Flags
+    HistoryItem : +DateTime TimeCreated
+    HistoryItem : +string CreatorId
+    HistoryItem : +DateTime TimeModified
+    HistoryItem : +string UserId
+    HistoryItem : +string ReferenceId
+    HistoryItem : +EditStatus Status
+    HistoryItem : +HistoryItem(string id, string referenceId)
+
+    HistoryPart : +public class HistoryPart<T>
+    HistoryPart : +public string Id
+    HistoryPart : +public T Part
+    HistoryPart : +public DateTime TimeModified
+    HistoryPart : +public string UserId
+    HistoryPart : +public string ReferenceId
+    HistoryPart : +public EditStatus Status
+    HistoryPart : +public HistoryPart(string id, T part)
+
+    abstract class IDatabaseManager
+    IDatabaseManager : +CreateDatabase(string source, DataProfile profile)
+    IDatabaseManager : +DeleteDatabase(string source)
+    IDatabaseManager : +ClearDatabase(string source)
+    IDatabaseManager : +bool DatabaseExists(string source)
+
+    abstract class ICadmusRepository
+    ICadmusRepository : +IList<FlagDefinition> GetFlagDefinitions()
+    ICadmusRepository : +FlagDefinition GetFlagDefinition(int id)
+    ICadmusRepository : +AddFlagDefinition(FlagDefinition definition)
+    ICadmusRepository : +DeleteFlagDefinition(int id)
+    ICadmusRepository : +IList<FacetDefinition> GetFacetDefinitions()
+    ICadmusRepository : +FacetDefinition GetFacetDefinition(string id)
+    ICadmusRepository : +AddFacetDefinition(FacetDefinition facet)
+    ICadmusRepository : +DeleteFacetDefinition(string id)
+    ICadmusRepository : +IList<string> GetThesaurusIds()
+    ICadmusRepository : +Thesaurus GetThesaurus(string id)
+    ICadmusRepository : +AddThesaurus(Thesaurus thesaurus)
+    ICadmusRepository : +DeleteThesaurus(string id)
+    ICadmusRepository : +DataPage<ItemInfo> GetItems(ItemFilter filter)
+    ICadmusRepository : +IItem GetItem(string id, bool includeParts = true)
+    ICadmusRepository : +AddItem(IItem item, bool history = true)
+    ICadmusRepository : +DeleteItem(string id, string userId, bool history = true)
+    ICadmusRepository : +SetItemFlags(IList<string> ids, int flags)
+    ICadmusRepository : +DataPage<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter)
+    ICadmusRepository : +HistoryItem GetHistoryItem(string id)
+    ICadmusRepository : +DeleteHistoryItem(string id)
+    ICadmusRepository : +DataPage<PartInfo> GetParts(PartFilter filter)
+    ICadmusRepository : +IList<IPart> GetItemParts(string[] itemIds, string typeId = null, string roleId = null)
+    ICadmusRepository : +List<Tuple<string, string>> GetItemLayerPartIds(string itemId)
+    ICadmusRepository : +T GetPart<T>(string id)
+    ICadmusRepository : +string GetPartContent(string id)
+    ICadmusRepository : +AddPart(IPart part, bool history = true)
+    ICadmusRepository : +AddPartFromContent(string content, bool history = true)
+    ICadmusRepository : +DeletePart(string id, string userId, bool history = true)
+    ICadmusRepository : +DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
+    ICadmusRepository : +HistoryPart<T> GetHistoryPart<T>(string id)
+    ICadmusRepository : +DeleteHistoryPart(string id)
+    ICadmusRepository : +string GetPartCreatorId(string id)
 @enduml
 ```
 
@@ -527,20 +623,20 @@ TODO: complete diagram
 
 The storage namespace contains the components used to work with the underlying storage, like:
 
-- **filters** for browsing items and parts (`ItemFilter`, `PartFilter`, `VersionFilter`);
-- objects representing the **editing history** (`HistoryItem`, `HistoryPart`, `HistoryItemFilter`, `HistoryPartFilter`, `HistoryItemInfo`, `HistoryPartInfo`);
+- **filters** for browsing items and parts (`ItemFilter`, `PartFilter`, `VersionFilter`, `HistoryItemFilter`, `HistoryPartFilter`);
+- objects representing the **editing history** (`HistoryItem`, `HistoryPart`, `HistoryItemInfo`, `HistoryPartInfo`);
 - a **database management** interface (`IDatabaseManager`), used to represent an admin service to create and delete databases, mainly used for testing purposes;
 - a **repository** (`ICadmusRepository`), which connects any consumer code from upper layers to the lower data storage layer. The repository is the only access to data in the whole system. The implementation of this storage is found in separate packages, each related to a specific technology (e.g. MongoDB).
 
 ### History
 
-A full editing history can be activated whenever writing data to the underlying data store.
+Whenever writing data to the underlying data store, a full editing history can be activated.
 
-As any access to the data store is mediated by the repository, any of its methods affecting the underlying data in a way which should be recorded in editing history gets a boolean `history` parameter. When this is true, history data will be saved.
+As any access to the data store is mediated by the repository, any of its methods affecting the underlying data in a way which should be recorded in editing history gets a boolean `history` parameter. When this is `true`, history data will be saved.
 
 The methods affecting history are related only to items and parts. All what refers to the database profile is excluded as configuration-related operations.
 
-As for items and parts, creating, updating, or deleting them affects history. The only update operation which by design does not affect history is setting the flags of one or more items, as flags are essentially a redactional device, used to "mark" a set of items for some purpose (e.g. flag them to be revised).
+As for items and parts, creating, updating, or deleting them affects history. The only update operation which by design does not affect history is setting the flags of one or more items. This is because flags are essentially a redactional device, used to "mark" a set of items for some purpose (e.g. flag them to be revised).
 
 Thus, there are only 4 repository methods affecting history:
 

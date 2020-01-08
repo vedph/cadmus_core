@@ -4,7 +4,7 @@ This is the core namespace for the Cadmus system. It includes the following name
 
 - `config`: components related to the system configuration.
 - `layers`: components related to the text layers. These are a type of parts specialized in handling metatextual data, i.e. data strictly connected to a specific portion of a base text.
-- `storage`: components related to the underlying storage system. These are all abstractions, virtually independent from a specific storage technology.
+- `storage`: components related to the underlying storage system. These are all abstractions, virtually independent from any specific storage technology.
 
 ## (A) Core
 
@@ -128,39 +128,49 @@ A number of interfaces and classes are provided to define the attributes of thei
 
 ### A.2. Tags
 
-Every "pluggable" component, like parts or fragments, is decorated with a `TagAttribute`. This attribute has a single `Tag` value which must be unique in the Cadmus ecosystem. To ensure uniqueness, the convention is prefixing the ID with a domain name. Also, you should use just ASCII lowercase letters or digits, dots, and dashes. For instance, `net.fusisoft.categories` is the ID for the categories part.
+Every "pluggable" component, like parts or fragments, is decorated with a `TagAttribute`. This attribute has a single `Tag` value, which must be unique in the Cadmus ecosystem. This value is used to find and instantiate the component type.
+
+To ensure uniqueness, the convention is prefixing the ID with a domain name. Also, you should use just `a-z` lowercase letters or digits, dots, and dashes. For instance, `net.fusisoft.categories` is the ID for the categories part.
 
 ### A.3. Data Blocks
 
 The building blocks for the Cadmus data model are **items** and **parts**.
 
-The item and part types are DTO interfaces and classes essentially used to represent and transfer data between system layers, whatever the underlying data store. They correspond to database entities, at a higher abstraction level.
+The item and part types are DTO interfaces and classes, essentially used to represent and transfer data between system layers, whatever the underlying data store. They correspond to database entities, at a higher abstraction level.
 
 All the **IDs** for these blocks are client-side generated GUIDs, modeled as strings in the generic entities objects which represent the data at a higher abstraction level.
 
 #### A.3.1. Items
 
-The item is what roughly corresponds to a record in the Cadmus database: for instance, in a collection of inscriptions it would be a single inscription; in a collection of archeological artifacts, it would be a single artifact; in a literary text document, it would be a semantically defined division in it (e.g. a poem or a paragraph); etc.
+The item is what roughly corresponds to a *record* in the Cadmus database: for instance, in a collection of inscriptions it would be a single inscription; in a collection of archeological artifacts, it would be a single artifact; in a literary text document, it would be a semantically defined division in it (e.g. a poem or a paragraph); etc.
 
-All the items have a single data model. This model is represented by the `IItem` interface. Each item has an **ID**, a set of essential **metadata** (like title or last modified time), and a collection of **parts**, each representing a specialized piece of data, with its own model.
+All the items have a single data model. This model is represented by the `IItem` interface. Each item has:
 
-The item essentially being a data-transfer object, this does not necessarily reflect the underlying storage. In fact, parts are stored independently of items. Yet, at a higher level of abstraction items "contain" parts. According to the API, an `IItem` can have its parts collection filled, or just leave it empty; in both cases, this does not necessarily means that in the database the items has or has not parts; it only represents the subset of data requested by a specific API.
+- an **ID**;
+- a set of essential **metadata** (like title or last modified time);
+- a collection of **parts**, each representing a specialized piece of data, with its own model.
 
-An item also has a **sort key**, i.e. a string representing its position in a lexicographic order. This order is the default order used when retrieving items for presentation purposes, e.g. when getting a virtual page of items. As such, the sort key is algorithmically defined by an object implementing the `IItemSortKeyBuilder` interface.
+Notice that the item essentially being a data-transfer object, this does not necessarily reflect the underlying storage. In fact, parts are stored independently of items. Yet, at a higher level of abstraction items "contain" parts. According to the API, an `IItem` can have its parts collection filled, or just leave it empty; in both cases, this does not necessarily means that in the database the items has or has not parts; it only represents the subset of data requested by a specific API.
+
+Among its metadata, an item also has a **sort key**, i.e. a string representing its position in a lexicographic order. This order is the default order used when retrieving items for presentation purposes, e.g. when getting a virtual page of items. As such, the sort key is algorithmically defined by an object implementing the `IItemSortKeyBuilder` interface.
 
 Finally, an item can also have a set of 32 **flags** whose meaning is arbitrarily defined (in the Cadmus data profile). These typically serve for specific in-house editing purposes; for instance, they might specify items marked for a revision. The flags are just bits in a 32-bits integer.
 
 #### A.3.2. Parts
 
-The concept of part derives from the fact that *most items share a common subset of data models*. For instance, think of a structured datation, with different levels of granularity, from day, month and year up to centuries, and different levels of uncertainty, from a point to an interval in time. The model of a similar piece of information would be needed to be fully repeated in each item requiring to be dated, whatever its nature. Also, whenever we want to add the date to an item, we would have to change its model.
+The concept of part derives from the fact that *most items share a common subset of data models*. For instance, think of a structured datation, with different levels of granularity, from day, month, and year up to centuries, and different levels of uncertainty, from a point to an interval in time. The model of a similar piece of information would be needed to be fully repeated in each item requiring to be dated, whatever its nature. Also, whenever we want to add the date to an item, we would have to change its model.
 
-Rather, *the items model is composed by its parts*. Items contain a collection of such parts, each representing a specialized data model. This makes the abstract data model of each item totally dynamic, as far as it depends on the parts it contains. You can think of an item as a black box, which can contain whatever object you toss into it. These objects are the parts.
+Rather, *the items model is composed by its parts*. Items contain a collection of such parts, each representing a specialized data model. This makes the abstract data model of each item totally dynamic, as far as it depends on the parts it contains.
 
-A part can represent *any* type of data, either *textual* (a text), *meta-textual* (a piece of data linked to a specific portion of a text), or *extra-textual* (a piece of data which has no direct relationship with a text). This makes it possible not only to reuse data models in the context of a composable record, but also to reuse editing user interfaces in the context of a composable frontend.
+You can think of an item as a black *box*, which can contain whatever *object* you toss into it. These objects are the parts.
+
+This makes it possible not only to reuse data models in the context of a composable record, but also to reuse editing user interfaces in the context of a composable frontend.
+
+A part can represent *any* type of data. If we refer to text, a part can either be *textual* (=a text), *meta-textual* (=a piece of data linked to a specific portion of a text), or *extra-textual* (=a piece of data which has no direct relationship with a text).
 
 A part is thus the atomic data record. Each part has its own model, plus a common shape represented by the `IPart` interface, which defines a set of metadata, like the container **item ID**, the **part type ID** (an arbitrary string which uniquely identifies its type: e.g. `date` for a datation part), and eventually its **role ID**.
 
-The role ID is used only when adding several parts of the same type to the same item. This happens in two cases:
+The role ID is used only when adding *several parts of the same type* to the same item. This happens in two cases:
 
 - when we need *several parts of the same type*, because of the intrinsic nature of our data. For instance, two date parts may refer to the date of the original text and to that of its later copy. In this case, a role ID helps selecting the desired part from an item. The value of the role ID is an arbitrary string, as defined by content authors. It should be a very short identifier, usually a single word, like e.g. `copy`.
 - when we add *text layers*. A text layer (see below under `Layers`) is a collection of data fragments linked to a specific portion of a base text. As such, the text layer is a single part type; but it may contain different types of fragments. Thus, we typically have several layer parts with different roles, one for each type of fragment: e.g. an apparatus layer and a comment layer. The role ID for layer parts always starts with the reserved `fr.` (=fragment) prefix (defined in `PartBase.FR_PREFIX`), to distinguish it from other role ID types.
@@ -189,6 +199,8 @@ Typically, the database can be queried for a single item or part, or for a set o
 The summary information for items and parts used when browsing them is represented by classes `ItemInfo` and `PartInfo`, respectively. Currently, they represent only the essential metadata from each object.
 
 ## (B) Layers
+
+The *layers* namespace contains components related to the text layers. Text layers are collections of metadata, all connected to a base text, just like all the pages of a book are connected to its spine.
 
 ```plantuml
 @startuml
@@ -258,16 +270,18 @@ The summary information for items and parts used when browsing them is represent
 
 ### B.1. Layer Parts
 
-A part can represent any type of data. In the case of text, usually there is a base text and any number of metatextual structures attached to it. Think for instance of a traditional markup document like TEI, where ideally the text is just a plain text, and we then add XML tags to encode all these structures.
+A part can represent any type of data. In the case of text, usually there is a base text, and any number of metatextual structures attached to it.
 
-In Cadmus this scenario is rather represented in terms of parts, as for any other type of data:
+Think for instance of a traditional markup document like TEI, where ideally the text is just a plain text, and we then add XML tags to encode all these structures.
+
+In Cadmus, this scenario is rather represented in terms of parts, as for any other type of data:
 
 - the base text is a text part, including only plain text (e.g. the text of an inscription, just as it appears on the stone);
 - then, any set of metatextual data is represented by a different part, like e.g. abbreviations part, paleographic description part, apparatus part, chronological part, geographical part, prosopographical part, etc.
 
-You can imagine all these metadata as **layers** which get overlaid on the base text, just as in photo-editing tools you have the original picture in its base layer, and add any modification by adding new layers to it.
+You can imagine all these metadata as **layers** which get overlaid on the base text, just as in photo-editing tools you have the original picture in its base layer, and add any modification by adding new layers to it. This makes it possible to have a composable editing procedure, where the original picture is never touched, and yet we can add as many layers as we want to modify it at will.
 
-This makes it possible to have a composable editing procedure, where the original picture is never touched, and yet we can add as many layers as we want to modify it at will. In this metaphor, the original picture is the base text, while the layers are the parts which refer their data to any portion of it. So, all what we have here is a set of parts: one representing a text, and others representing layers.
+In this metaphor, the original picture is the base text, while the layers are the parts which refer their data to any portion of it. So, all what we have here is a set of parts: one representing a text, and others representing layers.
 
 In XML your metadata is embedded in the text as markup, and modeled after a DOM, i.e. practically into elements and attributes; in Cadmus metadata are just parts, each modeled as an independent object.
 
@@ -577,6 +591,33 @@ As the part provider works also for closed generic types representing text layer
     HistoryPart : +public EditStatus Status
     HistoryPart : +public HistoryPart(string id, T part)
 
+    IHasHistory <|-- HistoryItemInfo 
+    HistoryItemInfo : +string Id
+    HistoryItemInfo : +string Title
+    HistoryItemInfo : +string Description
+    HistoryItemInfo : +string FacetId
+    HistoryItemInfo : +string SortKey
+    HistoryItemInfo : +int Flags
+    HistoryItemInfo : +DateTime TimeCreated
+    HistoryItemInfo : +string CreatorId
+    HistoryItemInfo : +DateTime TimeModified
+    HistoryItemInfo : +string UserId
+    HistoryItemInfo : +string ReferenceId
+    HistoryItemInfo : +EditStatus Status
+    HistoryItemInfo : +HistoryItemInfo(string id, string referenceId)
+
+    IHasHistory <|-- HistoryPartInfo
+    HistoryPartInfo : +string Id
+    HistoryPartInfo : +string ItemId
+    HistoryPartInfo : +string TypeId
+    HistoryPartInfo : +string RoleId
+    HistoryPartInfo : +DateTime TimeCreated
+    HistoryPartInfo : +string CreatorId
+    HistoryPartInfo : +DateTime TimeModified
+    HistoryPartInfo : +string UserId
+    HistoryPartInfo : +string ReferenceId
+    HistoryPartInfo : +EditStatus Status
+
     abstract class IDatabaseManager
     IDatabaseManager : +CreateDatabase(string source, DataProfile profile)
     IDatabaseManager : +DeleteDatabase(string source)
@@ -619,9 +660,7 @@ As the part provider works also for closed generic types representing text layer
 @enduml
 ```
 
-TODO: complete diagram
-
-The storage namespace contains the components used to work with the underlying storage, like:
+The *storage* namespace contains the components used to work with the underlying storage, like:
 
 - **filters** for browsing items and parts (`ItemFilter`, `PartFilter`, `VersionFilter`, `HistoryItemFilter`, `HistoryPartFilter`);
 - objects representing the **editing history** (`HistoryItem`, `HistoryPart`, `HistoryItemInfo`, `HistoryPartInfo`);

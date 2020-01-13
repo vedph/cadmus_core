@@ -55,8 +55,9 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         /// <remarks>If operations have tags, the operations with tags are
         /// grouped by them, and a pin is returned for each group, with its name
-        /// equal to <c>msp</c> + the grouped operations tag, and its value
-        /// equal to the count of such operations.</remarks>
+        /// equal to <c>fr.msp</c> + the grouped operations tag, and its value
+        /// equal to the count of such operations. These pins are sorted
+        /// by their name.</remarks>
         /// <returns>pins</returns>
         public IEnumerable<DataPin> GetDataPins()
         {

@@ -36,9 +36,9 @@ namespace Cadmus.Philology.Parts.Layers
         public string Work { get; set; }
 
         /// <summary>
-        /// Gets or sets the work location (e.g. <c>3,24</c>).
+        /// Gets or sets the work's passage citation (e.g. <c>3.24</c>).
         /// </summary>
-        public string WorkLoc { get; set; }
+        public string Citation { get; set; }
 
         /// <summary>
         /// Gets or sets the original quotation text, when the text this layer
@@ -53,7 +53,7 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
-        /// Pins: <c>author</c>=author, <c>work</c>=work.
+        /// Pins: <c>fr.author</c>=author, <c>fr.work</c>=work, in this order.
         /// </summary>
         /// <returns>Pins.</returns>
         public IEnumerable<DataPin> GetDataPins()
@@ -84,7 +84,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            return $"[Quotation] {Location} {Author} {Work} {WorkLoc}".TrimEnd();
+            return $"[Quotation] {Location} {Author} {Work} {Citation}".TrimEnd();
         }
     }
 }

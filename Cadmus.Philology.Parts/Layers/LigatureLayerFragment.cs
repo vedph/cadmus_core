@@ -30,7 +30,7 @@ namespace Cadmus.Philology.Parts.Layers
     [Tag("fr.net.fusisoft.ligature")]
     public sealed class LigatureLayerFragment : ITextLayerFragment
     {
-        private const string ABBREVIATIONS = "LIORGNCX";
+        private const string ABBREVIATIONS = "-LIORGNCX";
 
         /// <summary>
         /// Gets or sets the location of this fragment.

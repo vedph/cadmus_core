@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Core;
 using Cadmus.Core.Layers;
@@ -12,8 +11,8 @@ namespace Cadmus.Parts.Layers
     /// to a specific text portion. The text format depends on the implementor.
     /// Tag: <c>fr.net.fusisoft.comment</c>
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Layers.ITextLayerFragment" />
-    /// <seealso cref="Cadmus.Core.IHasText" />
+    /// <seealso cref="ITextLayerFragment" />
+    /// <seealso cref="IHasText" />
     [Tag("fr.net.fusisoft.comment")]
     public sealed class CommentLayerFragment : ITextLayerFragment, IHasText
     {
@@ -52,6 +51,7 @@ namespace Cadmus.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
+        /// Pins: <c>fr.tag</c>=tag if any.
         /// </summary>
         /// <returns>Data pins.</returns>
         public IEnumerable<DataPin> GetDataPins()
@@ -69,10 +69,10 @@ namespace Cadmus.Parts.Layers
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

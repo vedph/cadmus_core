@@ -104,8 +104,12 @@ namespace Cadmus.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
+        /// Pins: all the pins from the part's fragments, sorted first in their
+        /// order, and then by the criterion used by the fragment's type.
+        /// By convention, fragment-generated pins should all start with
+        /// prefix <see cref="PartBase.FR_PREFIX"/>.
         /// </summary>
-        /// <returns>pins</returns>
+        /// <returns>Pins.</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
             List<DataPin> pins = new List<DataPin>();
@@ -128,7 +132,7 @@ namespace Cadmus.Parts.Layers
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

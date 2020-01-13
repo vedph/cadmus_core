@@ -7,8 +7,11 @@ Server-side parts in the editor are essentially used for indexing. Anyway, their
 Guidelines for **implementing a part**:
 
 - *derive* from `PartBase`, even if this is not strictly a requirement, but rather a commodity. The part class must anyway implement the `IPart` interface.
+
 - *decorate* the class with a `TagAttribute` providing the part's type ID.
+
 - *do not add any logic* to the part. The part is just a POCO object modeling the data it represents, and should have no logic. The only piece of logic required is the method returning the part's data pins, which is just a form of reflecting on the part's data themselves, e.g. for indexing.
+
 - consider that the part will be subject to automatic serialization and deserialization. As the part is just a POCO object, this should not pose any issue.
 
 **Part template** sample (in the following template replace `__NAME__` with your part's name, minus the `Part` suffix):
@@ -122,8 +125,51 @@ public sealed class __NAME__PartTest
 
 ## Layer Parts
 
-Guidelines for **implementing a layer part**: for layer parts, the same guidelines already listed for the other parts are applicable, with the following additions:
+For layer parts, the same guidelines already listed for the other parts are applicable, with the following additions:
 
-- create a `...LayerFragment` class representing the fragment for the layer part. This is the true data model for the metatextual data represented by the layer. The class must implement `ITextLayerFragment`. Do not add any other property to the class; by design, the only property of a layer part is its collection of fragments.
-- give the fragment a type ID (via the usual `TagAttribute`) which *must* begin with the prefix `fr.` (note the trailing dot).
+- create a `...LayerFragment` class representing the fragment for the layer part. This is the true data model for the metatextual data represented by the layer. The class must implement `ITextLayerFragment`. Do not add any other property to the class; *by design, the only property of a layer part is its collection of fragments*.
+
+- give the fragment a type ID (via the usual `TagAttribute`), which *must* begin with the prefix `fr.` (=`PartBase.FR_PREFIX`; note the trailing dot).
+
 - if adding pins in the fragment, just provide the pin's name and value; the other properties will be supplied by the container part. By convention, you should prefix your pin name with the `fr.` prefix.
+
+Anyway, adding a new layer part would be rarely required, as there is just a generic (parameterized) layer part provided for this: one part, many fragments. You rather have to provide fragments and their tests.
+
+**Fragment test template** sample:
+
+```cs
+public sealed class __NAME__LayerFragmentTest
+{
+    private static __NAME__LayerFragment GetFragment()
+    {
+        return new __NAME__LayerFragment
+        {
+            Location = "1.23",
+            // TODO: add properties here...
+        };
+    }
+
+    [Fact]
+    public void Fragment_Has_Tag()
+    {
+        TagAttribute attr = typeof(__NAME__LayerFragment).GetTypeInfo()
+            .GetCustomAttribute<TagAttribute>();
+        string typeId = attr != null ? attr.Tag : GetType().FullName;
+        Assert.NotNull(typeId);
+        Assert.StartsWith(PartBase.FR_PREFIX, typeId);
+    }
+
+    [Fact]
+    public void Fragment_Is_Serializable()
+    {
+        __NAME__LayerFragment fr = GetFragment();
+
+        string json = TestHelper.SerializeFragment(fr);
+        __NAME__LayerFragment fr2 =
+            TestHelper.DeserializeFragment<__NAME__LayerFragment>(json);
+
+        Assert.Equal(fr.Location, fr2.Location);
+        // TODO: check properties here...
+    }
+}
+```

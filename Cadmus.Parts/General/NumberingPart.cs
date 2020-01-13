@@ -45,7 +45,7 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>ordinal</c>=tag + space + ordinal, or just ordinal.
+        /// Pins: <c>ordinal</c>=tag + space + ordinal.
         /// </summary>
         /// <returns>Pins.</returns>
         public override IEnumerable<DataPin> GetDataPins()

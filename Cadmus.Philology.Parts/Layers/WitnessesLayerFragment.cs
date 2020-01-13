@@ -46,8 +46,8 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// For each unique witness source ID, a pin with name=<c>fr.witness.id</c>
-        /// and value=ID is returned.
+        /// For each unique witness source ID, in their order, a pin with
+        /// name=<c>fr.id</c> and value=ID is returned.
         /// </summary>
         /// <returns>Pins.</returns>
         public IEnumerable<DataPin> GetDataPins()
@@ -61,7 +61,7 @@ namespace Cadmus.Philology.Parts.Layers
                     .Distinct()
                     .Select(id => new DataPin
                     {
-                        Name = PartBase.FR_PREFIX + "witness.id",
+                        Name = PartBase.FR_PREFIX + "id",
                         Value = id
                     });
         }

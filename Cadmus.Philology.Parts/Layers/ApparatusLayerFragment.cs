@@ -88,7 +88,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Authors of this variant.
         /// </summary>
-        public List<string> Authors { get; set; }
+        public HashSet<string> Authors { get; set; }
 
         /// <summary>
         /// An optional short note.
@@ -102,32 +102,36 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         public ApparatusLayerFragment()
         {
-            Authors = new List<string>();
+            Authors = new HashSet<string>();
         }
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
+        /// Pins: <c>fr.author</c>=author (0-N, 1 pin for each single author),
+        /// sorted by author.
         /// </summary>
         /// <returns>pins</returns>
         public IEnumerable<DataPin> GetDataPins()
         {
-            if (Authors.Count > 0)
+            if (Authors?.Count > 0)
             {
-                return new []
-                {
-                    new DataPin
-                    {
-                        Name = PartBase.FR_PREFIX + "adpar.entry.author",
-                        Value = string.Join("; ", Authors)
-                    }
-                };
+                return from author in Authors.OrderBy(s => s)
+                       select new DataPin
+                       {
+                           Name = PartBase.FR_PREFIX + "author",
+                           Value = author
+                       };
             }
 
             return Enumerable.Empty<DataPin>();
         }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder($"[Apparatus] {Location} ");

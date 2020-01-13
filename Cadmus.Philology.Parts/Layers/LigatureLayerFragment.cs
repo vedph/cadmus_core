@@ -50,16 +50,18 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
+        /// Pins: <c>ligature</c>=ligature type letter (one letter picked
+        /// from <c>LIORGNCX</c>, each representing a ligature type;
+        /// see <see cref="LigatureType"/>).
         /// </summary>
         /// <returns>Data pins.</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<DataPin> GetDataPins()
         {
             return new[]
             {
                 new DataPin
                 {
-                    Name = PartBase.FR_PREFIX + "ligature.type",
+                    Name = PartBase.FR_PREFIX + "ligature",
                     Value = new string(LigatureTypeToAbbreviation(Type), 1)
                 }
             };

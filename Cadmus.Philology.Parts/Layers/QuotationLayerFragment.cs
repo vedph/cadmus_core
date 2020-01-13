@@ -53,8 +53,9 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
+        /// Pins: <c>author</c>=author, <c>work</c>=work.
         /// </summary>
-        /// <returns>pins</returns>
+        /// <returns>Pins.</returns>
         public IEnumerable<DataPin> GetDataPins()
         {
             if (Author == null || Work == null)
@@ -64,12 +65,12 @@ namespace Cadmus.Philology.Parts.Layers
             {
                 new DataPin
                 {
-                    Name = PartBase.FR_PREFIX + "quote.author",
+                    Name = PartBase.FR_PREFIX + "author",
                     Value = Author
                 },
                 new DataPin
                 {
-                    Name = PartBase.FR_PREFIX + "quote.work",
+                    Name = PartBase.FR_PREFIX + "work",
                     Value = Work
                 }
             };
@@ -79,7 +80,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

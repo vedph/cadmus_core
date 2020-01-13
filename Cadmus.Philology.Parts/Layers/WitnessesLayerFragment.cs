@@ -36,7 +36,8 @@ namespace Cadmus.Philology.Parts.Layers
         public List<Witness> Witnesses { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WitnessesLayerFragment"/> class.
+        /// Initializes a new instance of the <see cref="WitnessesLayerFragment"/>
+        /// class.
         /// </summary>
         public WitnessesLayerFragment()
         {
@@ -45,7 +46,7 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// For each unique witness source ID a pin with name=<c>fr.witness.id</c>
+        /// For each unique witness source ID, a pin with name=<c>fr.witness.id</c>
         /// and value=ID is returned.
         /// </summary>
         /// <returns>Pins.</returns>

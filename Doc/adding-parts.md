@@ -94,7 +94,7 @@ public sealed class __NAME__PartTest
         // TODO: check parts data here...
     }
 
-    // TODO: check pins here, e.g. for the NotePart we had a single pin
+    // TODO: check pins here, e.g. for the NotePart we get a single pin
     // when the tag is set, with name=tag and value=tag value:
     // [Fact]
     // public void GetDataPins_NoTag_Empty()
@@ -171,5 +171,30 @@ public sealed class __NAME__LayerFragmentTest
         Assert.Equal(fr.Location, fr2.Location);
         // TODO: check properties here...
     }
+
+    // TODO: check pins here, e.g. for the CommentLayerFragment
+    // we get a single pin when the tag is set, with name=fr.tag
+    // and value=tag value:
+    // [Fact]
+    // public void GetDataPins_NoTag_0()
+    // {
+    //     CommentLayerFragment fr = GetFragment();
+    //     fr.Tag = null;
+
+    //     Assert.Empty(fr.GetDataPins());
+    // }
+
+    // [Fact]
+    // public void GetDataPins_Tag_1()
+    // {
+    //     CommentLayerFragment fr = GetFragment();
+
+    //     List<DataPin> pins = fr.GetDataPins().ToList();
+
+    //     Assert.Single(pins);
+    //     DataPin pin = pins[0];
+    //     Assert.Equal("fr.tag", pin.Name);
+    //     Assert.Equal("some-tag", pin.Value);
+    // }
 }
 ```

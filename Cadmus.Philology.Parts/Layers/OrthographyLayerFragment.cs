@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Cadmus.Core;
@@ -43,7 +42,8 @@ namespace Cadmus.Philology.Parts.Layers
         public List<string> Operations { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrthographyLayerFragment"/> class.
+        /// Initializes a new instance of the <see cref="OrthographyLayerFragment"/>
+        /// class.
         /// </summary>
         public OrthographyLayerFragment()
         {
@@ -54,9 +54,9 @@ namespace Cadmus.Philology.Parts.Layers
         /// Get all the pins exposed by the implementor.
         /// </summary>
         /// <remarks>If operations have tags, the operations with tags are
-        /// grouped by them and a pin is returned for each group, with name
-        /// equal to the operations tag, and value equal to the count of
-        /// such operations.</remarks>
+        /// grouped by them, and a pin is returned for each group, with its name
+        /// equal to <c>msp</c> + the grouped operations tag, and its value
+        /// equal to the count of such operations.</remarks>
         /// <returns>pins</returns>
         public IEnumerable<DataPin> GetDataPins()
         {
@@ -80,10 +80,10 @@ namespace Cadmus.Philology.Parts.Layers
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

@@ -46,7 +46,7 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// When the date is specified, the pins are <c>fr.date-value</c>
+        /// When the date is specified, the pins are <c>fr.date-value</c>,
         /// and eventually <c>fr.tag</c> when the tag is set.
         /// </summary>
         public IEnumerable<DataPin> GetDataPins()

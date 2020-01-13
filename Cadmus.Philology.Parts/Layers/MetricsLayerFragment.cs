@@ -56,8 +56,9 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
+        /// Pins: <c>metre</c>=metre, suffixed with <c>*</c> when imperfect.
         /// </summary>
-        /// <returns>pins</returns>
+        /// <returns>Pins.</returns>
         public IEnumerable<DataPin> GetDataPins()
         {
             if (Metre == null) return Enumerable.Empty<DataPin>();
@@ -66,7 +67,7 @@ namespace Cadmus.Philology.Parts.Layers
                 new DataPin
                 {
                     Name = PartBase.FR_PREFIX + "metre",
-                    Value = Metre
+                    Value = Metre + (IsImperfect? "*" : "")
                 }
             };
         }

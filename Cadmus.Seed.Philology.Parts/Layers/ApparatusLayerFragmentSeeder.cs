@@ -56,7 +56,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 
             if (_options == null || _options.Authors.Length == 0) return null;
 
-            List<string> authors = new List<string>(
+            HashSet<string> authors = new HashSet<string>(
                 SeedHelper.RandomPickOf(
                 _options.Authors,
                 Randomizer.Seed.Next(1, 4)));

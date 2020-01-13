@@ -179,18 +179,7 @@ The interface `IItem` is implemented by `Item`. Given that items are all created
 
 Each part instead has its own model, represented by a specific concrete type, implementing the `IPart` interface. Part implementations usually derive from a `PartBase` abstract class, which provides some common data and functionality.
 
-Guidelines for **implementing a part**:
-
-- *derive* from `PartBase`, even if this is not strictly a requirement, but rather a commodity. The part class must anyway implement the `IPart` interface.
-- *decorate* the class with a `TagAttribute` providing the part's type ID.
-- *do not add any logic* to the part. The part is just a POCO object modeling the data it represents, and should have no logic. The only piece of logic required is the method returning the part's data pins, which is just a form of reflecting on the part's data themselves, to extract a sort of index from them.
-- consider that the part will be subject to automatic serialization and deserialization. As the part is just a POCO object, this should not pose any issue.
-
-Guidelines for **implementing a layer part**: for layer parts, the same guidelines already listed for the other parts are applicable, with the following additions:
-
-- create a `...LayerFragment` class representing the fragment for the layer part. This is the true data model for the metatextual data represented by the layer. The class must implement `ITextLayerFragment`. Do not add any other property to the class; by design, the only property of a layer part is its collection of fragments.
-- give the fragment a type ID (via the usual `TagAttribute`) which *must* begin with the prefix `fr.` (note the trailing dot).
-- if adding pins in the fragment, just provide the pin's name and value; the other properties will be supplied by the container part. By convention, you should prefix your pin name with the `fr.` prefix.
+See also: [adding new parts to the system](adding-parts.md).
 
 #### A.3.3. Summary Data
 

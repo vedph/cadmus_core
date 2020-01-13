@@ -35,6 +35,7 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
+        /// Pins: <c>tag</c>=tag if defined, else none.
         /// </summary>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()

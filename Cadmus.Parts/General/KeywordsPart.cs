@@ -41,8 +41,8 @@ namespace Cadmus.Parts.General
             if (language == null) throw new ArgumentNullException(nameof(language));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            if (Keywords.All(k => k.Language != language &&
-                             k.Value != value))
+            if (Keywords.Find(k => k.Language == language &&
+                                   k.Value == value) == null)
             {
                 Keywords.Add(new Keyword
                 {
@@ -61,7 +61,8 @@ namespace Cadmus.Parts.General
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
-            if (Keywords.Count == 0) return Enumerable.Empty<DataPin>();
+            if (Keywords == null || Keywords.Count == 0)
+                return Enumerable.Empty<DataPin>();
 
             List<DataPin> pins = new List<DataPin>();
 

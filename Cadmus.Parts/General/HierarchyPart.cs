@@ -107,8 +107,10 @@ namespace Cadmus.Parts.General
 
             sb.Append(' ').Append(Y).Append('.').Append(X);
 
-            if (ParentId != null) sb.Append(" P=").Append(ParentId);
-            if (ChildrenIds?.Count > 0) sb.Append(" C:").Append(ChildrenIds.Count);
+            if (ParentId != null)
+                sb.Append(" P=").Append(ParentId);
+            if (ChildrenIds?.Count > 0)
+                sb.Append(" C:").Append(ChildrenIds.Count);
 
             return sb.ToString();
         }

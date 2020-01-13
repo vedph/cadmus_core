@@ -40,8 +40,9 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
+        /// Pins: <c>citation</c>=citation.
         /// </summary>
-        /// <returns>pins</returns>
+        /// <returns>Pins.</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
             return Citation != null ?
@@ -55,7 +56,7 @@ namespace Cadmus.Parts.General
         /// <summary>
         /// Get a single string representing the whole text, line by line.
         /// </summary>
-        /// <returns>text</returns>
+        /// <returns>Text.</returns>
         public string GetText()
         {
             return Lines == null ?
@@ -214,10 +215,14 @@ namespace Cadmus.Parts.General
                     if (i > start || y == location.A.Y) sb.Append(' ');
 
                     if (y == lastY && i == end)
+                    {
                         ExtractRangeLastTokenText(location, tokens[i - 1],
                             wholeToken, endMarker, sb);
+                    }
                     else
+                    {
                         sb.Append(tokens[i - 1]);
+                    }
                 }
             }
 
@@ -225,10 +230,10 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

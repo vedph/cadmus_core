@@ -30,12 +30,12 @@ namespace Cadmus.Parts.General
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// Each category is a pin, with name=<c>category</c> and value=category.
-        /// Pins are sorted by their name.
+        /// Pins are sorted by their value.
         /// </summary>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
-            if (Categories.Count == 0)
+            if (Categories == null || Categories.Count == 0)
                 return Enumerable.Empty<DataPin>();
 
             return from category in Categories.OrderBy(s => s)
@@ -46,11 +46,11 @@ namespace Cadmus.Parts.General
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
-            return "[Categories] " + string.Join(", ", Categories.OrderBy(s => s));
+            return "[Categories] " + string.Join(", ", Categories?.OrderBy(s => s));
         }
     }
 }

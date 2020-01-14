@@ -187,7 +187,7 @@ namespace Cadmus.Mongo.Test
             };
         }
 
-        private void SeedItemParts(IMongoDatabase db)
+        private void SeedParts(IMongoDatabase db)
         {
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
 
@@ -265,7 +265,7 @@ namespace Cadmus.Mongo.Test
             SeedFlags(db);
             SeedFacets(db);
             SeedItems(db);
-            SeedItemParts(db);
+            SeedParts(db);
             ClearHistory(db);
         }
         #endregion
@@ -569,6 +569,12 @@ namespace Cadmus.Mongo.Test
         public void GetItemParts_Items1And2_2()
         {
             DoGetItemParts_Items1And2_2();
+        }
+
+        [Fact]
+        public void GetPart_NotExisting_Null()
+        {
+            DoGetPart_NotExisting_Null();
         }
         // TODO
         #endregion

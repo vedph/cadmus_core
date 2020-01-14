@@ -886,6 +886,29 @@ namespace Cadmus.TestBase
             Assert.Equal(2, commentLayerPart.Fragments.Count);
         }
 
+        protected void DoGetPart_NotExisting_Null()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var part = repository.GetPart<CategoriesPart>("notexisting");
+
+            Assert.Null(part);
+        }
+
+        protected void DoGetPart_Existing_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            CategoriesPart part = repository.GetPart<CategoriesPart>("part-001");
+
+            Assert.NotNull(part);
+            Assert.Equal(2, part.Categories.Count);
+            Assert.Contains("alpha", part.Categories);
+            Assert.Contains("beta", part.Categories);
+        }
+
         // TODO
         #endregion
     }

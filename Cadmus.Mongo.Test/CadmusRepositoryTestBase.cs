@@ -292,6 +292,133 @@ namespace Cadmus.TestBase
         }
         #endregion
 
+        #region Thesauri
+        private void SeedThesauri(ICadmusRepository repository, int count)
+        {
+            for (int i = 1; i <= count; i++)
+            {
+                Thesaurus thesaurus = new Thesaurus($"t{i}@en");
+                for (int j = 1; j <= 5; j++)
+                {
+                    thesaurus.AddEntry(new ThesaurusEntry
+                        ($"entry{j}", $"value of entry{j}"));
+                }
+                repository.AddThesaurus(thesaurus);
+            }
+        }
+
+        protected void DoGetThesaurusIds_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 3);
+
+            IList<string> ids = repository.GetThesaurusIds();
+
+            Assert.Equal(3, ids.Count);
+            for (int i = 1; i <= 3; i++)
+            {
+                Assert.Equal($"t{i}@en", ids[i - 1]);
+            }
+        }
+
+        protected void DoGetThesaurus_NotExisting_Null()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 1);
+
+            Thesaurus thesaurus = repository.GetThesaurus("notexisting@en");
+
+            Assert.Null(thesaurus);
+        }
+
+        protected void DoGetThesaurus_Existing_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 2);
+
+            Thesaurus thesaurus = repository.GetThesaurus("t2@en");
+
+            Assert.NotNull(thesaurus);
+            Assert.Equal("en", thesaurus.GetLanguage());
+            var entries = thesaurus.GetEntries();
+            Assert.Equal(5, entries.Count);
+            for (int i = 1; i <= 5; i++)
+            {
+                Assert.Equal($"entry{i}", entries[i - 1].Id);
+                Assert.Equal($"value of entry{i}", entries[i - 1].Value);
+            }
+        }
+
+        protected void DoAddThesaurus_NotExisting_Added()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            SeedThesauri(repository, 1);
+
+            Thesaurus thesaurus = repository.GetThesaurus("t1@en");
+
+            Assert.NotNull(thesaurus);
+            Assert.Equal("en", thesaurus.GetLanguage());
+            IList<ThesaurusEntry> entries = thesaurus.GetEntries();
+            Assert.Equal(5, entries.Count);
+            for (int i = 1; i <= 5; i++)
+            {
+                Assert.Equal($"entry{i}", entries[i - 1].Id);
+                Assert.Equal($"value of entry{i}", entries[i - 1].Value);
+            }
+        }
+
+        protected void DoAddThesaurus_Existing_Updated()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 1);
+            Thesaurus thesaurus = repository.GetThesaurus("t1@en");
+            thesaurus.AddEntry(new ThesaurusEntry("added", "here I am"));
+
+            repository.AddThesaurus(thesaurus);
+
+            Assert.NotNull(thesaurus);
+            Assert.Equal("en", thesaurus.GetLanguage());
+            IList<ThesaurusEntry> entries = thesaurus.GetEntries();
+            Assert.Equal(6, entries.Count);
+            for (int i = 1; i <= 5; i++)
+            {
+                Assert.Equal($"entry{i}", entries[i - 1].Id);
+                Assert.Equal($"value of entry{i}", entries[i - 1].Value);
+            }
+            ThesaurusEntry entry = entries[5];
+            Assert.Equal("added", entry.Id);
+            Assert.Equal("here I am", entry.Value);
+        }
+
+        protected void DoDeleteThesaurus_NotExisting_Nope()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 1);
+
+            repository.DeleteThesaurus("notexisting");
+
+            Assert.Single(repository.GetThesaurusIds());
+        }
+
+        protected void DoDeleteThesaurus_Existing_Deleted()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 1);
+
+            repository.DeleteThesaurus("t1@en");
+
+            Assert.Empty(repository.GetThesaurusIds());
+        }
+        #endregion
+
         #region Items
         protected void DoGetItemsPage_1_Ok()
         {

@@ -342,6 +342,50 @@ namespace Cadmus.Mongo.Test
         }
         #endregion
 
+        #region Thesauri
+        [Fact]
+        public void GetThesaurusIds_Ok()
+        {
+            DoGetThesaurusIds_Ok();
+        }
+
+        [Fact]
+        public void GetThesaurus_NotExisting_Null()
+        {
+            DoGetThesaurus_NotExisting_Null();
+        }
+
+        [Fact]
+        public void GetThesaurus_Existing_Ok()
+        {
+            DoGetThesaurus_Existing_Ok();
+        }
+
+        [Fact]
+        public void AddThesaurus_NotExisting_Added()
+        {
+            DoAddThesaurus_NotExisting_Added();
+        }
+
+        [Fact]
+        public void AddThesaurus_Existing_Updated()
+        {
+            DoAddThesaurus_Existing_Updated();
+        }
+
+        [Fact]
+        public void DeleteThesaurus_NotExisting_Nope()
+        {
+            DoDeleteThesaurus_NotExisting_Nope();
+        }
+
+        [Fact]
+        public void DeleteThesaurus_Existing_Deleted()
+        {
+            DoDeleteThesaurus_Existing_Deleted();
+        }
+        #endregion
+
         #region Facets
         [Fact]
         public void GetFacets_Ok()

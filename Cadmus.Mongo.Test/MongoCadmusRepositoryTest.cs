@@ -601,6 +601,22 @@ namespace Cadmus.Mongo.Test
             DoGetPartContent_Existing_Ok();
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AddPart_NotExisting_Added(bool history)
+        {
+            DoAddPart_NotExisting_Added(history);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AddPart_Existing_Updated(bool history)
+        {
+            DoAddPart_Existing_Updated(history);
+        }
+
         // TODO
         #endregion
     }

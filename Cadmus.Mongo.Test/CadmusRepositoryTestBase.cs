@@ -866,7 +866,11 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            IList<IPart> parts = repository.GetItemParts(new[] { "item-001", "item-002" });
+            IList<IPart> parts = repository.GetItemParts(new[]
+            {
+                "item-001",
+                "item-002"
+            });
 
             Assert.Equal(3, parts.Count);
 
@@ -951,6 +955,67 @@ namespace Cadmus.TestBase
             Assert.Equal(2, part.Categories.Count);
             Assert.Contains("alpha", part.Categories);
             Assert.Contains("beta", part.Categories);
+        }
+
+        protected void DoAddPart_NotExisting_Added(bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            NotePart part = new NotePart
+            {
+                Id = "new",
+                ItemId = "item-001",
+                CreatorId = "Even",
+                UserId = "Even",
+                Tag = "tag",
+                Text = "Some text"
+            };
+            repository.AddPart(part, history);
+
+            NotePart part2 = repository.GetPart<NotePart>("new");
+            Assert.NotNull(part2);
+
+            // history
+            var historyParts = repository.GetHistoryParts(
+                new HistoryPartFilter
+                {
+                    ReferenceId = "new",
+                    PageNumber = 1,
+                    PageSize = 10
+                });
+            if (history)
+                Assert.Equal(1, historyParts.Total);
+            else
+                Assert.Equal(0, historyParts.Total);
+        }
+
+        protected void DoAddPart_Existing_Updated(bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            CategoriesPart part = repository.GetPart<CategoriesPart>("part-001");
+            part.Categories.Add("new");
+
+            repository.AddPart(part, history);
+
+            CategoriesPart part2 = repository.GetPart<CategoriesPart>("part-001");
+            Assert.NotNull(part2);
+            Assert.Equal(3, part2.Categories.Count);
+            Assert.Contains("new", part2.Categories);
+
+            // history
+            var historyParts = repository.GetHistoryParts(
+                new HistoryPartFilter
+                {
+                    ReferenceId = "part-001",
+                    PageNumber = 1,
+                    PageSize = 10
+                });
+            if (history)
+                Assert.Equal(1, historyParts.Total);
+            else
+                Assert.Equal(0, historyParts.Total);
         }
 
         // TODO

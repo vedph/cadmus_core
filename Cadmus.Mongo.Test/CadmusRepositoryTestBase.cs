@@ -909,6 +909,36 @@ namespace Cadmus.TestBase
             Assert.Contains("beta", part.Categories);
         }
 
+        protected void DoGetPartCreatorId_NotExisting_Null()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            string id = repository.GetPartCreatorId("notexisting");
+
+            Assert.Null(id);
+        }
+
+        protected void DoGetPartCreatorId_Existing_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            string id = repository.GetPartCreatorId("part-001");
+
+            Assert.Equal("Odd", id);
+        }
+
+        protected void DoGetPartContent_NotExisting_Null()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            string json = repository.GetPartContent("notexisting");
+
+            Assert.Null(json);
+        }
+
         // TODO
         #endregion
     }

@@ -13,7 +13,12 @@ using Xunit;
 
 namespace Cadmus.Mongo.Test
 {
-    [CollectionDefinition(name: "Mongo repository", DisableParallelization = true)]
+    // https://github.com/xunit/xunit/issues/1999
+
+    [CollectionDefinition(nameof(NonParallelResourceCollection), DisableParallelization = true)]
+    public class NonParallelResourceCollection { }
+
+    [Collection(nameof(NonParallelResourceCollection))]
     public class MongoCadmusRepositoryTest : CadmusRepositoryTestBase
     {
         private const string DB_NAME = "cadmus-test";

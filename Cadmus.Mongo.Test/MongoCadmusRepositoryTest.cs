@@ -595,6 +595,12 @@ namespace Cadmus.Mongo.Test
             DoGetPartContent_NotExisting_Null();
         }
 
+        [Fact]
+        public void GetPartContent_Existing_Ok()
+        {
+            DoGetPartContent_Existing_Ok();
+        }
+
         // TODO
         #endregion
     }

@@ -1125,6 +1125,8 @@ namespace Cadmus.Mongo
         /// <returns>Creator ID, or null.</returns>
         public string GetPartCreatorId(string id)
         {
+            EnsureClientCreated(_options.ConnectionString);
+
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             var filter = Builders<MongoPart>.Filter.Eq(p => p.Id, id);

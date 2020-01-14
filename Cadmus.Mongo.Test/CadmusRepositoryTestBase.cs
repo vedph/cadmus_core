@@ -939,6 +939,20 @@ namespace Cadmus.TestBase
             Assert.Null(json);
         }
 
+        protected void DoGetPartContent_Existing_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            string json = repository.GetPartContent("part-001");
+
+            Assert.NotNull(json);
+            var part = TestHelper.DeserializePart<CategoriesPart>(json);
+            Assert.Equal(2, part.Categories.Count);
+            Assert.Contains("alpha", part.Categories);
+            Assert.Contains("beta", part.Categories);
+        }
+
         // TODO
         #endregion
     }

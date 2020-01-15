@@ -924,7 +924,8 @@ namespace Cadmus.Mongo
 
                 MongoHistoryPart historyPart = new MongoHistoryPart(part)
                 {
-                    Content = json
+                    Content = json,
+                    Status = exists ? EditStatus.Updated : EditStatus.Created
                 };
 
                 db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)

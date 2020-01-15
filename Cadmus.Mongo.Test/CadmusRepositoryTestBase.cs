@@ -971,6 +971,7 @@ namespace Cadmus.TestBase
                 Tag = "tag",
                 Text = "Some text"
             };
+
             repository.AddPart(part, history);
 
             NotePart part2 = repository.GetPart<NotePart>("new");
@@ -985,9 +986,11 @@ namespace Cadmus.TestBase
                     PageSize = 10
                 });
             if (history)
+            {
                 Assert.Equal(1, historyParts.Total);
-            else
-                Assert.Equal(0, historyParts.Total);
+                Assert.Equal(EditStatus.Created, historyParts.Items[0].Status);
+            }
+            else Assert.Equal(0, historyParts.Total);
         }
 
         protected void DoAddPart_Existing_Updated(bool history)
@@ -1013,9 +1016,79 @@ namespace Cadmus.TestBase
                     PageSize = 10
                 });
             if (history)
+            {
                 Assert.Equal(1, historyParts.Total);
-            else
-                Assert.Equal(0, historyParts.Total);
+                Assert.Equal(EditStatus.Updated, historyParts.Items[0].Status);
+            }
+            else Assert.Equal(0, historyParts.Total);
+        }
+
+        protected void DoAddPartFromContent_NotExisting_Added(bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            NotePart part = new NotePart
+            {
+                Id = "new",
+                ItemId = "item-001",
+                CreatorId = "Even",
+                UserId = "Even",
+                Tag = "tag",
+                Text = "Some text"
+            };
+            string json = TestHelper.SerializePart(part);
+
+            repository.AddPartFromContent(json, history);
+
+            NotePart part2 = repository.GetPart<NotePart>("new");
+            Assert.NotNull(part2);
+
+            // history
+            var historyParts = repository.GetHistoryParts(
+                new HistoryPartFilter
+                {
+                    ReferenceId = "new",
+                    PageNumber = 1,
+                    PageSize = 10
+                });
+            if (history)
+            {
+                Assert.Equal(1, historyParts.Total);
+                Assert.Equal(EditStatus.Created, historyParts.Items[0].Status);
+            }
+            else Assert.Equal(0, historyParts.Total);
+        }
+
+        protected void DoAddPartFromContent_Existing_Updated(bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            CategoriesPart part = repository.GetPart<CategoriesPart>("part-001");
+            part.Categories.Add("new");
+            string json = TestHelper.SerializePart(part);
+
+            repository.AddPartFromContent(json, history);
+
+            CategoriesPart part2 = repository.GetPart<CategoriesPart>("part-001");
+            Assert.NotNull(part2);
+            Assert.Equal(3, part2.Categories.Count);
+            Assert.Contains("new", part2.Categories);
+
+            // history
+            var historyParts = repository.GetHistoryParts(
+                new HistoryPartFilter
+                {
+                    ReferenceId = "part-001",
+                    PageNumber = 1,
+                    PageSize = 10
+                });
+            if (history)
+            {
+                Assert.Equal(1, historyParts.Total);
+                Assert.Equal(EditStatus.Updated, historyParts.Items[0].Status);
+            }
+            else Assert.Equal(0, historyParts.Total);
         }
 
         // TODO

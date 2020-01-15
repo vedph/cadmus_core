@@ -961,16 +961,16 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
-
             NotePart part = new NotePart
             {
                 Id = "new",
                 ItemId = "item-001",
-                CreatorId = "Even",
-                UserId = "Even",
+                CreatorId = "Creator",
+                UserId = "Creator",
                 Tag = "tag",
                 Text = "Some text"
             };
+            DateTime now = DateTime.UtcNow;
 
             repository.AddPart(part, history);
 
@@ -988,7 +988,12 @@ namespace Cadmus.TestBase
             if (history)
             {
                 Assert.Equal(1, historyParts.Total);
-                Assert.Equal(EditStatus.Created, historyParts.Items[0].Status);
+                var hp = historyParts.Items[0];
+                Assert.Equal(EditStatus.Created, hp.Status);
+                Assert.Equal("Creator", hp.UserId);
+                Assert.Equal("Creator", hp.CreatorId);
+                Assert.True(hp.TimeCreated >= now);
+                Assert.True(hp.TimeModified >= now);
             }
             else Assert.Equal(0, historyParts.Total);
         }
@@ -999,6 +1004,8 @@ namespace Cadmus.TestBase
             ICadmusRepository repository = GetRepository();
             CategoriesPart part = repository.GetPart<CategoriesPart>("part-001");
             part.Categories.Add("new");
+            part.UserId = "Updater";
+            DateTime now = DateTime.UtcNow;
 
             repository.AddPart(part, history);
 
@@ -1018,7 +1025,12 @@ namespace Cadmus.TestBase
             if (history)
             {
                 Assert.Equal(1, historyParts.Total);
-                Assert.Equal(EditStatus.Updated, historyParts.Items[0].Status);
+                var hp = historyParts.Items[0];
+                Assert.Equal(EditStatus.Updated, hp.Status);
+                Assert.Equal("Updater", hp.UserId);
+                Assert.NotEqual("Updater", hp.CreatorId);
+                Assert.True(hp.TimeCreated <= now);
+                Assert.True(hp.TimeModified >= now);
             }
             else Assert.Equal(0, historyParts.Total);
         }
@@ -1027,17 +1039,17 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
-
             NotePart part = new NotePart
             {
                 Id = "new",
                 ItemId = "item-001",
-                CreatorId = "Even",
-                UserId = "Even",
+                CreatorId = "Creator",
+                UserId = "Creator",
                 Tag = "tag",
                 Text = "Some text"
             };
             string json = TestHelper.SerializePart(part);
+            DateTime now = DateTime.UtcNow;
 
             repository.AddPartFromContent(json, history);
 
@@ -1055,7 +1067,12 @@ namespace Cadmus.TestBase
             if (history)
             {
                 Assert.Equal(1, historyParts.Total);
-                Assert.Equal(EditStatus.Created, historyParts.Items[0].Status);
+                var hp = historyParts.Items[0];
+                Assert.Equal(EditStatus.Created, hp.Status);
+                Assert.Equal("Creator", hp.UserId);
+                Assert.Equal("Creator", hp.CreatorId);
+                Assert.True(hp.TimeCreated >= now);
+                Assert.True(hp.TimeModified >= now);
             }
             else Assert.Equal(0, historyParts.Total);
         }
@@ -1066,7 +1083,9 @@ namespace Cadmus.TestBase
             ICadmusRepository repository = GetRepository();
             CategoriesPart part = repository.GetPart<CategoriesPart>("part-001");
             part.Categories.Add("new");
+            part.UserId = "Updater";
             string json = TestHelper.SerializePart(part);
+            DateTime now = DateTime.UtcNow;
 
             repository.AddPartFromContent(json, history);
 
@@ -1086,12 +1105,76 @@ namespace Cadmus.TestBase
             if (history)
             {
                 Assert.Equal(1, historyParts.Total);
-                Assert.Equal(EditStatus.Updated, historyParts.Items[0].Status);
+                var hp = historyParts.Items[0];
+                Assert.Equal(EditStatus.Updated, hp.Status);
+                Assert.Equal("Updater", hp.UserId);
+                Assert.NotEqual("Updater", hp.CreatorId);
+                Assert.True(hp.TimeCreated <= now);
+                Assert.True(hp.TimeModified >= now);
             }
             else Assert.Equal(0, historyParts.Total);
         }
 
-        // TODO
+        protected void DoDeletePart_NotExisting_Nope(bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            repository.DeletePart("notexisting", "Killer", history);
+
+            // history
+            if (history)
+            {
+                var historyParts = repository.GetHistoryParts(
+                    new HistoryPartFilter
+                    {
+                        ReferenceId = "notexisting",
+                        PageNumber = 1,
+                        PageSize = 10
+                    });
+                Assert.Equal(0, historyParts.Total);
+            }
+        }
+
+        protected void DoDeletePart_Existing_Deleted(bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            DateTime now = DateTime.UtcNow;
+
+            repository.DeletePart("part-001", "Killer", history);
+
+            CategoriesPart part = repository.GetPart<CategoriesPart>("part-001");
+            Assert.Null(part);
+
+            // history
+            var historyParts = repository.GetHistoryParts(
+                new HistoryPartFilter
+                {
+                    ReferenceId = "part-001",
+                    PageNumber = 1,
+                    PageSize = 10
+                });
+            if (history)
+            {
+                Assert.Equal(1, historyParts.Total);
+                Assert.Equal(EditStatus.Deleted, historyParts.Items[0].Status);
+                var hp = historyParts.Items[0];
+                Assert.Equal("Killer", hp.UserId);
+                Assert.NotEqual("Killer", hp.CreatorId);
+                Assert.True(hp.TimeCreated <= now);
+                Assert.True(hp.TimeModified >= now);
+            }
+            else Assert.Equal(0, historyParts.Total);
+        }
         #endregion
+
+        // TODO: test GetHistoryItems
+        // TODO: test GetHistoryItem
+        // TODO: test AddHistoryItem
+        // TODO: test DeleteHistoryItem
+        // TODO: test GetHistoryParts
+        // TODO: test GetHistoryPart
+        // TODO: test DeleteHistoryPart
     }
 }

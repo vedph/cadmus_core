@@ -632,6 +632,22 @@ namespace Cadmus.Mongo.Test
         {
             DoAddPartFromContent_Existing_Updated(history);
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void DeletePart_NotExisting_Nope(bool history)
+        {
+            DoDeletePart_NotExisting_Nope(history);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void DeletePart_Existing_Deleted(bool history)
+        {
+            DoDeletePart_Existing_Deleted(history);
+        }
         // TODO
         #endregion
     }

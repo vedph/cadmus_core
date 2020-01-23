@@ -113,5 +113,14 @@ namespace Cadmus.Core.Properties {
                 return ResourceManager.GetString("MultipleBaseTexts", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid profile: no facet defined.
+        /// </summary>
+        internal static string NoFacetInProfile {
+            get {
+                return ResourceManager.GetString("NoFacetInProfile", resourceCulture);
+            }
+        }
     }
 }

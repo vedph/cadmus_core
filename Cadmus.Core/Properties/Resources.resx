@@ -135,4 +135,7 @@
   <data name="MultipleBaseTexts" xml:space="preserve">
     <value>Invalid profile: multiple base text parts defined</value>
   </data>
+  <data name="NoFacetInProfile" xml:space="preserve">
+    <value>Invalid profile: no facet defined</value>
+  </data>
 </root>

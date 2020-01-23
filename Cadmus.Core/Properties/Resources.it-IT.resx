@@ -129,4 +129,7 @@
   <data name="MultipleBaseTexts" xml:space="preserve">
     <value>Profile non valido: più di una parte definita come testo di base</value>
   </data>
+  <data name="NoFacetInProfile" xml:space="preserve">
+    <value>Profilo non valido: nessuna facet definita</value>
+  </data>
 </root>

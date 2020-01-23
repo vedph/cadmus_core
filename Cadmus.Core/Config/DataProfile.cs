@@ -28,7 +28,7 @@ namespace Cadmus.Core.Config
             Facets?.Length > 0 && Facets.Any(f => f.PartDefinitions.Any(d => condition(d)));
 
         /// <summary>
-        /// Returns true if this profile is valid.
+        /// Validate this profile.
         /// </summary>
         /// <remarks>
         /// To be valid, a data profile must:
@@ -49,13 +49,14 @@ namespace Cadmus.Core.Config
         /// <returns>
         /// An error message if the profile is not valid; else, null.
         /// </returns>
-        public string IsValid()
+        public string Validate()
         {
-            if (Facets == null || Facets.Length == 0) return null;
+            if (Facets == null || Facets.Length == 0)
+                return Properties.Resources.NoFacetInProfile;
 
             // any layers?
             if (HasAnyPart(def => def.RoleId?.StartsWith(
-                    PartBase.FR_PREFIX, StringComparison.Ordinal) == true))
+                PartBase.FR_PREFIX, StringComparison.Ordinal) == true))
             {
                 // there must be a base text
                 if (!HasAnyPart(def => def.RoleId == PartBase.BASE_TEXT_ROLE_ID))
@@ -73,8 +74,8 @@ namespace Cadmus.Core.Config
                     return Properties.Resources.MultipleBaseTexts;
                 }
             }
-            // TODO:
-            throw new NotImplementedException();
+
+            return null;
         }
     }
 }

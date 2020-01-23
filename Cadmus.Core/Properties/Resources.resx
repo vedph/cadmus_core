@@ -129,4 +129,10 @@
   <data name="InvalidTokenPoint" xml:space="preserve">
     <value>Invalid token point: "{0}"</value>
   </data>
+  <data name="LayerPartsWithoutBaseText" xml:space="preserve">
+    <value>Invalid profile: layer part(s) are defined without a base text part</value>
+  </data>
+  <data name="MultipleBaseTexts" xml:space="preserve">
+    <value>Invalid profile: multiple base text parts defined</value>
+  </data>
 </root>

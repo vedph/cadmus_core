@@ -21,6 +21,13 @@ namespace Cadmus.Core
         public const string FR_PREFIX = "fr.";
 
         /// <summary>
+        /// The role ID reserved for the base text part. There can be only 1
+        /// part type with this role; that part represents the base text
+        /// referenced by text layers.
+        /// </summary>
+        public const string BASE_TEXT_ROLE_ID = "base-text";
+
+        /// <summary>
         /// Gets or sets the part identifier.
         /// </summary>
         public string Id { get; set; }

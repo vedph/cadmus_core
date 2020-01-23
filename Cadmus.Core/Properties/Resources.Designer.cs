@@ -19,7 +19,7 @@ namespace Cadmus.Core.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -93,6 +93,24 @@ namespace Cadmus.Core.Properties {
         internal static string InvalidTokenPoint {
             get {
                 return ResourceManager.GetString("InvalidTokenPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid profile: layer part(s) are defined without a base text part.
+        /// </summary>
+        internal static string LayerPartsWithoutBaseText {
+            get {
+                return ResourceManager.GetString("LayerPartsWithoutBaseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid profile: multiple base text parts defined.
+        /// </summary>
+        internal static string MultipleBaseTexts {
+            get {
+                return ResourceManager.GetString("MultipleBaseTexts", resourceCulture);
             }
         }
     }

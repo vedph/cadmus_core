@@ -232,4 +232,4 @@ Here is a profile sample for thesauri, representing a set of language names, loc
 ]
 ```
 
-Note that currently the web UI frontend implements a convention by which if a thesaurus with id `model-types@en` exists, it will use to map part type IDs like `net.fusisoft.note` to user-friendly names like `note`. If such thesaurus does not exist, or is not complete, no error will occur; rather, the raw type IDs will be used instead of the corresponding user-friendly names.
+Note that currently the web UI frontend implements a convention by which if a thesaurus with id `model-types@en` exists, it will be used to map raw part type IDs like `net.fusisoft.note` to user-friendly names like `note`. If such thesaurus does not exist, or is not complete, no error will occur; rather, the raw type IDs will be used instead of the corresponding user-friendly names.

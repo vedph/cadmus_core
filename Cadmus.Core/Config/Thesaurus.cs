@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Cadmus.Core.Config
@@ -33,9 +32,10 @@ namespace Cadmus.Core.Config
         /// Gets or sets the tag's unique identifier.
         /// </summary>
         /// <value>The tag ID must not be null, and should contain only letters
-        /// (a-z or A-Z), digits (0-9), underscores, dashes, dots (which can
-        /// be used to represent a hierarchy), and end with a language suffix
-        /// like in RDF, e.g. <c>@en</c> = English.</value>
+        /// (a-z or A-Z), digits (0-9), underscores, dashes, dots, and end with
+        /// a language suffix like in RDF, using ISO639-2 or ISO639-3, e.g.
+        /// <c>@en</c> (or <c>eng</c>) = English. The choice between ISO639-2
+        /// and -3 is up to the user, but once set it should be coherent.</value>
         /// <exception cref="ArgumentNullException">null value</exception>
         /// <exception cref="ArgumentException">invalid value</exception>
         public string Id { get; }
@@ -49,7 +49,7 @@ namespace Cadmus.Core.Config
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            if (!Regex.IsMatch(id, @"^[a-zA-Z0-9_\-\.]+\@[a-z]{2}$"))
+            if (!Regex.IsMatch(id, @"^[a-zA-Z0-9_\-\.]+\@[a-z]{2,3}$"))
             {
                 throw new ArgumentException(LocalizedStrings.Format(
                     Properties.Resources.InvalidTagSetId, id));
@@ -63,12 +63,12 @@ namespace Cadmus.Core.Config
         /// <summary>
         /// Gets the language of the tags in this set, as extracted from
         /// the set <see cref="Id"/>. If not set there, it defaults to English
-        /// (<c>en</c>).
+        /// (ISO639-2: <c>en</c>).
         /// </summary>
-        /// <returns>ISO 639-2 language code</returns>
+        /// <returns>ISO 639-2/-3 language code.</returns>
         public string GetLanguage()
         {
-            Match m = Regex.Match(Id, @"\@([a-z]{2})$");
+            Match m = Regex.Match(Id, @"\@([a-z]{2,3})$");
             return m.Success? m.Groups[1].Value : "en";
         }
 
@@ -111,10 +111,10 @@ namespace Cadmus.Core.Config
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

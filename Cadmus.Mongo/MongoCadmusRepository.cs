@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
@@ -227,8 +228,12 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets the thesaurus with the specified ID.
         /// </summary>
-        /// <param name="id">The thesaurus ID.</param>
-        /// <returns>tag set, or null if not found</returns>
+        /// <param name="id">The thesaurus ID. This usually should include the
+        /// language code suffix. When this language is not found, the repository
+        /// tries to fall back to these languages (in this order): <c>eng</c>,
+        /// <c>en</c>, or no language at all. If there is still no match, null
+        /// will be returned.</param>
+        /// <returns>Thesaurus, or null if not found.</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
         public Thesaurus GetThesaurus(string id)
         {
@@ -237,10 +242,26 @@ namespace Cadmus.Mongo
             EnsureClientCreated(_options.ConnectionString);
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
-            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
+                .AsQueryable();
 
-            MongoThesaurus mongo = thesauri.AsQueryable()
-                .FirstOrDefault(set => set.Id == id);
+            MongoThesaurus mongo = thesauri.FirstOrDefault(set => set.Id == id);
+
+            // if not found and not @en, try with @eng, @en
+            if (mongo == null
+                && !id.EndsWith("@en", StringComparison.OrdinalIgnoreCase))
+            {
+                string[] langs = new[] { "@eng", "@en", "" };
+                string bareId = Regex.Replace(id, @"\@[a-z]{2,3}$", "");
+
+                for (int i = 0; i < langs.Length; i++)
+                {
+                    string fallbackId = bareId + langs[i];
+                    mongo = thesauri.FirstOrDefault(set => set.Id == id);
+                    if (mongo != null) break;
+                }
+            }
+
             return mongo?.ToThesaurus();
         }
 

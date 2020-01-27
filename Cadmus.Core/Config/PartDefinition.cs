@@ -34,7 +34,8 @@ namespace Cadmus.Core.Config
         public bool IsRequired { get; set; }
 
         /// <summary>
-        /// Gets or sets the color key.
+        /// Gets or sets the color key, which can be used to visually mark
+        /// parts when presenting them.
         /// </summary>
         /// <value>The color key, with format RRGGBB.</value>
         public string ColorKey { get; set; }
@@ -67,10 +68,10 @@ namespace Cadmus.Core.Config
         public string EditorKey { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

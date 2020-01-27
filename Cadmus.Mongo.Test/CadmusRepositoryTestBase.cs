@@ -961,6 +961,7 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            DateTime now = DateTime.UtcNow;
             NotePart part = new NotePart
             {
                 Id = "new",
@@ -970,7 +971,6 @@ namespace Cadmus.TestBase
                 Tag = "tag",
                 Text = "Some text"
             };
-            DateTime now = DateTime.UtcNow;
 
             repository.AddPart(part, history);
 
@@ -992,8 +992,8 @@ namespace Cadmus.TestBase
                 Assert.Equal(EditStatus.Created, hp.Status);
                 Assert.Equal("Creator", hp.UserId);
                 Assert.Equal("Creator", hp.CreatorId);
-                Assert.True(hp.TimeCreated >= now);
-                Assert.True(hp.TimeModified >= now);
+                Assert.True((int)(hp.TimeCreated - now).TotalSeconds >= 0);
+                Assert.True((int)(hp.TimeModified - now).TotalSeconds >= 0);
             }
             else Assert.Equal(0, historyParts.Total);
         }
@@ -1039,6 +1039,7 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            DateTime now = DateTime.UtcNow;
             NotePart part = new NotePart
             {
                 Id = "new",
@@ -1049,7 +1050,6 @@ namespace Cadmus.TestBase
                 Text = "Some text"
             };
             string json = TestHelper.SerializePart(part);
-            DateTime now = DateTime.UtcNow;
 
             repository.AddPartFromContent(json, history);
 
@@ -1071,8 +1071,8 @@ namespace Cadmus.TestBase
                 Assert.Equal(EditStatus.Created, hp.Status);
                 Assert.Equal("Creator", hp.UserId);
                 Assert.Equal("Creator", hp.CreatorId);
-                Assert.True(hp.TimeCreated >= now);
-                Assert.True(hp.TimeModified >= now);
+                Assert.True((int)(hp.TimeCreated - now).TotalSeconds >= 0);
+                Assert.True((int)(hp.TimeModified - now).TotalSeconds >= 0);
             }
             else Assert.Equal(0, historyParts.Total);
         }

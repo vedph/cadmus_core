@@ -41,6 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{461AF59A-C6B
 		Doc\core.md = Doc\core.md
 		Doc\index.md = Doc\index.md
 		Doc\packages.md = Doc\packages.md
+		Doc\profiles.md = Doc\profiles.md
 		Doc\seeding.md = Doc\seeding.md
 	EndProjectSection
 EndProject
@@ -50,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Parts.Test", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Philology.Parts.Test", "Cadmus.Seed.Philology.Parts.Test\Cadmus.Seed.Philology.Parts.Test.csproj", "{3D097ECE-8572-411F-B4DB-16A08E2DBC39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Parts.Test", "Cadmus.Parts.Test\Cadmus.Parts.Test.csproj", "{10334072-8A33-46AF-B1DA-50E30DE49AE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Parts.Test", "Cadmus.Parts.Test\Cadmus.Parts.Test.csproj", "{10334072-8A33-46AF-B1DA-50E30DE49AE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

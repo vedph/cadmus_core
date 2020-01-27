@@ -384,6 +384,8 @@ A Cadmus database has a data profile defined by three main components:
 
 This profile can be defined in a text file. An `IDataProfileSerializer` implementation is used to deserialize the profile from its format; its JSON implementation is `JsonDataProfileSerializer`.
 
+For more information about profiles, see the [profiles](profiles.md) page.
+
 ### C.1. Item Facets
 
 Items have a dynamic model, defined by the parts they contain.
@@ -396,12 +398,6 @@ The **part definition** includes:
 - a human readable *name* and *description*;
 - a flag specifying whether the part is *required*;
 - further presentational aspects: a *color key*, a *group key*, a *sort key*, and an *editor key*. These are used to present parts with different colors, group them, and sort them in a UI.
-
-Note: the **editor key** can be used to group parts according to the frontend editors organization. Whereas `GroupKey` is a purely presentational feature, `EditorKey` is related to how the frontend organizes its editing components in different modules.
-
-For instance, the same frontend module might include two parts whose definitions have different `GroupKey`'s, so that they get displayed in different groups, but their editors are found in the same component. This is a property used by frontend only, and has no usage in the database or in the backend.
-
-A set of parts definitions determines an item's facet, defined for presentational and validation purposes during editing. A **facet definition** (`FacetDefinition`) has a number of fixed metadata (ID, label, description), and a collection of part definitions.
 
 ### C.2. Flag Definitions
 

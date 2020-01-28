@@ -3,6 +3,7 @@
     internal sealed class ThesaurusOptions
     {
         public string Id { get; set; }
+        public string TargetId { get; set; }
         public ThesaurusEntryOptions[] Entries { get; set; }
     }
 

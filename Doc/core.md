@@ -354,6 +354,7 @@ This namespace contains configuration-specific components, used to define the Ca
     Thesaurus : -Dictionary<string, ThesaurusEntry> _entries
     Thesaurus : -List<string> _sortedIds
     Thesaurus : +string Id
+    Thesaurus : +string TargetId
     Thesaurus : +Thesaurus(string id)
     Thesaurus : +string GetLanguage()
     Thesaurus : +IList<ThesaurusEntry> GetEntries()

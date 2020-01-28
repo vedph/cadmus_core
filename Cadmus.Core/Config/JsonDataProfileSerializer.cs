@@ -41,7 +41,10 @@ namespace Cadmus.Core.Config
                 int i = 0;
                 foreach (ThesaurusOptions to in options.Thesauri)
                 {
-                    Thesaurus thesaurus = new Thesaurus(to.Id);
+                    Thesaurus thesaurus = new Thesaurus(to.Id)
+                    {
+                        TargetId = to.TargetId
+                    };
                     foreach (ThesaurusEntryOptions eo in to.Entries)
                         thesaurus.AddEntry(new ThesaurusEntry(eo.Id, eo.Value));
 

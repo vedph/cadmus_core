@@ -233,3 +233,18 @@ Here is a profile sample for thesauri, representing a set of language names, loc
 ```
 
 Note that currently the web UI frontend implements a convention by which if a thesaurus with id `model-types@en` exists, it will be used to map raw part type IDs like `net.fusisoft.note` to user-friendly names like `note`. If such thesaurus does not exist, or is not complete, no error will occur; rather, the raw type IDs will be used instead of the corresponding user-friendly names.
+
+### Thesauri Aliases
+
+Additionally, thesauri allow for an aliasing mechanism. This may be useful when your frontend is aggregating different editors which might use different identifiers for the same thesaurus resource. In this case, you can define a thesaurus having only its `id` property, equal to the alias, and a `targetId` property, equal to the identifier of the target thesaurus. No entries will be set for the alias. Once this alias is set, Cadmus will return the target thesaurus when requested for the alias thesaurus.
+
+For instance, say you want to retrieve the `languages@en` thesaurus using two different identifiers: `languages@en`, and the alias `ui-languages@en`. You could just add this thesaurus to the above sample:
+
+```json
+{
+    "id": "ui-languages@en",
+    "targetId": "languages@en"
+}
+```
+
+This way, the languages thesaurus would be retrieved whatever ID you use: `languages@en` or the alias `ui-languages@en`, without having to duplicate resources or changing the frontend components.

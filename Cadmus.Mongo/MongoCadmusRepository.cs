@@ -233,7 +233,9 @@ namespace Cadmus.Mongo
         /// tries to fall back to these languages (in this order): <c>eng</c>,
         /// <c>en</c>, or no language at all. If there is still no match, null
         /// will be returned.</param>
-        /// <returns>Thesaurus, or null if not found.</returns>
+        /// <returns>Thesaurus, or null if not found. Notice that when the
+        /// requested thesaurus is an alias, it is its target thesaurus that
+        /// will be returned, if any.</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
         public Thesaurus GetThesaurus(string id)
         {
@@ -245,22 +247,29 @@ namespace Cadmus.Mongo
             var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
                 .AsQueryable();
 
-            MongoThesaurus mongo = thesauri.FirstOrDefault(set => set.Id == id);
-
-            // if not found and not @en, try with @eng, @en
-            if (mongo == null
-                && !id.EndsWith("@en", StringComparison.OrdinalIgnoreCase))
+            MongoThesaurus mongo;
+            do
             {
-                string[] langs = new[] { "@eng", "@en", "" };
-                string bareId = Regex.Replace(id, @"\@[a-z]{2,3}$", "");
+                mongo = thesauri.FirstOrDefault(set => set.Id == id);
 
-                for (int i = 0; i < langs.Length; i++)
+                // if not found and not @en, try with @eng, @en
+                if (mongo == null
+                    && !id.EndsWith("@en", StringComparison.OrdinalIgnoreCase))
                 {
-                    string fallbackId = bareId + langs[i];
-                    mongo = thesauri.FirstOrDefault(set => set.Id == id);
-                    if (mongo != null) break;
+                    string[] langs = new[] { "@eng", "@en", "" };
+                    string bareId = Regex.Replace(id, @"\@[a-z]{2,3}$", "");
+
+                    for (int i = 0; i < langs.Length; i++)
+                    {
+                        string fallbackId = bareId + langs[i];
+                        mongo = thesauri.FirstOrDefault(set => set.Id == id);
+                        if (mongo != null) break;
+                    }
                 }
-            }
+
+                // if this is an alias, repeat the search
+                if (mongo?.TargetId != null) id = mongo.TargetId;
+            } while (mongo?.TargetId != null);
 
             return mongo?.ToThesaurus();
         }

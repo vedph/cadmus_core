@@ -41,6 +41,14 @@ namespace Cadmus.Core.Config
         public string Id { get; }
 
         /// <summary>
+        /// Gets or sets the target thesaurus identifier. This is used only
+        /// for those thesauri which are just aliases to another thesaurus.
+        /// When this property is not null, this is an alias and should have
+        /// no entries. Otherwise, it is a regular thesaurus with entries.
+        /// </summary>
+        public string TargetId { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Thesaurus"/> class.
         /// </summary>
         /// <param name="id">The identifier.</param>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using Cadmus.Core.Config;
 using MongoDB.Bson.Serialization.Attributes;
@@ -21,6 +20,11 @@ namespace Cadmus.Mongo
         /// </summary>
         [BsonId]
         public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target identifier (for aliases).
+        /// </summary>
+        public string TargetId { get; set; }
 
         /// <summary>
         /// Gets or sets the tags.
@@ -45,6 +49,7 @@ namespace Cadmus.Mongo
             if (thesaurus == null) throw new ArgumentNullException(nameof(thesaurus));
 
             Id = thesaurus.Id;
+            TargetId = thesaurus.TargetId;
             Entries = new List<MongoThesaurusEntry>();
             foreach (ThesaurusEntry entry in thesaurus.GetEntries())
                 Entries.Add(new MongoThesaurusEntry(entry));
@@ -56,17 +61,20 @@ namespace Cadmus.Mongo
         /// <returns>Thesaurus.</returns>
         public Thesaurus ToThesaurus()
         {
-            Thesaurus thesaurus = new Thesaurus(Id);
+            Thesaurus thesaurus = new Thesaurus(Id)
+            {
+                TargetId = TargetId
+            };
             foreach (MongoThesaurusEntry entry in Entries)
                 thesaurus.AddEntry(entry.ToThesaurusEntry());
             return thesaurus;
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

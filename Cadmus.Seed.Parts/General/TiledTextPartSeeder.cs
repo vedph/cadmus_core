@@ -8,11 +8,11 @@ using System.Globalization;
 namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
-    /// Token-based text part seeder.
-    /// Tag: <c>seed.net.fusisoft.token-text</c>.
+    /// Tiled text part seeder.
     /// </summary>
-    [Tag("seed.net.fusisoft.token-text")]
-    public sealed class TokenTextPartSeeder : PartSeederBase
+    /// <seealso cref="PartSeederBase" />
+    [Tag("seed.net.fusisoft.tiled-text")]
+    public sealed class TiledTextPartSeeder : PartSeederBase
     {
         /// <summary>
         /// Creates and seeds a new part.
@@ -31,24 +31,50 @@ namespace Cadmus.Seed.Parts.General
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
 
-            TokenTextPart part = new TokenTextPart();
+            TiledTextPart part = new TiledTextPart();
             SetPartMetadata(part, roleId, item);
 
             // citation
             part.Citation = Randomizer.Seed.Next(1, 100)
                 .ToString(CultureInfo.InvariantCulture);
 
-            // from 2 to 10 lines
-            string text = new Faker().Lorem.Sentences(
+            // from 2 to 10 rows
+            var faker = new Faker();
+            string text = faker.Lorem.Sentences(
                 Randomizer.Seed.Next(2, 11));
             int y = 1;
             foreach (string line in text.Split('\n'))
             {
-                part.Lines.Add(new TextLine
+                // row
+                TextTileRow row = new TextTileRow
                 {
                     Y = y++,
-                    Text = line.Trim()
-                });
+                };
+                // row's data
+                for (int i = 0; i < Randomizer.Seed.Next(0, 4); i++)
+                {
+                    row.Data[$"d{(char)(i + 97)}"] = faker.Lorem.Word();
+                }
+
+                // add tiles in row
+                int x = 1;
+                foreach (string token in line.Trim().Split(' '))
+                {
+                    TextTile tile = new TextTile
+                    {
+                        X = x++,
+                    };
+                    // text
+                    tile.Data[TextTileRow.TEXT_DATA_NAME] = token;
+                    // other data
+                    for (int i = 0; i < Randomizer.Seed.Next(0, 11); i++)
+                    {
+                        tile.Data[$"d{(char)(i + 97)}"] = faker.Lorem.Word();
+                    }
+                    row.Tiles.Add(tile);
+                }
+
+                part.Rows.Add(row);
             }
 
             return part;

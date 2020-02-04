@@ -30,7 +30,7 @@ namespace Cadmus.Seed.Parts.Test
             Dictionary<string, IPartSeeder> seeders = _factory.GetPartSeeders();
 
             Assert.NotNull(seeders);
-            Assert.Equal(6, seeders.Count);
+            Assert.Equal(8, seeders.Count);
 
             string key = "net.fusisoft.categories";
             Assert.True(seeders.ContainsKey(key));
@@ -55,6 +55,22 @@ namespace Cadmus.Seed.Parts.Test
             key = "net.fusisoft.token-text-layer";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TokenTextLayerPartSeeder);
+
+            key = "net.fusisoft.token-text";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as TokenTextPartSeeder);
+
+            key = "net.fusisoft.token-text-layer";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as TokenTextLayerPartSeeder);
+
+            key = "net.fusisoft.tiled-text";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as TiledTextPartSeeder);
+
+            key = "net.fusisoft.tiled-text-layer";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as TiledTextLayerPartSeeder);
         }
 
         [Fact]

@@ -12,6 +12,8 @@ Guidelines for **implementing a part**:
 
 - *do not add any logic* to the part. The part is just a POCO object modeling the data it represents, and should have no logic. The only piece of logic required is the method returning the part's data pins, which is just a form of reflecting on the part's data themselves, e.g. for indexing.
 
+- if creating a part representing a *base text* for text layers, implement the `IHasText` interface by providing a `GetText()` method which, whatever the part's model, produces a single string representing its whole text. The same interface should be implemented whenever your part has some rather long piece of free, unstructured text you might want to be included in processes like full-text indexing.
+
 - consider that the part will be subject to automatic serialization and deserialization. As the part is just a POCO object, this should not pose any issue.
 
 **Part template** sample (in the following template replace `__NAME__` with your part's name, minus the `Part` suffix):

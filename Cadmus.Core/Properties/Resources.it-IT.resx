@@ -124,12 +124,15 @@
     <value>Punto di token non valido: "{0}"</value>
   </data>
   <data name="LayerPartsWithoutBaseText" xml:space="preserve">
-    <value>Profilo non valido: parti di strato definite senza testo di base</value>
+    <value>Profilo non valido: parti di strato definite senza testo di base nella facet "{0}"</value>
   </data>
   <data name="MultipleBaseTexts" xml:space="preserve">
-    <value>Profile non valido: più di una parte definita come testo di base</value>
+    <value>Profile non valido: più di una parte definita come testo di base nella facet "{0}"</value>
   </data>
   <data name="NoFacetInProfile" xml:space="preserve">
     <value>Profilo non valido: nessuna facet definita</value>
+  </data>
+  <data name="NoPartInFacet" xml:space="preserve">
+    <value>Profilo non valido: nessuna parte nella facet "{0}"</value>
   </data>
 </root>

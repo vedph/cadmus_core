@@ -97,7 +97,7 @@ namespace Cadmus.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid profile: layer part(s) are defined without a base text part.
+        ///   Looks up a localized string similar to Invalid profile: layer part(s) are defined without a base text part in facet &quot;{0}&quot;.
         /// </summary>
         internal static string LayerPartsWithoutBaseText {
             get {
@@ -106,7 +106,7 @@ namespace Cadmus.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid profile: multiple base text parts defined.
+        ///   Looks up a localized string similar to Invalid profile: multiple base text parts defined in facet &quot;{0}&quot;.
         /// </summary>
         internal static string MultipleBaseTexts {
             get {
@@ -120,6 +120,15 @@ namespace Cadmus.Core.Properties {
         internal static string NoFacetInProfile {
             get {
                 return ResourceManager.GetString("NoFacetInProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid profile: no part in facet &quot;{0}&quot;.
+        /// </summary>
+        internal static string NoPartInFacet {
+            get {
+                return ResourceManager.GetString("NoPartInFacet", resourceCulture);
             }
         }
     }

@@ -130,12 +130,15 @@
     <value>Invalid token point: "{0}"</value>
   </data>
   <data name="LayerPartsWithoutBaseText" xml:space="preserve">
-    <value>Invalid profile: layer part(s) are defined without a base text part</value>
+    <value>Invalid profile: layer part(s) are defined without a base text part in facet "{0}"</value>
   </data>
   <data name="MultipleBaseTexts" xml:space="preserve">
-    <value>Invalid profile: multiple base text parts defined</value>
+    <value>Invalid profile: multiple base text parts defined in facet "{0}"</value>
   </data>
   <data name="NoFacetInProfile" xml:space="preserve">
     <value>Invalid profile: no facet defined</value>
+  </data>
+  <data name="NoPartInFacet" xml:space="preserve">
+    <value>Invalid profile: no part in facet "{0}"</value>
   </data>
 </root>

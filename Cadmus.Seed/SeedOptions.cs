@@ -14,13 +14,6 @@ namespace Cadmus.Seed
         public int? Seed { get; set; }
 
         /// <summary>
-        /// Gets or sets the base text part type identifier.
-        /// Usually this is <c>net.fusisoft.token-text</c>.
-        /// This value is required for seeding fragments.
-        /// </summary>
-        public string BaseTextPartTypeId { get; set; }
-
-        /// <summary>
         /// Gets or sets the users names to be randomly picked for assigning
         /// users to seeded data.
         /// </summary>

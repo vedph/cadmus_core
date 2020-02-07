@@ -24,25 +24,30 @@ namespace Cadmus.Core.Config
         /// </summary>
         public Thesaurus[] Thesauri { get; set; }
 
-        private bool HasAnyPart(Func<PartDefinition, bool> condition) =>
-            Facets?.Length > 0 && Facets.Any(f => f.PartDefinitions.Any(d => condition(d)));
-
         /// <summary>
         /// Validate this profile.
         /// </summary>
         /// <remarks>
-        /// To be valid, a data profile must:
+        /// These conditions are checked:
         /// <list type="bullet">
         /// <item>
-        /// <description>have at least 1 facet definition;</description>
+        /// <description>there must be at least 1 facet definition;</description>
         /// </item>
         /// <item>
-        /// <description>if any definition refers to a layer, have a part with
-        /// role ID = <see cref="PartBase.BASE_TEXT_ROLE_ID"/>;</description>
+        /// <description>there must be at least 1 part definition inside
+        /// each facet definition;</description>
         /// </item>
         /// <item>
-        /// <description>have no more than 1 part definition with role ID =
-        /// <see cref="PartBase.BASE_TEXT_ROLE_ID"/>.</description>
+        /// <description>if a facet definition contains a part definition
+        /// referring to a layer (=with a role ID starting with
+        /// <see cref="PartBase.FR_PREFIX"/>), the same facet must have a part
+        /// with role ID = <see cref="PartBase.BASE_TEXT_ROLE_ID"/>, representing
+        /// its base text;</description>
+        /// </item>
+        /// <item>
+        /// <description>in each facet, there cannot be more than 1 part
+        /// definition with role ID = <see cref="PartBase.BASE_TEXT_ROLE_ID"/>.
+        /// </description>
         /// </item>
         /// </list>
         /// </remarks>
@@ -51,27 +56,42 @@ namespace Cadmus.Core.Config
         /// </returns>
         public string Validate()
         {
+            // at least 1 facet
             if (Facets == null || Facets.Length == 0)
                 return Properties.Resources.NoFacetInProfile;
 
-            // any layers?
-            if (HasAnyPart(def => def.RoleId?.StartsWith(
-                PartBase.FR_PREFIX, StringComparison.Ordinal) == true))
+            // at least 1 part per facet
+            FacetDefinition emptyFacet = Array.Find(
+                Facets, f => f.PartDefinitions.Count == 0);
+            if (emptyFacet != null)
             {
-                // there must be a base text
-                if (!HasAnyPart(def => def.RoleId == PartBase.BASE_TEXT_ROLE_ID))
-                    return Properties.Resources.LayerPartsWithoutBaseText;
+                return LocalizedStrings.Format(
+                    Properties.Resources.NoPartInFacet,
+                    emptyFacet.Id);
             }
 
-            // single base text
-            int n = 0;
+            // layers imply a single base text part
             foreach (FacetDefinition facet in Facets)
             {
-                n += facet.PartDefinitions.Count(
-                    d => d.RoleId == PartBase.BASE_TEXT_ROLE_ID);
-                if (n > 1)
+                // any layers?
+                if (facet.PartDefinitions.Any(def => def.RoleId?.StartsWith(
+                    PartBase.FR_PREFIX, StringComparison.Ordinal) == true))
                 {
-                    return Properties.Resources.MultipleBaseTexts;
+                    // there must be a base text
+                    int count = facet.PartDefinitions.Count(
+                        def => def.RoleId == PartBase.BASE_TEXT_ROLE_ID);
+                    if (count == 0)
+                    {
+                        return LocalizedStrings.Format(
+                            Properties.Resources.LayerPartsWithoutBaseText,
+                            facet.Id);
+                    }
+                    if (count > 1)
+                    {
+                        return LocalizedStrings.Format(
+                            Properties.Resources.MultipleBaseTexts,
+                            facet.Id);
+                    }
                 }
             }
 

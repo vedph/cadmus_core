@@ -1,7 +1,9 @@
 ﻿using Cadmus.Core;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace Cadmus.Mongo
 {
@@ -110,6 +112,35 @@ namespace Cadmus.Mongo
                 CreatorId = CreatorId,
                 TimeModified = TimeModified,
                 UserId = UserId,
+            };
+        }
+
+        /// <summary>
+        /// Gets a <see cref="LayerPartInfo" /> from this object.
+        /// </summary>
+        /// <returns>
+        /// The part info.
+        /// </returns>
+        public LayerPartInfo ToLayerPartInfo()
+        {
+            // we assume that the layer part has a "fragments" property
+            JsonDocument doc = JsonDocument.Parse(Content);
+            int n = doc.RootElement.TryGetProperty(
+                "fragments", out JsonElement fragments) ?
+                fragments.EnumerateArray().Count() : 0;
+
+            return new LayerPartInfo
+            {
+                Id = Id,
+                ItemId = ItemId,
+                TypeId = TypeId,
+                RoleId = RoleId,
+                TimeCreated = TimeCreated,
+                CreatorId = CreatorId,
+                TimeModified = TimeModified,
+                UserId = UserId,
+                FragmentCount = n
+                // IsAbsent is always false
             };
         }
 

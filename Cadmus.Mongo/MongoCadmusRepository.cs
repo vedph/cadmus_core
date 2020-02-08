@@ -877,6 +877,81 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
+        /// Gets layer parts information about the item with the specified ID.
+        /// </summary>
+        /// <param name="itemId">The item's identifier.</param>
+        /// <param name="absent">if set to <c>true</c>, include also information
+        /// about absent parts, i.e. those parts which are not present in the
+        /// repository, but are defined in the item's facet.</param>
+        /// <returns>layers parts information.</returns>
+        /// <exception cref="ArgumentNullException">itemId</exception>
+        public IList<LayerPartInfo> GetItemLayerInfo(string itemId, bool absent)
+        {
+            if (itemId == null)
+                throw new ArgumentNullException(nameof(itemId));
+
+            // get all the layer parts for the specified item
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+
+            List<MongoPart> parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
+                .Find(Builders<MongoPart>.Filter
+                    .And(
+                        Builders<MongoPart>.Filter.Eq(p => p.ItemId, itemId),
+                        Builders<MongoPart>.Filter.Where(
+                            p => p.RoleId.StartsWith(PartBase.FR_PREFIX))))
+                .SortBy(p => p.RoleId)
+                .ToList();
+
+            // generate the corresponding layer part infos
+            List<LayerPartInfo> results = new List<LayerPartInfo>(
+                from p in parts select p.ToLayerPartInfo());
+
+            // append to these results the absent layer parts if requested
+            if (absent)
+            {
+                // get the facet from the item's facet ID
+                var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
+                MongoItem item = items.Find(
+                    i => i.Id.Equals(itemId)).FirstOrDefault();
+
+                if (item != null)
+                {
+                    MongoFacetDefinition facet =
+                        db.GetCollection<MongoFacetDefinition>(
+                            MongoFacetDefinition.COLLECTION)
+                        .Find(f => f.Id.Equals(item.FacetId)).FirstOrDefault();
+                    if (facet != null)
+                    {
+                        // append each layer part definition not already present
+                        foreach (PartDefinition def in facet.PartDefinitions
+                            .Where(pd => pd.RoleId.StartsWith(
+                                PartBase.FR_PREFIX, StringComparison.Ordinal)
+                            && results.All(i => i.RoleId != pd.RoleId
+                                                || i.TypeId != pd.TypeId))
+                            .OrderBy(pd => pd.RoleId))
+                        {
+                            results.Add(new LayerPartInfo
+                            {
+                                Id = null,
+                                ItemId = itemId,
+                                TypeId = def.TypeId,
+                                RoleId = def.RoleId,
+                                TimeCreated = DateTime.UtcNow,
+                                CreatorId = null,
+                                TimeModified = DateTime.UtcNow,
+                                UserId = null,
+                                IsAbsent = true
+                            });
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// Gets the specified part.
         /// </summary>
         /// <typeparam name="T">The type of the part to cast the result to.

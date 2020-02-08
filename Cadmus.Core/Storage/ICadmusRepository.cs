@@ -186,6 +186,16 @@ namespace Cadmus.Core.Storage
         List<Tuple<string, string>> GetItemLayerPartIds(string itemId);
 
         /// <summary>
+        /// Gets layer parts information about the item with the specified ID.
+        /// </summary>
+        /// <param name="itemId">The item's identifier.</param>
+        /// <param name="absent">if set to <c>true</c>, include also information
+        /// about absent parts, i.e. those parts which are not present in the
+        /// repository, but are defined in the item's facet.</param>
+        /// <returns>layers parts information.</returns>
+        IList<LayerPartInfo> GetItemLayerInfo(string itemId, bool absent);
+
+        /// <summary>
         /// Gets the specified part.
         /// </summary>
         /// <typeparam name="T">the type of the part to retrieve</typeparam>

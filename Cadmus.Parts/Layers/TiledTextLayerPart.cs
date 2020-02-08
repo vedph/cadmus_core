@@ -35,7 +35,8 @@ namespace Cadmus.Parts.Layers
     /// <typeparam name="TFragment">The type of the fragment.</typeparam>
     /// <seealso cref="PartBase" />
     [Tag("net.fusisoft.tiled-text-layer")]
-    public sealed class TiledTextLayerPart<TFragment> : PartBase
+    public sealed class TiledTextLayerPart<TFragment> : PartBase,
+        IHasFragments<TFragment>
         where TFragment : ITextLayerFragment, new()
     {
         /// <summary>

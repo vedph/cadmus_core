@@ -31,7 +31,8 @@ namespace Cadmus.Parts.Layers
     /// </para>
     /// </remarks>
     [Tag("net.fusisoft.token-text-layer")]
-    public sealed class TokenTextLayerPart<TFragment> : PartBase
+    public sealed class TokenTextLayerPart<TFragment> : PartBase,
+        IHasFragments<TFragment>
         where TFragment : ITextLayerFragment, new()
     {
         /// <summary>

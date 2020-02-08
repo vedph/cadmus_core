@@ -3,6 +3,7 @@
     {
       "id": "facet-default",
       "label": "default",
+      "colorKey": "FF0000",
       "description": "The default facet",
       "partDefinitions": [
         {

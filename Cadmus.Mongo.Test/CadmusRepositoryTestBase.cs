@@ -147,12 +147,14 @@ namespace Cadmus.TestBase
             Assert.Equal("alpha", facet.Id);
             Assert.Equal("Alpha", facet.Label);
             Assert.Equal("Alpha facet", facet.Description);
+            Assert.Equal("FF0000", facet.ColorKey);
             Assert.Equal(2, facet.PartDefinitions.Count);
 
             facet = facets[1];
             Assert.Equal("beta", facet.Id);
             Assert.Equal("Beta", facet.Label);
             Assert.Equal("Beta facet", facet.Description);
+            Assert.Equal("00FF00", facet.ColorKey);
             Assert.Equal(2, facet.PartDefinitions.Count);
         }
 
@@ -177,6 +179,7 @@ namespace Cadmus.TestBase
             Assert.Equal("alpha", facet.Id);
             Assert.Equal("Alpha", facet.Label);
             Assert.Equal("Alpha facet", facet.Description);
+            Assert.Equal("FF0000", facet.ColorKey);
             Assert.Equal(2, facet.PartDefinitions.Count);
         }
 
@@ -190,6 +193,7 @@ namespace Cadmus.TestBase
                 Id = "alpha",
                 Label = "Alpha",
                 Description = "Alpha facet description",
+                ColorKey = "101010",
                 PartDefinitions =
                 {
                     new PartDefinition
@@ -226,6 +230,7 @@ namespace Cadmus.TestBase
             Assert.Equal(facet.Id, facet2.Id);
             Assert.Equal(facet.Label, facet2.Label);
             Assert.Equal(facet.Description, facet2.Description);
+            Assert.Equal(facet.ColorKey, facet2.ColorKey);
             Assert.Equal(facet.PartDefinitions.Count, facet2.PartDefinitions.Count);
 
             Assert.Contains(facet2.PartDefinitions, p => p.TypeId == "categories");
@@ -242,6 +247,7 @@ namespace Cadmus.TestBase
                 Id = "gamma",
                 Label = "Gamma",
                 Description = "A new facet",
+                ColorKey = "101010",
                 PartDefinitions =
                 {
                     new PartDefinition
@@ -266,6 +272,7 @@ namespace Cadmus.TestBase
             Assert.Equal(facet.Id, facet2.Id);
             Assert.Equal(facet.Label, facet2.Label);
             Assert.Equal(facet.Description, facet2.Description);
+            Assert.Equal(facet.ColorKey, facet2.ColorKey);
             Assert.Equal(facet.PartDefinitions.Count, facet2.PartDefinitions.Count);
 
             Assert.Equal(3, repository.GetFacetDefinitions().Count);

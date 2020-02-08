@@ -23,6 +23,14 @@ namespace Cadmus.Core.Config
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or sets the color key.
+        /// </summary>
+        /// <value>
+        /// The color key, with format RRGGBB.
+        /// </value>
+        public string ColorKey { get; set; }
+
+        /// <summary>
         /// Gets the part definitions.
         /// </summary>
         public List<PartDefinition> PartDefinitions { get; set; }

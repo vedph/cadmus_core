@@ -33,6 +33,15 @@ namespace Cadmus.Mongo
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or sets the color key.
+        /// </summary>
+        /// <value>
+        /// The color key, with format RRGGBB.
+        /// </value>
+        [BsonIgnoreIfNull]
+        public string ColorKey { get; set; }
+
+        /// <summary>
         /// Gets the part definitions.
         /// </summary>
         public List<PartDefinition> PartDefinitions { get; set; }
@@ -57,6 +66,7 @@ namespace Cadmus.Mongo
             Id = facet.Id;
             Label = facet.Label;
             Description = facet.Description;
+            ColorKey = facet.ColorKey;
             PartDefinitions = new List<PartDefinition>(facet.PartDefinitions);
         }
 
@@ -70,7 +80,8 @@ namespace Cadmus.Mongo
             {
                 Id = Id,
                 Label = Label,
-                Description = Description
+                Description = Description,
+                ColorKey = ColorKey
             };
             definition.PartDefinitions.AddRange(PartDefinitions);
             return definition;
@@ -80,7 +91,7 @@ namespace Cadmus.Mongo
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

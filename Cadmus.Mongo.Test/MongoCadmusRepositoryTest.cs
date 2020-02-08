@@ -87,6 +87,7 @@ namespace Cadmus.Mongo.Test
                 Id = "alpha",
                 Label = "Alpha",
                 Description = "Alpha facet",
+                ColorKey = "FF0000"
             };
             facetA.PartDefinitions.AddRange(new[]
             {
@@ -118,7 +119,8 @@ namespace Cadmus.Mongo.Test
             {
                 Id = "beta",
                 Label = "Beta",
-                Description = "Beta facet"
+                Description = "Beta facet",
+                ColorKey = "00FF00"
             };
             facetB.PartDefinitions.AddRange(new[]
             {

@@ -35,6 +35,7 @@ namespace Cadmus.Core.Test.Config
             Assert.Equal("facet-default", facetDef.Id);
             Assert.Equal("default", facetDef.Label);
             Assert.Equal("The default facet", facetDef.Description);
+            Assert.Equal("FF0000", facetDef.ColorKey);
             Assert.Equal(7, facetDef.PartDefinitions.Count);
 
             // TODO: check each facet definition

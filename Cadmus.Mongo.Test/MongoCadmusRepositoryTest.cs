@@ -528,6 +528,36 @@ namespace Cadmus.Mongo.Test
         {
             DoGetItemLayers_LayerParts_Ok();
         }
+
+        [Fact]
+        public void GetItemLayerInfo_NoAbsentNoItem_Empty()
+        {
+            DoGetItemLayerInfo_NoAbsentNoItem_Empty();
+        }
+
+        [Fact]
+        public void GetItemLayerInfo_AbsentNoItem_Empty()
+        {
+            DoGetItemLayerInfo_AbsentNoItem_Empty();
+        }
+
+        [Fact]
+        public void GetItemLayerInfo_ItemNoAbsentNoPart_0()
+        {
+            DoGetItemLayerInfo_ItemNoAbsentNoPart_0();
+        }
+
+        [Fact]
+        public void GetItemLayerInfo_ItemAbsentNoPart_2()
+        {
+            DoGetItemLayerInfo_ItemAbsentNoPart_2();
+        }
+
+        [Fact]
+        public void GetItemLayerInfo_ItemAbsent1Part_2()
+        {
+            DoGetItemLayerInfo_ItemAbsent1Part_2();
+        }
         #endregion
 
         #region Parts
@@ -650,7 +680,6 @@ namespace Cadmus.Mongo.Test
         {
             DoDeletePart_Existing_Deleted(history);
         }
-        // TODO
         #endregion
     }
 }

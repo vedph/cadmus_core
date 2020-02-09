@@ -699,6 +699,178 @@ namespace Cadmus.TestBase
 
             Assert.Single(ids);
         }
+
+        protected void DoGetItemLayerInfo_NoAbsentNoItem_Empty()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var ids = repository.GetItemLayerInfo("item-not-existing", false);
+
+            Assert.Empty(ids);
+        }
+
+        protected void DoGetItemLayerInfo_AbsentNoItem_Empty()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var ids = repository.GetItemLayerInfo("item-not-existing", true);
+
+            Assert.Empty(ids);
+        }
+
+        private string AddItemWithLayers(ICadmusRepository repository,
+            bool addPart = false)
+        {
+            // a facet with 1 base text part and 2 layer parts
+            FacetDefinition facet = new FacetDefinition
+            {
+                Id = "default",
+                Label = "default",
+                ColorKey = "FF0000",
+                Description = "Test",
+            };
+            facet.PartDefinitions.Add(
+                new PartDefinition
+                {
+                    TypeId = "net.fusisoft.token-text",
+                    RoleId = "base-text",
+                    Name = "text",
+                    Description = "Text",
+                    IsRequired = true,
+                    ColorKey = "00FF00",
+                    GroupKey = "general",
+                    SortKey = "text",
+                    EditorKey = "general"
+                });
+            facet.PartDefinitions.Add(
+                new PartDefinition
+                {
+                    TypeId = "net.fusisoft.token-text-layer",
+                    RoleId = "fr.net.fusisoft.comment",
+                    Name = "comments layer",
+                    Description = "Generic comments",
+                    IsRequired = false,
+                    ColorKey = "FF0000",
+                    GroupKey = "layers",
+                    SortKey = "comments",
+                    EditorKey = "general"
+                });
+            facet.PartDefinitions.Add(
+                new PartDefinition
+                {
+                    TypeId = "net.fusisoft.token-text-layer",
+                    RoleId = "fr.net.fusisoft.apparatus",
+                    Name = "apparatus layer",
+                    Description = "Critical apparatus",
+                    IsRequired = false,
+                    ColorKey = "0000FF",
+                    GroupKey = "layers",
+                    SortKey = "apparatus",
+                    EditorKey = "philology"
+                });
+
+            // assign item to this facet
+            repository.AddFacetDefinition(facet);
+            IItem item = new Item
+            {
+                FacetId = facet.Id,
+                Description = "A new item",
+                SortKey = "newitem",
+                Title = "New item",
+                UserId = "zeus",
+                CreatorId = "zeus"
+            };
+            repository.AddItem(item, false);
+
+            // add comment part if requested
+            if (addPart)
+            {
+                TokenTextLayerPart<CommentLayerFragment> part =
+                    new TokenTextLayerPart<CommentLayerFragment>
+                    {
+                        ItemId = item.Id,
+                        CreatorId = "zeus",
+                        UserId = "zeus"
+                    };
+                part.AddFragment(new CommentLayerFragment
+                {
+                    Location = "1.2",
+                    Text = "A comment"
+                });
+                repository.AddPart(part, false);
+            }
+
+            return item.Id;
+        }
+
+        protected void DoGetItemLayerInfo_ItemNoAbsentNoPart_0()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            string id = AddItemWithLayers(repository);
+
+            IList<LayerPartInfo> parts =
+                repository.GetItemLayerInfo(id, false);
+
+            Assert.Empty(parts);
+        }
+
+        protected void DoGetItemLayerInfo_ItemAbsentNoPart_2()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            string id = AddItemWithLayers(repository);
+
+            IList<LayerPartInfo> parts =
+                repository.GetItemLayerInfo(id, true);
+
+            Assert.Equal(2, parts.Count);
+            Assert.Equal(2, parts.Count(p => p.IsAbsent));
+
+            // comments
+            LayerPartInfo part = parts.FirstOrDefault(
+                p => p.RoleId == "fr.net.fusisoft.comment");
+            Assert.NotNull(part);
+            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.Equal(0, part.FragmentCount);
+
+            // apparatus
+            part = parts.FirstOrDefault(
+                p => p.RoleId == "fr.net.fusisoft.apparatus");
+            Assert.NotNull(part);
+            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.Equal(0, part.FragmentCount);
+        }
+
+        protected void DoGetItemLayerInfo_ItemAbsent1Part_2()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            string id = AddItemWithLayers(repository, true);
+
+            IList<LayerPartInfo> parts =
+                repository.GetItemLayerInfo(id, true);
+
+            Assert.Equal(2, parts.Count);
+
+            // comments
+            LayerPartInfo part = parts.FirstOrDefault(
+                p => p.RoleId == "fr.net.fusisoft.comment");
+            Assert.NotNull(part);
+            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.False(part.IsAbsent);
+            Assert.Equal(1, part.FragmentCount);
+
+            // apparatus
+            part = parts.FirstOrDefault(
+                p => p.RoleId == "fr.net.fusisoft.apparatus");
+            Assert.NotNull(part);
+            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.True(part.IsAbsent);
+            Assert.Equal(0, part.FragmentCount);
+        }
         #endregion
 
         #region Parts

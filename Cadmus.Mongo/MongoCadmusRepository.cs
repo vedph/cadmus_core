@@ -925,8 +925,8 @@ namespace Cadmus.Mongo
                     {
                         // append each layer part definition not already present
                         foreach (PartDefinition def in facet.PartDefinitions
-                            .Where(pd => pd.RoleId.StartsWith(
-                                PartBase.FR_PREFIX, StringComparison.Ordinal)
+                            .Where(pd => pd.RoleId?.StartsWith(
+                                PartBase.FR_PREFIX, StringComparison.Ordinal) == true
                             && results.All(i => i.RoleId != pd.RoleId
                                                 || i.TypeId != pd.TypeId))
                             .OrderBy(pd => pd.RoleId))

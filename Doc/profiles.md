@@ -10,9 +10,14 @@ A facet is an abstraction representing the "type" of an item. In Cadmus there is
 
 A facet is a collection of part definitions, which list all the parts an item having that specific facet could contain. In a facet, some of the parts are defined as required, while other as optional. Also, there can be several parts of the same type with different roles: for instance, a datation part for the text and another one for a later copy of it.
 
-Given the open nature of this data architecture, the notion of facet is essentially a frontend concept, designed with practical purposes. No facet-related constraint is enforced at the backend level, as by design an item could include any type of part.
+These restrictions apply to facets:
 
-A facet has a unique ID (an arbitrary string), a label with a human-readable name, a short description, and a set of part definitions.
+- a facet must include at least 1 part definition.
+- when a facet contains text layers, it *must* contain 1 (and only 1) part definition representing the "base text". This is a logical requirement, as you must have some base text to link metatextual data to. This part definition must have the reserved role ID `base-text`.
+
+Given the open nature of this data architecture, the notion of facet is essentially a frontend concept, designed with practical purposes. No facet-specific constraint is enforced at the backend level, as by design an item could include any type of part.
+
+A facet has a unique ID (an arbitrary string), a label with a human-readable name, a short description, a color key, and a set of part definitions.
 
 Each part definition has these properties:
 
@@ -39,9 +44,10 @@ The following code is a facet sample:
 ```json
   "facets": [
     {
-      "id": "facet-default",
+      "id": "default",
       "label": "default",
       "description": "The default facet",
+      "colorKey": "86ACEB",
       "partDefinitions": [
         {
           "typeId": "net.fusisoft.categories",
@@ -236,7 +242,11 @@ Note that currently the web UI frontend implements a convention by which if a th
 
 ### Thesauri Aliases
 
-Additionally, thesauri allow for an aliasing mechanism. This may be useful when your frontend is aggregating different editors which might use different identifiers for the same thesaurus resource. In this case, you can define a thesaurus having only its `id` property, equal to the alias, and a `targetId` property, equal to the identifier of the target thesaurus. No entries will be set for the alias. Once this alias is set, Cadmus will return the target thesaurus when requested for the alias thesaurus.
+Additionally, thesauri allow for an aliasing mechanism. This may be useful when your frontend is aggregating different editors which might use different identifiers for the same thesaurus resource.
+
+In this case, you can define a thesaurus having only its `id` property, equal to the alias, and a `targetId` property, equal to the identifier of the target thesaurus. No entries will be set for the alias.
+
+Once this alias is set, Cadmus will return the target thesaurus when requested for the alias thesaurus.
 
 For instance, say you want to retrieve the `languages@en` thesaurus using two different identifiers: `languages@en`, and the alias `ui-languages@en`. You could just add this thesaurus to the above sample:
 

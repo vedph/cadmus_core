@@ -122,6 +122,8 @@ A number of interfaces and classes are provided to define the attributes of thei
 
 - `IHasDataPins`: implemented by parts exposing data pins. A data pin (`DataPin`) is just a name/value pair derived from an item's part. Most parts expose such pairs to the outer world mainly for indexing purposes. For instance, a datation part might expose a numeric value representing its content. As each part is an independent entity, with its own model, it is only the part which can know which data could be extracted from it for indexing. Thus, typically parts implement this interface. The data pin is generic enough to represent different levels of granularity: it may just be a name/value property, or a more complex entity, e.g. a semantic web triple (usually with name acting as predicate and value as object, the implicit subject being the data pin owner). Note that these pins are not stored, but calculated. The calculation is implemented in the part's own code. Of course, this does not stop us to store the snapshot results of such calculations, either elsewhere or in the same data store, should this be required for publishing purposes.
 
+- `IHasFragments<TFragment>`: implemented by layer parts, which are collection of fragments of type `TFragment`.
+
 - `IItemSortKeyBuilder`: used to build the item's sort key from its data. Sort keys are used to display paged (and thus ordered) lists of items in the UI. Implementors of this interface provide their own algorithm to generate a sort key given a specific item (and eventually its parts). The default implementation (`StandardItemSortKeyBuilder`) just relies on the item's title, which is normalized by flattening any whitespace to a single space, trimming the result at both ends, lowercasing all the letters and removing any diacritics from them, and keeping only letters, digits, and apostrophe. In the Cadmus profile you are free to replace this component with any other, should you need a special ordering. Whenever an item is saved, its sort key is automatically rebuilt and stored with it.
 
 - `IRepositoryProvider`: an interface used in consumer code infrastructure to provide implementations of `ICadmusRepository` and `IPartTypeProvider`. These depend on the system's details; for instance, in the API layer they rely on static linking (as the API is targeted to a closed and ready-to-deploy Docker image), whereas in the CLI tool they rely on dynamic linking (a true "plugin" architecture).
@@ -138,7 +140,7 @@ The building blocks for the Cadmus data model are **items** and **parts**.
 
 The item and part types are DTO interfaces and classes, essentially used to represent and transfer data between system layers, whatever the underlying data store. They correspond to database entities, at a higher abstraction level.
 
-All the **IDs** for these blocks are client-side generated GUIDs, modeled as strings in the generic entities objects which represent the data at a higher abstraction level.
+All the **IDs** for these blocks are client-side generated GUIDs, modeled as strings in the generic entities objects which represent the data at a higher abstraction level. These ID strings are in the conventional "dashed" format, which makes them slightly more readable, e.g. `965200f3-523a-42aa-99b1-f5cd26354e9d`.
 
 #### A.3.1. Items
 
@@ -150,15 +152,15 @@ All the items have a single data model. This model is represented by the `IItem`
 - a set of essential **metadata** (like title or last modified time);
 - a collection of **parts**, each representing a specialized piece of data, with its own model.
 
-Notice that the item essentially being a data-transfer object, this does not necessarily reflect the underlying storage. In fact, parts are stored independently of items. Yet, at a higher level of abstraction items "contain" parts. According to the API, an `IItem` can have its parts collection filled, or just leave it empty; in both cases, this does not necessarily means that in the database the items has or has not parts; it only represents the subset of data requested by a specific API.
+Notice that, the item essentially being a data-transfer object, this does not necessarily reflect the underlying storage. In fact, *parts are stored independently of items*. Yet, at a higher level of abstraction items "contain" parts. According to the API, an `IItem` can have its parts collection filled, or just leave it empty; in both cases, this does not necessarily means that in the database the items has or has not parts; it only represents the subset of data requested by a specific API.
 
 Among its metadata, an item also has a **sort key**, i.e. a string representing its position in a lexicographic order. This order is the default order used when retrieving items for presentation purposes, e.g. when getting a virtual page of items. As such, the sort key is algorithmically defined by an object implementing the `IItemSortKeyBuilder` interface.
 
-Finally, an item can also have a set of 32 **flags** whose meaning is arbitrarily defined (in the Cadmus data profile). These typically serve for specific in-house editing purposes; for instance, they might specify items marked for a revision. The flags are just bits in a 32-bits integer.
+Finally, an item can also have a set of 32 **flags**, whose meaning is arbitrarily defined (in the Cadmus [data profile](profiles.md)). These typically serve for specific in-house editing purposes; for instance, they might specify items marked for a revision. The flags are just bits in a 32-bits integer.
 
 #### A.3.2. Parts
 
-The concept of part derives from the fact that *most items share a common subset of data models*. For instance, think of a structured datation, with different levels of granularity, from day, month, and year up to centuries, and different levels of uncertainty, from a point to an interval in time. The model of a similar piece of information would be needed to be fully repeated in each item requiring to be dated, whatever its nature. Also, whenever we want to add the date to an item, we would have to change its model.
+The concept of part derives from the fact that *most items share a common subset of data models*. For instance, think of a structured datation, with different levels of granularity, from day, month, and year up to centuries, and different levels of uncertainty, from a point to an interval in time (*terminus ante*, *terminus post*, between two dates, etc.). The model of a similar piece of information would be needed to be fully repeated in each item requiring to be dated, whatever its nature. Also, whenever we want to add the date to an item, we would have to change its model.
 
 Rather, *the items model is composed by its parts*. Items contain a collection of such parts, each representing a specialized data model. This makes the abstract data model of each item totally dynamic, as far as it depends on the parts it contains.
 
@@ -185,7 +187,7 @@ See also: [adding new parts to the system](adding-parts.md).
 
 Typically, the database can be queried for a single item or part, or for a set of summary information about items or parts matching some specific criteria (filters). This is the well-known "list-and-details" scenario, where the UI provides a filtered list of objects, among which users pick a single object for editing or viewing its details.
 
-The summary information for items and parts used when browsing them is represented by classes `ItemInfo` and `PartInfo`, respectively. Currently, they represent only the essential metadata from each object.
+The summary information for items and parts used when browsing them is represented by classes `ItemInfo` and `PartInfo`, respectively. Currently, they represent only the essential metadata from each object. There also is a `LayerPartInfo`, a specialization of `PartInfo` used when inspecting the layers in a specific item.
 
 ## (B) Layers
 
@@ -268,7 +270,7 @@ In Cadmus, this scenario is rather represented in terms of parts, as for any oth
 - the base text is a text part, including only plain text (e.g. the text of an inscription, just as it appears on the stone);
 - then, any set of metatextual data is represented by a different part, like e.g. abbreviations part, paleographic description part, apparatus part, chronological part, geographical part, prosopographical part, etc.
 
-You can imagine all these metadata as **layers** which get overlaid on the base text, just as in photo-editing tools you have the original picture in its base layer, and add any modification by adding new layers to it. This makes it possible to have a composable editing procedure, where the original picture is never touched, and yet we can add as many layers as we want to modify it at will.
+You can imagine all these metadata as **layers** which get overlaid on the base text, just as in photo-editing tools you have the original picture in its base layer, and add any modification by adding new layers to it. This makes it possible to have a *composable editing* procedure, where the original picture is never touched, and yet we can add as many layers as we want to modify it at will.
 
 In this metaphor, the original picture is the base text, while the layers are the parts which refer their data to any portion of it. So, all what we have here is a set of parts: one representing a text, and others representing layers.
 
@@ -338,6 +340,7 @@ This namespace contains configuration-specific components, used to define the Ca
     FacetDefinition : +string Id
     FacetDefinition : +string Label
     FacetDefinition : +string Description
+    FacetDefinition : +string ColorKey
     FacetDefinition : +List<PartDefinition> PartDefinitions
     FacetDefinition "1"*--"0.." PartDefinition
 
@@ -379,7 +382,7 @@ This namespace contains configuration-specific components, used to define the Ca
 
 A Cadmus database has a data profile defined by three main components:
 
-- items **facets** definitions: there must be at least 1 facet. Each facet is a set of parts definitions, and lists all the parts which can appear in an item of a given "type".
+- items **facets** definitions: there must be at least 1 facet. Each facet is a set of parts definitions, and lists all the parts which can appear in an item of a given "type". Usually the "default" facet (=the most used one) has its ID equal to `default`; this is just a convention typically honored by frontends, so that they can pick a default facet when creating a new item.
 - items **flags** definitions: the optional 32 flags assignable to each item are defined here.
 - **thesauri**: a set of taxonomies, flat and/or hierarchical, used to provide closed sets of predefined values to the user.
 
@@ -469,7 +472,7 @@ The convention underlying this method assumes that any fragment type ID starts w
 For instance, a token-based text layer part for comments has type ID=`net.fusisoft.token-text-layer`, and role ID=`fr.net.fusisoft.comment`.
 So, each layer part has the corresponding fragment ID as its role. Should we want to use the same fragment type with different roles, we add a new part type definition with role=fragment ID + colon + role ID, e.g. `fr.net.fusisoft.commentscholarly`.
 
-A couple of unit tests should make this discussion more concrete
+A couple of unit tests should make this discussion more concrete:
 
 ```cs
 [Fact]
@@ -492,7 +495,7 @@ public void Get_CommentLayerPart_Ok()
 
 As you can see, when requesting a comment layer part we get a closed generic type, combining the generic token-based text layer part (`TokenTextLayerPart<T>`) with the comment layer fragment (`CommentLayerFragment`).
 
-For instance, the MongoDB repository instantiates parts from a JSON text representing them (`content`) like this
+For instance, the MongoDB repository instantiates parts from a JSON text representing them (`content`) like this:
 
 ```cs
 private IPart InstantiatePart(string typeId, string roleId, string content)
@@ -553,6 +556,35 @@ As the part provider works also for closed generic types representing text layer
     PartFilter : +string RoleId
     PartFilter : +Tuple<string,bool>[] SortExpressions
 
+    IHasVersion <|-- ItemInfo
+    ItemInfo : +string Id
+    ItemInfo : +string Title
+    ItemInfo : +string Description
+    ItemInfo : +string FacetId
+    ItemInfo : +string SortKey
+    ItemInfo : +int Flags
+    ItemInfo : +DateTime TimeCreated
+    ItemInfo : +string CreatorId
+    ItemInfo : +DateTime TimeModified
+    ItemInfo : +string UserId
+
+    IHasVersion <|-- PartInfo
+    PartInfo : +string Id
+    PartInfo : +string ItemId
+    PartInfo : +string TypeId
+    PartInfo : +string RoleId
+    PartInfo : +DateTime TimeCreated
+    PartInfo : +string CreatorId
+    PartInfo : +DateTime TimeModified
+    PartInfo : +string UserId
+
+    PartInfo <|-- LayerPartInfo
+    LayerPartInfo : +int FragmentCount
+    LayerPartInfo : +bool IsAbsent
+
+    abstract class "IHasFragments<TFragment>" as IHasFragmentsT
+    IHasFragmentsT : +List<TFragment> Fragments
+
     IHasHistory <|-- HistoryItem
     HistoryItem : +string Id
     HistoryItem : +string Title
@@ -577,7 +609,7 @@ As the part provider works also for closed generic types representing text layer
     HistoryPart : +public EditStatus Status
     HistoryPart : +public HistoryPart(string id, T part)
 
-    IHasHistory <|-- HistoryItemInfo 
+    IHasHistory <|-- HistoryItemInfo
     HistoryItemInfo : +string Id
     HistoryItemInfo : +string Title
     HistoryItemInfo : +string Description
@@ -633,7 +665,7 @@ As the part provider works also for closed generic types representing text layer
     ICadmusRepository : +DeleteHistoryItem(string id)
     ICadmusRepository : +DataPage<PartInfo> GetParts(PartFilter filter)
     ICadmusRepository : +IList<IPart> GetItemParts(string[] itemIds, string typeId = null, string roleId = null)
-    ICadmusRepository : +List<Tuple<string, string>> GetItemLayerPartIds(string itemId)
+    ICadmusRepository : +List<LayerPartInfo> GetItemLayerInfo(string itemId)
     ICadmusRepository : +T GetPart<T>(string id)
     ICadmusRepository : +string GetPartContent(string id)
     ICadmusRepository : +AddPart(IPart part, bool history = true)

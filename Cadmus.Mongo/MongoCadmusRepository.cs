@@ -846,37 +846,6 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
-        /// Gets the layer parts role IDs and part IDs for the specified item.
-        /// This is useful when you want to have a list of all the item's layer
-        /// parts IDs (part ID and role ID) so that you can retrieve each of
-        /// them separately.
-        /// </summary>
-        /// <param name="itemId">The item's identifier.</param>
-        /// <returns>array of tuples where 1=role ID and 2=part ID</returns>
-        /// <exception cref="ArgumentNullException">null item ID</exception>
-        public List<Tuple<string, string>> GetItemLayerPartIds(string itemId)
-        {
-            if (itemId == null) throw new ArgumentNullException(nameof(itemId));
-
-            EnsureClientCreated(_options.ConnectionString);
-
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
-
-            // we assume that all the layer parts have their role ID equal to their
-            // fragments ID, which by convention starts with "fr."
-            var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
-                .Find(Builders<MongoPart>.Filter
-                    .And(
-                        Builders<MongoPart>.Filter.Eq(p => p.ItemId, itemId),
-                        Builders<MongoPart>.Filter.Where(
-                            p => p.RoleId.StartsWith(PartBase.FR_PREFIX))))
-                .SortBy(p => p.RoleId)
-                .ToList();
-
-            return parts.Select(p => Tuple.Create(p.RoleId, p.Id)).ToList();
-        }
-
-        /// <summary>
         /// Gets layer parts information about the item with the specified ID.
         /// </summary>
         /// <param name="itemId">The item's identifier.</param>

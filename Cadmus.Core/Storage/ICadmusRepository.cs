@@ -175,17 +175,6 @@ namespace Cadmus.Core.Storage
             string roleId = null);
 
         /// <summary>
-        /// Gets the layer parts role IDs and part IDs for the specified item.
-        /// This is useful when you want to have a list of all the item's layer
-        /// parts IDs (part ID and role ID) so that you can retrieve each of
-        /// them separately.
-        /// </summary>
-        /// <param name="itemId">The item's identifier.</param>
-        /// <returns>array of tuples where 1=role ID and 2=part ID</returns>
-        /// <exception cref="ArgumentNullException">null item ID</exception>
-        List<Tuple<string, string>> GetItemLayerPartIds(string itemId);
-
-        /// <summary>
         /// Gets layer parts information about the item with the specified ID.
         /// </summary>
         /// <param name="itemId">The item's identifier.</param>

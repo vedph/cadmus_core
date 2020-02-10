@@ -680,26 +680,6 @@ namespace Cadmus.TestBase
             Assert.Equal(3, result.Total);
         }
 
-        protected void DoGetItemLayers_NotFound_Empty()
-        {
-            PrepareDatabase();
-            ICadmusRepository repository = GetRepository();
-
-            var ids = repository.GetItemLayerPartIds("item-not-existing");
-
-            Assert.Empty(ids);
-        }
-
-        protected void DoGetItemLayers_LayerParts_Ok()
-        {
-            PrepareDatabase();
-            ICadmusRepository repository = GetRepository();
-
-            var ids = repository.GetItemLayerPartIds("item-001");
-
-            Assert.Single(ids);
-        }
-
         protected void DoGetItemLayerInfo_NoAbsentNoItem_Empty()
         {
             PrepareDatabase();

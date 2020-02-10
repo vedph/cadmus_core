@@ -518,18 +518,6 @@ namespace Cadmus.Mongo.Test
         }
 
         [Fact]
-        public void GetItemLayers_NotFound_Empty()
-        {
-            DoGetItemLayers_NotFound_Empty();
-        }
-
-        [Fact]
-        public void GetItemLayers_LayerParts_Ok()
-        {
-            DoGetItemLayers_LayerParts_Ok();
-        }
-
-        [Fact]
         public void GetItemLayerInfo_NoAbsentNoItem_Empty()
         {
             DoGetItemLayerInfo_NoAbsentNoItem_Empty();

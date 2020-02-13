@@ -28,28 +28,28 @@ namespace Cadmus.Philology.Parts.Layers
             int start = 1;
             for (int i = 0; i < diffs.Count; i++)
             {
-                if (diffs[i].Operation == Operation.Delete
+                if (diffs[i].operation == Operation.DELETE
                     && i + 1 < diffs.Count
-                    && diffs[i + 1].Operation == Operation.Insert)
+                    && diffs[i + 1].operation == Operation.INSERT)
                 {
                     output.Add(
                         Tuple.Create(diffs[i], new MspOperation
                         {
                             Operator = MspOperator.Replace,
-                            RangeA = new TextRange(start, diffs[i].Text.Length),
-                            ValueA = diffs[i].Text,
-                            ValueB = diffs[i + 1].Text
+                            RangeA = new TextRange(start, diffs[i].text.Length),
+                            ValueA = diffs[i].text,
+                            ValueB = diffs[i + 1].text
                         }));
-                    start += diffs[i].Text.Length;
+                    start += diffs[i].text.Length;
                     i++;
                 }
                 else
                 {
                     output.Add(Tuple.Create(diffs[i], (MspOperation)null));
-                    if (diffs[i].Operation == Operation.Delete
-                        || diffs[i].Operation == Operation.Equal)
+                    if (diffs[i].operation == Operation.DELETE
+                        || diffs[i].operation == Operation.EQUAL)
                     {
-                        start += diffs[i].Text.Length;
+                        start += diffs[i].text.Length;
                     }
                 }
             }
@@ -165,30 +165,30 @@ namespace Cadmus.Philology.Parts.Layers
                 }
 
                 Tuple<Diff, MspOperation> t = mspDiffs[i];
-                switch (t.Item1.Operation)
+                switch (t.Item1.operation)
                 {
-                    case Operation.Equal:
-                        index += t.Item1.Text.Length;
+                    case Operation.EQUAL:
+                        index += t.Item1.text.Length;
                         break;
 
-                    case Operation.Delete:
+                    case Operation.DELETE:
                         mspDiffs[i] = Tuple.Create(t.Item1,
                             new MspOperation
                             {
                                 Operator = MspOperator.Delete,
-                                RangeA = new TextRange(index + 1, t.Item1.Text.Length),
-                                ValueA = t.Item1.Text
+                                RangeA = new TextRange(index + 1, t.Item1.text.Length),
+                                ValueA = t.Item1.text
                             });
-                        index += t.Item1.Text.Length;
+                        index += t.Item1.text.Length;
                         break;
 
-                    case Operation.Insert:
+                    case Operation.INSERT:
                         mspDiffs[i] = Tuple.Create(t.Item1,
                             new MspOperation
                             {
                                 Operator = MspOperator.Insert,
                                 RangeA = new TextRange(index + 1, 0),
-                                ValueB = t.Item1.Text
+                                ValueB = t.Item1.text
                             });
                         break;
                 }

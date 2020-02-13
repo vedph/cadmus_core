@@ -8,7 +8,7 @@
     <Description>Philological parts for Cadmus.</Description>
     <Copyright>by Daniele Fusi 2018</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>2.2.19</Version>
+    <Version>2.2.20</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DiffMatchPatch" Version="1.0.0" />
+    <PackageReference Include="DiffMatchPatch" Version="1.0.1" />
     <PackageReference Include="DiffPlex" Version="1.5.0" />
     <PackageReference Include="Fusi.Antiquity" Version="1.1.22" />
   </ItemGroup>

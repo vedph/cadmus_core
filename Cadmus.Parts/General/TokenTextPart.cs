@@ -32,10 +32,13 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenTextPart"/> class.
+        /// Note that this part automatically gets a role ID equal to
+        /// <see cref="PartBase.BASE_TEXT_ROLE_ID"/>.
         /// </summary>
         public TokenTextPart()
         {
             Lines = new List<TextLine>();
+            RoleId = BASE_TEXT_ROLE_ID;
         }
 
         /// <summary>

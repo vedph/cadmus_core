@@ -11,7 +11,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("abc", "abc"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("abc", "abc"));
 
             Assert.Empty(ops);
         }
@@ -21,7 +21,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("ischola", "schola"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("ischola", "schola"));
 
             Assert.Single(ops);
             // del
@@ -36,7 +36,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("ahenus", "aenus"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("ahenus", "aenus"));
 
             Assert.Single(ops);
             // del
@@ -51,7 +51,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("hocc", "hoc"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("hocc", "hoc"));
 
             Assert.Single(ops);
             // del
@@ -66,7 +66,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("XabYcdZ", "abcd"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("XabYcdZ", "abcd"));
 
             Assert.Equal(3, ops.Count);
             // X
@@ -91,7 +91,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("eros", "heros"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("eros", "heros"));
 
             Assert.Single(ops);
             // ins
@@ -106,7 +106,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("meses", "menses"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("meses", "menses"));
 
             Assert.Single(ops);
             // ins
@@ -121,7 +121,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("viru", "virum"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("viru", "virum"));
 
             Assert.Single(ops);
             // ins
@@ -136,7 +136,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("abcd", "XabYcdZ"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("abcd", "XabYcdZ"));
 
             Assert.Equal(3, ops.Count);
             // X
@@ -161,7 +161,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("bixit", "vixit"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("bixit", "vixit"));
 
             Assert.Single(ops);
             // rep
@@ -177,7 +177,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("gaudis", "gaudes"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("gaudis", "gaudes"));
 
             Assert.Single(ops);
             // rep
@@ -193,7 +193,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("victo", "victu"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("victo", "victu"));
 
             Assert.Single(ops);
             // rep
@@ -209,7 +209,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("vicsit", "vixit"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("vicsit", "vixit"));
 
             Assert.Single(ops);
             // rep
@@ -225,7 +225,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("abcde", "XbYdZ"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("abcde", "XbYdZ"));
 
             Assert.Equal(3, ops.Count);
             // X
@@ -253,7 +253,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("bxdf", "AbCd"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("bxdf", "AbCd"));
 
             Assert.Equal(3, ops.Count);
             // ins
@@ -279,7 +279,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("Xab", "abX"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("Xab", "abX"));
 
             Assert.Single(ops);
             // mov
@@ -295,7 +295,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("aXbc", "abcX"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("aXbc", "abcX"));
 
             Assert.Single(ops);
             // mov
@@ -311,7 +311,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         {
             DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-            var ops = adapter.Adapt(new Differ().Diffs("abX", "Xab"));
+            var ops = adapter.Adapt(new diff_match_patch().diff_main("abX", "Xab"));
 
             Assert.Single(ops);
             // mov
@@ -327,7 +327,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         //{
         //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-        //    var ops = adapter.Adapt(new Differ().Diffs("XYab", "YXab"));
+        //    var ops = adapter.Adapt(new diff_match_patch().diff_main("XYab", "YXab"));
 
         //    Assert.Single(ops);
         //    // swp
@@ -344,7 +344,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         //{
         //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-        //    var ops = adapter.Adapt(new Differ().Diffs("abXY", "abYX"));
+        //    var ops = adapter.Adapt(new diff_match_patch().diff_main("abXY", "abYX"));
 
         //    Assert.Single(ops);
         //    // swp
@@ -361,7 +361,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         //{
         //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-        //    var ops = adapter.Adapt(new Differ().Diffs("abXYcd", "abYXcd"));
+        //    var ops = adapter.Adapt(new diff_match_patch().diff_main("abXYcd", "abYXcd"));
 
         //    Assert.Single(ops);
         //    // swp
@@ -378,7 +378,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         //{
         //    DifferResultToMspAdapter adapter = new DifferResultToMspAdapter();
 
-        //    var ops = adapter.Adapt(new Differ().Diffs("XaYb", "YaXb"));
+        //    var ops = adapter.Adapt(new diff_match_patch().diff_main("XaYb", "YaXb"));
 
         //    Assert.Single(ops);
         //    // swp

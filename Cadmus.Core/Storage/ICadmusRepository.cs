@@ -253,6 +253,33 @@ namespace Cadmus.Core.Storage
         /// <param name="id">The part ID.</param>
         /// <returns>Creator ID, or null.</returns>
         string GetPartCreatorId(string id);
+
+        /// <summary>
+        /// Determines whether the layer part with the specified ID might
+        /// potentially be broken because of changes in its base text.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="toleranceSeconds">The count of seconds representing
+        /// the tolerance time interval between a base text save time and that
+        /// of its layer part. Once this interval has elapsed, the layer part
+        /// is not considered as potentially broken.</param>
+        /// <returns>
+        /// <c>true</c> if the layer part is potentially broken; otherwise,
+        /// <c>false</c>.
+        /// </returns>
+        /// <remarks>A layer part is potentially broken when the corresponding
+        /// text part has been saved (with a different text) either after it,
+        /// or a few time before it.
+        /// In both cases, this implies that the part fragments might have
+        /// broken links, as the underlying text was in some way changed.
+        /// To detect a potential break we can just check for last modified date
+        /// and time; if the above conditions for save date and time are not met,
+        /// the method can return false. If instead they are met, we must ensure
+        /// that text has changed. To this end, we must go back in the text part
+        /// history to find the latest save which changed the text, and refer
+        /// to its date and time.
+        /// </remarks>
+        bool IsLayerPartPotentiallyBroken(string id, int toleranceSeconds);
         #endregion
     }
 }

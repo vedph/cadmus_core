@@ -620,8 +620,9 @@ namespace Cadmus.Mongo
             }
 
             var mongoItems = items.Find(f)
-                .SortBy(i => i.SortKey)
+                .SortByDescending(i => i.TimeModified)
                 .ThenBy(i => i.ReferenceId)
+                .ThenBy(i => i.Id)
                 .Skip(filter.GetSkipCount())
                 .Limit(filter.PageSize)
                 .ToList();
@@ -1073,21 +1074,11 @@ namespace Cadmus.Mongo
             parts.DeleteOne(p => p.Id.Equals(id));
         }
 
-        /// <summary>
-        /// Gets a page of history parts.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <returns>history items page</returns>
-        public DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
+        private DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter,
+            IMongoDatabase db)
         {
-            if (filter == null) throw new ArgumentNullException(nameof(filter));
-
-            EnsureClientCreated(_options.ConnectionString);
-
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
             var collection = db.GetCollection<MongoHistoryPart>(
                 MongoHistoryPart.COLLECTION);
-
             IQueryable<MongoHistoryPart> parts = collection.AsQueryable();
 
             if (filter.ItemIds?.Length > 0)
@@ -1138,7 +1129,8 @@ namespace Cadmus.Mongo
                     filter.PageNumber, filter.PageSize, 0, null);
             }
 
-            var page = parts.OrderBy(p => p.TimeModified)
+            var page = parts.OrderByDescending(p => p.TimeModified)
+                .ThenBy(p => p.Id)
                 .Skip(filter.GetSkipCount())
                 .Take(filter.PageSize)
                 .ToList();
@@ -1146,6 +1138,22 @@ namespace Cadmus.Mongo
             return new DataPage<HistoryPartInfo>(
                 filter.PageNumber, filter.PageSize, total,
                 page.Select(p => p.ToHistoryPartInfo()).ToList());
+        }
+
+        /// <summary>
+        /// Gets a page of history parts.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>history items page</returns>
+        public DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+
+            return GetHistoryParts(filter, db);
         }
 
         /// <summary>
@@ -1211,6 +1219,153 @@ namespace Cadmus.Mongo
                 .Project<MongoPart>(fields)
                 .FirstOrDefault()
                 ?.CreatorId;
+        }
+
+        private Tuple<string, DateTime> GetPartItemIdAndLastModified(string id,
+            IMongoDatabase db)
+        {
+            var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+            var filter = Builders<MongoPart>.Filter.Eq(p => p.Id, id);
+            var fields = Builders<MongoPart>.Projection
+                .Include(p => p.ItemId)
+                .Include(p => p.TimeModified);
+            MongoPart part = collection
+                .Find(filter)
+                .Project<MongoPart>(fields)
+                .FirstOrDefault();
+            return part != null
+                ? Tuple.Create(part.ItemId, part.TimeModified)
+                : null;
+        }
+
+        private MongoHistoryPart FindLastBaseTextChange(IMongoDatabase db,
+            string baseTextPartId)
+        {
+            int total =
+                db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
+                .AsQueryable()
+                .Count(p => p.ReferenceId == baseTextPartId);
+
+            for (int i = 0; i < total; i++)
+            {
+                var historyParts =
+                    db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
+                    .AsQueryable()
+                    .Skip(i)
+                    .Where(p => p.ReferenceId == baseTextPartId)
+                    .OrderByDescending(p => p.TimeModified)
+                    .Take(2)
+                    .ToList();
+
+                if (historyParts.Count == 1) return historyParts[0];
+
+                MongoHistoryPart hp1 = historyParts[0];
+                MongoHistoryPart hp2 = historyParts[1];
+                IHasText part1 = InstantiatePart(hp1.TypeId, hp1.RoleId, hp1.Content)
+                    as IHasText;
+                IHasText part2 = InstantiatePart(hp2.TypeId, hp2.RoleId, hp2.Content)
+                    as IHasText;
+                if (part1 == null || part2 == null) return null;
+
+                if (part1.GetText() != part2.GetText()) return hp1;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Determines whether the layer part with the specified ID might
+        /// potentially be broken because of changes in its base text.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="toleranceSeconds">The count of seconds representing
+        /// the tolerance time interval between a base text save time and that
+        /// of its layer part. Once this interval has elapsed, the layer part
+        /// is not considered as potentially broken.</param>
+        /// <returns>
+        /// <c>true</c> if the layer part is potentially broken; otherwise,
+        /// <c>false</c>.
+        /// </returns>
+        /// <remarks>A layer part is potentially broken when the corresponding
+        /// text part has been saved (with a different text) either after it,
+        /// or a few time (within the interval specified by 
+        /// <paramref name="toleranceSeconds"/>) before it.
+        /// In both cases, this implies that the part fragments might have
+        /// broken links, as the underlying text was in some way changed.
+        /// There is a potential break when:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>the base text part has been saved after/when the
+        /// layer part was saved.</description>
+        /// </item>
+        /// <item>
+        /// <description>the base text part has been saved before the layer
+        /// part was saved, but within a specified interval of time.</description>
+        /// </item>
+        /// </list>
+        /// For both cases, when history is present the text part save time
+        /// is not necessarily that of the text part itself; rather, we look
+        /// back in the text part history, to find the latest save which implied
+        /// a change in the part's text proper. If found, this is used as the
+        /// reference save time for the text part; otherwise, we just use the
+        /// text part's save time, outside of the history collection.
+        /// <para>
+        /// This is because one might save a text part without affecting its
+        /// text: for instance, one might change just its citation, and save
+        /// it. In this case, no layer parts would be broken.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">id</exception>
+        public bool IsLayerPartPotentiallyBroken(string id, int toleranceSeconds)
+        {
+            if (id == null) throw new ArgumentNullException(nameof(id));
+
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+
+            // get the layer part item ID and its last modified time
+            // (if there is no such part, there's nothing which can be broken!)
+            var layerPartItemIdAndTime = GetPartItemIdAndLastModified(id, db);
+            if (layerPartItemIdAndTime == null) return false;
+
+            // get the layer part's container item
+            // (if not found, it's broken for sure: the whole part is orphan!)
+            MongoItem item = db.GetCollection<MongoItem>(MongoItem.COLLECTION)
+                .Find(i => i.Id.Equals(id))
+                .FirstOrDefault();
+            if (item == null) return true;
+
+            // get the item's facet
+            MongoFacetDefinition facet = db.GetCollection<MongoFacetDefinition>
+                (MongoFacetDefinition.COLLECTION)
+                .Find(f => f.Id.Equals(item.FacetId))
+                .FirstOrDefault();
+            if (facet == null) return true; // defensive
+
+            // get the base text part from the role defined in the facet
+            // (if not found, it's broken for sure, as any other layer in this item;
+            // in this case, all the layers are orphaned)
+            MongoPart baseTextPart = db.GetCollection<MongoPart>(
+                MongoPart.COLLECTION)
+                .Find(f => f.ItemId == item.Id && f.RoleId == PartBase.BASE_TEXT_ROLE_ID)
+                .FirstOrDefault();
+            if (item == null) return true;
+
+            // determine the reference text part save time:
+            // - if we have history, look for the latest saved base text
+            // version where the text changed from its preceding version,
+            // and use it as a reference.
+            // - else, just use the current base text part as the reference.
+            MongoHistoryPart lastHp = FindLastBaseTextChange(db, baseTextPart.Id);
+            DateTime lastTextChange = lastHp != null ?
+                lastHp.TimeModified : baseTextPart.TimeModified;
+
+            // potentially broken if:
+            // last text change happened after/when layer was saved;
+            // last text change happened before layer was saved, but within the
+            // tolerance interval.
+            return lastTextChange >= layerPartItemIdAndTime.Item2
+                || (layerPartItemIdAndTime.Item2 - lastTextChange).TotalSeconds
+                <= toleranceSeconds;
         }
         #endregion
     }

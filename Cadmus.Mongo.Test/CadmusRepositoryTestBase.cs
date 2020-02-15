@@ -1402,16 +1402,54 @@ namespace Cadmus.TestBase
             Assert.Equal(1, n);
         }
 
+        private static FacetDefinition GetLayeredFacetDefinition()
+        {
+            FacetDefinition facet = new FacetDefinition
+            {
+                Id = "layered",
+                ColorKey = "FF0000",
+                Label = "layered",
+                Description = "Layered text",
+            };
+            // text
+            facet.PartDefinitions.Add(new PartDefinition
+            {
+                Name = "text",
+                TypeId = "net.fusisoft.token-text",
+                ColorKey = "FF0000",
+                IsRequired = true,
+                GroupKey = "text",
+                Description = "The base text",
+                RoleId = PartBase.BASE_TEXT_ROLE_ID,
+                SortKey = "text"
+            });
+            // comments layer
+            facet.PartDefinitions.Add(new PartDefinition
+            {
+                Name = "comments",
+                TypeId = "net.fusisoft.token-text-layer",
+                ColorKey = "FF0000",
+                IsRequired = true,
+                GroupKey = "text",
+                Description = "The base text",
+                RoleId = "fr.net.fusisoft.comment",
+                SortKey = "comments"
+            });
+            return facet;
+        }
+
         protected void DoGetLayerPartBreakChance_NoTextPart_2()
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
             // add item
             IItem item = new Item
             {
                 Title = "Test",
                 Description = "Test",
-                FacetId = "not-existing",
+                FacetId = "layered",
                 SortKey = "test",
                 CreatorId = "zeus",
                 UserId = "zeus"
@@ -1442,12 +1480,14 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
             // add item
             IItem item = new Item
             {
                 Title = "Test",
                 Description = "Test",
-                FacetId = "not-existing",
+                FacetId = "layered",
                 SortKey = "test",
                 CreatorId = "zeus",
                 UserId = "zeus"
@@ -1497,12 +1537,14 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
             // add item
             IItem item = new Item
             {
                 Title = "Test",
                 Description = "Test",
-                FacetId = "not-existing",
+                FacetId = "layered",
                 SortKey = "test",
                 CreatorId = "zeus",
                 UserId = "zeus"
@@ -1553,12 +1595,14 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
             // add item
             IItem item = new Item
             {
                 Title = "Test",
                 Description = "Test",
-                FacetId = "not-existing",
+                FacetId = "layered",
                 SortKey = "test",
                 CreatorId = "zeus",
                 UserId = "zeus"
@@ -1604,12 +1648,14 @@ namespace Cadmus.TestBase
         {
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
             // add item
             IItem item = new Item
             {
                 Title = "Test",
                 Description = "Test",
-                FacetId = "not-existing",
+                FacetId = "layered",
                 SortKey = "test",
                 CreatorId = "zeus",
                 UserId = "zeus"

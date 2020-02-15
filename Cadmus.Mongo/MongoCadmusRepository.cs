@@ -441,6 +441,8 @@ namespace Cadmus.Mongo
 
             // update sort key
             item.SortKey = _itemSortKeyBuilder.BuildKey(item, this);
+            // set time modified
+            item.TimeModified = DateTime.UtcNow;
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
@@ -449,9 +451,6 @@ namespace Cadmus.Mongo
             {
                 // add the new item to the history, as newly created or updated
                 bool exists = items.AsQueryable().Any(i => i.Id.Equals(item.Id));
-
-                // set time modified when updating
-                if (exists) item.TimeModified = DateTime.UtcNow;
 
                 MongoHistoryItem historyItem = new MongoHistoryItem(item)
                 {
@@ -983,7 +982,11 @@ namespace Cadmus.Mongo
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
-            string json = JsonSerializer.Serialize(part, part.GetType(), _jsonOptions);
+            string json = JsonSerializer.Serialize(part, part.GetType(),
+                _jsonOptions);
+
+            // set time modified
+            part.TimeModified = DateTime.UtcNow;
 
             MongoPart mongoPart = new MongoPart(part)
             {
@@ -993,10 +996,6 @@ namespace Cadmus.Mongo
             if (history)
             {
                 bool exists = parts.AsQueryable().Any(p => p.Id.Equals(part.Id));
-
-                // set time modified when updating
-                if (exists) part.TimeModified = DateTime.UtcNow;
-
                 MongoHistoryPart historyPart = new MongoHistoryPart(part)
                 {
                     Content = json,
@@ -1342,7 +1341,7 @@ namespace Cadmus.Mongo
             // anyway, this should never happen, as deleting items implying
             // deleting all their parts)
             MongoItem item = db.GetCollection<MongoItem>(MongoItem.COLLECTION)
-                .Find(i => i.Id.Equals(id))
+                .Find(i => i.Id.Equals(layerPartItemIdAndTime.Item1))
                 .FirstOrDefault();
             if (item == null) return 2;
 
@@ -1360,7 +1359,7 @@ namespace Cadmus.Mongo
                 MongoPart.COLLECTION)
                 .Find(f => f.ItemId == item.Id && f.RoleId == PartBase.BASE_TEXT_ROLE_ID)
                 .FirstOrDefault();
-            if (item == null) return 2;
+            if (baseTextPart == null) return 2;
 
             // determine the reference text part save time:
             // - if we have history, look for the latest saved base text

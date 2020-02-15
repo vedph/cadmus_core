@@ -256,7 +256,7 @@ namespace Cadmus.Core.Storage
 
         /// <summary>
         /// Determines whether the layer part with the specified ID might
-        /// potentially be broken because of changes in its base text.
+        /// potentially have been broken because of changes in its base text.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="toleranceSeconds">The count of seconds representing
@@ -264,8 +264,8 @@ namespace Cadmus.Core.Storage
         /// of its layer part. Once this interval has elapsed, the layer part
         /// is not considered as potentially broken.</param>
         /// <returns>
-        /// <c>true</c> if the layer part is potentially broken; otherwise,
-        /// <c>false</c>.
+        /// <c>0</c> if the layer part is not potentially broken; <c>1</c>
+        /// if it's potentially broken; <c>2</c> if it's surely broken.
         /// </returns>
         /// <remarks>A layer part is potentially broken when the corresponding
         /// text part has been saved (with a different text) either after it,
@@ -279,7 +279,7 @@ namespace Cadmus.Core.Storage
         /// history to find the latest save which changed the text, and refer
         /// to its date and time.
         /// </remarks>
-        bool IsLayerPartPotentiallyBroken(string id, int toleranceSeconds);
+        int GetLayerPartBreakChance(string id, int toleranceSeconds);
         #endregion
     }
 }

@@ -1313,9 +1313,13 @@ namespace Cadmus.Mongo
         /// text: for instance, one might change just its citation, and save
         /// it. In this case, no layer parts would be broken.
         /// </para>
+        /// <para>Notice that this method requires to retrieve the layer part,
+        /// its item (to fetch its facet ID), the item's facet definition,
+        /// and the base text part. If the layer part to be checked does no
+        /// more exists, it returns 0;</para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">id</exception>
-        public bool IsLayerPartPotentiallyBroken(string id, int toleranceSeconds)
+        public int GetLayerPartBreakChance(string id, int toleranceSeconds)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
@@ -1325,21 +1329,23 @@ namespace Cadmus.Mongo
             // get the layer part item ID and its last modified time
             // (if there is no such part, there's nothing which can be broken!)
             var layerPartItemIdAndTime = GetPartItemIdAndLastModified(id, db);
-            if (layerPartItemIdAndTime == null) return false;
+            if (layerPartItemIdAndTime == null) return 0;
 
             // get the layer part's container item
-            // (if not found, it's broken for sure: the whole part is orphan!)
+            // (if not found, it's broken for sure: the whole part is orphan!
+            // anyway, this should never happen, as deleting items implying
+            // deleting all their parts)
             MongoItem item = db.GetCollection<MongoItem>(MongoItem.COLLECTION)
                 .Find(i => i.Id.Equals(id))
                 .FirstOrDefault();
-            if (item == null) return true;
+            if (item == null) return 2;
 
             // get the item's facet
             MongoFacetDefinition facet = db.GetCollection<MongoFacetDefinition>
                 (MongoFacetDefinition.COLLECTION)
                 .Find(f => f.Id.Equals(item.FacetId))
                 .FirstOrDefault();
-            if (facet == null) return true; // defensive
+            if (facet == null) return 1; // defensive
 
             // get the base text part from the role defined in the facet
             // (if not found, it's broken for sure, as any other layer in this item;
@@ -1348,7 +1354,7 @@ namespace Cadmus.Mongo
                 MongoPart.COLLECTION)
                 .Find(f => f.ItemId == item.Id && f.RoleId == PartBase.BASE_TEXT_ROLE_ID)
                 .FirstOrDefault();
-            if (item == null) return true;
+            if (item == null) return 2;
 
             // determine the reference text part save time:
             // - if we have history, look for the latest saved base text
@@ -1365,7 +1371,7 @@ namespace Cadmus.Mongo
             // tolerance interval.
             return lastTextChange >= layerPartItemIdAndTime.Item2
                 || (layerPartItemIdAndTime.Item2 - lastTextChange).TotalSeconds
-                <= toleranceSeconds;
+                <= toleranceSeconds ? 1 : 0;
         }
         #endregion
     }

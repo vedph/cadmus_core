@@ -262,7 +262,8 @@ namespace Cadmus.Core.Storage
         /// <param name="toleranceSeconds">The count of seconds representing
         /// the tolerance time interval between a base text save time and that
         /// of its layer part. Once this interval has elapsed, the layer part
-        /// is not considered as potentially broken.</param>
+        /// is not considered as potentially broken. If set to 0 or less, no
+        /// tolerance interval is allowed.</param>
         /// <returns>
         /// <c>0</c> if the layer part is not potentially broken; <c>1</c>
         /// if it's potentially broken; <c>2</c> if it's surely broken.

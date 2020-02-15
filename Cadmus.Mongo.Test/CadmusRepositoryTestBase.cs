@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
@@ -1154,7 +1155,10 @@ namespace Cadmus.TestBase
                 Assert.True((int)(hp.TimeCreated - now).TotalSeconds >= 0);
                 Assert.True((int)(hp.TimeModified - now).TotalSeconds >= 0);
             }
-            else Assert.Equal(0, historyParts.Total);
+            else
+            {
+                Assert.Equal(0, historyParts.Total);
+            }
         }
 
         protected void DoAddPart_Existing_Updated(bool history)
@@ -1191,7 +1195,10 @@ namespace Cadmus.TestBase
                 Assert.True(hp.TimeCreated <= now);
                 Assert.True(hp.TimeModified >= now);
             }
-            else Assert.Equal(0, historyParts.Total);
+            else
+            {
+                Assert.Equal(0, historyParts.Total);
+            }
         }
 
         protected void DoAddPartFromContent_NotExisting_Added(bool history)
@@ -1233,7 +1240,10 @@ namespace Cadmus.TestBase
                 Assert.True((int)(hp.TimeCreated - now).TotalSeconds >= 0);
                 Assert.True((int)(hp.TimeModified - now).TotalSeconds >= 0);
             }
-            else Assert.Equal(0, historyParts.Total);
+            else
+            {
+                Assert.Equal(0, historyParts.Total);
+            }
         }
 
         protected void DoAddPartFromContent_Existing_Updated(bool history)
@@ -1271,7 +1281,10 @@ namespace Cadmus.TestBase
                 Assert.True(hp.TimeCreated <= now);
                 Assert.True(hp.TimeModified >= now);
             }
-            else Assert.Equal(0, historyParts.Total);
+            else
+            {
+                Assert.Equal(0, historyParts.Total);
+            }
         }
 
         protected void DoDeletePart_NotExisting_Nope(bool history)
@@ -1324,7 +1337,317 @@ namespace Cadmus.TestBase
                 Assert.True(hp.TimeCreated <= now);
                 Assert.True(hp.TimeModified >= now);
             }
-            else Assert.Equal(0, historyParts.Total);
+            else
+            {
+                Assert.Equal(0, historyParts.Total);
+            }
+        }
+
+        protected void DoGetLayerPartBreakChance_NoLayerPart_0()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            int n = repository.GetLayerPartBreakChance("not-existing", 10);
+
+            Assert.Equal(0, n);
+        }
+
+        protected void DoGetLayerPartBreakChance_NoFacet_1()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "not-existing",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart);
+            // add layer part
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 10);
+
+            Assert.Equal(1, n);
+        }
+
+        protected void DoGetLayerPartBreakChance_NoTextPart_2()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "not-existing",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item);
+            // add layer part
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 10);
+
+            Assert.Equal(2, n);
+        }
+
+        protected void DoGetLayerPartBreakChance_TextSavedPastLayer_1(
+            bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "not-existing",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item, history);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart, history);
+            // add layer part
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart, history);
+
+            // now re-save text after layer part
+            textPart.Lines[0].Text = "A new text";
+            Thread.Sleep(500);
+            repository.AddPart(textPart, history);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 10);
+
+            Assert.Equal(1, n);
+        }
+
+        protected void DoGetLayerPartBreakChance_TextSavedPastLayerNoChange_0(
+            bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "not-existing",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item, history);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart, history);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart, history);
+
+            // now re-save text after layer part, without changing its text
+            textPart.Citation = "3.4";
+            Thread.Sleep(500);
+            repository.AddPart(textPart, history);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 0);
+
+            Assert.Equal(1, n);
+        }
+
+        protected void DoGetLayerPartBreakChance_TextSavedBeforeLayerNoTolerance_0(
+            bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "not-existing",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item, history);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart, history);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart, history);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 0);
+
+            Assert.Equal(0, n);
+        }
+
+        protected void DoGetLayerPartBreakChance_TextSavedBeforeLayerInInterval_1(
+            bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "not-existing",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item, history);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart, history);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart, history);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 10);
+
+            Assert.Equal(1, n);
         }
         #endregion
 

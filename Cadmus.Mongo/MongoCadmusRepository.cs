@@ -1280,7 +1280,8 @@ namespace Cadmus.Mongo
         /// <param name="toleranceSeconds">The count of seconds representing
         /// the tolerance time interval between a base text save time and that
         /// of its layer part. Once this interval has elapsed, the layer part
-        /// is not considered as potentially broken.</param>
+        /// is not considered as potentially broken. If set to 0 or less, no
+        /// tolerance interval is allowed.</param>
         /// <returns>
         /// <c>true</c> if the layer part is potentially broken; otherwise,
         /// <c>false</c>.
@@ -1316,7 +1317,12 @@ namespace Cadmus.Mongo
         /// <para>Notice that this method requires to retrieve the layer part,
         /// its item (to fetch its facet ID), the item's facet definition,
         /// and the base text part. If the layer part to be checked does no
-        /// more exists, it returns 0;</para>
+        /// more exists, it returns 0; if the container item does no more
+        /// exists, it returns 2; if its facet definition does not exist,
+        /// it returns 1 (this should not happen, anyway given that there is no
+        /// possibility to retrieve the text part without the facet, the part
+        /// is considered potentially broken as no check can be performed);
+        /// if the base text part does no more exists, it returns 2.</para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">id</exception>
         public int GetLayerPartBreakChance(string id, int toleranceSeconds)
@@ -1365,13 +1371,18 @@ namespace Cadmus.Mongo
             DateTime lastTextChange = lastHp != null ?
                 lastHp.TimeModified : baseTextPart.TimeModified;
 
-            // potentially broken if:
-            // last text change happened after/when layer was saved;
-            // last text change happened before layer was saved, but within the
-            // tolerance interval.
-            return lastTextChange >= layerPartItemIdAndTime.Item2
-                || (layerPartItemIdAndTime.Item2 - lastTextChange).TotalSeconds
-                <= toleranceSeconds ? 1 : 0;
+            // with/without tolerance: potentially broken if
+            // last text change happened after/when layer was saved.
+            if (lastTextChange >= layerPartItemIdAndTime.Item2)
+                return 1;
+
+            // last text change happened before layer was saved:
+            // potentially broken if no tolerance, or within the tolerance
+            // interval.
+            return toleranceSeconds > 0
+                ? (layerPartItemIdAndTime.Item2 - lastTextChange).TotalSeconds
+                   <= toleranceSeconds ? 1 : 0
+                : 0;
         }
         #endregion
     }

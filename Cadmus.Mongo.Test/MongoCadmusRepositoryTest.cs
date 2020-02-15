@@ -668,6 +668,60 @@ namespace Cadmus.Mongo.Test
         {
             DoDeletePart_Existing_Deleted(history);
         }
+
+        [Fact]
+        public void GetLayerPartBreakChance_NoLayerPart_0()
+        {
+            DoGetLayerPartBreakChance_NoLayerPart_0();
+        }
+
+        [Fact]
+        public void GetLayerPartBreakChance_NoFacet_1()
+        {
+            DoGetLayerPartBreakChance_NoFacet_1();
+        }
+
+        [Fact]
+        public void GetLayerPartBreakChance_NoTextPart_2()
+        {
+            DoGetLayerPartBreakChance_NoTextPart_2();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetLayerPartBreakChance_TextSavedPastLayer_1(
+            bool history)
+        {
+            DoGetLayerPartBreakChance_TextSavedPastLayer_1(history);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetLayerPartBreakChance_TextSavedPastLayerNoChange_0(
+            bool history)
+        {
+            DoGetLayerPartBreakChance_TextSavedPastLayerNoChange_0(history);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetLayerPartBreakChance_TextSavedBeforeLayerNoTolerance_0(
+            bool history)
+        {
+            DoGetLayerPartBreakChance_TextSavedBeforeLayerNoTolerance_0(history);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetLayerPartBreakChance_TextSavedBeforeLayerInInterval_1(
+            bool history)
+        {
+            DoGetLayerPartBreakChance_TextSavedBeforeLayerInInterval_1(history);
+        }
         #endregion
     }
 }

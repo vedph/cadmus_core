@@ -1237,7 +1237,7 @@ namespace Cadmus.Mongo
                 : null;
         }
 
-        private MongoHistoryPart FindLastBaseTextChange(IMongoDatabase db,
+        private Tuple<MongoHistoryPart, int> FindLastBaseTextChange(IMongoDatabase db,
             string baseTextPartId)
         {
             int total =
@@ -1256,7 +1256,8 @@ namespace Cadmus.Mongo
                     .Take(2)
                     .ToList();
 
-                if (historyParts.Count == 1) return historyParts[0];
+                if (historyParts.Count == 1)
+                    return Tuple.Create(historyParts[0], total);
 
                 MongoHistoryPart hp1 = historyParts[0];
                 MongoHistoryPart hp2 = historyParts[1];
@@ -1266,7 +1267,8 @@ namespace Cadmus.Mongo
                     as IHasText;
                 if (part1 == null || part2 == null) return null;
 
-                if (part1.GetText() != part2.GetText()) return hp1;
+                if (part1.GetText() != part2.GetText())
+                    return Tuple.Create(hp1, total);
             }
             return null;
         }
@@ -1295,7 +1297,12 @@ namespace Cadmus.Mongo
         /// the method can return false. If instead they are met, we must ensure
         /// that text has changed. To this end, we must go back in the text part
         /// history to find the latest save which changed the text, and refer
-        /// to its date and time.
+        /// to its date and time. If the history of the text part includes a
+        /// single record, this means that the text part is in its original
+        /// state; in this case, we never consider the layer part as broken,
+        /// because this means that we just have imported or seeded both the
+        /// text part and its layer(s) at the same time, or within a few
+        /// fractions of seconds.
         /// </remarks>
         /// <exception cref="ArgumentNullException">id</exception>
         public int GetLayerPartBreakChance(string id, int toleranceSeconds)
@@ -1340,19 +1347,31 @@ namespace Cadmus.Mongo
             // version where the text changed from its preceding version,
             // and use it as a reference.
             // - else, just use the current base text part as the reference.
-            MongoHistoryPart lastHp = FindLastBaseTextChange(db, baseTextPart.Id);
-            DateTime lastTextChange = lastHp != null ?
-                lastHp.TimeModified : baseTextPart.TimeModified;
+            var lastHistoryPartAndTotal = FindLastBaseTextChange(db, baseTextPart.Id);
+            DateTime lastTextChange = lastHistoryPartAndTotal != null
+                ? lastHistoryPartAndTotal.Item1.TimeModified
+                : baseTextPart.TimeModified;
+
+            // the total count of text part versions in history, used to determine
+            // if the current text part state is original (which happens when
+            // the count is 1); consider it as 2 if there is no history at all,
+            // because in such cases we cannot know if the current (unique)
+            // state is original or not.
+            int historyTotal = lastHistoryPartAndTotal != null
+                ? lastHistoryPartAndTotal.Item2 : 2;
 
             // with/without tolerance: potentially broken if
             // last text change happened after/when layer was saved.
-            if (lastTextChange >= layerPartItemIdAndTime.Item2)
+            if (lastTextChange >= layerPartItemIdAndTime.Item2
+                && historyTotal > 1)
+            {
                 return 1;
+            }
 
             // last text change happened before layer was saved:
             // potentially broken if no tolerance, or within the tolerance
             // interval.
-            return toleranceSeconds > 0
+            return toleranceSeconds > 0 && historyTotal > 1
                 ? (layerPartItemIdAndTime.Item2 - lastTextChange).TotalSeconds
                    <= toleranceSeconds ? 1 : 0
                 : 0;

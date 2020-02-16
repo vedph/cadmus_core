@@ -717,6 +717,15 @@ namespace Cadmus.Mongo.Test
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
+        public void GetLayerPartBreakChance_OriginalTextSavedBeforeLayerInInterval_01(
+            bool history)
+        {
+            DoGetLayerPartBreakChance_OriginalTextSavedBeforeLayerInInterval_01(history);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
         public void GetLayerPartBreakChance_TextSavedBeforeLayerInInterval_1(
             bool history)
         {

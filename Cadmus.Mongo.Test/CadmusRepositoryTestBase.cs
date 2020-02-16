@@ -1643,6 +1643,60 @@ namespace Cadmus.TestBase
             Assert.Equal(0, n);
         }
 
+        protected void DoGetLayerPartBreakChance_OriginalTextSavedBeforeLayerInInterval_01(
+            bool history)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "layered",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item, history);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart, history);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart, history);
+
+            int n = repository.GetLayerPartBreakChance(layerPart.Id, 10);
+
+            if (history) Assert.Equal(0, n);
+            else Assert.Equal(1, n);
+        }
+
         protected void DoGetLayerPartBreakChance_TextSavedBeforeLayerInInterval_1(
             bool history)
         {
@@ -1675,6 +1729,10 @@ namespace Cadmus.TestBase
                 Text = "Hello world!"
             });
             repository.AddPart(textPart, history);
+            // change it to add more versions in history
+            textPart.Citation = "3.4";
+            repository.AddPart(textPart, history);
+
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =

@@ -675,6 +675,7 @@ As the part provider works also for closed generic types representing text layer
     ICadmusRepository : +HistoryPart<T> GetHistoryPart<T>(string id)
     ICadmusRepository : +DeleteHistoryPart(string id)
     ICadmusRepository : +string GetPartCreatorId(string id)
+    ICadmusRepository : +int GetLayerPartBreakChance(string id, int toleranceSeconds)
 @enduml
 ```
 

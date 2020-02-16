@@ -1273,7 +1273,7 @@ namespace Cadmus.Mongo
 
         /// <summary>
         /// Determines whether the layer part with the specified ID might
-        /// potentially be broken because of changes in its base text.
+        /// potentially have been broken because of changes in its base text.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="toleranceSeconds">The count of seconds representing
@@ -1282,46 +1282,20 @@ namespace Cadmus.Mongo
         /// is not considered as potentially broken. If set to 0 or less, no
         /// tolerance interval is allowed.</param>
         /// <returns>
-        /// <c>true</c> if the layer part is potentially broken; otherwise,
-        /// <c>false</c>.
+        /// <c>0</c> if the layer part is not potentially broken; <c>1</c>
+        /// if it's potentially broken; <c>2</c> if it's surely broken.
         /// </returns>
         /// <remarks>A layer part is potentially broken when the corresponding
         /// text part has been saved (with a different text) either after it,
-        /// or a few time (within the interval specified by 
-        /// <paramref name="toleranceSeconds"/>) before it.
+        /// or a few time before it.
         /// In both cases, this implies that the part fragments might have
         /// broken links, as the underlying text was in some way changed.
-        /// There is a potential break when:
-        /// <list type="bullet">
-        /// <item>
-        /// <description>the base text part has been saved after/when the
-        /// layer part was saved.</description>
-        /// </item>
-        /// <item>
-        /// <description>the base text part has been saved before the layer
-        /// part was saved, but within a specified interval of time.</description>
-        /// </item>
-        /// </list>
-        /// For both cases, when history is present the text part save time
-        /// is not necessarily that of the text part itself; rather, we look
-        /// back in the text part history, to find the latest save which implied
-        /// a change in the part's text proper. If found, this is used as the
-        /// reference save time for the text part; otherwise, we just use the
-        /// text part's save time, outside of the history collection.
-        /// <para>
-        /// This is because one might save a text part without affecting its
-        /// text: for instance, one might change just its citation, and save
-        /// it. In this case, no layer parts would be broken.
-        /// </para>
-        /// <para>Notice that this method requires to retrieve the layer part,
-        /// its item (to fetch its facet ID), the item's facet definition,
-        /// and the base text part. If the layer part to be checked does no
-        /// more exists, it returns 0; if the container item does no more
-        /// exists, it returns 2; if its facet definition does not exist,
-        /// it returns 1 (this should not happen, anyway given that there is no
-        /// possibility to retrieve the text part without the facet, the part
-        /// is considered potentially broken as no check can be performed);
-        /// if the base text part does no more exists, it returns 2.</para>
+        /// To detect a potential break we can just check for last modified date
+        /// and time; if the above conditions for save date and time are not met,
+        /// the method can return false. If instead they are met, we must ensure
+        /// that text has changed. To this end, we must go back in the text part
+        /// history to find the latest save which changed the text, and refer
+        /// to its date and time.
         /// </remarks>
         /// <exception cref="ArgumentNullException">id</exception>
         public int GetLayerPartBreakChance(string id, int toleranceSeconds)

@@ -459,7 +459,7 @@ Cadmus provides a generic solution to these scenarios in the form of **thesauri*
 
 A **thesaurus entry** (`ThesaurusEntry`) is a generic id/value pair used by some parts or fragments to represent a set of selectable options.
 
-Note that each thesaurus has its own language, so that you can provide the same entries in different languages. If the client requests an undefined language, the system falls back to the default language, which is English (`en`).
+Note that each thesaurus has its own language, so that you can provide the same entries in different languages. The language can be identified with an [ISO639](https://en.wikipedia.org/wiki/ISO_639) 2-letters or 3-letters code, as needed. Of course, it is recommended to be coherent: pick either the 2-letters or the 3-letters codes, and not a mixture of the two. If the client requests an undefined language, the system falls back to the default language, which is English.
 
 ### C.4. Part Providers
 

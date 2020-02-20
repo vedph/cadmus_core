@@ -288,10 +288,16 @@ The *layers* namespace contains components related to the text layers. Text laye
     IEditOperationDiffAdapterT : +bool IsMoveEnabled
     IEditOperationDiffAdapterT : +bool IsReplaceEnabled
     IEditOperationDiffAdapterT : +IList<YXEditOperation> Adapt(IList<Diff> diffs)
+
+    LayerHint : +string Location
+    LayerHint : +string EditOperation
+    LayerHint : +string PatchOperation
+    LayerHint : +int ImpactLevel
+    LayerHint : +string Description
 @enduml
 ```
 
-For `IEditOperationDiffAdapter` and its artifacts (`YXEditOperation`, `YXEditOperationDiffAdapter`) see [layers reconciliation](layer-reconciliation.md).
+For `IEditOperationDiffAdapter` and its artifacts (`YXEditOperation`, `YXEditOperationDiffAdapter`, `LayerHint`) see [layers reconciliation](layer-reconciliation.md).
 
 ### B.1. Layer Parts
 

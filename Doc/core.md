@@ -273,8 +273,25 @@ The *layers* namespace contains components related to the text layers. Text laye
     YXLayerPartBaseT : +DeleteFragmentsAtIntegral(string location)
     YXLayerPartBaseT : +IList<TFragment> GetFragmentsAtIntegral(string location)
     YXLayerPartBaseT : +IList<TFragment> GetFragmentsAt(string location)
+
+    abstract class "IEditOperationDiffAdapter<TOperation>" as IEditOperationDiffAdapterT
+    IEditOperationDiffAdapterT : +IList<TOperation> Adapt(IList<Diff> diffs)
+
+    YXEditOperation : +string OldLocation
+    YXEditOperation : +string Location
+    YXEditOperation : +string Value
+    YXEditOperation : +string OldValue
+    YXEditOperation : +int GroupId
+    YXEditOperation : +{static} string FilterTextForDisplay(string text)
+
+    IEditOperationDiffAdapterT <|-- YXEditOperationDiffAdapter
+    IEditOperationDiffAdapterT : +bool IsMoveEnabled
+    IEditOperationDiffAdapterT : +bool IsReplaceEnabled
+    IEditOperationDiffAdapterT : +IList<YXEditOperation> Adapt(IList<Diff> diffs)
 @enduml
 ```
+
+For `IEditOperationDiffAdapter` and its artifacts (`YXEditOperation`, `YXEditOperationDiffAdapter`) see [layers reconciliation](layer-reconciliation.md).
 
 ### B.1. Layer Parts
 

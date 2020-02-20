@@ -87,5 +87,190 @@ namespace Cadmus.Parts.Test.Layers
                 Assert.Equal("scholarly", pin.Value);
             }
         }
+
+        // YXLayerPartBase<TFragment>, we test these once
+
+        [Fact]
+        public void AddFragment_NoOverlap_Added()
+        {
+            var part = GetPart();
+
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "2.1",
+                Tag = "scholarly",
+                Text = "The comment."
+            });
+
+            Assert.Equal(4, part.Fragments.Count);
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.1"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.2"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.3"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "2.1"));
+        }
+
+        [Fact]
+        public void AddFragment_Overlap_Replaced()
+        {
+            var part = GetPart();
+
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Tag = "scholarly",
+                Text = "New at 1.1"
+            });
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.3-2.1",
+                Tag = "scholarly",
+                Text = "New at 1.3-2.1"
+            });
+
+            Assert.Equal(3, part.Fragments.Count);
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.1"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.2"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.3-2.1"));
+        }
+
+        [Fact]
+        public void DeleteFragmentsAtIntegral_NoMatch_Nope()
+        {
+            var part = GetPart();
+
+            part.DeleteFragmentsAtIntegral("5.1");
+
+            Assert.Equal(3, part.Fragments.Count);
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.1"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.2"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.3"));
+        }
+
+        [Fact]
+        public void DeleteFragmentsAtIntegral_RangeOverlap_Nope()
+        {
+            var part = GetPart();
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.4-1.6",
+                Tag = "scholarly",
+                Text = "The comment."
+            });
+
+            part.DeleteFragmentsAtIntegral("1.4");
+
+            Assert.Equal(4, part.Fragments.Count);
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.1"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.2"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.3"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.4-1.6"));
+        }
+
+        [Fact]
+        public void DeleteFragmentsAtIntegral_IntegralMatch_Deleted()
+        {
+            var part = GetPart();
+
+            part.DeleteFragmentsAtIntegral("1.2");
+
+            Assert.Equal(2, part.Fragments.Count);
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.1"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.3"));
+        }
+
+        [Fact]
+        public void DeleteFragmentsAtIntegral_NonIntegralMatch_Deleted()
+        {
+            var part = GetPart();
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "5.1@1x3",
+                Tag = "scholarly",
+                Text = "The comment."
+            });
+
+            part.DeleteFragmentsAtIntegral("5.1");
+
+            Assert.Equal(3, part.Fragments.Count);
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.1"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.2"));
+            Assert.NotNull(part.Fragments.Find(fr => fr.Location == "1.3"));
+        }
+
+        [Fact]
+        public void GetFragmentsAtIntegral_NoMatch_Nope()
+        {
+            var part = GetPart();
+
+            IList<CommentLayerFragment> frr = part.GetFragmentsAtIntegral("5.1");
+
+            Assert.Empty(frr);
+        }
+
+        [Fact]
+        public void GetFragmentsAtIntegral_RangeOverlap_Nope()
+        {
+            var part = GetPart();
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.4-1.6",
+                Tag = "scholarly",
+                Text = "The comment."
+            });
+
+            IList<CommentLayerFragment> frr = part.GetFragmentsAtIntegral("5.1");
+
+            Assert.Empty(frr);
+        }
+
+        [Fact]
+        public void GetFragmentsAtIntegral_IntegralMatch_Ok()
+        {
+            var part = GetPart();
+
+            IList<CommentLayerFragment> frr = part.GetFragmentsAtIntegral("1.2");
+
+            Assert.Single(frr);
+            Assert.Equal("1.2", frr[0].Location);
+        }
+
+        [Fact]
+        public void GetFragmentsAtIntegral_NonIntegralMatch_Ok()
+        {
+            var part = GetPart();
+            part.AddFragment(new CommentLayerFragment
+            {
+                Location = "5.1@1x3",
+                Tag = "scholarly",
+                Text = "The comment."
+            });
+
+            IList<CommentLayerFragment> frr = part.GetFragmentsAtIntegral("5.1");
+
+            Assert.Single(frr);
+            Assert.Equal("5.1@1x3", frr[0].Location);
+        }
+
+        [Fact]
+        public void GetFragmentsAt_NoOverlap_Nope()
+        {
+            var part = GetPart();
+
+            IList<CommentLayerFragment> frr = part.GetFragmentsAt("5.1");
+
+            Assert.Empty(frr);
+        }
+
+        [Fact]
+        public void GetFragmentsAt_Overlap_Ok()
+        {
+            var part = GetPart();
+
+            IList<CommentLayerFragment> frr = part.GetFragmentsAt("1.2-3.1");
+
+            Assert.Equal(2, frr.Count);
+            Assert.NotNull(frr.FirstOrDefault(fr => fr.Location == "1.2"));
+            Assert.NotNull(frr.FirstOrDefault(fr => fr.Location == "1.3"));
+        }
     }
 }

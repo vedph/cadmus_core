@@ -23,7 +23,7 @@
     <PackageReference Include="Fusi.Text" Version="1.1.10" />
     <PackageReference Include="fusi.tools" Version="1.1.12" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup>

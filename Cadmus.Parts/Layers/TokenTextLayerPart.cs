@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using Cadmus.Core;
 using Cadmus.Core.Layers;
 using Fusi.Tools.Config;
@@ -31,78 +28,9 @@ namespace Cadmus.Parts.Layers
     /// </para>
     /// </remarks>
     [Tag("net.fusisoft.token-text-layer")]
-    public sealed class TokenTextLayerPart<TFragment> : PartBase,
-        IHasFragments<TFragment>
+    public sealed class TokenTextLayerPart<TFragment> : YXLayerPartBase<TFragment>
         where TFragment : ITextLayerFragment, new()
     {
-        /// <summary>
-        /// Gets or sets the part's fragments.
-        /// </summary>
-        public List<TFragment> Fragments { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TokenTextLayerPart{TFragment}"/>
-        /// class.
-        /// Note that the <see cref="PartBase.RoleId"/> property is set here
-        /// to the tag value of the fragment type. For instance, a 
-        /// <see cref="TokenTextLayerPart{TFragment}"/> with fragments whose
-        /// type has a <see cref="TagAttribute"/> value equal to <c>fr.comment</c>
-        /// will have its <see cref="PartBase.RoleId"/> property equal
-        /// to <c>fr.comment</c>. This effectively is the role played by this
-        /// generic layer part in an item, as determined by the type of its
-        /// fragments.
-        /// </summary>
-        public TokenTextLayerPart()
-        {
-            Fragments = new List<TFragment>();
-            RoleId = typeof(TFragment).GetTypeInfo()
-                .GetCustomAttribute<TagAttribute>()?.Tag;
-        }
-
-        /// <summary>
-        /// Add the specified layer fragment to this part. Any other existing
-        /// fragment eventually overlapping the new one will be removed.
-        /// </summary>
-        /// <param name="fragment">The new fragment.</param>
-        /// <exception cref="ArgumentNullException">null item</exception>
-        public void AddFragment(TFragment fragment)
-        {
-            if (fragment == null) throw new ArgumentNullException(nameof(fragment));
-
-            if (Fragments == null) Fragments = new List<TFragment>();
-
-            // remove all the existing overlapping fragments
-            TokenTextLocation newLoc = TokenTextLocation.Parse(fragment.Location);
-
-            for (int i = Fragments.Count - 1; i > -1; i--)
-            {
-                TokenTextLocation loc =
-                    TokenTextLocation.Parse(Fragments[i].Location);
-                if (newLoc.Overlaps(loc)) Fragments.RemoveAt(i);
-            }
-
-            Fragments.Add(fragment);
-        }
-
-        /// <summary>
-        /// Gets all the fragments ovlerapping the specified location.
-        /// </summary>
-        /// <param name="location">The location.</param>
-        /// <returns>The fragments</returns>
-        /// <exception cref="ArgumentNullException">location</exception>
-        public IList<TFragment> GetFragmentsAt(string location)
-        {
-            if (location == null) throw new ArgumentNullException(nameof(location));
-
-            if (Fragments == null) return new List<TFragment>();
-
-            TokenTextLocation requestedLoc = TokenTextLocation.Parse(location);
-
-            return (from fr in Fragments
-                where TokenTextLocation.Parse(fr.Location).Overlaps(requestedLoc)
-                select fr).ToList();
-        }
-
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// Pins: all the pins from the part's fragments, sorted first in their

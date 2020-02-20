@@ -15,5 +15,39 @@ namespace Cadmus.Core
         /// Gets the fragments.
         /// </summary>
         List<TFragment> Fragments { get; }
+
+        /// <summary>
+        /// Add the specified layer fragment to this part. Any other existing
+        /// fragment eventually overlapping the new one will be removed.
+        /// </summary>
+        /// <param name="fragment">The new fragment.</param>
+        void AddFragment(TFragment fragment);
+
+        /// <summary>
+        /// Deletes all the non-range fragments at the integral location
+        /// specified by the given coordinates. Fragments including this
+        /// location but with a larger extent (ranges) are not deleted;
+        /// fragments included by this location with a smaller extent 
+        /// are deleted.
+        /// </summary>
+        /// <param name="location">The location. This must represent a
+        /// single point, not a range.</param>
+        void DeleteFragmentsAtIntegral(string location);
+
+        /// <summary>
+        /// Gets the non-range fragments whose extent is equal to or less than
+        /// that specified by the given coordinates.
+        /// </summary>
+        /// <param name="location">The location. This must represent a single
+        /// point, not a range.</param>
+        /// <returns>Fragments list, empty if none matches.</returns>
+        IList<TFragment> GetFragmentsAtIntegral(string location);
+
+        /// <summary>
+        /// Gets all the fragments ovlerapping the specified location.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <returns>The fragments.</returns>
+        IList<TFragment> GetFragmentsAt(string location);
     }
 }

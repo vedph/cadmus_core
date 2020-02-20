@@ -214,7 +214,7 @@ namespace Cadmus.Core.Layers
 
         /// <summary>
         /// Compare this point to the specified one without taking into account
-        /// token portions.
+        /// token portions (i.e. <see cref="At"/> and <see cref="Run"/>).
         /// </summary>
         /// <param name="other">the point to compare to this point</param>
         /// <returns>comparison result</returns>

@@ -35,6 +35,13 @@ This is the core namespace for the Cadmus system. It includes the following name
     DataPin : +string PartId
     DataPin : +string RoleId
 
+    abstract class "IHasFragments<TFragment>" as IHasFragmentsT
+    IHasFragmentsT : +List<TFragment> Fragments
+    IHasFragmentsT : +AddFragment(TFragment fragment)
+    IHasFragmentsT : +DeleteFragmentsAtIntegral(string location)
+    IHasFragmentsT : +IList<TFragment> GetFragmentsAtIntegral(string location)
+    IHasFragmentsT : +IList<TFragment> GetFragmentsAt(string location)
+
     abstract class IPart
     IHasVersion <|-- IPart
     IHasDataPins <|-- IPart
@@ -256,6 +263,16 @@ The *layers* namespace contains components related to the text layers. Text laye
     TokenTextLocation : +TokenTextLocation Shift(int dy, int dx)
     TokenTextLocation : +{static} TokenTextLocation Parse(string text)
     TokenTextLocation : +string ToString()
+
+    abstract class "IHasFragments<TFragment>" as IHasFragmentsT
+
+    IHasFragmentsT <|-- YXLayerPartBaseT
+    abstract class "YXLayerPartBase<TFragment>" as YXLayerPartBaseT
+    YXLayerPartBaseT : +List<TFragment> Fragments
+    YXLayerPartBaseT : +AddFragment(TFragment fragment)
+    YXLayerPartBaseT : +DeleteFragmentsAtIntegral(string location)
+    YXLayerPartBaseT : +IList<TFragment> GetFragmentsAtIntegral(string location)
+    YXLayerPartBaseT : +IList<TFragment> GetFragmentsAt(string location)
 @enduml
 ```
 
@@ -581,9 +598,6 @@ As the part provider works also for closed generic types representing text layer
     PartInfo <|-- LayerPartInfo
     LayerPartInfo : +int FragmentCount
     LayerPartInfo : +bool IsAbsent
-
-    abstract class "IHasFragments<TFragment>" as IHasFragmentsT
-    IHasFragmentsT : +List<TFragment> Fragments
 
     IHasHistory <|-- HistoryItem
     HistoryItem : +string Id

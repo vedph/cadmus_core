@@ -56,10 +56,10 @@ namespace Cadmus.Core.Layers
 
         #region Equality
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same 
-        /// type.</summary>
-        /// <returns>true if the current object is equal to the <paramref name="other" /> 
-        /// parameter; otherwise, false.</returns>
+        /// Indicates whether the current object is equal to another object
+        /// of the same type.</summary>
+        /// <returns>true if the current object is equal to the
+        /// <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(TokenTextLocation other)
         {
@@ -69,10 +69,13 @@ namespace Cadmus.Core.Layers
         }
 
         /// <summary>
-        /// Determines whether the specified object is equal to the current object.</summary>
+        /// Determines whether the specified object is equal to the current
+        /// object.
+        /// </summary>
         /// <returns>true if the specified object is equal to the current object; 
         /// otherwise, false.</returns>
-        /// <param name="obj">The object to compare with the current object.</param>
+        /// <param name="obj">The object to compare with the current
+        /// object.</param>
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
@@ -136,34 +139,38 @@ namespace Cadmus.Core.Layers
         }
 
         /// <summary>
-        /// Compares the current instance with another object of the same type and 
-        /// returns an integer that indicates whether the current instance precedes, 
-        /// follows, or occurs in the same position in the sort order as the other 
-        /// object.</summary>
-        /// <returns>A value that indicates the relative order of the objects being 
-        /// compared. The return value has these meanings: less than zero: this instance 
-        /// precedes <paramref name="obj" /> in the sort order; zero: this instance 
-        /// occurs in the same position in the sort order as <paramref name="obj" />; 
-        /// greater than zero This instance follows <paramref name="obj" /> in the sort 
-        /// order.</returns>
-        /// <param name="obj">An object to compare with this instance. </param>
+        /// Compares the current instance with another object of the same type
+        /// and returns an integer that indicates whether the current instance
+        /// precedes, follows, or occurs in the same position in the sort order
+        /// as the other object.</summary>
+        /// <returns>A value that indicates the relative order of the objects
+        /// being compared. The return value has these meanings: less than zero:
+        /// this instance precedes <paramref name="obj" /> in the sort order;
+        /// zero: this instance occurs in the same position in the sort order
+        /// as <paramref name="obj" />; greater than zero This instance follows
+        /// <paramref name="obj" /> in the sort order.</returns>
+        /// <param name="obj">An object to compare with this instance.</param>
         /// <exception cref="ArgumentException">
-        /// <paramref name="obj" /> is not the same type as this instance. </exception>
+        /// <paramref name="obj" /> is not the same type as this instance.
+        /// </exception>
         public int CompareTo(object obj)
         {
             if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
 
             if (!(obj is TokenTextLocation))
-                throw new ArgumentException($"Object must be of type {nameof(TokenTextLocation)}");
+            {
+                throw new ArgumentException(
+                    $"Object must be of type {nameof(TokenTextLocation)}");
+            }
             return CompareTo((TokenTextLocation) obj);
         }
         #endregion
 
         #region Overlap
         /// <summary>
-        /// True if these layer item coords overlap with any of the tokens referenced 
-        /// by <paramref name="other"/>.
+        /// True if these layer item coords overlap with any of the tokens
+        /// referenced by <paramref name="other"/>.
         /// </summary>
         /// <param name="other">the location to test for inclusion</param>
         /// <returns>true if this location overlaps the specified coords</returns>
@@ -188,8 +195,8 @@ namespace Cadmus.Core.Layers
             }
 
             // 2) if B is a range, cases are:
-            //	2.1. A is a point: A (point) overlaps with B (range) when B-left <= A and
-            //		B-right >= A
+            //	2.1. A is a point: A (point) overlaps with B (range) when
+            //       B-left <= A and B-right >= A
             //	2.2. A is a range: A (range) overlaps with B (range) 
             //       when B-right >= A-left and B-left <= A-right
             return !IsRange ?
@@ -198,8 +205,8 @@ namespace Cadmus.Core.Layers
         }
 
         /// <summary>
-        /// True if this layer item coords contain the token identified by the specified 
-        /// text coords.
+        /// True if this layer item coords contain the token identified by the
+        /// specified text coords.
         /// </summary>
         /// <param name="y">y-coords</param>
         /// <param name="x">x-coords</param>
@@ -220,8 +227,10 @@ namespace Cadmus.Core.Layers
         /// Shift this location by the specified Y and/or X amount, returning
         /// the result into a new location.
         /// </summary>
-        /// <param name="dy">amount to shift for Y (positive or negative, 0=no shift)</param>
-        /// <param name="dx">amount to shift for X (positive or negative, 0=no shift)</param>
+        /// <param name="dy">amount to shift for Y (positive or negative,
+        /// 0=no shift)</param>
+        /// <param name="dx">amount to shift for X (positive or negative,
+        /// 0=no shift)</param>
         /// <returns>The shifted location.</returns>
         public TokenTextLocation Shift(int dy, int dx)
         {
@@ -262,7 +271,7 @@ namespace Cadmus.Core.Layers
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

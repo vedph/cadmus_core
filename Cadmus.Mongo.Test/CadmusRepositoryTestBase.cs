@@ -1813,7 +1813,60 @@ namespace Cadmus.TestBase
 
         protected void DoGetLayerHints_Changed_Ok()
         {
-            // TODO
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "layered",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart);
+            // delete 1st token from text, wait and save
+            textPart.Lines[0].Text = "world!";
+            Thread.Sleep(500);
+            repository.AddPart(textPart);
+
+            IList<LayerHint> hints = repository.GetLayerPartHints(layerPart.Id);
+
+            Assert.Single(hints);
+            Assert.Equal(2, hints[0].ImpactLevel);
+            Assert.Equal("del 1.1", hints[0].PatchOperation);
         }
         #endregion
 

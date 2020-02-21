@@ -738,6 +738,12 @@ namespace Cadmus.Mongo.Test
         {
             DoGetLayerHints_Unchanged_Ok();
         }
+
+        [Fact]
+        public void GetLayerHints_Changed_Ok()
+        {
+            DoGetLayerHints_Changed_Ok();
+        }
         #endregion
     }
 }

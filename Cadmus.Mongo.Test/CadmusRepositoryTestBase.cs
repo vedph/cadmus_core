@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cadmus.Core;
 using Cadmus.Core.Config;
+using Cadmus.Core.Layers;
 using Cadmus.Core.Storage;
 using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
@@ -13,6 +14,9 @@ namespace Cadmus.TestBase
 {
     /// <summary>
     /// Base class for Cadmus repository tests.
+    /// In the event of supporting more storage technologies, move this class
+    /// outside the Cadmus.Mongo.Test project in its own project, and reference
+    /// it from both your storage test projects.
     /// </summary>
     public abstract class CadmusRepositoryTestBase
     {
@@ -1752,6 +1756,64 @@ namespace Cadmus.TestBase
             int n = repository.GetLayerPartBreakChance(layerPart.Id, 10);
 
             Assert.Equal(1, n);
+        }
+
+        protected void DoGetLayerHints_Unchanged_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "layered",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            repository.AddPart(layerPart);
+
+            IList<LayerHint> hints = repository.GetLayerPartHints(layerPart.Id);
+
+            Assert.Single(hints);
+            Assert.Equal(0, hints[0].ImpactLevel);
+        }
+
+        protected void DoGetLayerHints_Changed_Ok()
+        {
+            // TODO
         }
         #endregion
 

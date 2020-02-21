@@ -15,7 +15,8 @@ namespace Cadmus.Mongo.Test
 {
     // https://github.com/xunit/xunit/issues/1999
 
-    [CollectionDefinition(nameof(NonParallelResourceCollection), DisableParallelization = true)]
+    [CollectionDefinition(nameof(NonParallelResourceCollection),
+        DisableParallelization = true)]
     public class NonParallelResourceCollection { }
 
     [Collection(nameof(NonParallelResourceCollection))]
@@ -730,6 +731,12 @@ namespace Cadmus.Mongo.Test
             bool history)
         {
             DoGetLayerPartBreakChance_TextSavedBeforeLayerInInterval_1(history);
+        }
+
+        [Fact]
+        public void GetLayerHints_Unchanged_Ok()
+        {
+            DoGetLayerHints_Unchanged_Ok();
         }
         #endregion
     }

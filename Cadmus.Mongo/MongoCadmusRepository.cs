@@ -1406,7 +1406,7 @@ namespace Cadmus.Mongo
 
             // get the layer part's container item
             MongoItem item = db.GetCollection<MongoItem>(MongoItem.COLLECTION)
-                .Find(i => i.Id.Equals(id))
+                .Find(i => i.Id.Equals(mongoLayerPart.ItemId))
                 .FirstOrDefault();
             if (item == null) return hints;
 
@@ -1436,7 +1436,7 @@ namespace Cadmus.Mongo
             // is less than the layer part save time
             MongoHistoryPart hp = db.GetCollection<MongoHistoryPart>(
                 MongoHistoryPart.COLLECTION)
-                .Find(p => p.ReferenceId.Equals(id)
+                .Find(p => p.ReferenceId.Equals(textPart.Id)
                       && p.TimeModified < mongoLayerPart.TimeModified)
                 .FirstOrDefault();
             if (hp == null) return hints;

@@ -27,6 +27,9 @@ namespace Cadmus.Core.Test.Layers
         private string SerializePart(IPart part) =>
             JsonSerializer.Serialize(part, part.GetType(), _jsonOptions);
 
+        private IPart DeserializePart(string json, Type type) =>
+            (IPart)JsonSerializer.Deserialize(json, type, _jsonOptions);
+
         private AnonLayerPart DeserializeAnonLayerPart(string json) =>
             (AnonLayerPart)JsonSerializer.Deserialize(json,
                 typeof(AnonLayerPart), _jsonOptions);
@@ -320,17 +323,139 @@ namespace Cadmus.Core.Test.Layers
         #endregion
 
         #region ApplyPatches
+        private TokenTextLayerPart<CommentLayerFragment> GetCommentLayerPart(
+            string[] locations)
+        {
+            TokenTextLayerPart<CommentLayerFragment> part =
+                new TokenTextLayerPart<CommentLayerFragment>();
+
+            for (int i = 0; i < locations.Length; i++)
+            {
+                part.AddFragment(new CommentLayerFragment
+                {
+                    Location = locations[i],
+                    Tag = "tag",
+                    Text = $"Comment {i + 1}"
+                });
+            }
+
+            return part;
+        }
+
         [Fact]
         public void ApplyPatches_Empty_Unchanged()
         {
             TokenTextLayerPart<CommentLayerFragment> part =
-                new TokenTextLayerPart<CommentLayerFragment>();
+                GetCommentLayerPart(new[] { "1.1" });
             string json = SerializePart(part);
             AnonLayerPart anon = DeserializeAnonLayerPart(json);
 
             string json2 = anon.ApplyPatches(json, Array.Empty<string>());
 
             Assert.Equal(json, json2);
+        }
+
+        [Fact]
+        public void ApplyPatches_InvalidPatch_Unchanged()
+        {
+            TokenTextLayerPart<CommentLayerFragment> part =
+                GetCommentLayerPart(new[] { "1.1" });
+            string json = SerializePart(part);
+            AnonLayerPart anon = DeserializeAnonLayerPart(json);
+
+            string json2 = anon.ApplyPatches(json, new[] { "fake 1.1" });
+
+            Assert.Equal(json, json2);
+        }
+
+        [Fact]
+        public void ApplyPatches_Del_Ok()
+        {
+            TokenTextLayerPart<CommentLayerFragment> part =
+                GetCommentLayerPart(new[] { "1.1", "1.2" });
+            string json = SerializePart(part);
+            AnonLayerPart anon = DeserializeAnonLayerPart(json);
+
+            string json2 = anon.ApplyPatches(json, new[] { "del 1.1" });
+
+            // anon has been synched to changes in its source JSON
+            Assert.Single(anon.Fragments);
+            Assert.Equal("1.2", anon.Fragments[0].Location);
+
+            // layer was patched
+            TokenTextLayerPart<CommentLayerFragment> part2 =
+                (TokenTextLayerPart<CommentLayerFragment>)
+                DeserializePart(json2, part.GetType());
+            Assert.Single(part2.Fragments);
+
+            CommentLayerFragment fr = part2.Fragments[0];
+            Assert.Equal("1.2", fr.Location);
+            Assert.Equal("tag", fr.Tag);
+            Assert.Equal("Comment 2", fr.Text);
+        }
+
+        [Fact]
+        public void ApplyPatches_Mov_Ok()
+        {
+            TokenTextLayerPart<CommentLayerFragment> part =
+                GetCommentLayerPart(new[] { "1.1", "1.2" });
+            string json = SerializePart(part);
+            AnonLayerPart anon = DeserializeAnonLayerPart(json);
+
+            string json2 = anon.ApplyPatches(json, new[] { "mov 1.1 3.1" });
+
+            // anon has been synched to changes in its source JSON
+            Assert.Equal(2, anon.Fragments.Count);
+            Assert.NotNull(anon.Fragments.Find(fr => fr.Location == "3.1"));
+            Assert.NotNull(anon.Fragments.Find(fr => fr.Location == "1.2"));
+
+            // layer was patched
+            TokenTextLayerPart<CommentLayerFragment> part2 =
+                (TokenTextLayerPart<CommentLayerFragment>)
+                DeserializePart(json2, part.GetType());
+            Assert.Equal(2, part2.Fragments.Count);
+
+            CommentLayerFragment fr = part2.Fragments.Find(fr => fr.Location == "3.1");
+            Assert.NotNull(fr);
+            Assert.Equal("3.1", fr.Location);
+            Assert.Equal("tag", fr.Tag);
+            Assert.Equal("Comment 1", fr.Text);
+
+            fr = part2.Fragments.Find(fr => fr.Location == "1.2");
+            Assert.NotNull(fr);
+            Assert.Equal("1.2", fr.Location);
+            Assert.Equal("tag", fr.Tag);
+            Assert.Equal("Comment 2", fr.Text);
+        }
+
+        [Fact]
+        public void ApplyPatches_DelAndMov_Ok()
+        {
+            TokenTextLayerPart<CommentLayerFragment> part =
+                GetCommentLayerPart(new[] { "1.1", "1.2" });
+            string json = SerializePart(part);
+            AnonLayerPart anon = DeserializeAnonLayerPart(json);
+
+            string json2 = anon.ApplyPatches(json, new[]
+            {
+                "del 1.1",
+                "mov 1.2 1.1"
+            });
+
+            // anon has been synched to changes in its source JSON
+            Assert.Single(anon.Fragments);
+            Assert.Equal("1.1", anon.Fragments[0].Location);
+
+            // layer was patched
+            TokenTextLayerPart<CommentLayerFragment> part2 =
+                (TokenTextLayerPart<CommentLayerFragment>)
+                DeserializePart(json2, part.GetType());
+            Assert.Single(part2.Fragments);
+
+            CommentLayerFragment fr = part2.Fragments[0];
+            Assert.Equal("1.1", fr.Location);
+            Assert.Equal("tag", fr.Tag);
+            Assert.Equal("Comment 2", fr.Text);
         }
         #endregion
     }

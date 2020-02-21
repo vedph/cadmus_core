@@ -1,6 +1,9 @@
 ﻿using Cadmus.Core.Layers;
+using Cadmus.Parts.Layers;
 using DiffMatchPatch;
+using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Xunit;
 
 namespace Cadmus.Core.Test.Layers
@@ -9,12 +12,24 @@ namespace Cadmus.Core.Test.Layers
     {
         private readonly diff_match_patch _differ;
         private readonly IEditOperationDiffAdapter<YXEditOperation> _adapter;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public AnonLayerPartTest()
         {
             _differ = new diff_match_patch();
             _adapter = new YXEditOperationDiffAdapter();
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
         }
+
+        private string SerializePart(IPart part) =>
+            JsonSerializer.Serialize(part, part.GetType(), _jsonOptions);
+
+        private AnonLayerPart DeserializeAnonLayerPart(string json) =>
+            (AnonLayerPart)JsonSerializer.Deserialize(json,
+                typeof(AnonLayerPart), _jsonOptions);
 
         private IList<YXEditOperation> GetOperations(string a, string b)
         {
@@ -22,6 +37,7 @@ namespace Cadmus.Core.Test.Layers
             return _adapter.Adapt(diffs);
         }
 
+        #region GetFragmentHints
         [Fact]
         public void GetFragmentHints_Equ_Ok()
         {
@@ -301,5 +317,21 @@ namespace Cadmus.Core.Test.Layers
             Assert.Equal(operations[1].ToString(), fr.EditOperation);
             Assert.Null(fr.PatchOperation);
         }
+        #endregion
+
+        #region ApplyPatches
+        [Fact]
+        public void ApplyPatches_Empty_Unchanged()
+        {
+            TokenTextLayerPart<CommentLayerFragment> part =
+                new TokenTextLayerPart<CommentLayerFragment>();
+            string json = SerializePart(part);
+            AnonLayerPart anon = DeserializeAnonLayerPart(json);
+
+            string json2 = anon.ApplyPatches(json, Array.Empty<string>());
+
+            Assert.Equal(json, json2);
+        }
+        #endregion
     }
 }

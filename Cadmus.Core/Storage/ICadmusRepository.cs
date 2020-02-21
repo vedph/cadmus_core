@@ -291,6 +291,17 @@ namespace Cadmus.Core.Storage
         /// If any of the required resources is not found, an empty list
         /// will be returned.</returns>
         IList<LayerHint> GetLayerPartHints(string id);
+
+        /// <summary>
+        /// Applies the specified patches instructions to the layer part
+        /// with ID equal to <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The layer part identifier.</param>
+        /// <param name="userId">The user identifier. This will be set as
+        /// the author of the changes in the part.</param>
+        /// <param name="patches">The patch instructions.</param>
+        /// <returns>The patched layer part content.</returns>
+        string ApplyLayerPartPatches(string id, string userId, IList<string> patches);
         #endregion
     }
 }

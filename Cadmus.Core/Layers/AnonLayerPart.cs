@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -45,9 +46,11 @@ namespace Cadmus.Core.Layers
         /// This must represent a single point, not a range.</param>
         /// <returns>The JSON code representing the serialized layer part,
         /// edited to remove the matching fragments.</returns>
-        /// <exception cref="ArgumentNullException">null location</exception>
+        /// <exception cref="ArgumentNullException">json or location</exception>
         public string DeleteFragmentsAtIntegral(string json, string location)
         {
+            if (json == null)
+                throw new ArgumentNullException(nameof(json));
             if (location is null)
                 throw new ArgumentNullException(nameof(location));
 
@@ -65,6 +68,68 @@ namespace Cadmus.Core.Layers
 
                 if (!loc.IsRange && loc.A.Y == refLoc.A.Y && loc.A.X == refLoc.A.X)
                     frr.RemoveAt(i);
+            }
+
+            return doc.ToString(Formatting.None);
+        }
+
+        /// <summary>
+        /// Applies the specified patch operations to this fragment.
+        /// </summary>
+        /// <param name="json">The JSON code used to instantiate this layer
+        /// part.</param>
+        /// <param name="patches">The patches operations. These can be
+        /// either <c>del &lt;coords&gt;</c> or
+        /// <c>mov &lt;oldCoords&gt; &lt;newCoords&gt;</c>.</param>
+        /// <returns>The updated JSON code representing this layer part.</returns>
+        /// <exception cref="ArgumentNullException">json or patches</exception>
+        public string ApplyPatches(string json, IList<string> patches)
+        {
+            if (json == null)
+                throw new ArgumentNullException(nameof(json));
+            if (patches == null)
+                throw new ArgumentNullException(nameof(patches));
+
+            if (Fragments == null) return json;
+
+            JObject doc = JObject.Parse(json);
+            JArray frr = (JArray)doc["fragments"];
+
+            foreach (string patch in patches
+                .OrderBy(p => p, new PatchOperationComparer()))
+            {
+                // split operation into tokens. Currently we have only:
+                // -del coords
+                // -mov oldCoords newCoords
+                // so at least 2 tokens are required
+                string[] opTokens = patch.Split(' ');
+                if (opTokens.Length < 2
+                    || (opTokens[0] != "del" && opTokens[0] != "mov")
+                    || (opTokens[0] == "mov" && opTokens.Length != 3))
+                {
+                    continue;
+                }
+
+                // find index of fragment in array by its location
+                AnonFragment fragment =
+                    Fragments.Find(fr => fr.Location == opTokens[1]);
+                if (fragment == null) continue;
+                int frIndex = Fragments.IndexOf(fragment);
+
+                // apply operation to JSON
+                switch (opTokens[0])
+                {
+                    case "del":
+                        frr.RemoveAt(frIndex);
+                        Fragments.RemoveAt(frIndex);
+                        break;
+
+                    case "mov":
+                        JToken fr = frr[frIndex];
+                        fr["location"] = opTokens[2];
+                        Fragments[frIndex].Location = opTokens[2];
+                        break;
+                }
             }
 
             return doc.ToString(Formatting.None);
@@ -228,6 +293,34 @@ namespace Cadmus.Core.Layers
                 }
             }
             return hints;
+        }
+    }
+
+    internal sealed class PatchOperationComparer : IComparer<string>
+    {
+        private readonly Regex _opCmdRegex;
+
+        public PatchOperationComparer()
+        {
+            _opCmdRegex = new Regex(@"^[^\s]+");
+        }
+
+        public int Compare(string a, string b)
+        {
+            string aCmd = _opCmdRegex.Match(a).Value;
+            string bCmd = _opCmdRegex.Match(b).Value;
+
+            // operations are only del and mov, and del must come first
+            if (aCmd != bCmd)
+            {
+                return aCmd == "del" ? -1 : 1;
+            }
+
+            // if operations are equal, compare by location
+            TokenTextLocation aLoc = TokenTextLocation.Parse(a);
+            TokenTextLocation bLoc = TokenTextLocation.Parse(b);
+
+            return aLoc.CompareTo(bLoc);
         }
     }
 

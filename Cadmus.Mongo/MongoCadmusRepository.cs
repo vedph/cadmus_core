@@ -1466,6 +1466,56 @@ namespace Cadmus.Mongo
 
             return anonLayerPart.GetFragmentHints(operations);
         }
+
+        /// <summary>
+        /// Applies the specified patches instructions to the layer part
+        /// with ID equal to <paramref name="id" />.
+        /// </summary>
+        /// <param name="id">The layer part identifier.</param>
+        /// <param name="userId">The user identifier. This will be set as
+        /// the author of the changes in the part.</param>
+        /// <param name="patches">The patch instructions.</param>
+        /// <returns>The patched layer part content.</returns>
+        /// <exception cref="ArgumentNullException">id or userId or patches
+        /// </exception>
+        public string ApplyLayerPartPatches(string id, string userId,
+            IList<string> patches)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+            if (userId == null)
+                throw new ArgumentNullException(nameof(userId));
+            if (patches == null)
+                throw new ArgumentNullException(nameof(patches));
+
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+
+            // get the layer part
+            var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+            MongoPart mongoLayerPart = parts.Find(p => p.Id.Equals(id))
+                .FirstOrDefault();
+            if (mongoLayerPart == null) return null;
+
+            // instantiate a generic layer part
+            AnonLayerPart anonLayerPart = (AnonLayerPart)
+                JsonSerializer.Deserialize(mongoLayerPart.Content,
+                typeof(AnonLayerPart), _jsonOptions);
+
+            // apply patches to it
+            mongoLayerPart.Content = anonLayerPart.ApplyPatches(
+                mongoLayerPart.Content, patches);
+            anonLayerPart.UserId = userId;
+            anonLayerPart.TimeModified = DateTime.UtcNow;
+
+            // save it back
+            parts.ReplaceOne(f => f.Id.Equals(mongoLayerPart.Id),
+                mongoLayerPart,
+                new ReplaceOptions { IsUpsert = true });
+
+            // return patched part content
+            return mongoLayerPart.Content;
+        }
         #endregion
     }
 

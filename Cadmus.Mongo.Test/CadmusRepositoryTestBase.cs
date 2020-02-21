@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using Cadmus.Core;
 using Cadmus.Core.Config;
@@ -1867,6 +1868,81 @@ namespace Cadmus.TestBase
             Assert.Single(hints);
             Assert.Equal(2, hints[0].ImpactLevel);
             Assert.Equal("del 1.1", hints[0].PatchOperation);
+        }
+
+        protected void DoApplyLayerPartPatches_Del_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            // add facet
+            repository.AddFacetDefinition(GetLayeredFacetDefinition());
+            // add item
+            IItem item = new Item
+            {
+                Title = "Test",
+                Description = "Test",
+                FacetId = "layered",
+                SortKey = "test",
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            repository.AddItem(item);
+            // add text part
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+                Citation = "1.2"
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Y = 1,
+                Text = "Hello world!"
+            });
+            repository.AddPart(textPart);
+            // wait and add layer part
+            Thread.Sleep(500);
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = item.Id,
+                    CreatorId = item.CreatorId,
+                    UserId = item.UserId,
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A salutation."
+            });
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.2",
+                Text = "Another one."
+            });
+            repository.AddPart(layerPart);
+
+            string json = repository.ApplyLayerPartPatches(layerPart.Id,
+                "patcher", new[] { "del 1.1" });
+
+            // get from return value
+            TokenTextLayerPart<CommentLayerFragment> layerPart2 =
+                (TokenTextLayerPart<CommentLayerFragment>)
+                JsonSerializer.Deserialize(json, layerPart.GetType(),
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            Assert.Single(layerPart2.Fragments);
+            Assert.Equal("1.2", layerPart2.Fragments[0].Location);
+            Assert.Equal("Another one.", layerPart2.Fragments[0].Text);
+
+            // get from repository
+            layerPart2 = repository.GetPart<TokenTextLayerPart<CommentLayerFragment>>
+                (layerPart.Id);
+            Assert.Single(layerPart2.Fragments);
+            Assert.Equal("1.2", layerPart2.Fragments[0].Location);
+            Assert.Equal("Another one.", layerPart2.Fragments[0].Text);
         }
         #endregion
 

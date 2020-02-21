@@ -744,6 +744,12 @@ namespace Cadmus.Mongo.Test
         {
             DoGetLayerHints_Changed_Ok();
         }
+
+        [Fact]
+        public void ApplyLayerPartPatches_Del_Ok()
+        {
+            DoApplyLayerPartPatches_Del_Ok();
+        }
         #endregion
     }
 }

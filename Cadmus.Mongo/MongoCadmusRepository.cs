@@ -944,8 +944,10 @@ namespace Cadmus.Mongo
 
             if (part == null) return null;
 
+            string providerId = PartBase.BuildProviderId(part.TypeId, part.RoleId);
+
             return (T)JsonSerializer.Deserialize(part.Content,
-                _partTypeProvider.Get(part.TypeId),
+                _partTypeProvider.Get(providerId),
                 _jsonOptions);
         }
 

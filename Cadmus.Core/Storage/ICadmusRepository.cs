@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cadmus.Core.Config;
+using Cadmus.Core.Layers;
 using Fusi.Tools.Data;
 
 namespace Cadmus.Core.Storage
@@ -281,6 +282,15 @@ namespace Cadmus.Core.Storage
         /// to its date and time.
         /// </remarks>
         int GetLayerPartBreakChance(string id, int toleranceSeconds);
+
+        /// <summary>
+        /// Gets the layer part reconciliation hints.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The hints, one for each fragment in the layer part.
+        /// If any of the required resources is not found, an empty list
+        /// will be returned.</returns>
+        IList<LayerHint> GetLayerPartHints(string id);
         #endregion
     }
 }

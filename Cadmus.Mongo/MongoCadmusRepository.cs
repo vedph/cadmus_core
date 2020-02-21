@@ -6,7 +6,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Cadmus.Core;
 using Cadmus.Core.Config;
+using Cadmus.Core.Layers;
 using Cadmus.Core.Storage;
+using DiffMatchPatch;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MongoDB.Driver;
@@ -27,6 +29,7 @@ namespace Cadmus.Mongo
         private readonly IPartTypeProvider _partTypeProvider;
         private readonly IItemSortKeyBuilder _itemSortKeyBuilder;
         private readonly JsonSerializerOptions _jsonOptions;
+        private IEditOperationDiffAdapter<YXEditOperation> _opDiffAdapter;
         private MongoCadmusRepositoryOptions _options;
         private string _databaseName;
 
@@ -1375,6 +1378,93 @@ namespace Cadmus.Mongo
                 ? (layerPartItemIdAndTime.Item2 - lastTextChange).TotalSeconds
                    <= toleranceSeconds ? 1 : 0
                 : 0;
+        }
+
+        /// <summary>
+        /// Gets the layer part reconciliation hints.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The hints, one for each fragment in the layer part.
+        /// If any of the required resources is not found, an empty list
+        /// will be returned.</returns>
+        /// <exception cref="ArgumentNullException">null ID</exception>
+        public IList<LayerHint> GetLayerPartHints(string id)
+        {
+            if (id == null) throw new ArgumentNullException(nameof(id));
+
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+
+            List<LayerHint> hints = new List<LayerHint>();
+
+            // get the layer part
+            MongoPart mongoLayerPart = db.GetCollection<MongoPart>
+                (MongoPart.COLLECTION)
+                .Find(p => p.Id.Equals(id))
+                .FirstOrDefault();
+            if (mongoLayerPart == null) return hints;
+
+            // get the layer part's container item
+            MongoItem item = db.GetCollection<MongoItem>(MongoItem.COLLECTION)
+                .Find(i => i.Id.Equals(id))
+                .FirstOrDefault();
+            if (item == null) return hints;
+
+            // get the item's facet
+            MongoFacetDefinition facet = db.GetCollection<MongoFacetDefinition>
+                (MongoFacetDefinition.COLLECTION)
+                .Find(f => f.Id.Equals(item.FacetId))
+                .FirstOrDefault();
+            if (facet == null) return hints;
+
+            // get the base text part from the role defined in the facet
+            MongoPart mongoTextPart = db.GetCollection<MongoPart>(
+                MongoPart.COLLECTION)
+                .Find(f => f.ItemId == item.Id && f.RoleId == PartBase.BASE_TEXT_ROLE_ID)
+                .FirstOrDefault();
+            if (mongoTextPart == null) return hints;
+
+            // get the current text
+            IPart textPart = InstantiatePart(mongoTextPart.TypeId,
+                mongoTextPart.RoleId,
+                mongoTextPart.Content);
+            string currentText = (textPart as IHasText)?.GetText();
+            if (currentText == null) return hints;
+
+            // locate the text which was current when the layer part
+            // was last saved, i.e. its version in history whose save time
+            // is less than the layer part save time
+            MongoHistoryPart hp = db.GetCollection<MongoHistoryPart>(
+                MongoHistoryPart.COLLECTION)
+                .Find(p => p.ReferenceId.Equals(id)
+                      && p.TimeModified < mongoLayerPart.TimeModified)
+                .FirstOrDefault();
+            if (hp == null) return hints;
+
+            // get the old text
+            IPart oldTextPart = InstantiatePart(hp.TypeId, hp.RoleId, hp.Content);
+            string oldText = (oldTextPart as IHasText)?.GetText();
+            if (oldText == null) return hints;
+
+            // calculate diff's between old and new text
+            List<Diff> diffs = new diff_match_patch()
+                .diff_main(oldText, currentText);
+
+            // adapt them into YX-based edit operations (the adapter is
+            // created lazily here if required)
+            if (_opDiffAdapter == null)
+                _opDiffAdapter = new YXEditOperationDiffAdapter();
+            IList<YXEditOperation> operations = _opDiffAdapter.Adapt(diffs);
+
+            // to create hints, just load the layer part as a stripped down
+            // part whose fragments just include their locations. This is all
+            // what is needed for our purposes here, and is required because
+            // we do not know at compile time the type of the fragment
+            AnonLayerPart anonLayerPart = (AnonLayerPart)
+                JsonSerializer.Deserialize(mongoLayerPart.Content,
+                typeof(AnonLayerPart), _jsonOptions);
+
+            return anonLayerPart.GetFragmentHints(operations);
         }
         #endregion
     }

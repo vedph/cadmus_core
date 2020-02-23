@@ -294,6 +294,17 @@ The *layers* namespace contains components related to the text layers. Text laye
     LayerHint : +string PatchOperation
     LayerHint : +int ImpactLevel
     LayerHint : +string Description
+
+    PartBase <|-- AnonLayerPart
+    AnonLayerPart : +List<AnonFragment> Fragments
+    AnonLayerPart : +string DeleteFragmentsAtIntegral(string json, string location)
+    AnonLayerPart : +string ApplyPatches(string json, IList<string> patches)
+    AnonLayerPart : +IList<AnonFragment> GetFragmentsAtIntegral(string location)
+    AnonLayerPart : +IList<AnonFragment> GetFragmentsAt(string location)
+    AnonLayerPart : +IList<LayerHint> GetFragmentHints(IList<YXEditOperation> operations)
+    AnonLayerPart "1"*--"0..*" AnonFragment
+
+    AnonFragment : +string Location
 @enduml
 ```
 

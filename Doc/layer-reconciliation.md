@@ -77,7 +77,7 @@ Further, this is a situation where the orphaned fragment in the layer would be h
 
 Also, other edits might affect the layers in a more critical way: for instance, if we move a word around, most of the word-based coordinates in the affected area would probably require to be rebased. This is not a process we would want to go unsupervised, as the metatextual data models might be complex, and so their reference to a specific portion of the base text. Thus, we cannot predict which types of adjustments users might want to do.
 
-Rather, we can provide some generic mechanism to allow users reconcile layers with text in those rare occasions where a "layered" text gets changed. This needs to work `a posteriori`, in any moment after any editing has been done, by any of the users.
+Rather, we can provide some generic mechanism to allow users reconcile layers with text in those rare occasions where a "layered" text gets changed. This needs to work *a posteriori*, in any moment after any editing has been done, by any of the users.
 
 Validations will systematically happen on request, on the whole database; but we can also provide users with a view showing the consequences of their text editing in specific parts, so they can immediately take a look, and fix eventual issues as soon as they have finished with a potentially disruptive change.
 

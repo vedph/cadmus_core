@@ -308,7 +308,15 @@ The *layers* namespace contains components related to the text layers. Text laye
 @enduml
 ```
 
-For `IEditOperationDiffAdapter` and its artifacts (`YXEditOperation`, `YXEditOperationDiffAdapter`, `LayerHint`) see [layers reconciliation](layer-reconciliation.md).
+For the concepts behind `IEditOperationDiffAdapter` and its artifacts (`YXEditOperation`, `YXEditOperationDiffAdapter`, `LayerHint`) see [layers reconciliation](layer-reconciliation.md).
+
+The `IEditOperationDiffAdapter` represents an adapter used to generate editing operations from diff results for layers reconciliation. Its implementation for Y/X-based coordinates is `YXEditOperationDiffAdapter`, and its produced operations are of type `YXEditOperation`.
+
+The adapter operations are then used to provide layer reconciliation hints (`LayerHint`'s). In turn, these hints can be the source of a number of patch operations; users pick the patches they want to apply, and apply all of them at once.
+
+Patches get applied in a generalized way, whatever the type of the fragment involved, as far as the only patch operations are deletion or movement. In both cases, the essential information required is the fragment's location; all the other properties belonging to each fragment's model cam be ignored, even if they are of course to be moved around together with the fragment.
+
+To this end, the `AnonLayerPart` artifact is used to represent a layer part with any type of fragments.
 
 ### B.1. Layer Parts
 

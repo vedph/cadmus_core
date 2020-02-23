@@ -40,6 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{461AF59A-C6B
 		Doc\adding-parts.md = Doc\adding-parts.md
 		Doc\core.md = Doc\core.md
 		Doc\index.md = Doc\index.md
+		Doc\layer-reconciliation.md = Doc\layer-reconciliation.md
 		Doc\packages.md = Doc\packages.md
 		Doc\profiles.md = Doc\profiles.md
 		Doc\seeding.md = Doc\seeding.md

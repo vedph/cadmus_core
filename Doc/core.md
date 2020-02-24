@@ -316,7 +316,7 @@ The adapter operations are then used to provide layer reconciliation hints (`Lay
 
 Patches get applied in a generalized way, whatever the type of the fragment involved, as far as the only patch operations are deletion or movement. In both cases, the essential information required is the fragment's location; all the other properties belonging to each fragment's model cam be ignored, even if they are of course to be moved around together with the fragment.
 
-To this end, the `AnonLayerPart` artifact is used to represent a layer part with any type of fragments.
+To this end, the `AnonLayerPart` artifact is used to represent a layer part with any type of fragments. This allows deserializing any layer part model into it, dropping all the fragments data except their location. It is then possible to compare the fragments locations with the editing operations locations. When applying patches, i.e. deleting or moving fragments, the locations are used to find them, and then the backend directly patches its JSON-serialized representation.
 
 ### B.1. Layer Parts
 

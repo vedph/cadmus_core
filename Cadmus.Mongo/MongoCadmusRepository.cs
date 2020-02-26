@@ -265,7 +265,7 @@ namespace Cadmus.Mongo
                     for (int i = 0; i < langs.Length; i++)
                     {
                         string fallbackId = bareId + langs[i];
-                        mongo = thesauri.FirstOrDefault(set => set.Id == id);
+                        mongo = thesauri.FirstOrDefault(set => set.Id == fallbackId);
                         if (mongo != null) break;
                     }
                 }

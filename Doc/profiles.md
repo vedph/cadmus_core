@@ -258,3 +258,15 @@ For instance, say you want to retrieve the `languages@en` thesaurus using two di
 ```
 
 This way, the languages thesaurus would be retrieved whatever ID you use: `languages@en` or the alias `ui-languages@en`, without having to duplicate resources or changing the frontend components.
+
+### Thesaurus Scope in Parts
+
+Each part has an optional thesaurus scope property (`ThesaurusScope`) which adds runtime thesaurus selection to the frontend editor.
+
+Usually, each frontend (part or fragment) editor can load any number of required thesauri for its own UI. In most cases, the IDs of the thesauri are predefined at design time; but sometimes, they rather need to be determined by runtime data.
+
+For instance, an apparatus part might require to load a different set of witnesses, according to the work it refers to. As a general mechanism, we can set a part thesaurus scope so that when found a generic editor will rather load the scoped thesauri, by combining the thesauri IDs required by the specialized editor with the thesaurus scope of the part being loaded.
+
+For instance, say an apparatus layer fragment editor wants to load a thesaurus with ID `witnesses@en`: if the corresponding apparatus layer part has its `ThesaurusScope` equal to `lucr`, the generic editor, while requested by the specialized editor to load `witnesses@en`, will rather load `witnesses.lucr@en`.
+
+If in the specialized editor there are any IDs you do not want to be overridden in this way, just prefix them with an exclamation mark `!`, e.g. `!categories@en`.

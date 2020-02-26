@@ -45,6 +45,7 @@ namespace Cadmus.Seed
             part.CreatorId = item.CreatorId;
             part.UserId = item.UserId;
             part.RoleId = string.IsNullOrEmpty(roleId) ? null : roleId;
+            // (no thesaurus scope)
 
             // eventually assign a role
             if (roleId?.StartsWith(PartBase.FR_PREFIX) == true)

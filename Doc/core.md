@@ -49,6 +49,7 @@ This is the core namespace for the Cadmus system. It includes the following name
     IPart : +string ItemId
     IPart : +string TypeId
     IPart : +string RoleId
+    IPart : +string ThesaurusScope
 
     abstract class PartBase
     IPart <|-- PartBase

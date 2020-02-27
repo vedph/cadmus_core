@@ -33,29 +33,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
         }
 
         [Fact]
-        public void Seed_NoOptions_Null()
-        {
-            ApparatusLayerFragmentSeeder seeder = new ApparatusLayerFragmentSeeder();
-            seeder.SetSeedOptions(_seedOptions);
-
-            Assert.Null(seeder.GetFragment(_item, "1.1", "alpha"));
-        }
-
-        [Fact]
-        public void Seed_NoAuthors_Null()
-        {
-            ApparatusLayerFragmentSeeder seeder = new ApparatusLayerFragmentSeeder();
-            seeder.SetSeedOptions(_seedOptions);
-            seeder.Configure(new ApparatusLayerFragmentSeederOptions
-            {
-                Authors = Array.Empty<string>()  // invalid
-            });
-
-            Assert.Null(seeder.GetFragment(_item, "1.1", "alpha"));
-        }
-
-        [Fact]
-        public void Seed_ValidOptions_Ok()
+        public void Seed_WithOptions_Ok()
         {
             ApparatusLayerFragmentSeeder seeder = new ApparatusLayerFragmentSeeder();
             seeder.SetSeedOptions(_seedOptions);
@@ -77,9 +55,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             Assert.NotNull(fr);
 
             Assert.Equal("1.1", fr.Location);
-            Assert.NotEmpty(fr.Authors);
-            if (fr.Type != LemmaVariantType.Note)
-                Assert.NotNull(fr.Value);
+            Assert.NotEmpty(fr.Entries);
         }
     }
 }

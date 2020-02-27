@@ -11,45 +11,6 @@ namespace Cadmus.Philology.Parts.Layers
     /// Critical apparatus layer fragment.
     /// Tag: <c>fr.net.fusisoft.apparatus</c>.
     /// </summary>
-    /// <remarks>Any apparatus fragment may define a textual variant which
-    /// should be replaced to the lemma according to their proposers, or any
-    /// text which should be inserted before/after the lemma according to their
-    /// proposers, or any other annotation related to the constitution of the
-    /// text. According to these types, the entry is either a replacement, an
-    /// addition, or just a note respectively:
-    /// <list type="bullet">
-    /// <item>
-    ///	<term>replacement</term>
-    ///	<description>: the entry has been proposed as a replacement for its
-    ///	lemma by 1 or more authors (<c>Authors</c> property). Eventually
-    ///	the variant can be <see cref="IsAccepted"/>, so that it should
-    ///	replace the lemma in the output text. Only 1 variant in a set
-    ///	can be accepted. The replacement variant is the most common type of
-    ///	variant. 
-    /// A special case for this variant type is the deletion by an editor:
-    /// in this case, the variant text is zero (i.e. a null string: e.g.
-    /// <c>in om. Crusius</c>).
-    /// </description>
-    /// </item>
-    /// <item>
-    ///	<term>addition</term>
-    ///	<description>: the entry text has been proposed as an addition
-    ///	before/after the lemma it refers to (e.g. <c>in</c> before
-    ///	<c>domo</c>) by 1 or more authors (<see cref="Authors"/> property).
-    ///	If this variant is accepted, the output text should insert the
-    ///	variant text before or after the lemma with the proper diacritics.
-    ///	</description>
-    /// </item>
-    /// <item>
-    ///	<term>note</term>
-    ///	<description>: any annotation strictly connected to the text
-    ///	constitution (e.g. <c>dubitat Crusius an interpungendum sit</c>).
-    ///	In such case, the <see cref="Value"/> and <see cref="IsAccepted"/>
-    ///	properties have no meaning.
-    ///	</description>
-    /// </item>
-    /// </list>
-    /// </remarks>
     /// <seealso cref="T:Cadmus.Core.Layers.ITextLayerFragment" />
     [Tag("fr.net.fusisoft.apparatus")]
     public sealed class ApparatusLayerFragment : ITextLayerFragment
@@ -67,33 +28,16 @@ namespace Cadmus.Philology.Parts.Layers
         public string Location { get; set; }
 
         /// <summary>
-        /// Variant type.
+        /// Gets or sets the tag, an optional arbitrary string representing a
+        /// categorization of some sort for that fragment, e.g. "margin",
+        /// "interlinear", etc. This can be overridden by variants tag.
         /// </summary>
-        public LemmaVariantType Type { get; set; }
+        public string Tag { get; set; }
 
         /// <summary>
-        /// Lemma variant text value, can be zero (null or empty) for a
-        /// deletion. When <see cref="Type"/> is <see cref="LemmaVariantType.Note"/>
-        /// this property has no meaning as it's not applicable.
+        /// Gets or sets the entries.
         /// </summary>
-        /// <value>Variant text.</value>
-        public string Value { get; set; }
-
-        /// <summary>
-        /// True if this variant has been accepted.
-        /// </summary>
-        /// <remarks>Only 1 variant per text word can be accepted.</remarks>
-        public bool IsAccepted { get; set; }
-
-        /// <summary>
-        /// Authors of this variant.
-        /// </summary>
-        public HashSet<string> Authors { get; set; }
-
-        /// <summary>
-        /// An optional short note.
-        /// </summary>
-        public string Note { get; set; }
+        public List<ApparatusEntry> Entries { get; set; }
         #endregion
 
         /// <summary>
@@ -102,28 +46,71 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         public ApparatusLayerFragment()
         {
-            Authors = new HashSet<string>();
+            Entries = new List<ApparatusEntry>();
+        }
+
+        private static void AddPinsFromSet(HashSet<string> set, string name,
+            List<DataPin> pins)
+        {
+            foreach (string s in set.OrderBy(s => s))
+            {
+                pins.Add(new DataPin
+                {
+                    Name = PartBase.FR_PREFIX + name,
+                    Value = s
+                });
+            }
         }
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
-        /// Pins: <c>fr.author</c>=author (0-N, 1 pin for each single author),
-        /// sorted by author.
+        /// Pins are: <c>fr.variant</c>=variant (normalized if any, else just
+        /// the variant), <c>fr.witness</c>=witness, <c>fr.author</c>=author;
+        /// each distinct variant, witness, and author has a pin.
         /// </summary>
         /// <returns>pins</returns>
         public IEnumerable<DataPin> GetDataPins()
         {
-            if (Authors?.Count > 0)
+            HashSet<string> witnesses = new HashSet<string>();
+            HashSet<string> authors = new HashSet<string>();
+            HashSet<string> variants = new HashSet<string>();
+
+            foreach (ApparatusEntry entry in Entries)
             {
-                return from author in Authors.OrderBy(s => s)
-                       select new DataPin
-                       {
-                           Name = PartBase.FR_PREFIX + "author",
-                           Value = author
-                       };
+                if (entry.Type != ApparatusEntryType.Note)
+                {
+                    string variant = entry.NormValue ?? entry.Value;
+                    if (!variants.Contains(variant))
+                        variants.Add(variant);
+                }
+
+                if (entry.Witnesses != null)
+                {
+                    foreach (ApparatusAnnotatedValue w in entry.Witnesses
+                        .OrderBy(w => w.Value))
+                    {
+                        if (!witnesses.Contains(w.Value))
+                            witnesses.Add(w.Value);
+                    }
+                }
+
+                if (entry.Authors != null)
+                {
+                    foreach (ApparatusAnnotatedValue a in entry.Authors
+                        .OrderBy(a => a.Value))
+                    {
+                        if (!authors.Contains(a.Value))
+                            authors.Add(a.Value);
+                    }
+                }
             }
 
-            return Enumerable.Empty<DataPin>();
+            List<DataPin> pins = new List<DataPin>();
+            AddPinsFromSet(variants, "variant", pins);
+            AddPinsFromSet(witnesses, "witness", pins);
+            AddPinsFromSet(authors, "author", pins);
+
+            return pins;
         }
 
         /// <summary>
@@ -134,47 +121,21 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"[Apparatus] {Location} ");
+            StringBuilder sb = new StringBuilder($"[Apparatus] {Location}");
 
-            switch (Type)
+            switch (Entries?.Count ?? 0)
             {
-                case LemmaVariantType.Replacement:
-                    sb.Append(Value?.Length == 0 ? "del." : Value);
+                case 1:
+                    sb.Append(' ').Append(Entries[0].ToString());
                     break;
-
-                case LemmaVariantType.AdditionBefore:
-                    sb.Append(Value).Append(" add.");
+                case 0:
                     break;
-                case LemmaVariantType.AdditionAfter:
-                    goto case LemmaVariantType.AdditionBefore;
+                default:
+                    sb.Append(' ').Append(Entries.Count);
+                    break;
             }
-
-            if (Authors != null) sb.Append(' ').Append(string.Join(", ", Authors));
-
-            if (!string.IsNullOrEmpty(Note)) sb.Append(' ').Append(Note);
-            if (IsAccepted) sb.Append(" (ok)");
 
             return sb.ToString();
         }
     }
-
-    #region Constants
-    /// <summary>
-    /// Lemma variant type.
-    /// </summary>
-    public enum LemmaVariantType
-    {
-        /// <summary>variant should replace lemma</summary>
-        Replacement = 0,
-
-        /// <summary>variant should be added before lemma</summary>
-        AdditionBefore,
-
-        /// <summary>variant should be added after lemma</summary>
-        AdditionAfter,
-
-        /// <summary>any note to the text</summary>
-        Note
-    }
-    #endregion
 }

@@ -5,6 +5,7 @@ using Cadmus.Philology.Parts.Layers;
 using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cadmus.Seed.Philology.Parts.Layers
 {
@@ -18,7 +19,22 @@ namespace Cadmus.Seed.Philology.Parts.Layers
     public sealed class ApparatusLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<ApparatusLayerFragmentSeederOptions>
     {
-        private ApparatusLayerFragmentSeederOptions _options;
+        private readonly List<int> _witAndAuthorNumbers;
+        private string[] _authors;
+        private string[] _witnesses;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApparatusLayerFragmentSeeder"/>
+        /// class.
+        /// </summary>
+        public ApparatusLayerFragmentSeeder()
+        {
+            _witAndAuthorNumbers = new List<int>(Enumerable.Range(1, 10));
+            _authors = (from n in _witAndAuthorNumbers
+                        select $"author{n}").ToArray();
+            _witnesses = (from n in _witAndAuthorNumbers
+                          select $"w{n}").ToArray();
+        }
 
         /// <summary>
         /// Gets the type of the fragment.
@@ -32,7 +48,9 @@ namespace Cadmus.Seed.Philology.Parts.Layers
         /// <param name="options">The options.</param>
         public void Configure(ApparatusLayerFragmentSeederOptions options)
         {
-            _options = options;
+            _authors = options.Authors ??
+                (from n in _witAndAuthorNumbers
+                 select $"author{n}").ToArray();
         }
 
         /// <summary>
@@ -54,31 +72,58 @@ namespace Cadmus.Seed.Philology.Parts.Layers
             if (baseText == null)
                 throw new ArgumentNullException(nameof(baseText));
 
-            if (_options == null || _options.Authors.Length == 0) return null;
-
-            HashSet<string> authors = new HashSet<string>(
-                SeedHelper.RandomPickOf(
-                _options.Authors,
-                Randomizer.Seed.Next(1, 4)));
-
-            LemmaVariantType type = (LemmaVariantType)Randomizer.Seed.Next(0, 4);
-            switch (type)
+            Faker f = new Faker();
+            ApparatusLayerFragment fr = new ApparatusLayerFragment
             {
-                case LemmaVariantType.Note:
-                    return new Faker<ApparatusLayerFragment>()
-                        .RuleFor(fr => fr.Type, type)
-                        .RuleFor(fr => fr.Location, location)
-                        .RuleFor(fr => fr.Authors, authors)
-                        .RuleFor(fr => fr.Note, f => f.Lorem.Sentence())
-                        .Generate();
-                default:
-                    return new Faker<ApparatusLayerFragment>()
-                        .RuleFor(fr => fr.Type, type)
-                        .RuleFor(fr => fr.Location, location)
-                        .RuleFor(fr => fr.Authors, authors)
-                        .RuleFor(fr => fr.Value, f => f.Lorem.Word())
-                        .Generate();
+                Location = location,
+                Tag = f.Lorem.Word()
+            };
+            int n = Randomizer.Seed.Next(1, 4);
+            for (int i = 1; i <= n; i++)
+            {
+                ApparatusEntry entry = new ApparatusEntry
+                {
+                    Type = (ApparatusEntryType)Randomizer.Seed.Next(0, 4)
+                };
+                if (Randomizer.Seed.Next(1, 6) == 1) entry.Tag = f.Lorem.Word();
+
+                // note
+                if (entry.Type == ApparatusEntryType.Note)
+                {
+                    entry.Note = f.Lorem.Sentence();
+                    // authors
+                    foreach (string author in SeedHelper.RandomPickOf(_authors, 2))
+                    {
+                        entry.Authors.Add(
+                            new ApparatusAnnotatedValue { Value = author });
+                    }
+                }
+                // variant
+                else
+                {
+                    entry.Value = f.Lorem.Word();
+                    entry.NormValue = entry.Value.ToUpperInvariant();
+                    entry.IsAccepted = i == 1;
+
+                    // witnesses
+                    foreach (string witness in SeedHelper.RandomPickOf(_witnesses, 2))
+                    {
+                        entry.Authors.Add(
+                            new ApparatusAnnotatedValue { Value = witness });
+                    }
+
+                    // authors
+                    foreach (string author in SeedHelper.RandomPickOf(_authors, 1))
+                    {
+                        entry.Authors.Add(
+                            new ApparatusAnnotatedValue { Value = author });
+                    }
+                }
+
+                fr.Entries.Add(entry);
             }
+
+            return fr;
         }
     }
 
@@ -88,7 +133,8 @@ namespace Cadmus.Seed.Philology.Parts.Layers
     public sealed class ApparatusLayerFragmentSeederOptions
     {
         /// <summary>
-        /// Gets or sets the authors to pick from.
+        /// Gets or sets the authors to pick from. If not specified, names
+        /// like "author1", "author2", etc. will be used.
         /// </summary>
         public string[] Authors { get; set; }
     }

@@ -41,6 +41,14 @@ namespace Cadmus.Mongo
         public string FacetId { get; set; }
 
         /// <summary>
+        /// Gets or sets the group identifier. This is an arbitrary string
+        /// which can be used to group items into a set. For instance, you
+        /// might have a set of items belonging to the same literary work,
+        /// a set of lemmata belonging to the same dictionary letter, etc.
+        /// </summary>
+        public string GroupId { get; set; }
+
+        /// <summary>
         /// The sort key for the item. This is a value used to sort items in
         /// a list.
         /// </summary>
@@ -105,6 +113,7 @@ namespace Cadmus.Mongo
             Title = item.Title;
             Description = item.Description;
             FacetId = item.FacetId;
+            GroupId = item.GroupId;
             SortKey = item.SortKey;
             Flags = item.Flags;
 
@@ -128,6 +137,7 @@ namespace Cadmus.Mongo
             Title = item.Title;
             Description = item.Description;
             FacetId = item.FacetId;
+            GroupId = item.GroupId;
             SortKey = item.SortKey;
             Flags = item.Flags;
             TimeCreated = item.TimeCreated;
@@ -149,6 +159,7 @@ namespace Cadmus.Mongo
             Title = item.Title;
             Description = item.Description;
             FacetId = item.FacetId;
+            GroupId = item.GroupId;
             SortKey = item.SortKey;
             Flags = item.Flags;
 
@@ -172,6 +183,7 @@ namespace Cadmus.Mongo
                 Title = Title,
                 Description = Description,
                 FacetId = FacetId,
+                GroupId = GroupId,
                 SortKey = SortKey,
                 Flags = Flags,
 
@@ -195,6 +207,7 @@ namespace Cadmus.Mongo
                 Title = Title,
                 Description = Description,
                 FacetId = FacetId,
+                GroupId = GroupId,
                 SortKey = SortKey,
                 Flags = Flags,
 

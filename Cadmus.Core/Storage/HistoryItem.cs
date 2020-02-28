@@ -31,6 +31,14 @@ namespace Cadmus.Core.Storage
         public string FacetId { get; set; }
 
         /// <summary>
+        /// Gets or sets the group identifier. This is an arbitrary string
+        /// which can be used to group items into a set. For instance, you
+        /// might have a set of items belonging to the same literary work,
+        /// a set of lemmata belonging to the same dictionary letter, etc.
+        /// </summary>
+        public string GroupId { get; set; }
+
+        /// <summary>
         /// The sort key for the item. This is a value used to sort items in
         /// a list.
         /// </summary>

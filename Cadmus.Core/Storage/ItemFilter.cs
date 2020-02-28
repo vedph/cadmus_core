@@ -21,6 +21,11 @@
         public string FacetId { get; set; }
 
         /// <summary>
+        /// Gets or sets the group ID filter.
+        /// </summary>
+        public string GroupId { get; set; }
+
+        /// <summary>
         /// Gets or sets the flags filter.
         /// </summary>
         public int? Flags { get; set; }

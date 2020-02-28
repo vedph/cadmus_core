@@ -71,6 +71,7 @@ This is the core namespace for the Cadmus system. It includes the following name
     IItem : +string Title
     IItem : +string Description
     IItem : +string FacetId
+    IItem : +string GroupId
     IItem : +string SortKey
     IItem : +int Flags
     IItem : +List<IPart> Parts
@@ -99,6 +100,7 @@ This is the core namespace for the Cadmus system. It includes the following name
     ItemInfo : +string Title
     ItemInfo : +string Description
     ItemInfo : +string FacetId
+    ItemInfo : +string GroupId
     ItemInfo : +string SortKey
     ItemInfo : +int Flags
     ItemInfo : +DateTime TimeCreated
@@ -111,6 +113,7 @@ This is the core namespace for the Cadmus system. It includes the following name
     Item : +string Title
     Item : +string Description
     Item : +string FacetId
+    Item : +string GroupId
     Item : +string SortKey
     Item : +DateTime TimeCreated
     Item : +string CreatorId
@@ -597,6 +600,7 @@ As the part provider works also for closed generic types representing text layer
     HistoryItemFilter : +string Title
     HistoryItemFilter : +string Description
     HistoryItemFilter : +string FacetId
+    HistoryItemFilter : +string GroupId
     HistoryItemFilter : +int? Flags
 
     HistoryFilter <|-- HistoryPartFilter
@@ -609,6 +613,7 @@ As the part provider works also for closed generic types representing text layer
     ItemFilter : +string Title
     ItemFilter : +string Description
     ItemFilter : +string FacetId
+    ItemFilter : +string GroupId
     ItemFilter : +int? Flags
 
     VersionFilter <|-- PartFilter
@@ -623,6 +628,7 @@ As the part provider works also for closed generic types representing text layer
     ItemInfo : +string Title
     ItemInfo : +string Description
     ItemInfo : +string FacetId
+    ItemInfo : +string GroupId
     ItemInfo : +string SortKey
     ItemInfo : +int Flags
     ItemInfo : +DateTime TimeCreated
@@ -649,6 +655,7 @@ As the part provider works also for closed generic types representing text layer
     HistoryItem : +string Title
     HistoryItem : +string Description
     HistoryItem : +string FacetId
+    HistoryItem : +string GroupId
     HistoryItem : +string SortKey
     HistoryItem : +int Flags
     HistoryItem : +DateTime TimeCreated
@@ -673,6 +680,7 @@ As the part provider works also for closed generic types representing text layer
     HistoryItemInfo : +string Title
     HistoryItemInfo : +string Description
     HistoryItemInfo : +string FacetId
+    HistoryItemInfo : +string GroupId
     HistoryItemInfo : +string SortKey
     HistoryItemInfo : +int Flags
     HistoryItemInfo : +DateTime TimeCreated
@@ -735,6 +743,9 @@ As the part provider works also for closed generic types representing text layer
     ICadmusRepository : +DeleteHistoryPart(string id)
     ICadmusRepository : +string GetPartCreatorId(string id)
     ICadmusRepository : +int GetLayerPartBreakChance(string id, int toleranceSeconds)
+    ICadmusRepository : +IList<LayerHint> GetLayerPartHints(string id)
+    ICadmusRepository : +string ApplyLayerPartPatches(string id, string userId, IList<string> patches)
+    ICadmusRepository : +SetPartThesaurusScope(IList<string> ids, string scope)
 @enduml
 ```
 

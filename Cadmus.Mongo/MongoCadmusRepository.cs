@@ -352,6 +352,12 @@ namespace Cadmus.Mongo
                     i => i.Description.Contains(filter.FacetId)));
             }
 
+            if (!string.IsNullOrEmpty(filter.GroupId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
+                    i => i.GroupId.Equals(filter.GroupId)));
+            }
+
             if (filter.Flags.HasValue)
             {
                 f = builder.And(builder.BitsAllSet(i => i.Flags, filter.Flags.Value));
@@ -544,6 +550,26 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
+        /// Set the group ID of the item(s) with the specified ID(s).
+        /// Note that this operation never affects the item's history.
+        /// </summary>
+        /// <param name="ids">The items identifiers.</param>
+        /// <param name="groupId">The group ID (can be null).</param>
+        public void SetItemGroupId(IList<string> ids, string groupId)
+        {
+            if (ids == null) throw new ArgumentNullException(nameof(ids));
+
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
+
+            items.UpdateMany(
+                Builders<MongoItem>.Filter.In(i => i.Id, ids),
+                Builders<MongoItem>.Update.Set(i => i.GroupId, groupId));
+        }
+
+        /// <summary>
         /// Gets a page of history for the specified item.
         /// </summary>
         /// <param name="filter">The filter.</param>
@@ -577,6 +603,12 @@ namespace Cadmus.Mongo
             {
                 f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.Description.Contains(filter.FacetId)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.GroupId))
+            {
+                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.GroupId.Equals(filter.GroupId)));
             }
 
             if (filter.Flags.HasValue)

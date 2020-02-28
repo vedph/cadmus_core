@@ -135,6 +135,14 @@ namespace Cadmus.Core.Storage
         void SetItemFlags(IList<string> ids, int flags);
 
         /// <summary>
+        /// Set the group ID of the item(s) with the specified ID(s).
+        /// Note that this operation never affects the item's history.
+        /// </summary>
+        /// <param name="ids">The items identifiers.</param>
+        /// <param name="groupId">The group ID (can be null).</param>
+        void SetItemGroupId(IList<string> ids, string groupId);
+
+        /// <summary>
         /// Gets a pege of history for the specified item.
         /// </summary>
         /// <param name="filter">The filter.</param>

@@ -495,6 +495,18 @@ namespace Cadmus.Mongo.Test
         }
 
         [Fact]
+        public void SetItemGroupId_NotExisting_Nope()
+        {
+            DoSetItemGroupId_NotExisting_Nope();
+        }
+
+        [Fact]
+        public void SetItemGroupId_Existing_Updated()
+        {
+            DoSetItemGroupId_Existing_Updated();
+        }
+
+        [Fact]
         public void DeleteItem_NotExisting_Nope()
         {
             DoDeleteItem_NotExisting_Nope();

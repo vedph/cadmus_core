@@ -611,6 +611,28 @@ namespace Cadmus.TestBase
                 new ItemFilter { Flags = 128 }).Total);
         }
 
+        protected void DoSetItemGroupId_NotExisting_Nope()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            repository.SetItemGroupId(new[] { "NotExisting" }, "group");
+
+            Assert.Equal(0, repository.GetItems(
+                new ItemFilter { GroupId = "group" }).Total);
+        }
+
+        protected void DoSetItemGroupId_Existing_Updated()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            repository.SetItemGroupId(new[] { "item-001" }, "group");
+
+            Assert.Equal(1, repository.GetItems(
+                new ItemFilter { GroupId = "group" }).Total);
+        }
+
         protected void DoDeleteItem_NotExisting_Nope()
         {
             PrepareDatabase();

@@ -261,12 +261,37 @@ This way, the languages thesaurus would be retrieved whatever ID you use: `langu
 
 ### Thesaurus Scope in Parts
 
-Each part has an optional thesaurus scope property (`ThesaurusScope`) which adds runtime thesaurus selection to the frontend editor.
+In the editor architecture, thesauri are loaded when the part or fragment editor loads.
 
-Usually, each frontend (part or fragment) editor can load any number of required thesauri for its own UI. In most cases, the IDs of the thesauri are predefined at design time; but sometimes, they rather need to be determined by runtime data.
+Each editor provides its own list of thesauri IDs it requires. For instance, the keywords part editor requires a thesaurus listing all the languages used for them. The ID requested for this thesaurus is a string, usually without the language suffix, e.g. `languages`.
 
-For instance, an apparatus part might require to load a different set of witnesses, according to the work it refers to. As a general mechanism, we can set a part thesaurus scope so that when found a generic editor will rather load the scoped thesauri, by combining the thesauri IDs required by the specialized editor with the thesaurus scope of the part being loaded.
+When the editor loads, it passes its requested IDs to the base editor class (here BEC for short), which in turn passes them to the service in charge of loading the edited data in the corresponding editor state.
 
-For instance, say an apparatus layer fragment editor wants to load a thesaurus with ID `witnesses@en`: if the corresponding apparatus layer part has its `ThesaurusScope` equal to `lucr`, the generic editor, while requested by the specialized editor to load `witnesses@en`, will rather load `witnesses.lucr@en`.
+This service loads its data together with the requested thesauri, by calling the backend via its exposed API. The backend forwards the request to the data layer, which retrieves the matching thesauri from the database.
 
-If in the specialized editor there are any IDs you do not want to be overridden in this way, just prefix them with an exclamation mark `!`, e.g. `!categories@en`.
+The backend adopts a fallback mechanism for languages; if the specified language is not found, or no language is specified, it falls back to the default language (`eng` or `en`).
+
+Also, as we have seen above it is possible to define alias IDs for thesauri, so that we can eventually target the same thesaurus, whatever the IDs requested by different editors. For instance, say there are two editors requesting languages thesaurus, developed independently. One of them requests the ID `languages`; another requests the ID `keyword-languages`; yet, we want to use the same list of language for both. Rather than duplicating it, we just provide an alias for one of the two IDs, pointing to the other one. So, the requests of each editor will be satisfied, without having to modify their code, or to produce redundancy in the thesauri set.
+
+Until here, all the scenarios we have illustrated work with *statically* defined thesauri IDs; we can fallback with the language, or use aliases; but editors requests are totally defined at design time.
+
+In some cases, it may happen that editors require to define their requested IDs *dynamically*, at runtime. For instance, this happens for the apparatus fragment editor, which requires 2 dynamically defined IDs: the witnesses thesaurus and the authors thesaurus are different for each work being handled.
+
+The backend stores each of these thesauri with an ID which differs only for their "scope", i.e. the ID portion starting with the last dot: for instance, we might have these IDs for two different works:
+
+- `apparatus-witnesses.verg-eclo@en`: apparatus witnesses for Vergilius *Eclogae*.
+- `apparatus-witnesses.verg-aen@en`: apparatus witnesses for Vergilius *Aeneis*.
+
+In the frontend, at design time the fragment editor can just request an ID like `apparatus-witnesses`; it cannot know which is the work the fragment belongs to. So, how can we get to the actual IDs listed above for Vergilius? To this end, the BEC leverages a generic mechanism based on the part's *thesaurus scope*. This is an optional property which defines the scope of the thesaurus IDs for those editors requiring runtime data.
+
+If now the apparatus layer part referring to Vergilius *Eclogae* has its thesaurus scope defined, here as `verg-eclo`, this triggers a generic frontend mechanism which overrides the apparatus fragment editor requests. This just requests `apparatus-witnesses`; but once the mechanism finds out that its container part has a thesaurus ID scope, the ID is overridden as `apparatus-witnesses.verg-eclo`. Thus, the backend receives this ID request and satisfies it by retrieving the correct thesaurus.
+
+Finally, some of the IDs requested by the editor might require not to be overridden by the scope. For instance, the fragment editor requests a third thesaurus, the `apparatus-tags`, a list shared among the apparati of all the works. As such, we must not override it as `apparatus-tags.verg-eclo`, which would not be found, because the database just has a single thesaurus with ID `apparatus-tags`. In this case, the fragment editor notifies the mechanism that it should not override this ID by prefixing it with an exclamation mark.
+
+To sum up, the fragment editor at design time requests 3 IDs:
+
+- `!apparatus-tags`: apparatus tags. Note the leading `!` which avoids the override.
+- `apparatus-witnesses`: apparatus witnesses.
+- `apparatus-authors`: apparatus authors.
+
+This is all what the editor needs to know. It is up to the generic mechanism from which the editor is derived to lookup the corresponding part, and apply overrides when it finds that it has a thesaurus scope.

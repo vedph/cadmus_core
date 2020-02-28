@@ -302,6 +302,15 @@ namespace Cadmus.Core.Storage
         /// <param name="patches">The patch instructions.</param>
         /// <returns>The patched layer part content.</returns>
         string ApplyLayerPartPatches(string id, string userId, IList<string> patches);
+
+        /// <summary>
+        /// Set the <see cref="IPart.ThesaurusScope"/> property of all the
+        /// parts with the specified ID.
+        /// Note that this operation never affects the item's history.
+        /// </summary>
+        /// <param name="ids">The item identifier(s).</param>
+        /// <param name="scope">The new scope (may be null).</param>
+        void SetPartThesaurusScope(IList<string> ids, string scope);
         #endregion
     }
 }

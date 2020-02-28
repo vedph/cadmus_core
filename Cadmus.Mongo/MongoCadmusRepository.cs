@@ -13,6 +13,7 @@ using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using Newtonsoft.Json.Linq;
 using Thesaurus = Cadmus.Core.Config.Thesaurus;
 
 namespace Cadmus.Mongo
@@ -727,7 +728,7 @@ namespace Cadmus.Mongo
 
         private static IMongoQueryable<MongoPart> ApplyPartFilters(
             IMongoQueryable<MongoPart> parts, string[] itemIds,
-            string typeId, string roleId)
+            string typeId, string roleId, string thesaurusScope)
         {
             if (itemIds?.Length > 0)
             {
@@ -746,6 +747,9 @@ namespace Cadmus.Mongo
 
             if (!string.IsNullOrEmpty(roleId))
                 parts = parts.Where(p => p.RoleId.Equals(roleId));
+
+            if (!string.IsNullOrEmpty(thesaurusScope))
+                parts = parts.Where(p => p.ThesaurusScope.Equals(thesaurusScope));
 
             return parts;
         }
@@ -766,9 +770,10 @@ namespace Cadmus.Mongo
             var partCollection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             IMongoQueryable<MongoPart> parts = partCollection.AsQueryable();
 
-            parts = ApplyPartFilters(parts, filter.ItemIds, filter.TypeId, filter.RoleId);
+            parts = ApplyPartFilters(parts, filter.ItemIds, filter.TypeId,
+                filter.RoleId, filter.ThesaurusScope);
 
-            if (filter.UserId != null)
+            if (!string.IsNullOrEmpty(filter.UserId))
                 parts = parts.Where(p => p.UserId.Equals(filter.UserId));
 
             if (filter.MinModified.HasValue)
@@ -839,7 +844,7 @@ namespace Cadmus.Mongo
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             IMongoQueryable<MongoPart> parts = collection.AsQueryable();
 
-            parts = ApplyPartFilters(parts, itemIds, typeId, roleId);
+            parts = ApplyPartFilters(parts, itemIds, typeId, roleId, null);
 
             List<IPart> itemParts = new List<IPart>();
             itemParts.AddRange(InstantiateParts(
@@ -1517,6 +1522,50 @@ namespace Cadmus.Mongo
 
             // return patched part content
             return mongoLayerPart.Content;
+        }
+
+        private static string ToCamelCase(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return s;
+            if (s.Length == 1) return s.ToLowerInvariant();
+            return $"{char.ToLowerInvariant(s[0])}{s.Substring(1)}";
+        }
+
+        /// <summary>
+        /// Set the <see cref="IPart.ThesaurusScope"/> property of all the
+        /// parts with the specified ID.
+        /// Note that this operation never affects the item's history.
+        /// </summary>
+        /// <param name="ids">The item identifier(s).</param>
+        /// <param name="scope">The new scope (may be null).</param>
+        /// <exception cref="ArgumentNullException">null ID(s)</exception>
+        public void SetPartThesaurusScope(IList<string> ids, string scope)
+        {
+            if (ids == null) throw new ArgumentNullException(nameof(ids));
+
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+
+            foreach (MongoPart part in parts.AsQueryable()
+                .Where(p => ids.Contains(p.Id)))
+            {
+                // update property
+                part.ThesaurusScope = scope;
+
+                // patch property in serialized content, too
+                string propName = ToCamelCase(nameof(IPart.ThesaurusScope));
+                JObject content = JObject.Parse(part.Content);
+                if (content.ContainsKey(propName)) content.Remove(propName);
+                content.Add(propName, scope);
+                part.Content = content.ToString(Newtonsoft.Json.Formatting.None);
+
+                // save
+                parts.ReplaceOne(p => p.Id.Equals(part.Id),
+                    part,
+                    new ReplaceOptions { IsUpsert = true });
+            }
         }
         #endregion
     }

@@ -32,6 +32,25 @@ namespace Cadmus.Core
         public string RoleId { get; set; }
 
         /// <summary>
+        /// Gets or sets the thesaurus scope. This is an arbitrary string
+        /// representing the suffix to be appended to a thesaurus ID (just
+        /// before the <c>@</c> introducing its language ID) when loading
+        /// thesauri. The suffix is appended with a leading dot, and should
+        /// include only letters A-Z or a-z, digits, dash, and underscore.
+        /// </summary>
+        /// <remarks>This scope is used for those parts which require to
+        /// load different thesauri according to runtime data. For instance,
+        /// an apparatus part might require to load a different set of witnesses
+        /// according to the work it refers to. Thus, an editor could append
+        /// the part's thesaurus scope to its required thesaurus ID before
+        /// loading it. For instance, say the part wants to load a thesaurus
+        /// with ID <c>witnesses@en</c>: if the part has its
+        /// <see cref="ThesaurusScope"/> equal to <c>lucr</c>, the editor will
+        /// rather load <c>witnesses.lucr@en</c>.
+        /// </remarks>
+        public string ThesaurusScope { get; set; }
+
+        /// <summary>
         /// Creation date and time (UTC).
         /// </summary>
         public DateTime TimeCreated { get; set; }

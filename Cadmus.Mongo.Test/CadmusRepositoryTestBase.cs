@@ -9,6 +9,7 @@ using Cadmus.Core.Layers;
 using Cadmus.Core.Storage;
 using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
+using Fusi.Tools.Data;
 using Xunit;
 
 namespace Cadmus.TestBase
@@ -1943,6 +1944,39 @@ namespace Cadmus.TestBase
             Assert.Single(layerPart2.Fragments);
             Assert.Equal("1.2", layerPart2.Fragments[0].Location);
             Assert.Equal("Another one.", layerPart2.Fragments[0].Text);
+        }
+
+        protected void DoSetPartThesaurusScope_NoMatch_Unchanged()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            repository.SetPartThesaurusScope(new[] { "not-existing" },
+                "verg-eclo");
+
+            DataPage<PartInfo> page = repository.GetParts(
+                new PartFilter { ThesaurusScope = "verg-eclo" });
+            Assert.Equal(0, page.Total);
+        }
+
+        protected void DoSetPartThesaurusScope_Match_Updated()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            repository.SetPartThesaurusScope(new[] { "part-001", "part-003" },
+                "verg-eclo");
+
+            DataPage<PartInfo> page = repository.GetParts(
+                new PartFilter { ThesaurusScope = "verg-eclo" });
+            Assert.Equal(2, page.Total);
+
+            // content too must be patched
+            for (int i = 0; i < page.Items.Count; i++)
+            {
+                string content = repository.GetPartContent(page.Items[0].Id);
+                Assert.Contains("\"thesaurusScope\":\"verg-eclo\"", content);
+            }
         }
         #endregion
 

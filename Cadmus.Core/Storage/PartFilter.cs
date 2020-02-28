@@ -1,5 +1,4 @@
-﻿using Fusi.Tools.Data;
-using System;
+﻿using System;
 
 namespace Cadmus.Core.Storage
 {
@@ -22,6 +21,11 @@ namespace Cadmus.Core.Storage
         /// Gets or sets the part's role identifier filter.
         /// </summary>
         public string RoleId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the part's thesaurus scope.
+        /// </summary>
+        public string ThesaurusScope { get; set; }
 
         /// <summary>
         /// Gets or sets the optional custom sort expressions to be used to

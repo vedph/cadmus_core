@@ -88,6 +88,7 @@ This is the core namespace for the Cadmus system. It includes the following name
     PartInfo : +string ItemId
     PartInfo : +string TypeId
     PartInfo : +string RoleId
+    PartInfo : +string ThesaurusScope
     PartInfo : +DateTime TimeCreated
     PartInfo : +string CreatorId
     PartInfo : +DateTime TimeModified
@@ -614,6 +615,7 @@ As the part provider works also for closed generic types representing text layer
     PartFilter : +string[] ItemIds
     PartFilter : +string TypeId
     PartFilter : +string RoleId
+    PartFilter : +string ThesaurusScope
     PartFilter : +Tuple<string,bool>[] SortExpressions
 
     IHasVersion <|-- ItemInfo

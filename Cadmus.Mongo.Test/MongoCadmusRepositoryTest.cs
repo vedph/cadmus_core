@@ -750,6 +750,18 @@ namespace Cadmus.Mongo.Test
         {
             DoApplyLayerPartPatches_Del_Ok();
         }
+
+        [Fact]
+        public void SetPartThesaurusScope_NoMatch_Unchanged()
+        {
+            DoSetPartThesaurusScope_NoMatch_Unchanged();
+        }
+
+        [Fact]
+        public void SetPartThesaurusScope_Match_Updated()
+        {
+            DoSetPartThesaurusScope_Match_Updated();
+        }
         #endregion
     }
 }

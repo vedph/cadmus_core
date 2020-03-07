@@ -7,11 +7,11 @@ using Xunit;
 
 namespace Cadmus.Parts.Test.General
 {
-    public sealed class KeywordsPartTest
+    public sealed class IndexKeywordsPartTest
     {
-        private static KeywordsPart GetPart(bool keywords = true)
+        private static IndexKeywordsPart GetPart(bool keywords = true)
         {
-            KeywordsPart part = new KeywordsPart
+            IndexKeywordsPart part = new IndexKeywordsPart
             {
                 ItemId = Guid.NewGuid().ToString(),
                 RoleId = "some-role",
@@ -20,9 +20,27 @@ namespace Cadmus.Parts.Test.General
             };
             if (keywords)
             {
-                part.AddKeyword("eng", "red");
-                part.AddKeyword("eng", "green");
-                part.AddKeyword("ita", "rosso");
+                part.AddKeyword(new IndexKeyword
+                {
+                    IndexId = "colors",
+                    Language = "eng",
+                    Value = "red",
+                    Note = "red note",
+                    Tag = "tag"
+                });
+                part.AddKeyword(new IndexKeyword
+                {
+                    IndexId = "colors",
+                    Language = "eng",
+                    Value = "green",
+                    Note = "green note",
+                    Tag = "tag"
+                });
+                part.AddKeyword(new IndexKeyword
+                {
+                    Language = "eng",
+                    Value = "Greek"
+                });
             }
             return part;
         }
@@ -30,10 +48,11 @@ namespace Cadmus.Parts.Test.General
         [Fact]
         public void Part_Is_Serializable()
         {
-            KeywordsPart part = GetPart();
+            IndexKeywordsPart part = GetPart();
 
             string json = TestHelper.SerializePart(part);
-            KeywordsPart part2 = TestHelper.DeserializePart<KeywordsPart>(json);
+            IndexKeywordsPart part2 =
+                TestHelper.DeserializePart<IndexKeywordsPart>(json);
 
             Assert.Equal(part.Id, part2.Id);
             Assert.Equal(part.TypeId, part2.TypeId);
@@ -43,10 +62,11 @@ namespace Cadmus.Parts.Test.General
             Assert.Equal(part.UserId, part2.UserId);
             Assert.Equal(part.Keywords.Count, part2.Keywords.Count);
 
-            foreach (Keyword expected in part.Keywords)
+            foreach (IndexKeyword expected in part.Keywords)
             {
                 Assert.Contains(part2.Keywords,
-                    k => k.Language == expected.Language
+                    k => k.IndexId == expected.IndexId
+                    && k.Language == expected.Language
                     && k.Value == expected.Value);
             }
         }
@@ -54,7 +74,7 @@ namespace Cadmus.Parts.Test.General
         [Fact]
         public void GetDataPins_NoKeywords_Empty()
         {
-            KeywordsPart part = GetPart(false);
+            IndexKeywordsPart part = GetPart(false);
 
             Assert.Empty(part.GetDataPins());
         }
@@ -62,34 +82,34 @@ namespace Cadmus.Parts.Test.General
         [Fact]
         public void GetDataPins_Tag_3()
         {
-            KeywordsPart part = GetPart();
+            IndexKeywordsPart part = GetPart();
 
             List<DataPin> pins = part.GetDataPins().ToList();
             Assert.Equal(3, pins.Count);
 
-            // keyword.eng = green
+            // xkeyword..eng = Greek
             DataPin pin = pins[0];
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("keyword.eng", pin.Name);
-            Assert.Equal("green", pin.Value);
+            Assert.Equal("xkeyword..eng", pin.Name);
+            Assert.Equal("Greek", pin.Value);
 
-            // keyword.eng = red
+            // xkeyword.colors.eng = green
             pin = pins[1];
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("keyword.eng", pin.Name);
-            Assert.Equal("red", pin.Value);
+            Assert.Equal("xkeyword.colors.eng", pin.Name);
+            Assert.Equal("green", pin.Value);
 
-            // keyword.ita = rosso
+            // xkeyword.colors.eng = red
             pin = pins[2];
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("keyword.ita", pin.Name);
-            Assert.Equal("rosso", pin.Value);
+            Assert.Equal("xkeyword.colors.eng", pin.Name);
+            Assert.Equal("red", pin.Value);
         }
     }
 }

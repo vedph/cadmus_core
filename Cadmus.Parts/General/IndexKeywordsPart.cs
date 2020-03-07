@@ -3,10 +3,16 @@ using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Cadmus.Parts.General
 {
+    /// <summary>
+    /// Index keywords part. This parts contains a list of index keywords,
+    /// which are a specialization of <see cref="Keyword"/>'s to represent
+    /// entries in a traditional index.
+    /// Tag: <c>net.fusisoft.index-keywords</c>.
+    /// </summary>
+    /// <seealso cref="PartBase" />
     [Tag("net.fusisoft.index-keywords")]
     public sealed class IndexKeywordsPart : PartBase
     {
@@ -42,9 +48,10 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor. Each key is
-        /// <c>keyword.{lang}</c> where <c>{lang}</c> is its language value,
-        /// e.g. <c>keyword.eng</c> as name and <c>sample</c> as value.
-        /// The pins are returned sorted by language and then by value.
+        /// <c>xkeyword.{indexId}.{lang}</c> where <c>{indexId}</c> is the index
+        /// ID (whic may be empty), and <c>{lang}</c> is its language value;
+        /// e.g. <c>keyword..eng</c> as name and <c>sample</c> as value.
+        /// The pins are returned sorted by index ID, language and then value.
         /// </summary>
         /// <returns>pins</returns>
         public override IEnumerable<DataPin> GetDataPins()
@@ -54,10 +61,11 @@ namespace Cadmus.Parts.General
 
             List<DataPin> pins = new List<DataPin>();
 
-            foreach (string indexId in Keywords.Select(k => k.IndexId).Distinct())
+            foreach (string indexId in Keywords.Select(k => k.IndexId ?? "")
+                .OrderBy(s => s).Distinct())
             {
                 var keysByLang = from k in Keywords
-                                 where k.IndexId == indexId
+                                 where (k.IndexId ?? "") == indexId
                                  group k by k.Language
                                      into g
                                  orderby g.Key
@@ -69,9 +77,9 @@ namespace Cadmus.Parts.General
                                        orderby k.Value
                                        select k.Value).ToArray();
 
-                    string iid = string.IsNullOrEmpty(indexId) ? "" : "."+ indexId;
                     pins.AddRange(from value in values
-                                  select CreateDataPin($"xkeyword.{iid}{g.Key}", value));
+                                  select CreateDataPin(
+                                    $"xkeyword.{indexId}.{g.Key}", value));
                 }
             }
 
@@ -82,11 +90,11 @@ namespace Cadmus.Parts.General
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
-            return $"[Keywords] {Keywords.Count}";
+            return $"[Index Keywords] {Keywords.Count}";
         }
     }
 }

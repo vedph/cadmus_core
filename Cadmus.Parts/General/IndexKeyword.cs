@@ -3,7 +3,11 @@
 namespace Cadmus.Parts.General
 {
     /// <summary>
-    /// An index keyword.
+    /// An index keyword. This is a specialized version of <see cref="Keyword"/>
+    /// representing a keyword in a traditional index. The keyword value is
+    /// the index entry, and conventionally it can represent a hierarchy
+    /// through dots. For instance, <c>Athens.history</c> represents a 2-levels
+    /// entry, where the first is <c>Athens</c> and the second <c>history</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Parts.General.Keyword" />
     public sealed class IndexKeyword : Keyword

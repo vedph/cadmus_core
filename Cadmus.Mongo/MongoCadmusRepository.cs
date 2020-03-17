@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Layers;
@@ -11,6 +12,7 @@ using Cadmus.Core.Storage;
 using DiffMatchPatch;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json.Linq;
@@ -567,6 +569,195 @@ namespace Cadmus.Mongo
             items.UpdateMany(
                 Builders<MongoItem>.Filter.In(i => i.Id, ids),
                 Builders<MongoItem>.Update.Set(i => i.GroupId, groupId));
+        }
+
+        private async Task<int> GetDistinctGroupIdsCountAsync(
+            IMongoCollection<BsonDocument> items, AggregateOptions options)
+        {
+            #region Mongo query
+            // use cadmus;
+            // db.getCollection("items").aggregate(
+            //     [
+            //         { 
+            //             "$project" : { 
+            //                 "groupId" : true
+            //             }
+            //         }, 
+            //         { 
+            //             "$match" : { 
+            //                 "$and" : [
+            //                     { 
+            //                         "groupId" : { 
+            //                             "$exists" : true
+            //                         }
+            //                     }, 
+            //                     { 
+            //                         "groupId" : { 
+            //                             "$ne" : null
+            //                         }
+            //                     }
+            //                 ]
+            //             }
+            //         }, 
+            //         { 
+            //             "$group" : { 
+            //                 "_id" : "groupId"
+            //             }
+            //         }, 
+            //         { 
+            //             "$count" : "count"
+            //         }
+            //     ], 
+            //     { 
+            //         "allowDiskUse" : false
+            //     }
+            // );
+            #endregion
+
+            PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
+            {
+                new BsonDocument("$project", new BsonDocument()
+                        .Add("groupId", new BsonBoolean(true))),
+                new BsonDocument("$match", new BsonDocument()
+                        .Add("$and", new BsonArray()
+                                .Add(new BsonDocument()
+                                        .Add("groupId", new BsonDocument()
+                                                .Add("$exists", new BsonBoolean(true))
+                                        )
+                                )
+                                .Add(new BsonDocument()
+                                        .Add("groupId", new BsonDocument()
+                                                .Add("$ne", BsonNull.Value)
+                                        )
+                                )
+                        )),
+                new BsonDocument("$group", new BsonDocument()
+                        .Add("_id", "$groupId")),
+                new BsonDocument("$count", "count")
+            };
+
+            using (var cursor = await items.AggregateAsync(pipeline, options))
+            {
+                await cursor.MoveNextAsync();
+                var doc = cursor.Current.ToBsonDocument();
+                return doc["_id"].AsInt32;
+            }
+        }
+
+        /// <summary>
+        /// Gets the requested page from a list of all the distinct, non-null
+        /// group IDs found in the items.
+        /// </summary>
+        /// <param name="options">The paging options.</param>
+        /// <returns>The page.</returns>
+        /// <exception cref="ArgumentNullException">options</exception>
+        public async Task<DataPage<string>> GetDistinctGroupIdsAsync(
+            PagingOptions options)
+        {
+            #region Mongo query
+            // use cadmus;
+            // db.getCollection("items").aggregate(
+            //     [
+            //         { 
+            //             "$project" : { 
+            //                 "groupId" : true
+            //             }
+            //         }, 
+            //         { 
+            //             "$match" : { 
+            //                 "$and" : [
+            //                     { 
+            //                         "groupId" : { 
+            //                             "$exists" : true
+            //                         }
+            //                     }, 
+            //                     { 
+            //                         "groupId" : { 
+            //                             "$ne" : null
+            //                         }
+            //                     }
+            //                 ]
+            //             }
+            //         }, 
+            //         { 
+            //             "$group" : { 
+            //                 "_id" : "groupId"
+            //             }
+            //         }, 
+            //         { 
+            //             "$sort" : { 
+            //                 "_id" : 1.0
+            //             }
+            //         }, 
+            //         { 
+            //             "$skip" : 0.0
+            //         }, 
+            //         { 
+            //             "$limit" : 20.0
+            //         }
+            //     ], 
+            //     { 
+            //         "allowDiskUse" : false
+            //     }
+            // );
+            #endregion
+
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
+
+            var aggOptions = new AggregateOptions()
+            {
+                AllowDiskUse = false
+            };
+
+            int total = await GetDistinctGroupIdsCountAsync(items, aggOptions);
+            List<string> ids = new List<string>();
+
+            if (total > 0)
+            {
+                PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
+                {
+                new BsonDocument("$project", new BsonDocument()
+                        .Add("groupId", new BsonBoolean(true))),
+                new BsonDocument("$match", new BsonDocument()
+                        .Add("$and", new BsonArray()
+                                .Add(new BsonDocument()
+                                        .Add("groupId", new BsonDocument()
+                                                .Add("$exists", new BsonBoolean(true))
+                                        )
+                                )
+                                .Add(new BsonDocument()
+                                        .Add("groupId", new BsonDocument()
+                                                .Add("$ne", BsonNull.Value)
+                                        )
+                                )
+                        )),
+                new BsonDocument("$group", new BsonDocument()
+                        .Add("_id", "$groupId")),
+                new BsonDocument("$sort", new BsonDocument()
+                        .Add("_id", 1)),
+                new BsonDocument("$skip", options.GetSkipCount()),
+                new BsonDocument("$limit", options.PageSize)
+                };
+
+                using (var cursor = await items.AggregateAsync(pipeline, aggOptions))
+                {
+                    while (await cursor.MoveNextAsync())
+                    {
+                        var batch = cursor.Current;
+                        foreach (BsonDocument document in batch)
+                            ids.Add(document["_id"].AsString);
+                    }
+                }
+            }
+
+            return new DataPage<string>(options.PageNumber, options.PageSize,
+                total, ids);
         }
 
         /// <summary>

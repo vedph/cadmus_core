@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Cadmus.Core.Config;
 using Cadmus.Core.Layers;
 using Fusi.Tools.Data;
@@ -141,6 +142,14 @@ namespace Cadmus.Core.Storage
         /// <param name="ids">The items identifiers.</param>
         /// <param name="groupId">The group ID (can be null).</param>
         void SetItemGroupId(IList<string> ids, string groupId);
+
+        /// <summary>
+        /// Gets the requested page from a list of all the distinct, non-null
+        /// group IDs found in the items.
+        /// </summary>
+        /// <param name="options">The paging options.</param>
+        /// <returns>The page.</returns>
+        Task<DataPage<string>> GetDistinctGroupIdsAsync(PagingOptions options);
 
         /// <summary>
         /// Gets a pege of history for the specified item.

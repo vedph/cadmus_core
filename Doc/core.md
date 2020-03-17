@@ -727,6 +727,8 @@ As the part provider works also for closed generic types representing text layer
     ICadmusRepository : +AddItem(IItem item, bool history = true)
     ICadmusRepository : +DeleteItem(string id, string userId, bool history = true)
     ICadmusRepository : +SetItemFlags(IList<string> ids, int flags)
+    ICadmusRepository : +SetItemGroupId(IList<string> ids, string groupId)
+    ICadmusRepository : +Task<DataPage<string>> GetDistinctGroupIdsAsync(PagingOptions options)
     ICadmusRepository : +DataPage<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter)
     ICadmusRepository : +HistoryItem GetHistoryItem(string id)
     ICadmusRepository : +DeleteHistoryItem(string id)

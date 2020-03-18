@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Layers;
@@ -631,6 +632,69 @@ namespace Cadmus.TestBase
 
             Assert.Equal(1, repository.GetItems(
                 new ItemFilter { GroupId = "group" }).Total);
+        }
+
+        protected async Task DoGetDistinctGroupIdsAsync_All_11()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var page = await repository.GetDistinctGroupIdsAsync(
+                new PagingOptions
+            {
+                PageNumber = 1,
+                PageSize = 20
+            });
+
+            Assert.Equal(11, page.Total);
+            Assert.Equal(11, page.Items.Count);
+
+            for (int i = 0; i < 11; i++)
+                Assert.Equal($"g{i:00}", page.Items[i]);
+        }
+
+        protected async Task DoGetDistinctGroupIdsAsync_Page1_5()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var page = await repository.GetDistinctGroupIdsAsync(
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 5
+                });
+
+            Assert.Equal(11, page.Total);
+            Assert.Equal(5, page.Items.Count);
+
+            Assert.Equal("g00", page.Items[0]);
+            Assert.Equal("g01", page.Items[1]);
+            Assert.Equal("g02", page.Items[2]);
+            Assert.Equal("g03", page.Items[3]);
+            Assert.Equal("g04", page.Items[4]);
+        }
+
+        protected async Task DoGetDistinctGroupIdsAsync_Page2_5()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var page = await repository.GetDistinctGroupIdsAsync(
+                new PagingOptions
+                {
+                    PageNumber = 2,
+                    PageSize = 5
+                });
+
+            Assert.Equal(11, page.Total);
+            Assert.Equal(5, page.Items.Count);
+
+            Assert.Equal("g05", page.Items[0]);
+            Assert.Equal("g06", page.Items[1]);
+            Assert.Equal("g07", page.Items[2]);
+            Assert.Equal("g08", page.Items[3]);
+            Assert.Equal("g09", page.Items[4]);
         }
 
         protected void DoDeleteItem_NotExisting_Nope()

@@ -639,8 +639,7 @@ namespace Cadmus.Mongo
             using (var cursor = await items.AggregateAsync(pipeline, options))
             {
                 await cursor.MoveNextAsync();
-                var doc = cursor.Current.ToBsonDocument();
-                return doc["_id"].AsInt32;
+                return cursor.Current.First()["count"].AsInt32;
             }
         }
 

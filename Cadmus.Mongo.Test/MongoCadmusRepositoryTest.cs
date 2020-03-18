@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
@@ -171,6 +173,7 @@ namespace Cadmus.Mongo.Test
                     Title = $"Item {i}",
                     Description = $"Description of item {i}",
                     FacetId = (i & 1) == 1 ? "alpha" : "beta",
+                    GroupId = $"g{i / 2:00}",
                     SortKey = $"item{i:000}",
                     Flags = i,
                     CreatorId = userId,
@@ -504,6 +507,24 @@ namespace Cadmus.Mongo.Test
         public void SetItemGroupId_Existing_Updated()
         {
             DoSetItemGroupId_Existing_Updated();
+        }
+
+        [Fact]
+        public async Task GetDistinctGroupIdsAsync_All_11()
+        {
+            await DoGetDistinctGroupIdsAsync_All_11();
+        }
+
+        [Fact]
+        public async Task GetDistinctGroupIdsAsync_Page1_5()
+        {
+            await DoGetDistinctGroupIdsAsync_Page1_5();
+        }
+
+        [Fact]
+        public async Task GetDistinctGroupIdsAsync_Page2_5()
+        {
+            await DoGetDistinctGroupIdsAsync_Page2_5();
         }
 
         [Fact]

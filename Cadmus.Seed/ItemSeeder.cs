@@ -43,7 +43,7 @@ namespace Cadmus.Seed
                     $"Description for {oddEven} " +
                     $"item number {NumberToWords.Convert(number)}.")
                 .RuleFor(i => i.FacetId, facetId)
-                // (no GroupId set)
+                .RuleFor(i => i.GroupId, oddEven)
                 .RuleFor(i => i.CreatorId, f => f.PickRandom(_options.Users))
                 .RuleFor(i => i.UserId, f => f.PickRandom(_options.Users))
                 .RuleFor(i => i.Flags, (number & 1) == 1 ? 1 : 0);

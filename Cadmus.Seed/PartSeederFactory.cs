@@ -40,6 +40,10 @@ namespace Cadmus.Seed
     /// <c>Options</c>.</description>
     /// </item>
     /// </list>
+    /// Also, besides the <c>seed</c> property we might find an <c>imports</c>
+    /// property, which lists import sources as an array of strings. These can
+    /// be retrieved with <see cref="GetImports"/>, and are used to import
+    /// items and parts from JSON dumps.
     /// </remarks>
     /// <seealso cref="Fusi.Tools.Config.ComponentFactoryBase" />
     public sealed class PartSeederFactory : ComponentFactoryBase
@@ -106,7 +110,8 @@ namespace Cadmus.Seed
         {
             IConfigurationSection section =
                 Configuration.GetSection("seed")?.GetSection("options");
-            SeedOptions options = section.Get<SeedOptions>();
+            SeedOptions options = section?.Get<SeedOptions>()
+                ?? new SeedOptions();
 
             options.FacetDefinitions = Configuration.GetSection("facets")
                 .Get<FacetDefinition[]>();
@@ -187,6 +192,19 @@ namespace Cadmus.Seed
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the list of imports sources defined in the seeder configuration.
+        /// The value of each source depends on its host; it might be a file
+        /// path when the source is just a file; a web resource when the source
+        /// is an HTTP URI; etc. In the configuration, the list of imports is
+        /// an array property named <c>imports</c>.
+        /// </summary>
+        /// <returns>List of imports, or null.</returns>
+        public IList<string> GetImports()
+        {
+            return Configuration.GetSection("imports")?.Get<List<string>>();
         }
 
         /// <summary>

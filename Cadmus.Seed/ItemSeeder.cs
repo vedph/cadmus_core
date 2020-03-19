@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using Cadmus.Core;
-using Cadmus.Core.Config;
 using System;
 
 namespace Cadmus.Seed

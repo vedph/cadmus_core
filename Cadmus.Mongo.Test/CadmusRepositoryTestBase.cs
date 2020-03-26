@@ -697,6 +697,39 @@ namespace Cadmus.TestBase
             Assert.Equal("g09", page.Items[4]);
         }
 
+        protected async Task DoGetGroupLayersCountAsync_NoItem_0()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            int count = await repository.GetGroupLayersCountAsync("not-existing");
+
+            Assert.Equal(0, count);
+        }
+
+        protected async Task DoGetGroupLayersCountAsync_Items_2()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            TokenTextLayerPart<CommentLayerFragment> layerPart =
+                new TokenTextLayerPart<CommentLayerFragment>
+                {
+                    ItemId = "item-001",
+                    CreatorId = "zeus",
+                    UserId = "zeus"
+                };
+            layerPart.AddFragment(new CommentLayerFragment
+            {
+                Location = "1.1",
+                Text = "A comment"
+            });
+            repository.AddPart(layerPart);
+
+            int count = await repository.GetGroupLayersCountAsync("g00");
+
+            Assert.Equal(1, count);
+        }
+
         protected void DoDeleteItem_NotExisting_Nope()
         {
             PrepareDatabase();

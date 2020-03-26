@@ -531,6 +531,18 @@ namespace Cadmus.Mongo.Test
         }
 
         [Fact]
+        public async Task GetGroupLayersCountAsync_NoItem_0()
+        {
+            await DoGetGroupLayersCountAsync_NoItem_0();
+        }
+
+        [Fact]
+        public async Task GetGroupLayersCountAsync_Items_2()
+        {
+            // TODO
+        }
+
+        [Fact]
         public void DeleteItem_NotExisting_Nope()
         {
             DoDeleteItem_NotExisting_Nope();

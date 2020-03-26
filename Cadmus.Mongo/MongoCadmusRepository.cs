@@ -644,7 +644,8 @@ namespace Cadmus.Mongo
             using (var cursor = await items.AggregateAsync(pipeline, options))
             {
                 await cursor.MoveNextAsync();
-                return cursor.Current.First()["count"].AsInt32;
+                BsonDocument first = cursor.Current.FirstOrDefault();
+                return first?["count"].AsInt32 ?? 0;
             }
         }
 
@@ -761,6 +762,106 @@ namespace Cadmus.Mongo
 
             return new DataPage<string>(options.PageNumber, options.PageSize,
                 total, ids);
+        }
+
+        /// <summary>
+        /// Get the count of all the non-empty layers in the specified items
+        /// group.
+        /// </summary>
+        /// <param name="groupId">The group ID.</param>
+        /// <returns>The count.</returns>
+        public async Task<int> GetGroupLayersCountAsync(string groupId)
+        {
+            #region MongoDB query
+            // db.getCollection("parts").aggregate(
+            //     [
+            //         { 
+            //             "$lookup" : { 
+            //                 "from" : "items", 
+            //                 "localField" : "itemId", 
+            //                 "foreignField" : "_id", 
+            //                 "as" : "items"
+            //             }
+            //         }, 
+            //         { 
+            //             "$match" : { 
+            //                 "items" : { 
+            //                     "$elemMatch" : { 
+            //                         "groupId" : "VERG-eclo"
+            //                     }
+            //                 }, 
+            //                 "$and" : [
+            //                     { 
+            //                         "roleId" : /^fr\./
+            //                     }
+            //                 ]
+            //             }
+            //         }, 
+            //         { 
+            //             "$match" : { 
+            //                 "content.fragments" : { 
+            //                     "$exists" : true, 
+            //                     "$ne" : [
+            // 
+            //                     ]
+            //                 }
+            //             }
+            //         }, 
+            //         { 
+            //             "$count" : "count"
+            //         }
+            //     ], 
+            //     { 
+            //         "allowDiskUse" : false
+            //     }
+            // );
+            #endregion
+
+            if (groupId is null)
+                throw new ArgumentNullException(nameof(groupId));
+
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var items = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
+
+            var aggOptions = new AggregateOptions()
+            {
+                AllowDiskUse = false
+            };
+
+            PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
+            {
+                new BsonDocument("$lookup", new BsonDocument()
+                        .Add("from", "items")
+                        .Add("localField", "itemId")
+                        .Add("foreignField", "_id")
+                        .Add("as", "items")),
+                new BsonDocument("$match", new BsonDocument()
+                        .Add("items", new BsonDocument()
+                                .Add("$elemMatch", new BsonDocument()
+                                        .Add("groupId", groupId)
+                                )
+                        )
+                        .Add("$and", new BsonArray()
+                                .Add(new BsonDocument()
+                                        .Add("roleId", new BsonRegularExpression("^fr\\."))
+                                )
+                        )),
+                new BsonDocument("$match", new BsonDocument()
+                        .Add("content.fragments", new BsonDocument()
+                                .Add("$exists", new BsonBoolean(true))
+                                .Add("$ne", new BsonArray())
+                        )),
+                new BsonDocument("$count", "count")
+            };
+
+            using (var cursor = await items.AggregateAsync(pipeline, aggOptions))
+            {
+                await cursor.MoveNextAsync();
+                BsonDocument first = cursor.Current.FirstOrDefault();
+                return first?["count"].AsInt32 ?? 0;
+            }
         }
 
         /// <summary>

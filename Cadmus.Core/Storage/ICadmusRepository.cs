@@ -152,6 +152,14 @@ namespace Cadmus.Core.Storage
         Task<DataPage<string>> GetDistinctGroupIdsAsync(PagingOptions options);
 
         /// <summary>
+        /// Get the count of all the non-empty layers in the specified items
+        /// group.
+        /// </summary>
+        /// <param name="groupId">The group ID.</param>
+        /// <returns>The count.</returns>
+        Task<int> GetGroupLayersCountAsync(string groupId);
+
+        /// <summary>
         /// Gets a pege of history for the specified item.
         /// </summary>
         /// <param name="filter">The filter.</param>

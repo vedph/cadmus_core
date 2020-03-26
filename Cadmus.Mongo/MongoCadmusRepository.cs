@@ -13,9 +13,9 @@ using DiffMatchPatch;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using Newtonsoft.Json.Linq;
 using Thesaurus = Cadmus.Core.Config.Thesaurus;
 
 namespace Cadmus.Mongo
@@ -32,6 +32,7 @@ namespace Cadmus.Mongo
         private readonly IPartTypeProvider _partTypeProvider;
         private readonly IItemSortKeyBuilder _itemSortKeyBuilder;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly JsonWriterSettings _jsonSettings;
         private IEditOperationDiffAdapter<YXEditOperation> _opDiffAdapter;
         private MongoCadmusRepositoryOptions _options;
         private string _databaseName;
@@ -53,6 +54,10 @@ namespace Cadmus.Mongo
             _itemSortKeyBuilder = itemSortKeyBuilder ??
                 throw new ArgumentNullException(nameof(itemSortKeyBuilder));
 
+            _jsonSettings = new JsonWriterSettings
+            {
+                Indent = false
+            };
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -748,8 +753,7 @@ namespace Cadmus.Mongo
                 {
                     while (await cursor.MoveNextAsync())
                     {
-                        var batch = cursor.Current;
-                        foreach (BsonDocument document in batch)
+                        foreach (BsonDocument document in cursor.Current)
                             ids.Add(document["_id"].AsString);
                     }
                 }
@@ -931,7 +935,7 @@ namespace Cadmus.Mongo
             foreach (MongoPart mongoPart in parts)
             {
                 IPart part = InstantiatePart(mongoPart.TypeId, mongoPart.RoleId,
-                    mongoPart.Content);
+                    mongoPart.Content.ToJson(_jsonSettings));
 
                 if (part == null)
                 {
@@ -1175,7 +1179,8 @@ namespace Cadmus.Mongo
 
             string providerId = PartBase.BuildProviderId(part.TypeId, part.RoleId);
 
-            return (T)JsonSerializer.Deserialize(part.Content,
+            return (T)JsonSerializer.Deserialize(
+                part.Content.ToJson(_jsonSettings),
                 _partTypeProvider.Get(providerId),
                 _jsonOptions);
         }
@@ -1197,7 +1202,7 @@ namespace Cadmus.Mongo
                 .Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
 
-            return part?.Content;
+            return part?.Content?.ToJson(_jsonSettings);
         }
 
         /// <summary>
@@ -1224,7 +1229,7 @@ namespace Cadmus.Mongo
 
             MongoPart mongoPart = new MongoPart(part)
             {
-                Content = json
+                Content = BsonDocument.Parse(json)
             };
 
             if (history)
@@ -1232,7 +1237,7 @@ namespace Cadmus.Mongo
                 bool exists = parts.AsQueryable().Any(p => p.Id.Equals(part.Id));
                 MongoHistoryPart historyPart = new MongoHistoryPart(part)
                 {
-                    Content = json,
+                    Content = mongoPart.Content,
                     Status = exists ? EditStatus.Updated : EditStatus.Created
                 };
 
@@ -1410,7 +1415,9 @@ namespace Cadmus.Mongo
                 .FirstOrDefault();
             if (part == null) return null;
 
-            T wrapped = JsonSerializer.Deserialize<T>(part.Content, _jsonOptions);
+            T wrapped = JsonSerializer.Deserialize<T>(
+                part.Content.ToJson(_jsonSettings),
+                _jsonOptions);
             return new HistoryPart<T>(part.Id, wrapped)
             {
                 UserId = part.UserId,
@@ -1495,9 +1502,11 @@ namespace Cadmus.Mongo
 
                 MongoHistoryPart hp1 = historyParts[0];
                 MongoHistoryPart hp2 = historyParts[1];
-                IHasText part1 = InstantiatePart(hp1.TypeId, hp1.RoleId, hp1.Content)
+                IHasText part1 = InstantiatePart(hp1.TypeId, hp1.RoleId,
+                    hp1.Content.ToJson(_jsonSettings))
                     as IHasText;
-                IHasText part2 = InstantiatePart(hp2.TypeId, hp2.RoleId, hp2.Content)
+                IHasText part2 = InstantiatePart(hp2.TypeId, hp2.RoleId,
+                    hp2.Content.ToJson(_jsonSettings))
                     as IHasText;
                 if (part1 == null || part2 == null) return null;
 
@@ -1658,7 +1667,7 @@ namespace Cadmus.Mongo
             // get the current text
             IPart textPart = InstantiatePart(mongoTextPart.TypeId,
                 mongoTextPart.RoleId,
-                mongoTextPart.Content);
+                mongoTextPart.Content.ToJson(_jsonSettings));
             string currentText = (textPart as IHasText)?.GetText();
             if (currentText == null) return hints;
 
@@ -1673,7 +1682,8 @@ namespace Cadmus.Mongo
             if (hp == null) return hints;
 
             // get the old text
-            IPart oldTextPart = InstantiatePart(hp.TypeId, hp.RoleId, hp.Content);
+            IPart oldTextPart = InstantiatePart(hp.TypeId, hp.RoleId,
+                hp.Content.ToJson(_jsonSettings));
             string oldText = (oldTextPart as IHasText)?.GetText();
             if (oldText == null) return hints;
 
@@ -1692,8 +1702,10 @@ namespace Cadmus.Mongo
             // what is needed for our purposes here, and is required because
             // we do not know at compile time the type of the fragment
             AnonLayerPart anonLayerPart = (AnonLayerPart)
-                JsonSerializer.Deserialize(mongoLayerPart.Content,
-                typeof(AnonLayerPart), _jsonOptions);
+                JsonSerializer.Deserialize(
+                    mongoLayerPart.Content.ToJson(_jsonSettings),
+                    typeof(AnonLayerPart),
+                    _jsonOptions);
 
             return anonLayerPart.GetFragmentHints(operations);
         }
@@ -1729,13 +1741,16 @@ namespace Cadmus.Mongo
             if (mongoLayerPart == null) return null;
 
             // instantiate a generic layer part
+            string json = mongoLayerPart.Content.ToJson(_jsonSettings);
             AnonLayerPart anonLayerPart = (AnonLayerPart)
-                JsonSerializer.Deserialize(mongoLayerPart.Content,
-                typeof(AnonLayerPart), _jsonOptions);
+                JsonSerializer.Deserialize(
+                    json,
+                    typeof(AnonLayerPart),
+                    _jsonOptions);
 
             // apply patches to it
-            mongoLayerPart.Content = anonLayerPart.ApplyPatches(
-                mongoLayerPart.Content, patches);
+            mongoLayerPart.Content =
+                BsonDocument.Parse(anonLayerPart.ApplyPatches(json, patches));
             anonLayerPart.UserId = userId;
             anonLayerPart.TimeModified = DateTime.UtcNow;
 
@@ -1745,7 +1760,7 @@ namespace Cadmus.Mongo
                 new ReplaceOptions { IsUpsert = true });
 
             // return patched part content
-            return mongoLayerPart.Content;
+            return mongoLayerPart.Content.ToJson(_jsonSettings);
         }
 
         private static string ToCamelCase(string s)
@@ -1780,10 +1795,10 @@ namespace Cadmus.Mongo
 
                 // patch property in serialized content, too
                 string propName = ToCamelCase(nameof(IPart.ThesaurusScope));
-                JObject content = JObject.Parse(part.Content);
-                if (content.ContainsKey(propName)) content.Remove(propName);
-                content.Add(propName, scope);
-                part.Content = content.ToString(Newtonsoft.Json.Formatting.None);
+                if (part.Content.Contains(propName))
+                    part.Content[propName] = scope;
+                else
+                    part.Content.Add(propName, scope);
 
                 // save
                 parts.ReplaceOne(p => p.Id.Equals(part.Id),

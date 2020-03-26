@@ -1,9 +1,8 @@
 ﻿using Cadmus.Core;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
-using System.Linq;
 using System.Text;
-using System.Text.Json;
 
 namespace Cadmus.Mongo
 {
@@ -65,7 +64,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets or sets the encoded content representing this part.
         /// </summary>
-        public string Content { get; set; }
+        public BsonDocument Content { get; set; }
 
         /// <summary>
         /// Creation date and time (UTC).
@@ -145,10 +144,7 @@ namespace Cadmus.Mongo
         public LayerPartInfo ToLayerPartInfo()
         {
             // we assume that the layer part has a "fragments" property
-            JsonDocument doc = JsonDocument.Parse(Content);
-            int n = doc.RootElement.TryGetProperty(
-                "fragments", out JsonElement fragments) ?
-                fragments.EnumerateArray().Count() : 0;
+            int n = Content["fragments"].AsBsonArray.Count;
 
             return new LayerPartInfo
             {

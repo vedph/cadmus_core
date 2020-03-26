@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Storage;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 
@@ -63,7 +64,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets or sets the encoded content representing this part.
         /// </summary>
-        public string Content { get; set; }
+        public BsonDocument Content { get; set; }
 
         /// <summary>
         /// Creation date and time (UTC).

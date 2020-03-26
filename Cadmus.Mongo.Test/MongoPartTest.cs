@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using MongoDB.Bson;
 using System;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace Cadmus.Mongo.Test
                 ItemId = Guid.NewGuid().ToString(),
                 TypeId = "some-typeid",
                 RoleId = PartBase.FR_PREFIX + "some-roleid",
-                Content = "{\"fragments\": []}"
+                Content = BsonDocument.Parse("{\"fragments\": []}")
             };
 
             LayerPartInfo info = part.ToLayerPartInfo();
@@ -32,7 +33,8 @@ namespace Cadmus.Mongo.Test
                 ItemId = Guid.NewGuid().ToString(),
                 TypeId = "some-typeid",
                 RoleId = PartBase.FR_PREFIX + "some-roleid",
-                Content = "{\"fragments\": [ {\"x\":1}, {\"x\":2}, {\"x\":3} ]}"
+                Content = BsonDocument.Parse(
+                    "{\"fragments\": [ {\"x\":1}, {\"x\":2}, {\"x\":3} ]}")
             };
 
             LayerPartInfo info = part.ToLayerPartInfo();

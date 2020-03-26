@@ -2061,7 +2061,7 @@ namespace Cadmus.TestBase
             for (int i = 0; i < page.Items.Count; i++)
             {
                 string content = repository.GetPartContent(page.Items[0].Id);
-                Assert.Contains("\"thesaurusScope\":\"verg-eclo\"", content);
+                Assert.Contains("\"thesaurusScope\" : \"verg-eclo\"", content);
             }
         }
         #endregion

@@ -187,9 +187,12 @@ namespace Cadmus.Mongo.Test
 
         private MongoPart CreateMongoPart(IPart part)
         {
+            string content =
+                JsonSerializer.Serialize(part, part.GetType(), _jsonOptions);
+
             return new MongoPart(part)
             {
-                Content = JsonSerializer.Serialize(part, part.GetType(), _jsonOptions)
+                Content = BsonDocument.Parse(content)
             };
         }
 

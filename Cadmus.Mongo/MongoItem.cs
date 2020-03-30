@@ -83,6 +83,7 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoItem()
         {
+            Id = Guid.NewGuid().ToString();
             TimeCreated = TimeModified = DateTime.UtcNow;
         }
 

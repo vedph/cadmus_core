@@ -70,10 +70,16 @@ namespace Cadmus.Core
         public string UserId { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Gets or sets the payload, a general-purpose payload optionally
+        /// associated to this info. This can be provided by item browsers.
+        /// </summary>
+        public object Payload { get; set; }
+
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

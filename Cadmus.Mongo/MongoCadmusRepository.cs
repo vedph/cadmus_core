@@ -775,44 +775,46 @@ namespace Cadmus.Mongo
             #region MongoDB query
             // db.getCollection("parts").aggregate(
             //     [
-            //         { 
-            //             "$lookup" : { 
-            //                 "from" : "items", 
-            //                 "localField" : "itemId", 
-            //                 "foreignField" : "_id", 
-            //                 "as" : "items"
-            //             }
-            //         }, 
-            //         { 
-            //             "$match" : { 
-            //                 "items" : { 
-            //                     "$elemMatch" : { 
-            //                         "groupId" : "VERG-eclo"
-            //                     }
-            //                 }, 
-            //                 "$and" : [
-            //                     { 
-            //                         "roleId" : /^fr\./
-            //                     }
-            //                 ]
-            //             }
-            //         }, 
-            //         { 
-            //             "$match" : { 
-            //                 "content.fragments" : { 
-            //                     "$exists" : true, 
-            //                     "$ne" : [
+            //      { 
+            //       "$match" : { 
+            //        "content.fragments" : { 
+            //         "$exists" : true, 
+            //         "$ne" : [
             // 
-            //                     ]
-            //                 }
-            //             }
-            //         }, 
-            //         { 
-            //             "$count" : "count"
-            //         }
+            //         ]
+            //        }
+            //       }
+            //      }, 
+            //      { 
+            //       "$lookup" : { 
+            //        "from" : "items", 
+            //        "localField" : "itemId", 
+            //        "foreignField" : "_id", 
+            //        "as" : "items"
+            //       }
+            //      }, 
+            //      { 
+            //       "$project" : { 
+            //        "_id" : 1.0, 
+            //        "item" : { 
+            //         "$arrayElemAt" : [
+            //             "$items", 
+            //             0.0
+            //         ]
+            //        }
+            //       }
+            //      }, 
+            //      { 
+            //       "$match" : { 
+            //        "item.groupId" : "g00"
+            //       }
+            //      }, 
+            //      { 
+            //       "$count" : "count"
+            //      }
             //     ], 
             //     { 
-            //         "allowDiskUse" : false
+            //      "allowDiskUse" : false
             //     }
             // );
             #endregion
@@ -823,7 +825,7 @@ namespace Cadmus.Mongo
             EnsureClientCreated(_options.ConnectionString);
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
-            var items = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
+            var parts = db.GetCollection<BsonDocument>(MongoPart.COLLECTION);
 
             var aggOptions = new AggregateOptions()
             {
@@ -832,31 +834,30 @@ namespace Cadmus.Mongo
 
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
             {
-                new BsonDocument("$lookup", new BsonDocument()
-                        .Add("from", "items")
-                        .Add("localField", "itemId")
-                        .Add("foreignField", "_id")
-                        .Add("as", "items")),
-                new BsonDocument("$match", new BsonDocument()
-                        .Add("items", new BsonDocument()
-                                .Add("$elemMatch", new BsonDocument()
-                                        .Add("groupId", groupId)
-                                )
-                        )
-                        .Add("$and", new BsonArray()
-                                .Add(new BsonDocument()
-                                        .Add("roleId", new BsonRegularExpression("^fr\\."))
-                                )
-                        )),
                 new BsonDocument("$match", new BsonDocument()
                         .Add("content.fragments", new BsonDocument()
                                 .Add("$exists", new BsonBoolean(true))
                                 .Add("$ne", new BsonArray())
                         )),
+                new BsonDocument("$lookup", new BsonDocument()
+                        .Add("from", "items")
+                        .Add("localField", "itemId")
+                        .Add("foreignField", "_id")
+                        .Add("as", "items")),
+                new BsonDocument("$project", new BsonDocument()
+                        .Add("_id", 1)
+                        .Add("item", new BsonDocument()
+                                .Add("$arrayElemAt", new BsonArray()
+                                        .Add("$items")
+                                        .Add(0)
+                                )
+                        )),
+                new BsonDocument("$match", new BsonDocument()
+                        .Add("item.groupId", groupId)),
                 new BsonDocument("$count", "count")
             };
 
-            using (var cursor = await items.AggregateAsync(pipeline, aggOptions))
+            using (var cursor = await parts.AggregateAsync(pipeline, aggOptions))
             {
                 await cursor.MoveNextAsync();
                 BsonDocument first = cursor.Current.FirstOrDefault();

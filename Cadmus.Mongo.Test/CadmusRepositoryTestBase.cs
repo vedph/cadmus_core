@@ -727,7 +727,7 @@ namespace Cadmus.TestBase
 
             int count = await repository.GetGroupLayersCountAsync("g00");
 
-            Assert.Equal(1, count);
+            Assert.Equal(2, count);
         }
 
         protected void DoDeleteItem_NotExisting_Nope()

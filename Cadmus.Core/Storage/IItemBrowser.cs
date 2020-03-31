@@ -1,4 +1,5 @@
 ﻿using Fusi.Tools.Data;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Cadmus.Core.Storage
@@ -16,8 +17,15 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Browses the items using the specified options.
         /// </summary>
-        /// <param name="options">The paging and filtering options.</param>
-        /// <returns>Page of items.</returns>
-        Task<DataPage<ItemInfo>> BrowseAsync(IPagingOptions options);
+        /// <param name="database">The database name.</param>
+        /// <param name="options">The paging options.</param>
+        /// <param name="filters">The filters dictionary.</param>
+        /// <returns>
+        /// Page of items.
+        /// </returns>
+        Task<DataPage<ItemInfo>> BrowseAsync(
+            string database,
+            IPagingOptions options,
+            IDictionary<string, string> filters);
     }
 }

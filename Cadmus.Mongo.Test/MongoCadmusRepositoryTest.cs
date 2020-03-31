@@ -539,7 +539,7 @@ namespace Cadmus.Mongo.Test
         [Fact]
         public async Task GetGroupLayersCountAsync_Items_2()
         {
-            // TODO
+            await DoGetGroupLayersCountAsync_Items_2();
         }
 
         [Fact]

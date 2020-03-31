@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Config;
+using Cadmus.Core.Storage;
 using Cadmus.Parts.General;
 using Fusi.Tools.Data;
 using MongoDB.Bson;
@@ -19,6 +20,7 @@ namespace Cadmus.Mongo.Test
     [Collection(nameof(NonParallelBrowserResourceCollection))]
     public sealed class MongoHierarchyItemBrowserTest : MongoConsumerBase
     {
+        private const string CONNECTION_TEMPLATE = "mongodb://localhost:27017/{0}";
         private const string DB_NAME = "cadmus-browser-test";
         private const string CONNECTION = "mongodb://localhost:27017/" + DB_NAME;
 
@@ -158,19 +160,22 @@ namespace Cadmus.Mongo.Test
             MongoItem[] items = SeedItems();
 
             MongoHierarchyItemBrowser browser = new MongoHierarchyItemBrowser();
-            browser.Configure(new MongoHierarchyItemBrowserOptions
+            browser.Configure(new ItemBrowserOptions
             {
-                ConnectionString = CONNECTION,
+                ConnectionString = CONNECTION_TEMPLATE,
             });
 
             // act
             DataPage<ItemInfo> page = await browser.BrowseAsync(
-                new MongoHierarchyItemBrowserFilter
+                DB_NAME,
+                new PagingOptions
                 {
                     PageNumber = 1,
-                    PageSize = 0,
-                    Tag = null,
-                    Y = 2
+                    PageSize = 0
+                },
+                new Dictionary<string, string>
+                {
+                    ["y"] = "2"
                 });
 
             Assert.Equal(2, page.Total);

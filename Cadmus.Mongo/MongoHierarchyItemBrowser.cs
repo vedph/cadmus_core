@@ -1,5 +1,4 @@
 ﻿using Cadmus.Core;
-using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Parts.General;
 using Fusi.Tools.Config;
@@ -8,23 +7,29 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cadmus.Mongo
 {
     /// <summary>
-    /// MongoDB hierarchy-based items browser.
+    /// MongoDB hierarchy-based items browser. This browser assumes that
+    /// each item to be browsed has at least 1 <see cref="HierarchyPart"/>,
+    /// representing its relationships in a single-parent hierarchy: this
+    /// parts tells which is the parent item, and which are the children items,
+    /// and the item's depth level (Y) and sibling ordinal number (X).
+    /// It collects all such parts for the specified Y level, with paging,
+    /// sorted by X and then by item's sort key.
     /// <para>Tag: <c>item-browser.mongo.hierarchy</c>.</para>
     /// </summary>
     /// <seealso cref="IItemBrowser" />
     [Tag("item-browser.mongo.hierarchy")]
     public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
         IItemBrowser,
-        IConfigurable<MongoHierarchyItemBrowserOptions>
+        IConfigurable<ItemBrowserOptions>
     {
-        private MongoHierarchyItemBrowserOptions _options;
-        private string _databaseName;
+        private string _connection;
         private readonly string _partTypeId;
 
         /// <summary>
@@ -41,17 +46,16 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="options">The options.</param>
         /// <exception cref="ArgumentNullException">options</exception>
-        public void Configure(MongoHierarchyItemBrowserOptions options)
+        public void Configure(ItemBrowserOptions options)
         {
-            _options = options ??
-                throw new ArgumentNullException(nameof(options));
-            _databaseName = GetDatabaseName(options.ConnectionString);
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            _connection = options.ConnectionString;
         }
 
-        private BsonDocument BuildMatchStage(MongoHierarchyItemBrowserFilter filter)
+        private BsonDocument BuildMatchStage(int y, string tag)
         {
-            BsonDocument tagFilter = filter.Tag != null
-                ? new BsonDocument().Add("content.tag", filter.Tag)
+            BsonDocument tagFilter = tag != null
+                ? new BsonDocument().Add("content.tag", tag)
                 : new BsonDocument().Add("content.tag", BsonNull.Value);
 
             // "$match" : {
@@ -61,7 +65,7 @@ namespace Cadmus.Mongo
                 // "$and" : [
                 .Add("$and", new BsonArray()
                     // { "content.y": Y },
-                    .Add(new BsonDocument().Add("content.y", filter.Y))
+                    .Add(new BsonDocument().Add("content.y", y))
                     // { "$and": [
                     .Add(new BsonDocument().Add("$and", new BsonArray()
                         // { ... } ] } ] }
@@ -69,7 +73,7 @@ namespace Cadmus.Mongo
         }
 
         private async Task<int> GetTotalAsync(IMongoCollection<BsonDocument> parts,
-            MongoHierarchyItemBrowserFilter filter)
+            int y, string tag)
         {
             #region MongoDB query
             // db.getCollection("parts").aggregate(
@@ -108,7 +112,7 @@ namespace Cadmus.Mongo
 
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
             {
-                BuildMatchStage(filter),
+                BuildMatchStage(y, tag),
                 new BsonDocument("$count", "count")
             };
 
@@ -144,15 +148,23 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Browses the items using the specified options.
         /// </summary>
+        /// <param name="database">The database name.</param>
         /// <param name="options">The paging and filtering options.
         /// You can set the page size to 0 when you want to retrieve all
         /// the items at the specified level.</param>
+        /// <param name="filters">The filters dictionary: it should include
+        /// <c>y</c>=requested Y level and optionally <c>tag</c>=requested
+        /// tag (defaults to null).</param>
         /// <returns>
         /// Page of items.
         /// </returns>
-        /// <exception cref="ArgumentNullException">options</exception>
+        /// <exception cref="ArgumentNullException">database or options or
+        /// filters</exception>
         /// <exception cref="InvalidOperationException">not configured</exception>
-        public async Task<DataPage<ItemInfo>> BrowseAsync(IPagingOptions options)
+        public async Task<DataPage<ItemInfo>> BrowseAsync(
+            string database,
+            IPagingOptions options,
+            IDictionary<string, string> filters)
         {
             #region MongoDB query
             // db.getCollection("parts").aggregate(
@@ -201,23 +213,32 @@ namespace Cadmus.Mongo
             // );
             #endregion
 
+            if (database == null) throw new ArgumentNullException(nameof(database));
             if (options == null) throw new ArgumentNullException(nameof(options));
-            if (_options == null)
+            if (filters == null)
+                throw new ArgumentNullException(nameof(filters));
+
+            if (_connection == null)
             {
                 throw new InvalidOperationException(
                     $"{nameof(MongoHierarchyItemBrowser)} not configured");
             }
 
-            MongoHierarchyItemBrowserFilter filter =
-                (MongoHierarchyItemBrowserFilter)options;
+            int y = 0;
+            if (filters.ContainsKey("y"))
+            {
+                int.TryParse(filters["y"], out y);
+            }
+            string tag = filters.ContainsKey("tag") ? filters["tag"] : null;
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(string.Format(CultureInfo.InvariantCulture,
+                _connection, database));
+            IMongoDatabase db = Client.GetDatabase(database);
             IMongoCollection<BsonDocument> parts =
                 db.GetCollection<BsonDocument>(MongoPart.COLLECTION);
 
             // the parts count is equal to the items count
-            int total = await GetTotalAsync(parts, filter);
+            int total = await GetTotalAsync(parts, y, tag);
             if (total == 0)
             {
                 return new DataPage<ItemInfo>(
@@ -235,7 +256,7 @@ namespace Cadmus.Mongo
 
             List<BsonDocument> stages = new List<BsonDocument>(new BsonDocument[]
             {
-                BuildMatchStage(filter),
+                BuildMatchStage(y, tag),
                 new BsonDocument("$lookup", new BsonDocument()
                         .Add("from", "items")
                         .Add("localField", "itemId")
@@ -244,11 +265,11 @@ namespace Cadmus.Mongo
                 new BsonDocument("$sort", new BsonDocument()
                         .Add("content.x", 1)
                         .Add("items[0].sortKey", 1)),
-                new BsonDocument("$skip", filter.GetSkipCount())
+                new BsonDocument("$skip", (options.PageNumber - 1) * options.PageSize)
             });
 
             if (options.PageSize > 0)
-                stages.Add(new BsonDocument("$limit", filter.PageSize));
+                stages.Add(new BsonDocument("$limit", options.PageSize));
 
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = stages.ToArray();
 
@@ -268,7 +289,7 @@ namespace Cadmus.Mongo
                         BsonDocument content = document["content"].AsBsonDocument;
                         info.Payload = new MongoHierarchyItemBrowserPayload
                         {
-                            Y = filter.Y,
+                            Y = y,
                             X = content["x"].AsInt32,
                             ChildCount = content["childrenIds"].AsBsonArray.Count
                         };
@@ -280,38 +301,6 @@ namespace Cadmus.Mongo
             return new DataPage<ItemInfo>(options.PageNumber, options.PageSize,
                 total, items);
         }
-    }
-
-    /// <summary>
-    /// Filter for <see cref="MongoHierarchyItemBrowser"/>.
-    /// </summary>
-    /// <seealso cref="PagingOptions" />
-    public sealed class MongoHierarchyItemBrowserFilter : PagingOptions
-    {
-        /// <summary>
-        /// Gets or sets the Y-level filter to be matched on the
-        /// <see cref="HierarchyPart"/>.
-        /// </summary>
-        public int Y { get; set; }
-
-        /// <summary>
-        /// Gets or sets the optional tag filter to be matched on the
-        /// <see cref="HierarchyPart"/>.
-        /// </summary>
-        public string Tag { get; set; }
-    }
-
-    /// <summary>
-    /// Options for <see cref="MongoHierarchyItemBrowser"/>.
-    /// </summary>
-    public sealed class MongoHierarchyItemBrowserOptions
-    {
-        /// <summary>
-        /// Gets or sets the connection string. This is supplied by the
-        /// <see cref="ItemBrowserFactory"/>, unless overridden by this
-        /// object's property.
-        /// </summary>
-        public string ConnectionString { get; set; }
     }
 
     /// <summary>

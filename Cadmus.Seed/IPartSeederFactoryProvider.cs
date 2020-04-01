@@ -9,8 +9,8 @@
         /// <summary>
         /// Gets the part/fragment seeders factory.
         /// </summary>
-        /// <param name="profilePath">The profile file path.</param>
+        /// <param name="profile">The profile.</param>
         /// <returns>Factory.</returns>
-        PartSeederFactory GetFactory(string profilePath);
+        PartSeederFactory GetFactory(string profile);
     }
 }

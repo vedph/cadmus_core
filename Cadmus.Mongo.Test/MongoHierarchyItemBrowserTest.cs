@@ -48,7 +48,6 @@ namespace Cadmus.Mongo.Test
                                 {
                                     ColorKey = "F08080",
                                     Description = "Hierarchy",
-                                    EditorKey = "general",
                                     GroupKey = "general",
                                     IsRequired = true,
                                     Name = "hierarchy",

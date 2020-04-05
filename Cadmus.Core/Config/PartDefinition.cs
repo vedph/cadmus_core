@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cadmus.Core.Config
+﻿namespace Cadmus.Core.Config
 {
     /// <summary>
     /// Definition of a part in an <see cref="FacetDefinition"/>.
@@ -51,21 +49,6 @@ namespace Cadmus.Core.Config
         /// presenting them.
         /// </summary>
         public string SortKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets the editor key, which can be used to group parts
-        /// according to the frontend editors organization. Whereas
-        /// <see cref="GroupKey"/> is a purely presentational feature,
-        /// <see cref="EditorKey"/> is related to how the frontend organizes
-        /// its editing components in different modules. For instance,
-        /// the same frontend module might include two parts whose definitions
-        /// have different <see cref="GroupKey"/>'s, so that they get
-        /// displayed in different groups, but their editors are found in the
-        /// same component.
-        /// This is a property used by frontend only, and has no usage in
-        /// the database or in the backend.
-        /// </summary>
-        public string EditorKey { get; set; }
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.

@@ -213,8 +213,7 @@ namespace Cadmus.TestBase
                         IsRequired = true,
                         ColorKey = "FF00FF",
                         GroupKey = "General",
-                        SortKey = "categories",
-                        EditorKey = "module1"
+                        SortKey = "categories"
                     },
                     new PartDefinition
                     {
@@ -225,8 +224,7 @@ namespace Cadmus.TestBase
                         IsRequired = false,
                         ColorKey = "00FF00",
                         GroupKey = "General",
-                        SortKey = "keywords",
-                        EditorKey = "module2"
+                        SortKey = "keywords"
                     }
                 }
             };
@@ -267,8 +265,7 @@ namespace Cadmus.TestBase
                         IsRequired = false,
                         ColorKey = "00FF80",
                         GroupKey = "General",
-                        SortKey = "note",
-                        EditorKey = "module1"
+                        SortKey = "note"
                     }
                 }
             };
@@ -847,8 +844,7 @@ namespace Cadmus.TestBase
                     IsRequired = true,
                     ColorKey = "00FF00",
                     GroupKey = "general",
-                    SortKey = "text",
-                    EditorKey = "general"
+                    SortKey = "text"
                 });
             facet.PartDefinitions.Add(
                 new PartDefinition
@@ -860,8 +856,7 @@ namespace Cadmus.TestBase
                     IsRequired = false,
                     ColorKey = "FF0000",
                     GroupKey = "layers",
-                    SortKey = "comments",
-                    EditorKey = "general"
+                    SortKey = "comments"
                 });
             facet.PartDefinitions.Add(
                 new PartDefinition
@@ -873,8 +868,7 @@ namespace Cadmus.TestBase
                     IsRequired = false,
                     ColorKey = "0000FF",
                     GroupKey = "layers",
-                    SortKey = "apparatus",
-                    EditorKey = "philology"
+                    SortKey = "apparatus"
                 });
 
             // assign item to this facet

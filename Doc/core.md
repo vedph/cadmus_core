@@ -399,7 +399,6 @@ This namespace contains configuration-specific components, used to define the Ca
     PartDefinition : +string ColorKey
     PartDefinition : +string GroupKey
     PartDefinition : +string SortKey
-    PartDefinition : +string EditorKey
 
     FacetDefinition : +string Id
     FacetDefinition : +string Label

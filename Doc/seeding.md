@@ -115,8 +115,7 @@ A JSON template for the seeder configuration follows:
       "required": true,
       "colorKey": "98F8F8",
       "groupKey": "general",
-      "sortKey": "categories",
-      "editorKey": "general"
+      "sortKey": "categories"
     },
     {
       "typeId": "net.fusisoft.historical-date",
@@ -125,8 +124,7 @@ A JSON template for the seeder configuration follows:
       "required": false,
       "colorKey": "F898F8",
       "groupKey": "general",
-      "sortKey": "date",
-      "editorKey": "general"
+      "sortKey": "date"
     },
     {
       "typeId": "net.fusisoft.keywords",
@@ -134,8 +132,7 @@ A JSON template for the seeder configuration follows:
       "description": "Item's keywords.",
       "colorKey": "90C0F8",
       "groupKey": "general",
-      "sortKey": "keywords",
-      "editorKey": "general"
+      "sortKey": "keywords"
     },
     {
       "typeId": "net.fusisoft.note",
@@ -143,8 +140,7 @@ A JSON template for the seeder configuration follows:
       "description": "A free text note about the document.",
       "colorKey": "B0A0F8",
       "groupKey": "general",
-      "sortKey": "note",
-      "editorKey": "general"
+      "sortKey": "note"
     },
     {
       "typeId": "net.fusisoft.token-text",
@@ -152,8 +148,7 @@ A JSON template for the seeder configuration follows:
       "description": "Item's token-based text.",
       "colorKey": "31AB54",
       "groupKey": "text",
-      "sortKey": "text",
-      "editorKey": "general"
+      "sortKey": "text"
     },
     {
       "typeId": "net.fusisoft.token-text-layer",
@@ -162,8 +157,7 @@ A JSON template for the seeder configuration follows:
       "description": "Comments on text.",
       "colorKey": "F8D040",
       "groupKey": "text",
-      "sortKey": "text-comments",
-      "editorKey": "general"
+      "sortKey": "text-comments"
     }
   ],
   "seed": {

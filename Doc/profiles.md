@@ -35,15 +35,10 @@ Each part definition has these properties:
 - `colorKey`: an RRGGBB color key optionally used in a frontend to visually mark the part.
 - `groupKey`: a human-friendly short group name the part belongs to. This can be used in a frontend to present parts grouped in a logical manner.
 - `sortKey`: the sort key for the part inside its group. This can be used in a frontend to sort the parts of each group when presenting them.
-- `editorKey`: a string which can be used to group parts according to the frontend editors organization. Whereas `groupKey` is a purely presentational feature, `editorKey` is related to how the frontend organizes its editing components in different modules. For instance, the same frontend module might include two parts whose definitions have different `groupKey`'s, so that they get displayed in different groups, but their editors are found in the same component. This is a property used by frontend only, and has no usage beyond it.
 
 As for `roleId`, the following reserved values have a special meaning:
 
 - `base-text`: defines the part which represents the base text, when using text layers. This allows using different part types to represent the base text, according to the nature of the corpus being handled.
-
-Also, the `editorKey` can be a composite value, where 2 different values are separated by a space. This happens for layer parts, when the `editorKey` value for the layer part is different from that of the fragment. In this case, the first value is the part editor key, and the second is the fragment editor key.
-
-For instance, this is not the case of the comment fragment, as its editor key is equal to that of the layer part; but it is the case of the apparatus fragment, whose editor key (`philology`) is different from that of the layer part (`general`).
 
 The following code is a facet sample:
 
@@ -62,8 +57,7 @@ The following code is a facet sample:
           "required": true,
           "colorKey": "98F8F8",
           "groupKey": "general",
-          "sortKey": "categories",
-          "editorKey": "general"
+          "sortKey": "categories"
         },
         {
           "typeId": "net.fusisoft.historical-date",
@@ -72,8 +66,7 @@ The following code is a facet sample:
           "required": false,
           "colorKey": "F898F8",
           "groupKey": "general",
-          "sortKey": "date",
-          "editorKey": "general"
+          "sortKey": "date"
         },
         {
           "typeId": "net.fusisoft.keywords",
@@ -81,8 +74,7 @@ The following code is a facet sample:
           "description": "Item's keywords.",
           "colorKey": "90C0F8",
           "groupKey": "general",
-          "sortKey": "keywords",
-          "editorKey": "general"
+          "sortKey": "keywords"
         },
         {
           "typeId": "net.fusisoft.note",
@@ -90,8 +82,7 @@ The following code is a facet sample:
           "description": "A free text note about the document.",
           "colorKey": "B0A0F8",
           "groupKey": "general",
-          "sortKey": "note",
-          "editorKey": "general"
+          "sortKey": "note"
         },
         {
           "typeId": "net.fusisoft.token-text",
@@ -100,8 +91,7 @@ The following code is a facet sample:
           "description": "Item's token-based text.",
           "colorKey": "31AB54",
           "groupKey": "text",
-          "sortKey": "text",
-          "editorKey": "general"
+          "sortKey": "text"
         },
         {
           "typeId": "net.fusisoft.token-text-layer",
@@ -110,8 +100,7 @@ The following code is a facet sample:
           "description": "Comments on text.",
           "colorKey": "F8D040",
           "groupKey": "text",
-          "sortKey": "text-comments",
-          "editorKey": "general"
+          "sortKey": "text-comments"
         },
         {
           "typeId": "net.fusisoft.token-text-layer",
@@ -120,8 +109,7 @@ The following code is a facet sample:
           "description": "Critical apparatus.",
           "colorKey": "D4E0A4",
           "groupKey": "text",
-          "sortKey": "text-apparatus",
-          "editorKey": "general philology"
+          "sortKey": "text-apparatus"
         },
         {
           "typeId": "net.fusisoft.token-text-layer",
@@ -130,8 +118,7 @@ The following code is a facet sample:
           "description": "Standard orthography.",
           "colorKey": "E0D4A4",
           "groupKey": "text",
-          "sortKey": "text-apparatus",
-          "editorKey": "general philology"
+          "sortKey": "text-apparatus"
         },
         {
           "typeId": "net.fusisoft.token-text-layer",
@@ -140,8 +127,7 @@ The following code is a facet sample:
           "description": "Witnesses list.",
           "colorKey": "A4E0D4",
           "groupKey": "text",
-          "sortKey": "text-apparatus",
-          "editorKey": "general philology"
+          "sortKey": "text-apparatus"
         }
       ]
     }

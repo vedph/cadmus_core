@@ -18,9 +18,11 @@ namespace Cadmus.Mongo
     /// each item to be browsed has at least 1 <see cref="HierarchyPart"/>,
     /// representing its relationships in a single-parent hierarchy: this
     /// parts tells which is the parent item, and which are the children items,
-    /// and the item's depth level (Y) and sibling ordinal number (X).
-    /// It collects all such parts for the specified Y level, with paging,
-    /// sorted by X and then by item's sort key.
+    /// and the item's depth level (Y) and sibling ordinal number (X) (neither
+    /// of these two values are necessarily progressive).
+    /// The browser collects all such parts for the specified parent item ID
+    /// (or null for the root item), with paging, sorted first by X and then
+    /// by the item's sort key.
     /// <para>Tag: <c>net.fusisoft.item-browser.mongo.hierarchy</c>.</para>
     /// </summary>
     /// <seealso cref="IItemBrowser" />
@@ -52,7 +54,7 @@ namespace Cadmus.Mongo
             _connection = options.ConnectionString;
         }
 
-        private BsonDocument BuildMatchStage(int y, string tag)
+        private BsonDocument BuildMatchStage(string parentId, string tag)
         {
             BsonDocument tagFilter = tag != null
                 ? new BsonDocument().Add("content.tag", tag)
@@ -64,8 +66,9 @@ namespace Cadmus.Mongo
                 .Add("typeId", _partTypeId)
                 // "$and" : [
                 .Add("$and", new BsonArray()
-                    // { "content.y": Y },
-                    .Add(new BsonDocument().Add("content.y", y))
+                    // { "content.parentId": ... },
+                    .Add(new BsonDocument().Add("content.parentId",
+                        (BsonValue)parentId ?? BsonNull.Value))
                     // { "$and": [
                     .Add(new BsonDocument().Add("$and", new BsonArray()
                         // { ... } ] } ] }
@@ -73,7 +76,7 @@ namespace Cadmus.Mongo
         }
 
         private async Task<int> GetTotalAsync(IMongoCollection<BsonDocument> parts,
-            int y, string tag)
+            string parentId, string tag)
         {
             #region MongoDB query
             // db.getCollection("parts").aggregate(
@@ -83,7 +86,7 @@ namespace Cadmus.Mongo
             //         "typeId" : "net.fusisoft.hierarchy", 
             //         "$and" : [
             //           { 
-            //             "content.y" : 3.0
+            //             "content.parentId" : "..."
             //           }, 
             //           { 
             //             "$and" : [
@@ -112,7 +115,7 @@ namespace Cadmus.Mongo
 
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
             {
-                BuildMatchStage(y, tag),
+                BuildMatchStage(parentId, tag),
                 new BsonDocument("$count", "count")
             };
 
@@ -174,7 +177,7 @@ namespace Cadmus.Mongo
             //         "typeId" : "net.fusisoft.hierarchy", 
             //         "$and" : [
             //           { 
-            //             "content.y" : 3
+            //             "content.parentId" : "..."
             //           }, 
             //           { 
             //             "$and" : [
@@ -224,11 +227,8 @@ namespace Cadmus.Mongo
                     $"{nameof(MongoHierarchyItemBrowser)} not configured");
             }
 
-            int y = 0;
-            if (filters.ContainsKey("y"))
-            {
-                int.TryParse(filters["y"], out y);
-            }
+            string parentId = filters.ContainsKey("parentId") ?
+                filters["parentId"] : null;
             string tag = filters.ContainsKey("tag") ? filters["tag"] : null;
 
             EnsureClientCreated(string.Format(CultureInfo.InvariantCulture,
@@ -238,7 +238,7 @@ namespace Cadmus.Mongo
                 db.GetCollection<BsonDocument>(MongoPart.COLLECTION);
 
             // the parts count is equal to the items count
-            int total = await GetTotalAsync(parts, y, tag);
+            int total = await GetTotalAsync(parts, parentId, tag);
             if (total == 0)
             {
                 return new DataPage<ItemInfo>(
@@ -256,7 +256,7 @@ namespace Cadmus.Mongo
 
             List<BsonDocument> stages = new List<BsonDocument>(new BsonDocument[]
             {
-                BuildMatchStage(y, tag),
+                BuildMatchStage(parentId, tag),
                 new BsonDocument("$lookup", new BsonDocument()
                         .Add("from", "items")
                         .Add("localField", "itemId")
@@ -289,7 +289,7 @@ namespace Cadmus.Mongo
                         BsonDocument content = document["content"].AsBsonDocument;
                         info.Payload = new MongoHierarchyItemBrowserPayload
                         {
-                            Y = y,
+                            Y = content["y"].AsInt32,
                             X = content["x"].AsInt32,
                             ChildCount = content["childrenIds"].AsBsonArray.Count
                         };

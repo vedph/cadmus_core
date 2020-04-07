@@ -67,24 +67,24 @@ namespace Cadmus.Mongo.Test
         {
             switch (index)
             {
-                case 0:
+                case 0: // A (root)
                     part.Y = 1;
                     part.X = 1;
                     part.ChildrenIds.Add(itemIds[1]);
                     part.ChildrenIds.Add(itemIds[2]);
                     break;
-                case 1:
+                case 1: // B (child)
                     part.Y = 2;
                     part.X = 1;
                     part.ParentId = itemIds[0];
                     break;
-                case 2:
+                case 2: // C (child)
                     part.Y = 2;
                     part.X = 2;
                     part.ParentId = itemIds[0];
                     part.ChildrenIds.Add(itemIds[3]);
                     break;
-                case 3:
+                case 3: // D (grandson)
                     part.Y = 3;
                     part.X = 1;
                     part.ParentId = itemIds[2];
@@ -124,6 +124,7 @@ namespace Cadmus.Mongo.Test
                 // item
                 MongoItem mongoItem = new MongoItem
                 {
+                    Id = itemIds[i],
                     Title = $"Item {letter}",
                     Description = $"Description for {letter}",
                     FacetId = "default",
@@ -153,7 +154,7 @@ namespace Cadmus.Mongo.Test
         }
 
         [Fact]
-        public async Task Browse_Hierarchy_Ok()
+        public async Task Browse_HierarchyNullParent_Ok()
         {
             PrepareDatabase();
             MongoItem[] items = SeedItems();
@@ -170,11 +171,47 @@ namespace Cadmus.Mongo.Test
                 new PagingOptions
                 {
                     PageNumber = 1,
-                    PageSize = 0
+                    PageSize = 0    // = get all
                 },
                 new Dictionary<string, string>
                 {
-                    ["y"] = "2"
+                    ["parentId"] = null
+                });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+            // A
+            Assert.Equal(items[0].Id, page.Items[0].Id);
+            var payload = page.Items[0].Payload as MongoHierarchyItemBrowserPayload;
+            Assert.NotNull(payload);
+            Assert.Equal(1, payload.Y);
+            Assert.Equal(1, payload.X);
+            Assert.Equal(2, payload.ChildCount);
+        }
+
+        [Fact]
+        public async Task Browse_HierarchyNonNullParent_Ok()
+        {
+            PrepareDatabase();
+            MongoItem[] items = SeedItems();
+
+            MongoHierarchyItemBrowser browser = new MongoHierarchyItemBrowser();
+            browser.Configure(new ItemBrowserOptions
+            {
+                ConnectionString = CONNECTION_TEMPLATE,
+            });
+
+            // act
+            DataPage<ItemInfo> page = await browser.BrowseAsync(
+                DB_NAME,
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 0    // = get all
+                },
+                new Dictionary<string, string>
+                {
+                    ["parentId"] = items[0].Id
                 });
 
             Assert.Equal(2, page.Total);

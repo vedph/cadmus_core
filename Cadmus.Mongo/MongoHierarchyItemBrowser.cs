@@ -21,10 +21,10 @@ namespace Cadmus.Mongo
     /// and the item's depth level (Y) and sibling ordinal number (X).
     /// It collects all such parts for the specified Y level, with paging,
     /// sorted by X and then by item's sort key.
-    /// <para>Tag: <c>item-browser.mongo.hierarchy</c>.</para>
+    /// <para>Tag: <c>net.fusisoft.item-browser.mongo.hierarchy</c>.</para>
     /// </summary>
     /// <seealso cref="IItemBrowser" />
-    [Tag("item-browser.mongo.hierarchy")]
+    [Tag("net.fusisoft.item-browser.mongo.hierarchy")]
     public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
         IItemBrowser,
         IConfigurable<ItemBrowserOptions>

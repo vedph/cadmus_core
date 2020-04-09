@@ -278,7 +278,7 @@ In the frontend, at design time the fragment editor can just request an ID like 
 
 If now the apparatus layer part referring to Vergilius *Eclogae* has its thesaurus scope defined, here as `verg-eclo`, this triggers a generic frontend mechanism which overrides the apparatus fragment editor requests. This just requests `apparatus-witnesses`; but once the mechanism finds out that its container part has a thesaurus ID scope, the ID is overridden as `apparatus-witnesses.verg-eclo`. Thus, the backend receives this ID request and satisfies it by retrieving the correct thesaurus.
 
-Finally, some of the IDs requested by the editor might require not to be overridden by the scope. For instance, the fragment editor requests a third thesaurus, the `apparatus-tags`, a list shared among the apparati of all the works. As such, we must not override it as `apparatus-tags.verg-eclo`, which would not be found, because the database just has a single thesaurus with ID `apparatus-tags`. In this case, the fragment editor notifies the mechanism that it should not override this ID by prefixing it with an exclamation mark.
+Finally, some of the IDs requested by the editor might require not to be overridden by the scope. For instance, the fragment editor requests a third thesaurus, the `apparatus-tags`, a list shared among the apparatuses of all the works. As such, we must not override it as `apparatus-tags.verg-eclo`, which would not be found, because the database just has a single thesaurus with ID `apparatus-tags`. In this case, the fragment editor notifies the mechanism that it should not override this ID by prefixing it with an exclamation mark.
 
 To sum up, the fragment editor at design time requests 3 IDs:
 

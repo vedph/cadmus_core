@@ -201,6 +201,83 @@ Typically, the database can be queried for a single item or part, or for a set o
 
 The summary information for items and parts used when browsing them is represented by classes `ItemInfo` and `PartInfo`, respectively. Currently, they represent only the essential metadata from each object. There also is a `LayerPartInfo`, a specialization of `PartInfo` used when inspecting the layers in a specific item.
 
+#### A.3.4. Items Browsers
+
+As this is a general-purpose UI, items are just listed in a flat table, with various filtering options. Yet, it may be the case that some databases require a more specialized items browsing experience.
+
+For instance, consider a database representing a **documental archive**. Such archives are typically structured around a central *hierarchy*, which holds all the data in its different locations. This hierarchy can be more or less granular, thus counting a different numbers of levels.
+
+In its maximum extent, this hierarchy would include all these standardized levels (in parentheses I add an arbitrary abbreviation used for each of these levels):
+
+1. Super-super-archive (U1);
+2. Super-archive (U2);
+3. Archive (A1);
+4. Sub-archive (A2);
+5. Section1 (E1);
+6. Section1 (E2);
+7. Series (S1);
+8. Sub-series (S2);
+9. Sub-sub-series (S3);
+10. Sub-sub-sub-series (S4);
+11. File (F1);
+12. Sub-file (F2);
+13. Enclosure (I);
+14. Document (D).
+
+In the real world, each archive just contains some of these levels, according to its nature and to the archivists work on it. Thus, typically archive management software provide a configurable hierarchy, where a subset of this maximum hierarchy is selected and used throughout the archive.
+
+Yet, not only the extent of this configuration is highly variable across software; it may also happen that the same archive has more than a single hierarchy. For instance, this happens when an archivist has provided one or more historical hierarchies, or any other grouping and sorting criteria, side to side with a purely descriptive hierarchy.
+
+In this context, Cadmus is typically used as a transport data store to collect archives imported from a number of different sources, each with its own peculiarities and media, from paper to legacy databases. Thus, it adopts a very open modeling, where there is no single, data-bearing hierarchy; starting from the hierarchy chosen as the import source (often, a presentational hierarchy), *each node of its tree becomes an item*. Each semantically specialized datum inside that node becomes a *part*. Finally, the hierarchy itself is represented by a *hierarchy part*, which simply connects a parent item with a set of children items. When more than a single hierarchy is present, this just means that we will have more than a single hierarchy part for each item (with different roles).
+
+This implies that the hierarchies which traditionally bear data are dissected into a "flat" set of items and parts. We can just browse the list of items, but it would not be very user-friendly, as archives are often modeled and always presented as hierarchical structures. So, this is a case where an additional, specialized items browser is required; we would like to browse items in a tree-shaped view, where each node can be expanded or collapsed at will, and then view or edit each item by clicking it.
+
+To this end, we must remember that in this modeling each node is an item connected to 1 (or more) hierarchy parts. Thus, if we want to browse items in a hierarchy, we must first select the desired hierarchy, by collecting all the hierarchy parts of a specific type. Then, we must collect all the corresponding items, and present them in a tree-based view, from the root item up to the bottom leaf items.
+
+Of course, we would not want to collect or present all these data at once, as we can have thousands of nodes. Presenting all of them at once would potentially tear down a client or even a server, and it would produce a very long, effectively useless tree.
+
+Rather, we want to start presenting the archive from its root, and let the user walk down the tree as desired. Also, even the nodes at the same level might happen to be too many; thus, we want to combine the tree-based presentation with paging, so that each tree branch contains at maximum a specific number of nodes, representing a virtual page. To view other sibling nodes, users will have to page up or down just like in a flat list. The difference here is only that this paged list appears at each level of our tree, wherever its nodes grow beyond a predefined page size.
+
+All this is accomplished using a specialized hierarchy-based items browser. From the standpoint of Cadmus architecture, this is a pluggable component; yet, it is not independent from the storage technology, as it happens for other modular components, like parts or fragments. This is a requirement, because such browser need to have direct access to the storage technology, to fully exploit its aggregation capabilities with a reasonable performance.
+
+Thus, where items, parts and the like are all handled via a repository abstraction, this is not the case with items browsers. Such browsers directly connect to the database layer, so that you must implement one for each database technology.
+
+Currently, the only database technology used for data storage is MongoDB, so that there is a MongoDB hierarchy-based items browser.
+
+Despite this specialization, *all the item browsers implement the same interface* (`IItemBrowser`). This exposes a single `BrowseAsync` method, which gets the database name, the paging options (page number and size), and any number of additional filters. These are a generic dictionary with name/value pairs, as each browser will require its own filtering criteria.
+
+For instance, the MongoDB-based hierarchical items browsers requires two filtering parameters: the hierarchy tag (used to select a hierarchy), and the parent item ID. This is because the browser is designed to retrieve a page of sibling items which all depend from the same parent item. Users will walk the hierarchy tree by expanding one node after the other; and whenever a node is expanded, the items browser will be invoked to retrieve a page of children nodes for it. The same will happen when paging through sibling nodes, too.
+
+Thus, the items browser always gets paging and custom filtering options, and returns a page of information about items (`ItemInfo`). Every browser can provide additional, specific data about each item by storing it in `ItemInfo.Payload`, which is a generic object which can hold any data type.
+
+In the case of the MongoDB hierarchy tree browser, this payload is of type `MongoHierarchyItemBrowserPayload`, including the Y and X positions in the tree, and a count of children nodes.
+
+A factory (`ItemBrowserFactory`) is used to instantiate and configure items browsers as specified in the Cadmus [profile](profiles.md) at the `browsers` section. This includes an array of objects, each with an `id` and an eventual `options` object.
+
+For instance, here is the configuration for the hierarchy items browser:
+
+```json
+"browsers": [
+  {
+    "id": "net.fusisoft.item-browser.mongo.hierarchy"
+  }
+]
+```
+
+A corresponding thesaurus in the [profile](profiles.md), with ID `item-browsers@en`, is used to provide a human-friendly list of browsers in a UI:
+
+```json
+{
+  "id": "item-browsers@en",
+  "entries": [
+    {
+      "id": "net.fusisoft.item-browser.mongo.hierarchy",
+      "value": "items hierarchy"
+    }
+  ]
+}
+```
+
 ## (B) Layers
 
 The *layers* namespace contains components related to the text layers. Text layers are collections of metadata, all connected to a base text, just like all the pages of a book are connected to its spine.

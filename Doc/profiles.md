@@ -287,3 +287,37 @@ To sum up, the fragment editor at design time requests 3 IDs:
 - `apparatus-authors`: apparatus authors.
 
 This is all what the editor needs to know. It is up to the generic mechanism from which the editor is derived to lookup the corresponding part, and apply overrides when it finds that it has a thesaurus scope.
+
+## Browsers
+
+Optionally, a profile can include a `browsers` section to define and configure specialized [items browsers](core.md#a.3.4.-items-browsers).
+
+This includes an array of objects, each with an `id` and an eventual `options` object.
+
+For instance, here is the configuration for the hierarchy items browser:
+
+```json
+"browsers": [
+  {
+    "id": "net.fusisoft.item-browser.mongo.hierarchy"
+  }
+]
+```
+
+A corresponding thesaurus in the [profile](profiles.md), with ID `item-browsers@en`, is used to provide a human-friendly list of browsers in a UI:
+
+```json
+{
+  "id": "item-browsers@en",
+  "entries": [
+    {
+      "id": "net.fusisoft.item-browser.mongo.hierarchy",
+      "value": "items hierarchy"
+    }
+  ]
+}
+```
+
+Note that the thesaurus entry is required to configure the browser object instantiated by the factory, while the thesaurus entry is just a presentational feature, used to provide a list of browsers to a UI.
+
+For instance, when this thesaurus is found, the standard Cadmus web app provides an `Items` menu with a list of browsers derived from it, plus the link to the default list-based browser. When it is not found, the app just provides a single `Items` link which provides the default list-based browser.

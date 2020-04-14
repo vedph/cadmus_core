@@ -58,7 +58,7 @@ namespace Cadmus.Parts.General
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("[Note]");
+            sb.Append("[Note] ");
             if (Tag != null) sb.Append(" (").Append(Tag).Append(')');
             if (Text != null)
             {

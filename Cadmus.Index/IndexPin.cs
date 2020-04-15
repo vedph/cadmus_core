@@ -18,6 +18,11 @@ namespace Cadmus.Index
         public string PartId { get; set; }
 
         /// <summary>
+        /// Gets or sets the part type identifier.
+        /// </summary>
+        public string PartTypeId { get; set; }
+
+        /// <summary>
         /// Gets or sets the optional role identifier.
         /// </summary>
         public string RoleId { get; set; }
@@ -46,7 +51,7 @@ namespace Cadmus.Index
         /// </returns>
         public override string ToString()
         {
-            return $"{Name}={Value} @{ItemId}.{PartId}" +
+            return $"{Name}={Value} {PartTypeId} @{ItemId}.{PartId}" +
                 (string.IsNullOrEmpty(RoleId) ? "" : " " + RoleId);
         }
     }

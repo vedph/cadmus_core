@@ -54,7 +54,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Philology.Parts
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Parts.Test", "Cadmus.Parts.Test\Cadmus.Parts.Test.csproj", "{10334072-8A33-46AF-B1DA-50E30DE49AE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index", "Cadmus.Index\Cadmus.Index.csproj", "{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index", "Cadmus.Index\Cadmus.Index.csproj", "{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.Sql", "Cadmus.Index.Sql\Cadmus.Index.Sql.csproj", "{8CDA4E04-A6C9-4C37-A79B-0129E904A584}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,6 +132,10 @@ Global
 		{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CDA4E04-A6C9-4C37-A79B-0129E904A584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CDA4E04-A6C9-4C37-A79B-0129E904A584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CDA4E04-A6C9-4C37-A79B-0129E904A584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CDA4E04-A6C9-4C37-A79B-0129E904A584}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

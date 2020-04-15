@@ -46,6 +46,7 @@ namespace Cadmus.Index
                     {
                         ItemId = pin.ItemId,
                         PartId = pin.PartId,
+                        PartTypeId = part.TypeId,
                         RoleId = pin.RoleId,
                         Name = pin.Name,
                         Value = pin.Value,

@@ -10,9 +10,10 @@ namespace Cadmus.Index
     {
         /// <summary>
         /// Writes the specified item to the index.
+        /// If the index does not exist, it is created.
         /// </summary>
         /// <param name="item">The item.</param>
-        void Write(IItem item);
+        Task Write(IItem item);
 
         /// <summary>
         /// Clears the whole index.

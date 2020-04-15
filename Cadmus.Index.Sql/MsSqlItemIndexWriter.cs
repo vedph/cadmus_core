@@ -24,9 +24,11 @@ namespace Cadmus.Index.Sql
         /// Writes the specified item to the index.
         /// If the index does not exist, it is created.
         /// </summary>
-        /// <param name="item">The item.</param>
+        /// <exception cref="ArgumentNullException">item</exception>
         public Task Write(IItem item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             throw new NotImplementedException();
         }
     }

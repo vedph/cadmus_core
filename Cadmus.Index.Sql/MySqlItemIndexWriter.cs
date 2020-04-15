@@ -1,8 +1,6 @@
 ﻿using Cadmus.Core;
 using Fusi.Tools.Config;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Cadmus.Index.Sql
@@ -24,8 +22,11 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Clears the whole index.
         /// </summary>
+        /// <exception cref="ArgumentNullException">item</exception>
         public Task Write(IItem item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             throw new NotImplementedException();
         }
     }

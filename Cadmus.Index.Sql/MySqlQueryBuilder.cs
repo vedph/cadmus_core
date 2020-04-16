@@ -82,8 +82,13 @@ namespace Cadmus.Index.Sql
         protected override void AppendSimilarClause(string fieldName,
             double treshold, string value, StringBuilder sb)
         {
-            // TODO:
-            throw new System.NotImplementedException();
+            sb.Append("(SELECT SIMILARITY_STRING(")
+              .Append(fieldName)
+              .Append(",'")
+              .Append(SQE(value))
+              .Append("'))>=")
+              .Append(treshold)
+              .AppendLine();
         }
 
         /// <summary>

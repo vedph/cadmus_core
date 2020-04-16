@@ -1,35 +1,104 @@
-﻿using Cadmus.Core;
-using Fusi.Tools.Config;
+﻿using Fusi.Tools.Config;
 using System;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Cadmus.Index.Sql
 {
     /// <summary>
     /// Item index writer for SQL Server.
+    /// Tag: <c>item-index-writer.mssql</c>.
     /// </summary>
-    /// <seealso cref="Cadmus.Index.IItemIndexWriter" />
+    /// <seealso cref="IItemIndexWriter" />
     [Tag("item-index-writer.mssql")]
-    public sealed class MsSqlItemIndexWriter : IItemIndexWriter
+    public sealed class MsSqlItemIndexWriter : SqlItemIndexWriterBase,
+        IItemIndexWriter,
+        IConfigurable<SqlOptions>
     {
+        /// <summary>
+        /// Configures the object with the specified options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <exception cref="ArgumentNullException">options</exception>
+        public void Configure(SqlOptions options)
+        {
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            ConnectionString = options.ConnectionString;
+        }
+
         /// <summary>
         /// Clears the whole index.
         /// </summary>
         public Task Clear()
         {
-            throw new NotImplementedException();
+            IDbManager manager = new MsSqlDbManager(ConnectionString);
+            manager.ClearDatabase(GetDbName());
+            return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Writes the specified item to the index.
-        /// If the index does not exist, it is created.
+        /// Gets the name of the database from the connection string.
         /// </summary>
-        /// <exception cref="ArgumentNullException">item</exception>
-        public Task Write(IItem item)
+        /// <returns>
+        /// Database name or null.
+        /// </returns>
+        protected override string GetDbName()
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
-
-            throw new NotImplementedException();
+            Match m = Regex.Match(ConnectionString, "Database=([^;]+)",
+                RegexOptions.IgnoreCase);
+            return m.Success ? m.Groups[1].Value : null;
         }
+
+        /// <summary>
+        /// Gets the database manager.
+        /// </summary>
+        /// <returns>
+        /// Database manager.
+        /// </returns>
+        protected override IDbManager GetDbManager() =>
+            new MsSqlDbManager(ConnectionString);
+
+        /// <summary>
+        /// Gets the connection.
+        /// </summary>
+        /// <returns>
+        /// Connection.
+        /// </returns>
+        protected override DbConnection GetConnection() =>
+            new SqlConnection(ConnectionString);
+
+        /// <summary>
+        /// Gets a new command object.
+        /// </summary>
+        /// <returns>Command.</returns>
+        protected override DbCommand GetCommand() =>
+            new SqlCommand();
+
+        #region IDisposable Support
+        private bool _disposedValue; // to detect redundant calls
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Connection?.Close();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing,
+        /// releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Cadmus.Index
+﻿using Cadmus.Core;
+
+namespace Cadmus.Index
 {
     /// <summary>
     /// Subset of item information stored in an items index.
@@ -47,6 +49,32 @@
         /// Gets or sets generic flags for the item.
         /// </summary>
         public int Flags { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndexItem"/> class.
+        /// </summary>
+        public IndexItem()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndexItem"/> class.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <exception cref="System.ArgumentNullException">item</exception>
+        public IndexItem(IItem item)
+        {
+            if (item == null)
+                throw new System.ArgumentNullException(nameof(item));
+
+            Id = item.Id;
+            Title = item.Title;
+            Description = item.Description;
+            FacetId = item.FacetId;
+            GroupId = item.GroupId;
+            SortKey = item.SortKey;
+            Flags = item.Flags;
+        }
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.

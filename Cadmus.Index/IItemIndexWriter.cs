@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace Cadmus.Index
@@ -6,7 +7,7 @@ namespace Cadmus.Index
     /// <summary>
     /// Items index writer.
     /// </summary>
-    public interface IItemIndexWriter
+    public interface IItemIndexWriter : IDisposable
     {
         /// <summary>
         /// Writes the specified item to the index.

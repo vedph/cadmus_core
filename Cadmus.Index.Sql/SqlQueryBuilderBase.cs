@@ -18,6 +18,7 @@ namespace Cadmus.Index.Sql
         private readonly Regex _clauseRegex;
         private readonly Regex _simValRegex;
         private readonly Regex _nrRegex;
+        private readonly Regex _escRegex;
         private readonly char[] _wildcards;
         private readonly char[] _flagSeparators;
         private readonly Dictionary<string, int> _flags;
@@ -31,9 +32,10 @@ namespace Cadmus.Index.Sql
             // [nameOPvalue]
             // n=name, o=operator, v=value
             _clauseRegex = new Regex(
-                @"\[(?<n>[a-zA-Z]+)(?<o>=|\<\>|\*=|\^=|\$=|\?=|~=|%=|:|&:|!:)(?<v>[^]]+)\]");
+                @"\[(?<n>[a-zA-Z]+)(?<o>==|=|\<\>|\*=|\^=|\$=|\?=|~=|%=|!=|\<=|\>=|\<|\>|:|&:|!:)(?<v>[^]]+)\]");
             _simValRegex = new Regex(@":(\d+(?:\.\d+)?)$");
             _nrRegex = new Regex(@"^\d+$");
+            _escRegex = new Regex(@"\\([0-9a-fA-F]{4})");
             _wildcards = new[] { '*', '?' };
             _flagSeparators = new[] { ',' };
             _flags = new Dictionary<string, int>();
@@ -204,10 +206,11 @@ namespace Cadmus.Index.Sql
             return _flags.ContainsKey(flag) ? _flags[flag] : 0;
         }
 
-        private void AppendFlagsSql(string op, string value, StringBuilder sb)
+        private void AppendFlagsSql(string name, string op, string value,
+            StringBuilder sb)
         {
-            // (item.flags
-            sb.Append('(').Append(ETP("item", "flags"));
+            // (name
+            sb.Append('(').Append(name);
 
             // parse all the values and OR them into n
             int[] values =
@@ -221,27 +224,37 @@ namespace Cadmus.Index.Sql
             {
                 case "&:":
                     // & n = n
-                    sb.Append("& ").Append(n).Append(" = ").Append(n);
+                    sb.Append(" & ").Append(n).Append(") = ").Append(n).AppendLine();
                     break;
                 case "!:":
                     // & n = 0
-                    sb.Append("& ").Append(n).Append(" = 0");
+                    sb.Append(" & ").Append(n).AppendLine(") = 0");
                     break;
                 default:
                     // & n <> 0
-                    sb.Append("& ").Append(n).Append(" <> 0");
+                    sb.Append(" & ").Append(n).AppendLine(") <> 0");
                     break;
             }
+        }
 
-            // )
-            sb.AppendLine(")");
+        private string UnescapeValue(string value)
+        {
+            if (value.IndexOf('\\') == -1) return value;
+            return _escRegex.Replace(value, m =>
+            {
+                return new string(
+                    (char)int.Parse(
+                        m.Groups[1].Value,
+                        NumberStyles.HexNumber,
+                        CultureInfo.InvariantCulture), 1);
+            });
         }
 
         private string BuildClause(Match m)
         {
             string name = GetFieldName(m.Groups["n"].Value);
             if (name == null) return "";
-            string value = m.Groups["v"].Value;
+            string value = UnescapeValue(m.Groups["v"].Value);
 
             StringBuilder sb = new StringBuilder();
 
@@ -251,33 +264,33 @@ namespace Cadmus.Index.Sql
                     // name='value' (encoded)
                     sb.Append(name)
                       .Append('=')
-                      .AppendLine(SQE(value, false, true));
+                      .AppendLine(SQE(value, false, true, false));
                     break;
                 case "<>":  // not equal
                     // name<>'value' (encoded)
                     sb.Append(name)
                       .Append("<>")
-                      .AppendLine(SQE(value, false, true));
+                      .AppendLine(SQE(value, false, true, false));
                     break;
                 case "*=":  // contains
                     // name LIKE '%value%' (encoded)
                     sb.Append(name)
                        .Append(" LIKE '%")
-                       .Append(SQE(value, false, false))
+                       .Append(SQE(value, false, false, false))
                        .AppendLine("%'");
                     break;
                 case "^=":  // starts-with
                     // name LIKE 'value%' (encoded)
                     sb.Append(name)
                       .Append(" LIKE '")
-                      .Append(SQE(value, false, false))
+                      .Append(SQE(value, false, false, false))
                       .AppendLine("%'");
                     break;
                 case "$=":  // ends-with
                     // name LIKE '%value' (encoded)
                     sb.Append(name)
                       .Append(" LIKE '%")
-                      .Append(SQE(value, false, false))
+                      .Append(SQE(value, false, false, false))
                       .AppendLine("'");
                     break;
                 case "?=":  // wildcards (?=1 char, *=0-N chars)
@@ -289,7 +302,7 @@ namespace Cadmus.Index.Sql
                     // name LIKE 'value' (encoded except for wildcards)
                     sb.Append(name)
                       .Append(" LIKE ")
-                      .AppendLine(SQE(wild, true, true));
+                      .AppendLine(SQE(wild, true, true, false));
                     break;
                 case "~=":  // regex
                     AppendRegexClause(name, value, sb);
@@ -319,13 +332,13 @@ namespace Cadmus.Index.Sql
                     break;
                 // flags
                 case ":":   // has any flags of
-                    AppendFlagsSql(":", value, sb);
+                    AppendFlagsSql(name, ":", value, sb);
                     break;
                 case "&:":  // has all flags of
-                    AppendFlagsSql("&:", value, sb);
+                    AppendFlagsSql(name, "&:", value, sb);
                     break;
                 case "!:":  // has not any flags of
-                    AppendFlagsSql("!:", value, sb);
+                    AppendFlagsSql(name, "!:", value, sb);
                     break;
             }
 
@@ -338,6 +351,10 @@ namespace Cadmus.Index.Sql
 
             // normalize whitespace
             query = _wsRegex.Replace(query, " ").Trim();
+
+            // replace \[ or \] with an escape
+            query = query.Replace("\\[", "\\005B");
+            query = query.Replace("\\]", "\\005D");
 
             // replace clauses
             string sql = _clauseRegex.Replace(query, BuildClause);

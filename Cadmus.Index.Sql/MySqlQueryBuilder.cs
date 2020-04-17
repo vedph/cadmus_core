@@ -69,7 +69,7 @@ namespace Cadmus.Index.Sql
         {
             sb.Append(fieldName)
               .Append(" REGEXP ")
-              .AppendLine(SQE(value, false, true));
+              .AppendLine(SQE(value, false, true, false));
         }
 
         /// <summary>
@@ -84,11 +84,11 @@ namespace Cadmus.Index.Sql
         {
             sb.Append("(SELECT SIMILARITY_STRING(")
               .Append(fieldName)
-              .Append(",'")
-              .Append(SQE(value))
-              .Append("'))>=")
+              .Append(", ")
+              .Append(SQE(value, false, true, false))
+              .Append(")>=")
               .Append(treshold)
-              .AppendLine();
+              .AppendLine(")");
         }
 
         /// <summary>
@@ -101,13 +101,13 @@ namespace Cadmus.Index.Sql
         protected override void AppendNumericPairSql(string fieldName,
             string op, string value, StringBuilder sb)
         {
-            sb.Append("(\n")
+            sb.AppendLine("(")
               .Append("  IF (")
               .Append(fieldName)
               .Append(" REGEXP '^[0-9]+$',CAST(")
               .Append(fieldName)
-              .Append(" AS SIGNED),NULL)\n")
-              .Append(")\n")
+              .AppendLine(" AS SIGNED),NULL)")
+              .Append(")")
               .Append(op)
               .AppendLine(value);
         }

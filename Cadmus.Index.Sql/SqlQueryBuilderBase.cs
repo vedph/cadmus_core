@@ -35,7 +35,7 @@ namespace Cadmus.Index.Sql
             _simValRegex = new Regex(@":(\d+(?:\.\d+)?)$");
             _nrRegex = new Regex(@"^\d+$");
             _wildcards = new[] { '*', '?' };
-            _flagSeparators = new[] { ' ', '\t' };
+            _flagSeparators = new[] { ',' };
             _flags = new Dictionary<string, int>();
         }
 
@@ -338,7 +338,7 @@ namespace Cadmus.Index.Sql
             // replace clauses
             string sql = _clauseRegex.Replace(query, BuildClause);
 
-            sb.AppendLine(sql);
+            sb.Append(sql);
         }
 
         /// <summary>

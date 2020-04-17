@@ -1,5 +1,7 @@
-﻿using Fusi.Tools.Data;
+﻿using Cadmus.Core.Config;
+using Fusi.Tools.Data;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -15,7 +17,10 @@ namespace Cadmus.Index.Sql
         private readonly Regex _wsRegex;
         private readonly Regex _clauseRegex;
         private readonly Regex _simValRegex;
+        private readonly Regex _nrRegex;
         private readonly char[] _wildcards;
+        private readonly char[] _flagSeparators;
+        private readonly Dictionary<string, int> _flags;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlQueryBuilderBase"/> class.
@@ -26,9 +31,26 @@ namespace Cadmus.Index.Sql
             // [nameOPvalue]
             // n=name, o=operator, v=value
             _clauseRegex = new Regex(
-                @"\[(?<n>[a-zA-Z]+)(?<o>=|\<\>|\*=|\^=|\$=|\?=|~=|%=)(?<v>[^]]+)\]");
+                @"\[(?<n>[a-zA-Z]+)(?<o>=|\<\>|\*=|\^=|\$=|\?=|~=|%=|:|&:|!:)(?<v>[^]]+)\]");
             _simValRegex = new Regex(@":(\d+(?:\.\d+)?)$");
+            _nrRegex = new Regex(@"^\d+$");
             _wildcards = new[] { '*', '?' };
+            _flagSeparators = new[] { ' ', '\t' };
+            _flags = new Dictionary<string, int>();
+        }
+
+        /// <summary>
+        /// Sets the flag definitions to be used for clauses involving flags.
+        /// </summary>
+        /// <param name="definitions">The definitions.</param>
+        public void SetFlagDefinitions(IList<FlagDefinition> definitions)
+        {
+            _flags.Clear();
+            if (definitions?.Count > 0)
+            {
+                foreach (FlagDefinition def in definitions)
+                    _flags[def.Label.ToLowerInvariant()] = def.Id;
+            }
         }
 
         /// <summary>
@@ -171,6 +193,46 @@ namespace Cadmus.Index.Sql
         protected abstract void AppendNumericPairSql(string fieldName, string op,
             string value, StringBuilder sb);
 
+        private int ParseFlag(string flag)
+        {
+            if (_nrRegex.IsMatch(flag))
+                return int.Parse(flag, CultureInfo.InvariantCulture);
+            return _flags.ContainsKey(flag) ? _flags[flag] : 0;
+        }
+
+        private void AppendFlagsSql(string op, string value, StringBuilder sb)
+        {
+            // (item.flags
+            sb.Append('(').Append(ETP("item", "flags"));
+
+            // parse all the values and OR them into n
+            int[] values =
+                (from s in value.ToLowerInvariant().Split(
+                _flagSeparators, StringSplitOptions.RemoveEmptyEntries)
+                 select ParseFlag(s)).ToArray();
+            int n = 0;
+            foreach (int v in values) n |= v;
+
+            switch (op)
+            {
+                case "&:":
+                    // & n = n
+                    sb.Append("& ").Append(n).Append(" = ").Append(n);
+                    break;
+                case "!:":
+                    // & n = 0
+                    sb.Append("& ").Append(n).Append(" = 0");
+                    break;
+                default:
+                    // & n <> 0
+                    sb.Append("& ").Append(n).Append(" <> 0");
+                    break;
+            }
+
+            // )
+            sb.AppendLine(")");
+        }
+
         private string BuildClause(Match m)
         {
             string name = GetFieldName(m.Groups["n"].Value);
@@ -250,6 +312,16 @@ namespace Cadmus.Index.Sql
                     break;
                 case ">=":  // greater-than or equal
                     AppendNumericPairSql(name, ">=", value, sb);
+                    break;
+                // flags
+                case ":":   // has any flags of
+                    AppendFlagsSql(":", value, sb);
+                    break;
+                case "&:":  // has all flags of
+                    AppendFlagsSql("&:", value, sb);
+                    break;
+                case "!:":  // has not any flags of
+                    AppendFlagsSql("!:", value, sb);
                     break;
             }
 

@@ -1,9 +1,9 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Storage;
+using Cadmus.Index.Config;
 using Fusi.Tools;
 using Fusi.Tools.Data;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +12,12 @@ namespace Cadmus.Index
     /// <summary>
     /// Items indexer. This uses an <see cref="IItemIndexWriter"/> to write
     /// into the index the data pins from a single item or a set of items.
+    /// You can create an <see cref="IItemIndexWriter"/> using an
+    /// <see cref="ItemIndexWriterFactory"/>, which requires a configuration
+    /// for the index writer, and a connection string.
+    /// The indexer can either add or update the indexes for a single item with its
+    /// parts, or build the whole index from all the items matching a specified
+    /// <see cref="ItemFilter"/>.
     /// </summary>
     public sealed class ItemIndexer
     {
@@ -26,35 +32,6 @@ namespace Cadmus.Index
         {
             _writer = writer
                 ?? throw new ArgumentNullException(nameof(writer));
-        }
-
-        /// <summary>
-        /// Gets the index pins from the parts of the specified item.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <param name="indexTime">The index time to be set.</param>
-        /// <returns>List of index pins.</returns>
-        public static IList<IndexPin> GetIndexPins(IItem item, DateTime indexTime)
-        {
-            List<IndexPin> pins = new List<IndexPin>();
-
-            foreach (IPart part in item.Parts)
-            {
-                foreach (DataPin pin in part.GetDataPins())
-                {
-                    pins.Add(new IndexPin
-                    {
-                        ItemId = pin.ItemId,
-                        PartId = pin.PartId,
-                        PartTypeId = part.TypeId,
-                        RoleId = pin.RoleId,
-                        Name = pin.Name,
-                        Value = pin.Value,
-                        TimeIndexed = indexTime
-                    });
-                }
-            }
-            return pins;
         }
 
         /// <summary>

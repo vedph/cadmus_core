@@ -8,9 +8,8 @@ namespace Cadmus.Index.Config
 {
     /// <summary>
     /// A factory for <see cref="IItemIndexWriter"/>'s. This factory relies on
-    /// a configuration rooted at the <c>browsers</c> section, including an
-    /// array of item browsers objects, each with an <c>id</c> and an eventual
-    /// <c>options</c> object.
+    /// a configuration rooted at the <c>indexer</c> section, including an
+    /// objects with an <c>id</c> and an eventual <c>options</c> object.
     /// </summary>
     /// <seealso cref="ComponentFactoryBase" />
     public sealed class ItemIndexWriterFactory : ComponentFactoryBase
@@ -80,11 +79,12 @@ namespace Cadmus.Index.Config
             // has a ConnectionString property, see if we should supply a value
             // for it
             PropertyInfo property;
-            if (_connectionString != null
-                && (property = optionType.GetProperty(CONNECTION_STRING_NAME)) != null)
+            if (_connectionString != null &&
+                (property = optionType.GetProperty(CONNECTION_STRING_NAME)) != null)
             {
-                options = SupplyProperty(optionType, property, options, _connectionString);
-            } // conn
+                options = SupplyProperty(optionType, property, options,
+                    _connectionString);
+            }
 
             // apply options if any
             if (options != null)
@@ -128,15 +128,10 @@ namespace Cadmus.Index.Config
         /// Gets the item index writer if any.
         /// </summary>
         /// <returns>Item index writer or null.</returns>
-        public IItemIndexWriter GetItemIndexWriter(string id)
+        public IItemIndexWriter GetItemIndexWriter()
         {
-            ComponentFactoryConfigEntry entry =
-                ComponentFactoryConfigEntry.ReadComponentEntry
-                (Configuration, "indexer", id);
-            if (entry == null) return null;
-
             return GetComponent<IItemIndexWriter>(
-                id,
+                Configuration["indexer:id"],
                 "indexer:options",
                 false);
         }

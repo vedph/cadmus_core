@@ -122,16 +122,20 @@ namespace Cadmus.Index.Sql
                 case "dsc":
                     return ETP("item", "description");
                 case "facet":
+                case "facetid":
                     return ETP("item", "facetId");
                 case "group":
+                case "groupid":
                     return ETP("item", "groupId");
                 case "sortkey":
                     return ETP("item", "sortKey");
                 case "flags":
                     return ETP("item", "flags");
+                case "parttypeid":
                 case "parttype":
                 case "type":
                     return ETP("pin", "partTypeId");
+                case "roleid":
                 case "role":
                     return ETP("pin", "roleId");
                 case "name":

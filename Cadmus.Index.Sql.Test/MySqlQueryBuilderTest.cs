@@ -35,8 +35,13 @@ namespace Cadmus.Index.Sql.Test
             return builder;
         }
 
-        [Fact]
-        public void Build_Title_Ok()
+        [Theory]
+        [InlineData("title")]
+        [InlineData("description")]
+        [InlineData("facetId")]
+        [InlineData("groupId")]
+        [InlineData("sortKey")]
+        public void Build_SingleItemField_Ok(string field)
         {
             MySqlQueryBuilder builder = GetBuilder();
 
@@ -44,13 +49,37 @@ namespace Cadmus.Index.Sql.Test
             {
                 PageNumber = 1,
                 PageSize = 20
-            }, "[title=hello]");
+            }, $"[{field}=hello]");
 
-            const string expected = SQL_HEAD +
-                "`item`.`title`=N'hello'\r\n" +
+            string expected = SQL_HEAD +
+                $"`item`.`{field}`=N'hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
             Assert.Equal(expected, sql);
         }
+
+        [Theory]
+        [InlineData("title")]
+        [InlineData("description")]
+        [InlineData("facetId")]
+        [InlineData("groupId")]
+        [InlineData("sortKey")]
+        public void Build_SingleItemFieldPage3_Ok(string field)
+        {
+            MySqlQueryBuilder builder = GetBuilder();
+
+            string sql = builder.Build(new PagingOptions
+            {
+                PageNumber = 3,
+                PageSize = 20
+            }, $"[{field}=hello]");
+
+            string expected = SQL_HEAD +
+                $"`item`.`{field}`=N'hello'\r\n" +
+                SQL_ORDER +
+                "\r\nLIMIT 20\r\nOFFSET 40\r\n";
+            Assert.Equal(expected, sql);
+        }
+
     }
 }

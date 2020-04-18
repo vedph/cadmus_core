@@ -12,44 +12,52 @@ namespace Cadmus.Index.Sql
     /// <seealso cref="IDbManager" />
     public sealed class MsSqlDbManager : IDbManager
     {
-        private readonly string _connectionString;
+        private readonly string _csTemplate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MsSqlDbManager"/> class.
         /// </summary>
-        /// <param name="connectionString">The connection string.</param>
+        /// <param name="connectionString">The connection string with placeholder
+        /// <c>{0}</c> for the database name.</param>
         /// <exception cref="ArgumentNullException">connectionString</exception>
         public MsSqlDbManager(string connectionString)
         {
-            _connectionString = connectionString ??
+            _csTemplate = connectionString ??
                 throw new ArgumentNullException(nameof(connectionString));
         }
 
         /// <summary>
-        /// Gets the connection string.
+        /// Gets the connection string to the database with the specified
+        /// name from the specified template, where the database name placeholder
+        /// is represented by the string <c>{0}</c>.
         /// </summary>
-        /// <param name="template">The template.</param>
-        /// <param name="name">The name.</param>
-        /// <returns>Connection string.</returns>
+        /// <param name="template">The connection string template with placeholder
+        /// at the database name value.</param>
+        /// <param name="name">The database name, or null or empty to avoid
+        /// setting the database name at all in the connection string.</param>
+        /// <returns>The connection string.</returns>
         public static string GetConnectionString(string template, string name)
         {
-            return Regex.Replace(template,
-                    "Database=[^;]+;", $"Database={name};",
-                    RegexOptions.IgnoreCase);
+            Regex dbRegex = new Regex("Database=[^;]+;", RegexOptions.IgnoreCase);
+
+            return string.IsNullOrEmpty(name)
+                ? dbRegex.Replace(template, "")
+                : string.Format(template, name);
         }
 
         /// <summary>
         /// Executes the specified set of commands against the database.
         /// </summary>
-        /// <param name="database">The database name or null to use the
-        /// default</param>
+        /// <param name="database">The database name.</param>
         /// <param name="commands">The SQL commands array.</param>
+        /// <exception cref="ArgumentNullException">database</exception>
         public void ExecuteCommands(string database, params string[] commands)
         {
+            if (database == null)
+                throw new ArgumentNullException(nameof(database));
+
             using (SqlConnection connection = new SqlConnection(
-                database == null ?
-                _connectionString :
-                GetConnectionString(_connectionString, database)))
+                GetConnectionString(_csTemplate, database)))
             {
                 connection.Open();
                 foreach (string command in commands.Where(
@@ -68,15 +76,15 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Checks if the specified database exists.
         /// </summary>
-        /// <param name="name">The name.</param>
+        /// <param name="database">The database name.</param>
         /// <returns>true if exists, else false</returns>
-        public bool Exists(string name)
+        public bool Exists(string database)
         {
             using (SqlConnection connection = new SqlConnection(
-                GetConnectionString(_connectionString, "master")))
+                GetConnectionString(_csTemplate, "master")))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand($"SELECT DB_ID('{name}')", connection);
+                SqlCommand cmd = new SqlCommand($"SELECT DB_ID('{database}')", connection);
                 object result = cmd.ExecuteScalar();
                 connection.Close();
                 return result != DBNull.Value;
@@ -86,14 +94,14 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Removes the database with the specified name.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <exception cref="ArgumentNullException">name</exception>
-        public void RemoveDatabase(string name)
+        /// <param name="database">The database name.</param>
+        /// <exception cref="ArgumentNullException">database</exception>
+        public void RemoveDatabase(string database)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (database == null) throw new ArgumentNullException(nameof(database));
 
-            if (Exists(name))
-                ExecuteCommands(null, $"DROP DATABASE [{name}]");
+            if (Exists(database))
+                ExecuteCommands(null, $"DROP DATABASE [{database}]");
         }
 
         /// <summary>
@@ -135,13 +143,14 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Clears the database by removing all the rows and resetting autonumber.
         /// </summary>
-        public void ClearDatabase(string name)
+        /// <exception cref="ArgumentNullException">database</exception>
+        public void ClearDatabase(string database)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (database == null) throw new ArgumentNullException(nameof(database));
 
             // https://stackoverflow.com/questions/155246/how-do-you-truncate-all-tables-in-a-database-using-tsql
-            ExecuteCommands(name,
-                $"USE [{name}]",
+            ExecuteCommands(database,
+                $"USE [{database}]",
                 "EXEC sp_MSForEachTable \"ALTER TABLE ? NOCHECK CONSTRAINT all\"\n" +
                 "EXEC sp_MSForEachTable \"DELETE FROM ?\"\n" +
                 "EXEC sp_MSForEachTable \"ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all\"");

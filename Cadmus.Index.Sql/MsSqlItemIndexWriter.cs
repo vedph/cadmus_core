@@ -33,8 +33,12 @@ namespace Cadmus.Index.Sql
         /// </summary>
         public Task Clear()
         {
-            IDbManager manager = new MsSqlDbManager(ConnectionString);
-            manager.ClearDatabase(GetDbName());
+            string sysCS = Regex.Replace(
+                ConnectionString, "Database=([^;]+)", "Database=master");
+            IDbManager manager = new MySqlDbManager(sysCS);
+
+            string db = GetDbName();
+            if (manager.Exists(db)) manager.ClearDatabase(db);
             return Task.CompletedTask;
         }
 

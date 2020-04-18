@@ -12,43 +12,52 @@ namespace Cadmus.Index.Sql
     /// <seealso cref="IDbManager" />
     public sealed class MySqlDbManager : IDbManager
     {
-        private readonly string _connectionString;
+        private readonly string _csTemplate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MySqlDbManager"/> class.
         /// </summary>
-        /// <param name="connectionString">The connection string.</param>
+        /// <param name="connectionString">The connection string with placeholder
+        /// <c>{0}</c> for the database name.</param>
         /// <exception cref="ArgumentNullException">connectionString</exception>
         public MySqlDbManager(string connectionString)
         {
-            _connectionString = connectionString ??
+            _csTemplate = connectionString ??
                 throw new ArgumentNullException(nameof(connectionString));
         }
 
         /// <summary>
-        /// Gets the connection string.
+        /// Gets the connection string to the database with the specified
+        /// name from the specified template, where the database name placeholder
+        /// is represented by the string <c>{0}</c>.
         /// </summary>
-        /// <param name="template">The template.</param>
-        /// <param name="name">The name.</param>
+        /// <param name="template">The connection string template with placeholder
+        /// at the database name value.</param>
+        /// <param name="name">The database name, or null or empty to avoid
+        /// setting the database name at all in the connection string.</param>
         /// <returns>The connection string.</returns>
         public static string GetConnectionString(string template, string name)
         {
-            return Regex.Replace(template,
-                    "Database=[^;]+;", $"Database={name};",
-                    RegexOptions.IgnoreCase);
+            Regex dbRegex = new Regex("Database=[^;]+;", RegexOptions.IgnoreCase);
+
+            return string.IsNullOrEmpty(name)
+                ? dbRegex.Replace(template, "")
+                : string.Format(template, name);
         }
 
         /// <summary>
         /// Executes the specified set of commands against the database.
         /// </summary>
-        /// <param name="database">The database or null to use the default.</param>
+        /// <param name="database">The database name.</param>
         /// <param name="commands">The SQL commands array.</param>
+        /// <exception cref="ArgumentNullException">database</exception>
         public void ExecuteCommands(string database, params string[] commands)
         {
+            if (database == null)
+                throw new ArgumentNullException(nameof(database));
+
             using (MySqlConnection connection = new MySqlConnection(
-                database == null ?
-                _connectionString :
-                GetConnectionString(_connectionString, database)))
+                GetConnectionString(_csTemplate, database)))
             {
                 connection.Open();
                 foreach (string command in commands.Where(
@@ -67,33 +76,34 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Checks if the specified database exists.
         /// </summary>
-        /// <param name="name">The name.</param>
+        /// <param name="database">The database name.</param>
         /// <returns>true if exists, else false</returns>
-        public bool Exists(string name)
+        public bool Exists(string database)
         {
-            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            using (MySqlConnection connection = new MySqlConnection(
+                GetConnectionString(_csTemplate, null)))
             {
                 connection.Open();
                 MySqlCommand cmd = new MySqlCommand(
-                    "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA " +
-                    $"WHERE SCHEMA_NAME = '{name}'", connection);
-                object result = cmd.ExecuteScalar();
+                    "SELECT COUNT(SCHEMA_NAME) FROM INFORMATION_SCHEMA.SCHEMATA " +
+                    $"WHERE SCHEMA_NAME = '{database}'", connection);
+                int n = Convert.ToInt32(cmd.ExecuteScalar());
                 connection.Close();
-                return result != DBNull.Value;
+                return n > 0;
             }
         }
 
         /// <summary>
         /// Removes the database with the specified name.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <exception cref="ArgumentNullException">name</exception>
-        public void RemoveDatabase(string name)
+        /// <param name="database">The database name.</param>
+        /// <exception cref="ArgumentNullException">database</exception>
+        public void RemoveDatabase(string database)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (database == null) throw new ArgumentNullException(nameof(database));
 
-            if (Exists(name))
-                ExecuteCommands(null, $"DROP DATABASE `{name}`");
+            if (Exists(database))
+                ExecuteCommands(null, $"DROP DATABASE `{database}`");
         }
 
         /// <summary>
@@ -143,21 +153,23 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Clears the database by removing all the rows and resetting autonumber.
         /// </summary>
-        public void ClearDatabase(string name)
+        /// <exception cref="ArgumentNullException">database</exception>
+        public void ClearDatabase(string database)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (database == null) throw new ArgumentNullException(nameof(database));
 
             // https://stackoverflow.com/questions/1912813/truncate-all-tables-in-a-mysql-database-in-one-command
-            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            using (MySqlConnection connection = new MySqlConnection(
+                GetConnectionString(_csTemplate, database)))
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand($"USE `{name}`", connection);
+                MySqlCommand cmd = new MySqlCommand($"USE `{database}`", connection);
                 cmd.ExecuteNonQuery();
 
                 cmd.CommandText = "SET FOREIGN_KEY_CHECKS=0";
                 cmd.ExecuteNonQuery();
 
-                foreach (string table in GetTableNames(connection, name))
+                foreach (string table in GetTableNames(connection, database))
                 {
                     cmd.CommandText = $"TRUNCATE TABLE `{table}`";
                     cmd.ExecuteNonQuery();

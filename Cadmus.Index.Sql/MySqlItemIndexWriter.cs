@@ -9,7 +9,7 @@ namespace Cadmus.Index.Sql
 {
     /// <summary>
     /// Item index writer for MySql.
-    /// Tag: <c>item-index-writer.mysql</c>.
+    /// <para>Tag: <c>item-index-writer.mysql</c>.</para>
     /// </summary>
     [Tag("item-index-writer.mysql")]
     public sealed class MySqlItemIndexWriter : SqlItemIndexWriterBase,
@@ -32,8 +32,13 @@ namespace Cadmus.Index.Sql
         /// </summary>
         public Task Clear()
         {
-            IDbManager manager = new MySqlDbManager(ConnectionString);
-            manager.ClearDatabase(GetDbName());
+            string sysCS = Regex.Replace(
+                ConnectionString, "Database=([^;]+)", "Database=sys");
+            IDbManager manager = new MySqlDbManager(sysCS);
+
+            string db = GetDbName();
+            if (manager.Exists(db)) manager.ClearDatabase(db);
+
             return Task.CompletedTask;
         }
 
@@ -74,30 +79,5 @@ namespace Cadmus.Index.Sql
         /// <returns>Command.</returns>
         protected override DbCommand GetCommand() =>
             new MySqlCommand();
-
-        #region IDisposable Support
-        private bool _disposedValue; // to detect redundant calls
-
-        private void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    Connection?.Close();
-                }
-                _disposedValue = true;
-            }
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing,
-        /// releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
     }
 }

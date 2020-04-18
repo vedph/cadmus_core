@@ -10,7 +10,7 @@ namespace Cadmus.Index
     /// target database if not present on he first write, and to remove all
     /// data from it on demand.
     /// </summary>
-    public interface IItemIndexWriter : IDisposable
+    public interface IItemIndexWriter
     {
         /// <summary>
         /// Writes the specified item to the index.
@@ -23,5 +23,10 @@ namespace Cadmus.Index
         /// Clears the whole index.
         /// </summary>
         Task Clear();
+
+        /// <summary>
+        /// Closes the connection to the target database.
+        /// </summary>
+        void Close();
     }
 }

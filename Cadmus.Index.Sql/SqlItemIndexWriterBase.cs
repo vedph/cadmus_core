@@ -246,5 +246,13 @@ namespace Cadmus.Index.Sql
             }
             return Task.CompletedTask;
         }
+
+        /// <summary>
+        /// Closes the connection to the target database.
+        /// </summary>
+        public void Close()
+        {
+            Connection?.Close();
+        }
     }
 }

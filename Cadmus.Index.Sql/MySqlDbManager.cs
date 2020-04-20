@@ -48,27 +48,21 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Executes the specified set of commands against the database.
         /// </summary>
-        /// <param name="database">The database name.</param>
+        /// <param name="database">The optional database name.</param>
         /// <param name="commands">The SQL commands array.</param>
-        /// <exception cref="ArgumentNullException">database</exception>
         public void ExecuteCommands(string database, params string[] commands)
         {
-            if (database == null)
-                throw new ArgumentNullException(nameof(database));
-
             using (MySqlConnection connection = new MySqlConnection(
                 GetConnectionString(_csTemplate, database)))
             {
                 connection.Open();
-                foreach (string command in commands.Where(
-                    c => !string.IsNullOrWhiteSpace(c)))
+                foreach (string command in commands)
                 {
-                    foreach (string single in Regex.Split(command, @"[\r\n\s;]+"))
-                    {
-                        if (string.IsNullOrWhiteSpace(single)) continue;
-                        MySqlCommand cmd = new MySqlCommand(single, connection);
-                        cmd.ExecuteNonQuery();
-                    }
+                    if (string.IsNullOrWhiteSpace(command)) continue;
+
+                    // https://stackoverflow.com/questions/1324693/c-mysql-ado-net-delimiter-causing-syntax-error
+                    MySqlScript script = new MySqlScript(connection, command);
+                    script.Execute();
                 }
             }
         }
@@ -107,7 +101,7 @@ namespace Cadmus.Index.Sql
         }
 
         /// <summary>
-        /// Creates the database with the specified name, or clears it if it exists.
+        /// Creates the database with the specified name.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="schema">The optional schema script to be executed only when the
@@ -121,19 +115,12 @@ namespace Cadmus.Index.Sql
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            if (Exists(name))
-            {
-                ClearDatabase(name);
-                ExecuteCommands(null, $"USE [{name}]", seed);
-            }
-            else
-            {
-                ExecuteCommands(null, $"CREATE DATABASE [{name}]",
-                    $"USE [{name}]", schema, seed);
-            }
+            ExecuteCommands(null, $"CREATE DATABASE `{name}`",
+                $"USE `{name}`", schema, seed);
         }
 
-        private IList<string> GetTableNames(MySqlConnection connection, string name)
+        private IList<string> GetTableNames(MySqlConnection connection,
+            string name)
         {
             List<string> tables = new List<string>();
             MySqlCommand cmd = new MySqlCommand(

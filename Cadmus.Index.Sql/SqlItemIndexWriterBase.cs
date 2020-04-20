@@ -66,6 +66,7 @@ namespace Cadmus.Index.Sql
             DbParameter p = command.CreateParameter();
             p.ParameterName = name;
             p.DbType = type;
+            command.Parameters.Add(p);
         }
 
         private void BuildInsertCommands()
@@ -204,12 +205,12 @@ namespace Cadmus.Index.Sql
             if (pin == null) throw new ArgumentNullException(nameof(pin));
 
             _insertPinCommand.Parameters["@itemId"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@partId"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@partTypeId"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@roleId"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@name"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@value"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@timeIndexed"].Value = pin.ItemId;
+            _insertPinCommand.Parameters["@partId"].Value = pin.PartId;
+            _insertPinCommand.Parameters["@partTypeId"].Value = pin.PartTypeId;
+            _insertPinCommand.Parameters["@roleId"].Value = pin.RoleId;
+            _insertPinCommand.Parameters["@name"].Value = pin.Name;
+            _insertPinCommand.Parameters["@value"].Value = pin.Value;
+            _insertPinCommand.Parameters["@timeIndexed"].Value = pin.TimeIndexed;
             _insertPinCommand.ExecuteNonQuery();
         }
 

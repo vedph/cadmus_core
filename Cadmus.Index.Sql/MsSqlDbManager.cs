@@ -63,7 +63,7 @@ namespace Cadmus.Index.Sql
                 foreach (string command in commands.Where(
                     c => !string.IsNullOrWhiteSpace(c)))
                 {
-                    foreach (string single in Regex.Split(command, @"[\r\n\s;]+GO\b"))
+                    foreach (string single in Regex.Split(command, @"[\r\n;]+GO\b"))
                     {
                         if (string.IsNullOrWhiteSpace(single)) continue;
                         SqlCommand cmd = new SqlCommand(single, connection);
@@ -105,7 +105,7 @@ namespace Cadmus.Index.Sql
         }
 
         /// <summary>
-        /// Creates the database with the specified name, or clears it if it exists.
+        /// Creates the database with the specified name.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="schema">The optional schema script to be executed only when the
@@ -119,25 +119,9 @@ namespace Cadmus.Index.Sql
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            if (Exists(name))
-            {
-                ClearDatabase(name);
-                if (identityTablesToReset != null)
-                {
-                    foreach (string table in identityTablesToReset)
-                    {
-                        ExecuteCommands(null, $"USE [{name}]",
-                                        "DBCC CHECKIDENT ([{table}], RESEED, 0)");
-                    }
-                }
-                ExecuteCommands(null, $"USE [{name}]", seed);
-            }
-            else
-            {
-                ExecuteCommands("master",
-                    $"CREATE DATABASE [{name}]", $"USE [{name}]",
-                    schema, seed);
-            }
+            ExecuteCommands("master",
+                $"CREATE DATABASE [{name}]", $"USE [{name}]",
+                schema, seed);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Cadmus.Index.Sql
     /// <summary>
     /// Base class for SQL query builders.
     /// </summary>
-    public abstract class SqlQueryBuilderBase
+    public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
     {
         private readonly Regex _wsRegex;
         private readonly Regex _clauseRegex;
@@ -371,9 +371,10 @@ namespace Cadmus.Index.Sql
             StringBuilder sb);
 
         /// <summary>
-        /// Builds the specified options.
+        /// Builds the SQL code corresponding to the specified query and
+        /// paging options.
         /// </summary>
-        /// <param name="options">The options.</param>
+        /// <param name="options">The paging options.</param>
         /// <param name="query">The query.</param>
         /// <returns>SQL code.</returns>
         /// <exception cref="ArgumentNullException">options or query</exception>

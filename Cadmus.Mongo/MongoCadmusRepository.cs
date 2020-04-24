@@ -1288,6 +1288,29 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
+        /// Gets the identifier of the item including the part with the
+        /// specified part identifier.
+        /// </summary>
+        /// <param name="id">The part identifier.</param>
+        /// <returns>
+        /// The item identifier, or null if part not found
+        /// </returns>
+        /// <exception cref="ArgumentNullException">id</exception>
+        public string GetPartItemId(string id)
+        {
+            if (id == null) throw new ArgumentNullException(nameof(id));
+
+            EnsureClientCreated(_options.ConnectionString);
+
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            MongoPart part = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
+                .Find(p => p.Id.Equals(id))
+                .FirstOrDefault();
+
+            return part?.ItemId;
+        }
+
+        /// <summary>
         /// Gets the JSON code representing the part with the specified ID.
         /// </summary>
         /// <param name="id">The part identifier.</param>

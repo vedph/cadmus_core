@@ -219,6 +219,14 @@ namespace Cadmus.Core.Storage
         T GetPart<T>(string id) where T : class, IPart;
 
         /// <summary>
+        /// Gets the identifier of the item including the part with the
+        /// specified part identifier.
+        /// </summary>
+        /// <param name="id">The part identifier.</param>
+        /// <returns>The item identifier, or null if part not found</returns>
+        string GetPartItemId(string id);
+
+        /// <summary>
         /// Gets the code representing the part with the specified ID.
         /// </summary>
         /// <param name="id">The part identifier.</param>

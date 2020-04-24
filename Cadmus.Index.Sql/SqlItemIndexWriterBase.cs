@@ -249,6 +249,25 @@ namespace Cadmus.Index.Sql
         }
 
         /// <summary>
+        /// Deletes the item with the specified identifier with all its pins
+        /// entries.
+        /// </summary>
+        /// <param name="itemId">The item identifier.</param>
+        /// <exception cref="ArgumentNullException">itemId</exception>
+        public Task Delete(string itemId)
+        {
+            if (itemId == null) throw new ArgumentNullException(nameof(itemId));
+
+            EnsureConnected();
+
+            // remove item and its pins
+            _deleteItemCommand.Parameters["@id"].Value = itemId;
+            _deleteItemCommand.ExecuteNonQuery();
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
         /// Closes the connection to the target database.
         /// </summary>
         public void Close()

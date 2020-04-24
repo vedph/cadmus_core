@@ -20,6 +20,13 @@ namespace Cadmus.Index
         Task Write(IItem item);
 
         /// <summary>
+        /// Deletes the item with the specified identifier with all its pins
+        /// entries.
+        /// </summary>
+        /// <param name="itemId">The item identifier.</param>
+        Task Delete(string itemId);
+
+        /// <summary>
         /// Clears the whole index.
         /// </summary>
         Task Clear();

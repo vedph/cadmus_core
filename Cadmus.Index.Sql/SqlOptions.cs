@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Cadmus.Index.Sql
+﻿namespace Cadmus.Index.Sql
 {
     /// <summary>
-    /// SQL options.
+    /// SQL options. These are used by implementations of
+    /// <see cref="IItemIndexWriter"/> to set their configuration.
     /// </summary>
     public class SqlOptions
     {

@@ -6,10 +6,18 @@ namespace Cadmus.Index.Sql.Test
 {
     public sealed class MySqlQueryBuilderTest
     {
-        private const string SQL_HEAD =
+        private const string SQL_PAG_HEAD =
             "SELECT DISTINCT\r\n" +
             "`item`.`id`,`item`.`title`,`item`.`description`,`item`.`facetId`," +
-            "`item`.`groupId`,`item`.`sortKey`,`item`.`flags`\r\n" +
+            "`item`.`groupId`,`item`.`sortKey`,`item`.`flags`," +
+            "`item`.`timeCreated`,`item`.`creatorId`," +
+            "`item`.`timeModified`,`item`.`userId`\r\n" +
+            "FROM `item`\r\n" +
+            "INNER JOIN `pin`\r\n" +
+            "ON `item`.`id`=`pin`.`itemId`\r\n" +
+            "WHERE\r\n";
+        private const string SQL_TOT_HEAD =
+            "SELECT COUNT(DISTINCT `item`.`id`)\r\n" +
             "FROM `item`\r\n" +
             "INNER JOIN `pin`\r\n" +
             "ON `item`.`id`=`pin`.`itemId`\r\n" +
@@ -45,17 +53,21 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
+            var sql = builder.Build($"[{field}=hello]", new PagingOptions
             {
                 PageNumber = 1,
                 PageSize = 20
-            }, $"[{field}=hello]");
+            });
 
-            string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 $"`item`.`{field}`='hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                $"`item`.`{field}`='hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Theory]
@@ -68,17 +80,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 3,
-                PageSize = 20
-            }, $"[{field}=hello]");
+            var sql = builder.Build($"[{field}=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 3,
+                    PageSize = 20
+                });
 
-            string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 $"`item`.`{field}`='hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 40\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                $"`item`.`{field}`='hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Theory]
@@ -90,17 +107,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, $"[{field}=hello]");
+            var sql = builder.Build($"[{field}=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 $"`pin`.`{field}`='hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                $"`pin`.`{field}`='hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Theory]
@@ -112,17 +134,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 3,
-                PageSize = 20
-            }, $"[{field}=hello]");
+            var sql = builder.Build($"[{field}=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 3,
+                    PageSize = 20
+                });
 
-            string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 $"`pin`.`{field}`='hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 40\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                $"`pin`.`{field}`='hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -130,17 +157,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title=hello]");
+            var sql = builder.Build("[title=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title`='hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title`='hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -148,17 +180,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title<>hello]");
+            var sql = builder.Build("[title<>hello]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title`<>'hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title`<>'hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -166,17 +203,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title*=hello]");
+            var sql = builder.Build("[title*=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title` LIKE '%hello%'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title` LIKE '%hello%'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -184,17 +226,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title^=hello]");
+            var sql = builder.Build("[title^=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title` LIKE 'hello%'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title` LIKE 'hello%'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -202,17 +249,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title$=hello]");
+            var sql = builder.Build("[title$=hello]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title` LIKE '%hello'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title` LIKE '%hello'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -220,17 +272,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title?=h?ll*]");
+            var sql = builder.Build("[title?=h?ll*]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title` LIKE 'h_ll%'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title` LIKE 'h_ll%'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -238,17 +295,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title~=h\\[ea\\]llo]");
+            var sql = builder.Build("[title~=h\\[ea\\]llo]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "`item`.`title` REGEXP 'h[ea]llo'\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "`item`.`title` REGEXP 'h[ea]llo'\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -256,17 +318,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[title%=hello:90]");
+            var sql = builder.Build("[title%=hello:90]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "(SELECT SIMILARITY_STRING(`item`.`title`, 'hello')>=90)\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "(SELECT SIMILARITY_STRING(`item`.`title`, 'hello')>=90)\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Theory]
@@ -280,18 +347,24 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, $"[title{inOp}12]");
+            var sql = builder.Build($"[title{inOp}12]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "(\r\n  IF (`item`.`title` REGEXP '^[0-9]+$'," +
                 $"CAST(`item`.`title` AS SIGNED),NULL)\r\n){outOp}12\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "(\r\n  IF (`item`.`title` REGEXP '^[0-9]+$'," +
+                $"CAST(`item`.`title` AS SIGNED),NULL)\r\n){outOp}12\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -299,17 +372,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[flags:review,todo]");
+            var sql = builder.Build("[flags:review,todo]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "(`item`.`flags` & 3) <> 0\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "(`item`.`flags` & 3) <> 0\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -317,17 +395,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[flags&:review,todo]");
+            var sql = builder.Build("[flags&:review,todo]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "(`item`.`flags` & 3) = 3\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "(`item`.`flags` & 3) = 3\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Fact]
@@ -335,17 +418,22 @@ namespace Cadmus.Index.Sql.Test
         {
             MySqlQueryBuilder builder = GetBuilder();
 
-            string sql = builder.Build(new PagingOptions
-            {
-                PageNumber = 1,
-                PageSize = 20
-            }, "[flags!:review,todo]");
+            var sql = builder.Build("[flags!:review,todo]",
+                new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
 
-            const string expected = SQL_HEAD +
+            string expected = SQL_PAG_HEAD +
                 "(`item`.`flags` & 3) = 0\r\n" +
                 SQL_ORDER +
                 "\r\nLIMIT 20\r\nOFFSET 0\r\n";
-            Assert.Equal(expected, sql);
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_TOT_HEAD +
+                "(`item`.`flags` & 3) = 0\r\n";
+            Assert.Equal(expected, sql.Item2);
         }
     }
 }

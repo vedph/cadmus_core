@@ -2,7 +2,6 @@
 using Fusi.Tools.Data;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Cadmus.Index.Sql
 {
@@ -21,9 +20,9 @@ namespace Cadmus.Index.Sql
         /// Builds the SQL code corresponding to the specified query and
         /// paging options.
         /// </summary>
-        /// <param name="options">The paging options.</param>
         /// <param name="query">The query.</param>
-        /// <returns>SQL code.</returns>
-        string Build(PagingOptions options, string query);
+        /// <param name="options">The paging options.</param>
+        /// <returns>SQL code for both page and total.</returns>
+        Tuple<string, string> Build(string query, PagingOptions options);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Cadmus.Core;
-using System;
 using System.Threading.Tasks;
 
 namespace Cadmus.Index

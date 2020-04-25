@@ -7,12 +7,14 @@ using System.Reflection;
 namespace Cadmus.Index.Config
 {
     /// <summary>
-    /// A factory for <see cref="IItemIndexWriter"/>'s. This factory relies on
-    /// a configuration rooted at the <c>indexer</c> section, including an
+    /// A factory for <see cref="IItemIndexWriter"/>'s and
+    /// <see cref="IItemIndexReader"/>'s. This factory relies on
+    /// a configuration rooted at the <c>index</c> section, with
+    /// properties <c>writer</c> and <c>reader</c>, both including an
     /// objects with an <c>id</c> and an eventual <c>options</c> object.
     /// </summary>
     /// <seealso cref="ComponentFactoryBase" />
-    public sealed class ItemIndexWriterFactory : ComponentFactoryBase
+    public sealed class ItemIndexFactory : ComponentFactoryBase
     {
         private readonly string _connectionString;
 
@@ -23,7 +25,7 @@ namespace Cadmus.Index.Config
         public const string CONNECTION_STRING_NAME = "ConnectionString";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ItemIndexWriterFactory"/>
+        /// Initializes a new instance of the <see cref="ItemIndexFactory"/>
         /// class.
         /// </summary>
         /// <param name="container">The container.</param>
@@ -32,7 +34,7 @@ namespace Cadmus.Index.Config
         /// supply to any component requiring an option named
         /// <see cref="CONNECTION_STRING_NAME"/> (=<c>ConnectionString</c>),
         /// when this option is not specified in its configuration.</param>
-        public ItemIndexWriterFactory(Container container,
+        public ItemIndexFactory(Container container,
             IConfiguration configuration,
             string connectionString) : base(container, configuration)
         {
@@ -131,8 +133,20 @@ namespace Cadmus.Index.Config
         public IItemIndexWriter GetItemIndexWriter()
         {
             return GetComponent<IItemIndexWriter>(
-                Configuration["indexer:id"],
-                "indexer:options",
+                Configuration["index:writer:id"],
+                "index:writer:options",
+                false);
+        }
+
+        /// <summary>
+        /// Gets the item index reader if any.
+        /// </summary>
+        /// <returns>Item index reader or null.</returns>
+        public IItemIndexReader GetItemIndexReader()
+        {
+            return GetComponent<IItemIndexReader>(
+                Configuration["index:reader:id"],
+                "index:reader:options",
                 false);
         }
     }

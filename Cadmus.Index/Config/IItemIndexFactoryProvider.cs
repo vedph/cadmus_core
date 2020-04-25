@@ -2,15 +2,15 @@
 {
     /// <summary>
     /// Item browser factory provider. This is used to provide an
-    /// <see cref="ItemIndexWriterFactory"/> from a specified profile file.
+    /// <see cref="ItemIndexFactory"/> from a specified profile file.
     /// </summary>
-    public interface IItemIndexWriterFactoryProvider
+    public interface IItemIndexFactoryProvider
     {
         /// <summary>
         /// Gets the part/fragment seeders factory.
         /// </summary>
         /// <param name="profile">The profile.</param>
         /// <returns>Factory.</returns>
-        ItemIndexWriterFactory GetFactory(string profile);
+        ItemIndexFactory GetFactory(string profile);
     }
 }

@@ -13,7 +13,7 @@ namespace Cadmus.Index
     /// Items indexer. This uses an <see cref="IItemIndexWriter"/> to write
     /// into the index the data pins from a single item or a set of items.
     /// You can create an <see cref="IItemIndexWriter"/> using an
-    /// <see cref="ItemIndexWriterFactory"/>, which requires a configuration
+    /// <see cref="ItemIndexFactory"/>, which requires a configuration
     /// for the index writer, and a connection string.
     /// The indexer can either add or update the indexes for a single item with its
     /// parts, or build the whole index from all the items matching a specified

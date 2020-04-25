@@ -345,8 +345,9 @@ namespace Cadmus.Index.Sql
             return sb.ToString();
         }
 
-        private void AppendWhere(string query, StringBuilder sb)
+        private string BuildWhereSql(string query)
         {
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine("WHERE");
 
             // normalize whitespace
@@ -360,6 +361,8 @@ namespace Cadmus.Index.Sql
             string sql = _clauseRegex.Replace(query, BuildClause);
 
             sb.Append(sql);
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -370,47 +373,65 @@ namespace Cadmus.Index.Sql
         protected abstract void AppendPaging(PagingOptions options,
             StringBuilder sb);
 
-        /// <summary>
-        /// Builds the SQL code corresponding to the specified query and
-        /// paging options.
-        /// </summary>
-        /// <param name="options">The paging options.</param>
-        /// <param name="query">The query.</param>
-        /// <returns>SQL code.</returns>
-        /// <exception cref="ArgumentNullException">options or query</exception>
-        public string Build(PagingOptions options, string query)
+        private string BuildFromSql()
         {
-            if (options == null)
-                throw new ArgumentNullException(nameof(options));
-            if (query == null) throw new ArgumentNullException(nameof(query));
-
             StringBuilder sb = new StringBuilder();
-
-            // select distinct item... inner join pin on item.id=pin.itemId
-            sb.AppendLine("SELECT DISTINCT")
-              .AppendLine(EKPS("item",
-                "id", "title", "description", "facetId",
-                "groupId", "sortKey", "flags"))
-              .Append("FROM ").AppendLine(ET("item"))
+            sb.Append("FROM ").AppendLine(ET("item"))
               .Append("INNER JOIN ").AppendLine(ET("pin"))
               .Append("ON ")
               .Append(ETP("item", "id"))
               .Append('=')
               .AppendLine(ETP("pin", "itemId"));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Builds the SQL code corresponding to the specified query and
+        /// paging options.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <param name="options">The paging options.</param>
+        /// <returns>SQL code for both page and total.</returns>
+        /// <exception cref="ArgumentNullException">options or query</exception>
+        public Tuple<string, string> Build(string query, PagingOptions options)
+        {
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+            if (query == null) throw new ArgumentNullException(nameof(query));
+
+            StringBuilder sbPage = new StringBuilder();
+            StringBuilder sbTotal = new StringBuilder();
+
+            // select distinct item... inner join pin on item.id=pin.itemId
+            sbPage.AppendLine("SELECT DISTINCT")
+              .AppendLine(EKPS("item",
+                "id", "title", "description", "facetId",
+                "groupId", "sortKey", "flags",
+                "timeCreated", "creatorId", "timeModified", "userId"));
+
+            sbTotal.Append("SELECT COUNT(DISTINCT ")
+                   .Append(ETP("item", "id"))
+                   .AppendLine(")");
+
+            string fromSql = BuildFromSql();
+            sbPage.Append(fromSql);
+            sbTotal.Append(fromSql);
 
             // where
-            AppendWhere(query, sb);
+            string whereSql = BuildWhereSql(query);
+            sbPage.Append(whereSql);
+            sbTotal.Append(whereSql);
 
-            // order by
-            sb.Append("ORDER BY ")
+            // order by (for page only)
+            sbPage.Append("ORDER BY ")
               .Append(ETP("item", "sortKey"))
               .Append(',')
               .AppendLine(ETP("item", "id"));
 
-            // paging
-            AppendPaging(options, sb);
+            // paging (for page only)
+            AppendPaging(options, sbPage);
 
-            return sb.ToString();
+            return Tuple.Create(sbPage.ToString(), sbTotal.ToString());
         }
     }
 }

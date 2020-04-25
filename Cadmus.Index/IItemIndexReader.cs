@@ -15,5 +15,10 @@ namespace Cadmus.Index
         /// <param name="options">The paging options.</param>
         /// <returns>Page of results.</returns>
         DataPage<ItemInfo> Search(string query, PagingOptions options);
+
+        /// <summary>
+        /// Closes the connection to the target database.
+        /// </summary>
+        void Close();
     }
 }

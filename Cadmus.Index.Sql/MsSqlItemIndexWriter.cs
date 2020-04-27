@@ -18,6 +18,14 @@ namespace Cadmus.Index.Sql
         IConfigurable<SqlOptions>
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="MsSqlItemIndexWriter"/>
+        /// class.
+        /// </summary>
+        public MsSqlItemIndexWriter() : base("MsSql")
+        {
+        }
+
+        /// <summary>
         /// Configures the object with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>

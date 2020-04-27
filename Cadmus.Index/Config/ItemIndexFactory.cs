@@ -124,6 +124,7 @@ namespace Cadmus.Index.Config
             Assembly[] assemblies = additionalAssemblies ?? Array.Empty<Assembly>();
 
             container.Collection.Register<IItemIndexWriter>(assemblies);
+            container.Collection.Register<IItemIndexReader>(assemblies);
         }
 
         /// <summary>

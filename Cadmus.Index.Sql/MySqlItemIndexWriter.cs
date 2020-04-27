@@ -17,6 +17,14 @@ namespace Cadmus.Index.Sql
         IConfigurable<SqlOptions>
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="MySqlItemIndexWriter"/>
+        /// class.
+        /// </summary>
+        public MySqlItemIndexWriter() : base("MySql")
+        {
+        }
+
+        /// <summary>
         /// Configures the object with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>

@@ -34,7 +34,7 @@ namespace Cadmus.Index.Sql
             _clauseRegex = new Regex(
                 @"\[(?<n>[a-zA-Z]+)(?<o>==|=|\<\>|\*=|\^=|\$=|\?=|~=|%=|!=|\<=|\>=|\<|\>|:|&:|!:)(?<v>[^]]+)\]");
             _simValRegex = new Regex(@":(\d+(?:\.\d+)?)$");
-            _nrRegex = new Regex(@"^\d+$");
+            _nrRegex = new Regex("^[0-9a-fA-F]{1,8}$");
             _escRegex = new Regex(@"\\([0-9a-fA-F]{4})");
             _wildcards = new[] { '*', '?' };
             _flagSeparators = new[] { ',' };
@@ -202,7 +202,10 @@ namespace Cadmus.Index.Sql
         private int ParseFlag(string flag)
         {
             if (_nrRegex.IsMatch(flag))
-                return int.Parse(flag, CultureInfo.InvariantCulture);
+            {
+                return int.Parse(flag, NumberStyles.HexNumber,
+                    CultureInfo.InvariantCulture);
+            }
             return _flags.ContainsKey(flag) ? _flags[flag] : 0;
         }
 

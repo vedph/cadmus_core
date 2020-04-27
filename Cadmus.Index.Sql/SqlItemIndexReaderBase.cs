@@ -10,7 +10,7 @@ namespace Cadmus.Index.Sql
     /// Base class for item index readers.
     /// </summary>
     /// <seealso cref="IItemIndexReader" />
-    public abstract class SqlItemIndexReaderBase : IItemIndexReader
+    public abstract class SqlItemIndexReaderBase
     {
         private string _connectionString;
         private ISqlQueryBuilder _queryBuilder;
@@ -25,6 +25,8 @@ namespace Cadmus.Index.Sql
             {
                 if (_connectionString == value) return;
                 _connectionString = value;
+                Connection?.Close();
+                Connection = null;
             }
         }
 
@@ -70,11 +72,21 @@ namespace Cadmus.Index.Sql
 
             var pageAndTot = _queryBuilder.Build(query, options);
 
+            if (Connection == null)
+            {
+                Connection = GetConnection();
+                Connection.Open();
+            }
+
             DbCommand pageCommand = GetCommand();
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             pageCommand.CommandText = pageAndTot.Item1;
+            pageCommand.Connection = Connection;
 
             DbCommand totCommand = GetCommand();
             totCommand.CommandText = pageAndTot.Item2;
+            totCommand.Connection = Connection;
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
 
             List<ItemInfo> items = new List<ItemInfo>();
 
@@ -120,7 +132,6 @@ namespace Cadmus.Index.Sql
                     items.Add(item);
                 }
             }
-
             return new DataPage<ItemInfo>(
                 options.PageNumber,
                 options.PageSize,

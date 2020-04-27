@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using System;
 
 namespace Cadmus.Index
 {
@@ -51,6 +52,26 @@ namespace Cadmus.Index
         public int Flags { get; set; }
 
         /// <summary>
+        /// Creation date and time (UTC).
+        /// </summary>
+        public DateTime TimeCreated { get; set; }
+
+        /// <summary>
+        /// ID of the user who created the resource.
+        /// </summary>
+        public string CreatorId { get; set; }
+
+        /// <summary>
+        /// Last saved date and time (UTC).
+        /// </summary>
+        public DateTime TimeModified { get; set; }
+
+        /// <summary>
+        /// ID of the user who last saved the resource.
+        /// </summary>
+        public string UserId { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="IndexItem"/> class.
         /// </summary>
         public IndexItem()
@@ -74,6 +95,10 @@ namespace Cadmus.Index
             GroupId = item.GroupId;
             SortKey = item.SortKey;
             Flags = item.Flags;
+            TimeCreated = item.TimeCreated;
+            CreatorId = item.CreatorId;
+            TimeModified = item.TimeModified;
+            UserId = item.UserId;
         }
 
         /// <summary>

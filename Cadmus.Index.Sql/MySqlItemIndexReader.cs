@@ -12,7 +12,7 @@ namespace Cadmus.Index.Sql
     /// <seealso cref="SqlItemIndexReaderBase" />
     [Tag("item-index-reader.mysql")]
     public sealed class MySqlItemIndexReader : SqlItemIndexReaderBase,
-        IConfigurable<SqlOptions>
+        IConfigurable<SqlOptions>, IItemIndexReader
     {
         /// <summary>
         /// Configures the object with the specified options.

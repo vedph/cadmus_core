@@ -11,11 +11,24 @@ namespace Cadmus.Index.Sql
     /// </summary>
     public abstract class SqlItemIndexWriterBase
     {
+        private readonly string _resScriptName;
         private string _connectionString;
         private bool _exists;
         private DbCommand _insertItemCommand;
         private DbCommand _insertPinCommand;
         private DbCommand _deleteItemCommand;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase"/>
+        /// class.
+        /// </summary>
+        /// <param name="resScriptName">Name of the resource SQL script
+        /// for seeding the database schema.</param>
+        protected SqlItemIndexWriterBase(string resScriptName)
+        {
+            _resScriptName = resScriptName ??
+                throw new ArgumentNullException(nameof(resScriptName));
+        }
 
         /// <summary>
         /// Gets or sets the connection string.
@@ -80,7 +93,12 @@ namespace Cadmus.Index.Sql
                 "`facetId`," +
                 "`groupId`," +
                 "`sortKey`," +
-                "`flags`)" +
+                "`flags`," +
+                "`timeCreated`," +
+                "`creatorId`," +
+                "`timeModified`," +
+                "`userId`" +
+                ")" +
                 "VALUES(" +
                 "@id," +
                 "@title," +
@@ -88,7 +106,12 @@ namespace Cadmus.Index.Sql
                 "@facetId," +
                 "@groupId," +
                 "@sortKey," +
-                "@flags);";
+                "@flags," +
+                "@timeCreated," +
+                "@creatorId," +
+                "@timeModified," +
+                "@userId" +
+                ");";
             _insertItemCommand.Connection = Connection;
             AddParameter(_insertItemCommand, "@id", DbType.String);
             AddParameter(_insertItemCommand, "@title", DbType.String);
@@ -97,6 +120,10 @@ namespace Cadmus.Index.Sql
             AddParameter(_insertItemCommand, "@groupId", DbType.String);
             AddParameter(_insertItemCommand, "@sortKey", DbType.String);
             AddParameter(_insertItemCommand, "@flags", DbType.Int32);
+            AddParameter(_insertItemCommand, "@timeCreated", DbType.DateTime);
+            AddParameter(_insertItemCommand, "@creatorId", DbType.String);
+            AddParameter(_insertItemCommand, "@timeModified", DbType.DateTime);
+            AddParameter(_insertItemCommand, "@userId", DbType.String);
 
             _deleteItemCommand = GetCommand();
             _deleteItemCommand.CommandText = "DELETE FROM `item` WHERE `id`=@id";
@@ -147,7 +174,7 @@ namespace Cadmus.Index.Sql
                 if (!manager.Exists(name))
                 {
                     manager.CreateDatabase(name,
-                        ResourceHelper.LoadResource("MySql.sql"),
+                        ResourceHelper.LoadResource(_resScriptName + ".sql"),
                         null);
                     _exists = true;
                 }
@@ -192,6 +219,10 @@ namespace Cadmus.Index.Sql
             _insertItemCommand.Parameters["@groupId"].Value = item.GroupId;
             _insertItemCommand.Parameters["@sortKey"].Value = item.SortKey;
             _insertItemCommand.Parameters["@flags"].Value = item.Flags;
+            _insertItemCommand.Parameters["@timeCreated"].Value = item.TimeCreated;
+            _insertItemCommand.Parameters["@creatorId"].Value = item.CreatorId;
+            _insertItemCommand.Parameters["@timeModified"].Value = item.TimeModified;
+            _insertItemCommand.Parameters["@userId"].Value = item.UserId;
             _insertItemCommand.ExecuteNonQuery();
         }
 

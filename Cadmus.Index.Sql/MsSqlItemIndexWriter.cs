@@ -21,7 +21,7 @@ namespace Cadmus.Index.Sql
         /// Initializes a new instance of the <see cref="MsSqlItemIndexWriter"/>
         /// class.
         /// </summary>
-        public MsSqlItemIndexWriter() : base("MsSql")
+        public MsSqlItemIndexWriter() : base("MsSql", new MsSqlTokenHelper())
         {
         }
 

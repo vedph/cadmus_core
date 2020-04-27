@@ -106,8 +106,10 @@ namespace Cadmus.Index.Sql
                 {
                     ItemInfo item = new ItemInfo
                     {
-                        Id = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("id")),
+                        // for some reason, the type from MySql is GUID here
+                        Id = reader.GetValue(reader.GetOrdinal("id")).ToString(),
+                        //Id = reader.GetFieldValue<string>(
+                        //    reader.GetOrdinal("id")),
                         Title = reader.GetFieldValue<string>(
                             reader.GetOrdinal("title")),
                         Description = reader.GetFieldValue<string>(

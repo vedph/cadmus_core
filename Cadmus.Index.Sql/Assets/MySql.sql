@@ -7,7 +7,10 @@ CREATE TABLE `item` (
   `groupId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `sortKey` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `flags` int NOT NULL,
-
+  `timeCreated` datetime NOT NULL,
+  `creatorId` varchar(100),
+  `timeModified` datetime NOT NULL,
+  `userId` varchar(100),
   PRIMARY KEY (`id`),
   KEY `title_ix` (`title`) /*!80000 INVISIBLE */,
   KEY `facetid_ix` (`facetId`) /*!80000 INVISIBLE */,

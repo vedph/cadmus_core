@@ -14,6 +14,7 @@ namespace Cadmus.Index.Sql
     /// </summary>
     public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
     {
+        private readonly ISqlTokenHelper _tokenHelper;
         private readonly Regex _wsRegex;
         private readonly Regex _clauseRegex;
         private readonly Regex _simValRegex;
@@ -24,10 +25,14 @@ namespace Cadmus.Index.Sql
         private readonly Dictionary<string, int> _flags;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlQueryBuilderBase"/> class.
+        /// Initializes a new instance of the <see cref="SqlQueryBuilderBase" /> class.
         /// </summary>
-        protected SqlQueryBuilderBase()
+        /// <param name="tokenHelper">The SQL token helper to be used.</param>
+        protected SqlQueryBuilderBase(ISqlTokenHelper tokenHelper)
         {
+            _tokenHelper = tokenHelper
+                ?? throw new ArgumentNullException(nameof(tokenHelper));
+
             _wsRegex = new Regex(@"\s+");
             // [nameOPvalue]
             // n=name, o=operator, v=value
@@ -62,7 +67,7 @@ namespace Cadmus.Index.Sql
         /// </summary>
         /// <param name="token">The token.</param>
         /// <returns>The wrapped token.</returns>
-        protected abstract string ET(string token);
+        protected string ET(string token) => _tokenHelper.ET(token);
 
         /// <summary>
         /// Wraps the specified non-keyword tokens according to the syntax
@@ -85,8 +90,8 @@ namespace Cadmus.Index.Sql
         /// <param name="suffix">An optional suffix to be appended at the end
         /// of the result.</param>
         /// <returns>The wrapped token.</returns>
-        protected abstract string ETP(string prefix, string token,
-            string suffix = null);
+        protected string ETP(string prefix, string token,
+            string suffix = null) => _tokenHelper.ETP(prefix, token, suffix);
 
         /// <summary>
         /// Wraps the specified non-keyword tokens and their prefix according to
@@ -97,7 +102,7 @@ namespace Cadmus.Index.Sql
         /// <param name="prefix">The prefix common to all the tokens.</param>
         /// <param name="tokens">The tokens.</param>
         /// <returns>The wrapped tokens.</returns>
-        private string EKPS(string prefix, params string[] tokens) =>
+        public string ETPS(string prefix, params string[] tokens) =>
             string.Join(",", from k in tokens select ETP(prefix, k));
 
         /// <summary>
@@ -110,8 +115,9 @@ namespace Cadmus.Index.Sql
         /// </param>
         /// <param name="unicode">if set to <c>true</c> [unicode].</param>
         /// <returns>Encoded text.</returns>
-        protected abstract string SQE(string text, bool hasWildcards = false,
-            bool wrapInQuotes = false, bool unicode = true);
+        protected string SQE(string text, bool hasWildcards = false,
+            bool wrapInQuotes = false, bool unicode = true) =>
+            _tokenHelper.SQE(text, hasWildcards, wrapInQuotes, unicode);
 
         private string GetFieldName(string name)
         {
@@ -407,7 +413,7 @@ namespace Cadmus.Index.Sql
 
             // select distinct item... inner join pin on item.id=pin.itemId
             sbPage.AppendLine("SELECT DISTINCT")
-              .AppendLine(EKPS("item",
+              .AppendLine(ETPS("item",
                 "id", "title", "description", "facetId",
                 "groupId", "sortKey", "flags",
                 "timeCreated", "creatorId", "timeModified", "userId"));

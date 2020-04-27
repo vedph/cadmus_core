@@ -20,7 +20,7 @@ namespace Cadmus.Index.Sql
         /// Initializes a new instance of the <see cref="MySqlItemIndexWriter"/>
         /// class.
         /// </summary>
-        public MySqlItemIndexWriter() : base("MySql")
+        public MySqlItemIndexWriter() : base("MySql", new MySqlTokenHelper())
         {
         }
 

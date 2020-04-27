@@ -4,8 +4,8 @@ echo Remember to generate the up-to-date package.
 pause
 c:\exe\nuget add .\Cadmus.Archive.Parts\bin\Debug\Cadmus.Archive.Parts.2.2.35.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Core\bin\Debug\Cadmus.Core.2.2.34.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Index\bin\Debug\Cadmus.Index.1.0.9.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Index.Sql\bin\Debug\Cadmus.Index.Sql.1.0.27.nupkg -source C:\Projects\_NuGet
+c:\exe\nuget add .\Cadmus.Index\bin\Debug\Cadmus.Index.1.0.10.nupkg -source C:\Projects\_NuGet
+c:\exe\nuget add .\Cadmus.Index.Sql\bin\Debug\Cadmus.Index.Sql.1.0.31.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Lexicon.Parts\bin\Debug\Cadmus.Lexicon.Parts.2.2.36.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Mongo\bin\Debug\Cadmus.Mongo.2.2.44.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Parts\bin\Debug\Cadmus.Parts.2.2.42.nupkg -source C:\Projects\_NuGet

@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core;
 using System;
+using System.Linq;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Cadmus.Index.Sql
     public abstract class SqlItemIndexWriterBase
     {
         private readonly string _resScriptName;
+        private readonly ISqlTokenHelper _tokenHelper;
         private string _connectionString;
         private bool _exists;
         private DbCommand _insertItemCommand;
@@ -19,16 +21,40 @@ namespace Cadmus.Index.Sql
         private DbCommand _deleteItemCommand;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase"/>
+        /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase" />
         /// class.
         /// </summary>
         /// <param name="resScriptName">Name of the resource SQL script
         /// for seeding the database schema.</param>
-        protected SqlItemIndexWriterBase(string resScriptName)
+        /// <param name="tokenHelper">The SQL token helper to be used.</param>
+        /// <exception cref="ArgumentNullException">resScriptName</exception>
+        protected SqlItemIndexWriterBase(string resScriptName,
+            ISqlTokenHelper tokenHelper)
         {
             _resScriptName = resScriptName ??
                 throw new ArgumentNullException(nameof(resScriptName));
+            _tokenHelper = tokenHelper ??
+                throw new ArgumentNullException(nameof(tokenHelper));
         }
+
+        /// <summary>
+        /// Wraps the specified non-keyword token according to the syntax
+        /// of the SQL dialect being handled. For instance, in MySql this
+        /// wraps a token into backticks, or in SQL Server into square brackets.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns>The wrapped token.</returns>
+        protected string ET(string token) => _tokenHelper.ET(token);
+
+        /// <summary>
+        /// Wraps the specified non-keyword tokens according to the syntax
+        /// of the SQL dialect being handled. For instance, in MySql this
+        /// wraps a token into backticks, or in SQL Server into square brackets.
+        /// </summary>
+        /// <param name="tokens">The tokens.</param>
+        /// <returns>The wrapped tokens separated by comma.</returns>
+        protected string ETS(params string[] tokens) =>
+            string.Join(",", from k in tokens select ET(k));
 
         /// <summary>
         /// Gets or sets the connection string.
@@ -86,20 +112,13 @@ namespace Cadmus.Index.Sql
         {
             // item
             _insertItemCommand = GetCommand();
-            _insertItemCommand.CommandText = "INSERT INTO `item`(" +
-                "`id`," +
-                "`title`," +
-                "`description`," +
-                "`facetId`," +
-                "`groupId`," +
-                "`sortKey`," +
-                "`flags`," +
-                "`timeCreated`," +
-                "`creatorId`," +
-                "`timeModified`," +
-                "`userId`" +
-                ")" +
-                "VALUES(" +
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+            _insertItemCommand.CommandText =
+                $"INSERT INTO {ET("item")}(" +
+                ETS("id", "title", "description", "facetId", "groupId",
+                    "sortKey", "flags", "timeCreated", "creatorId",
+                    "timeModified", "userId") +
+                ") VALUES(" +
                 "@id," +
                 "@title," +
                 "@description," +
@@ -132,15 +151,11 @@ namespace Cadmus.Index.Sql
 
             // pin
             _insertPinCommand = GetCommand();
-            _insertPinCommand.CommandText = "INSERT INTO `pin`(" +
-                "`itemId`," +
-                "`partId`," +
-                "`partTypeId`," +
-                "`roleId`," +
-                "`name`," +
-                "`value`," +
-                "`timeIndexed`)" +
-                "VALUES(" +
+            _insertPinCommand.CommandText =
+                $"INSERT INTO {ET("pin")}(" +
+                ETS("itemId", "partId", "partTypeId", "roleId",
+                "name", "value", "timeIndexed") +
+                ") VALUES(" +
                 "@itemId," +
                 "@partId," +
                 "@partTypeId," +
@@ -148,6 +163,7 @@ namespace Cadmus.Index.Sql
                 "@name," +
                 "@value," +
                 "@timeIndexed);";
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
             _insertPinCommand.Connection = Connection;
             AddParameter(_insertPinCommand, "@itemId", DbType.String);
             AddParameter(_insertPinCommand, "@partId", DbType.String);

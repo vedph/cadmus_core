@@ -359,6 +359,39 @@ namespace Cadmus.Mongo.Test
         }
 
         [Fact]
+        public void GetThesauri_NoFilterPage1_Ok()
+        {
+            DoGetThesauri_NoFilterPage1_Ok();
+        }
+
+        [Fact]
+        public void GetThesauri_NoFilterPage2_Ok()
+        {
+            DoGetThesauri_NoFilterPage2_Ok();
+        }
+
+        [Fact]
+        public void GetThesauri_FilterById_Ok()
+        {
+            DoGetThesauri_FilterById_Ok();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetThesauri_FilterByAlias_Ok(bool? alias)
+        {
+            DoGetThesauri_FilterByAlias_Ok(alias);
+        }
+
+        [Fact]
+        public void GetThesauri_FilterByLanguage_Ok()
+        {
+            DoGetThesauri_FilterByLanguage_Ok();
+        }
+
+        [Fact]
         public void GetThesaurus_NotExisting_Null()
         {
             DoGetThesaurus_NotExisting_Null();

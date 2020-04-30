@@ -237,6 +237,62 @@ namespace Cadmus.Mongo
         }
 
         /// <summary>
+        /// Gets the specified page of thesauri.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Page.</returns>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public DataPage<Thesaurus> GetThesauri(ThesaurusFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            EnsureClientCreated(_options.ConnectionString);
+            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
+                .AsQueryable();
+
+            // apply filters
+            if (!string.IsNullOrEmpty(filter.Id))
+                thesauri = thesauri.Where(t => t.Id.Contains(filter.Id));
+
+            if (filter.IsAlias != null)
+            {
+                thesauri = filter.IsAlias.Value
+                    ? thesauri.Where(t => t.TargetId != null)
+                    : thesauri.Where(t => t.TargetId == null);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Language))
+            {
+                string suffix = "@" + filter.Language;
+                thesauri = thesauri.Where(t => t.Id.EndsWith(suffix));
+            }
+
+            // get total
+            int total = thesauri.Count();
+            if (total == 0)
+            {
+                return new DataPage<Thesaurus>(
+                    filter.PageNumber,
+                    filter.PageSize,
+                    0,
+                    Array.Empty<Thesaurus>());
+            }
+
+            // get page
+            var pagedThesauri = thesauri.OrderBy(t => t.Id)
+                .Skip(filter.GetSkipCount())
+                .Take(filter.PageSize)
+                .ToList();
+
+            return new DataPage<Thesaurus>(
+                filter.PageNumber,
+                filter.PageSize,
+                total,
+                new List<Thesaurus>(from t in pagedThesauri select t.ToThesaurus()));
+        }
+
+        /// <summary>
         /// Gets the thesaurus with the specified ID.
         /// </summary>
         /// <param name="id">The thesaurus ID. This usually should include the

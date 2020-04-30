@@ -74,6 +74,13 @@ namespace Cadmus.Core.Storage
         IList<string> GetThesaurusIds();
 
         /// <summary>
+        /// Gets the specified page of thesauri.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Page.</returns>
+        DataPage<Thesaurus> GetThesauri(ThesaurusFilter filter);
+
+        /// <summary>
         /// Gets the tag set with the specified ID.
         /// </summary>
         /// <param name="id">The tag set ID.</param>

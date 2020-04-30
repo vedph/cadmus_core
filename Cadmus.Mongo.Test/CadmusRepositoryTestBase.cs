@@ -305,16 +305,29 @@ namespace Cadmus.TestBase
         #endregion
 
         #region Thesauri
-        private void SeedThesauri(ICadmusRepository repository, int count)
+        private void SeedThesauri(ICadmusRepository repository, int count,
+            int aliasNr = 0, string oddLanguage = null)
         {
             for (int i = 1; i <= count; i++)
             {
-                Thesaurus thesaurus = new Thesaurus($"t{i}@en");
+                string id = $"t{i:00}@";
+                if (oddLanguage != null && (i % 2) != 0)
+                    id += oddLanguage;
+                else
+                    id += "en";
+
+                Thesaurus thesaurus = new Thesaurus(id);
+
                 for (int j = 1; j <= 5; j++)
                 {
                     thesaurus.AddEntry(new ThesaurusEntry
                         ($"entry{j}", $"value of entry{j}"));
                 }
+
+                // alias
+                if (aliasNr > 0 && i == aliasNr)
+                    thesaurus.TargetId = "t-target";
+
                 repository.AddThesaurus(thesaurus);
             }
         }
@@ -330,8 +343,127 @@ namespace Cadmus.TestBase
             Assert.Equal(3, ids.Count);
             for (int i = 1; i <= 3; i++)
             {
-                Assert.Equal($"t{i}@en", ids[i - 1]);
+                Assert.Equal($"t{i:00}@en", ids[i - 1]);
             }
+        }
+
+        protected void DoGetThesauri_NoFilterPage1_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 10);
+
+            DataPage<Thesaurus> page = repository.GetThesauri(new ThesaurusFilter
+            {
+                PageNumber = 1,
+                PageSize = 5
+            });
+
+            Assert.Equal(10, page.Total);
+            Assert.Equal("t01@en", page.Items[0].Id);
+            Assert.Equal("t02@en", page.Items[1].Id);
+            Assert.Equal("t03@en", page.Items[2].Id);
+            Assert.Equal("t04@en", page.Items[3].Id);
+            Assert.Equal("t05@en", page.Items[4].Id);
+        }
+
+        protected void DoGetThesauri_NoFilterPage2_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 10);
+
+            DataPage<Thesaurus> page = repository.GetThesauri(new ThesaurusFilter
+            {
+                PageNumber = 2,
+                PageSize = 5
+            });
+
+            Assert.Equal(10, page.Total);
+            Assert.Equal("t06@en", page.Items[0].Id);
+            Assert.Equal("t07@en", page.Items[1].Id);
+            Assert.Equal("t08@en", page.Items[2].Id);
+            Assert.Equal("t09@en", page.Items[3].Id);
+            Assert.Equal("t10@en", page.Items[4].Id);
+        }
+
+        protected void DoGetThesauri_FilterById_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 10);
+
+            DataPage<Thesaurus> page = repository.GetThesauri(new ThesaurusFilter
+            {
+                PageNumber = 1,
+                PageSize = 5,
+                Id = "03"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal("t03@en", page.Items[0].Id);
+        }
+
+        protected void DoGetThesauri_FilterByAlias_Ok(bool? alias)
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 10, 3);
+
+            DataPage<Thesaurus> page = repository.GetThesauri(new ThesaurusFilter
+            {
+                PageNumber = 1,
+                PageSize = 5,
+                IsAlias = alias
+            });
+
+            if (alias == null)
+            {
+                Assert.Equal(10, page.Total);
+                Assert.Equal("t01@en", page.Items[0].Id);
+                Assert.Equal("t02@en", page.Items[1].Id);
+                Assert.Equal("t03@en", page.Items[2].Id);
+                Assert.Equal("t04@en", page.Items[3].Id);
+                Assert.Equal("t05@en", page.Items[4].Id);
+            }
+            else
+            {
+                if (alias.Value)
+                {
+                    Assert.Equal(1, page.Total);
+                    Assert.Equal("t03@en", page.Items[0].Id);
+                }
+                else
+                {
+                    Assert.Equal(9, page.Total);
+                    Assert.Equal("t01@en", page.Items[0].Id);
+                    Assert.Equal("t02@en", page.Items[1].Id);
+                    Assert.Equal("t04@en", page.Items[2].Id);
+                    Assert.Equal("t05@en", page.Items[3].Id);
+                    Assert.Equal("t06@en", page.Items[4].Id);
+                }
+            }
+        }
+
+        protected void DoGetThesauri_FilterByLanguage_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+            SeedThesauri(repository, 10, 0, "it");
+
+            DataPage<Thesaurus> page = repository.GetThesauri(new ThesaurusFilter
+            {
+                PageNumber = 1,
+                PageSize = 5,
+                Language = "it"
+            });
+
+            Assert.Equal(5, page.Total);
+            Assert.Equal("t01@it", page.Items[0].Id);
+            Assert.Equal("t03@it", page.Items[1].Id);
+            Assert.Equal("t05@it", page.Items[2].Id);
+            Assert.Equal("t07@it", page.Items[3].Id);
+            Assert.Equal("t09@it", page.Items[4].Id);
         }
 
         protected void DoGetThesaurus_NotExisting_Null()
@@ -351,7 +483,7 @@ namespace Cadmus.TestBase
             ICadmusRepository repository = GetRepository();
             SeedThesauri(repository, 2);
 
-            Thesaurus thesaurus = repository.GetThesaurus("t2@en");
+            Thesaurus thesaurus = repository.GetThesaurus("t02@en");
 
             Assert.NotNull(thesaurus);
             Assert.Equal("en", thesaurus.GetLanguage());
@@ -371,7 +503,7 @@ namespace Cadmus.TestBase
 
             SeedThesauri(repository, 1);
 
-            Thesaurus thesaurus = repository.GetThesaurus("t1@en");
+            Thesaurus thesaurus = repository.GetThesaurus("t01@en");
 
             Assert.NotNull(thesaurus);
             Assert.Equal("en", thesaurus.GetLanguage());
@@ -389,7 +521,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
             SeedThesauri(repository, 1);
-            Thesaurus thesaurus = repository.GetThesaurus("t1@en");
+            Thesaurus thesaurus = repository.GetThesaurus("t01@en");
             thesaurus.AddEntry(new ThesaurusEntry("added", "here I am"));
 
             repository.AddThesaurus(thesaurus);
@@ -425,7 +557,7 @@ namespace Cadmus.TestBase
             ICadmusRepository repository = GetRepository();
             SeedThesauri(repository, 1);
 
-            repository.DeleteThesaurus("t1@en");
+            repository.DeleteThesaurus("t01@en");
 
             Assert.Empty(repository.GetThesaurusIds());
         }

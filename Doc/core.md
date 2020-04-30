@@ -699,6 +699,11 @@ As the part provider works also for closed generic types representing text layer
     PartFilter : +string ThesaurusScope
     PartFilter : +Tuple<string,bool>[] SortExpressions
 
+    ThesaurusFilter <|-- PagingOptions
+    ThesaurusFilter : +string Id
+    ThesaurusFilter : +bool? IsAlias
+    ThesaurusFilter : +string Language
+
     IHasVersion <|-- ItemInfo
     ItemInfo : +string Id
     ItemInfo : +string Title
@@ -795,6 +800,7 @@ As the part provider works also for closed generic types representing text layer
     ICadmusRepository : +AddFacetDefinition(FacetDefinition facet)
     ICadmusRepository : +DeleteFacetDefinition(string id)
     ICadmusRepository : +IList<string> GetThesaurusIds()
+    ICadmusRepository : +DataPage<Thesaurus> GetThesauri(ThesaurusFilter filter)
     ICadmusRepository : +Thesaurus GetThesaurus(string id)
     ICadmusRepository : +AddThesaurus(Thesaurus thesaurus)
     ICadmusRepository : +DeleteThesaurus(string id)
@@ -830,7 +836,7 @@ As the part provider works also for closed generic types representing text layer
 
 The *storage* namespace contains the components used to work with the underlying storage, like:
 
-- **filters** for browsing items and parts (`ItemFilter`, `PartFilter`, `VersionFilter`, `HistoryItemFilter`, `HistoryPartFilter`);
+- **filters** for browsing items and parts (`ItemFilter`, `PartFilter`, `VersionFilter`, `HistoryItemFilter`, `HistoryPartFilter`, `ThesaurusFilter`);
 - objects representing the **editing history** (`HistoryItem`, `HistoryPart`, `HistoryItemInfo`, `HistoryPartInfo`);
 - a **database management** interface (`IDatabaseManager`), used to represent an admin service to create and delete databases, mainly used for testing purposes;
 - a **repository** (`ICadmusRepository`), which connects any consumer code from upper layers to the lower data storage layer. The repository is the only access to data in the whole system. The implementation of this storage is found in separate packages, each related to a specific technology (e.g. MongoDB).

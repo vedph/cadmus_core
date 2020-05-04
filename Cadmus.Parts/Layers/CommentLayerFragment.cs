@@ -9,7 +9,7 @@ namespace Cadmus.Parts.Layers
     /// <summary>
     /// Generic comment fragment. This item contains a generic comment referred
     /// to a specific text portion. The text format depends on the implementor.
-    /// Tag: <c>fr.net.fusisoft.comment</c>
+    /// Tag: <c>fr.net.fusisoft.comment</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
     /// <seealso cref="IHasText" />

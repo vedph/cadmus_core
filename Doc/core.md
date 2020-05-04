@@ -41,6 +41,7 @@ This is the core namespace for the Cadmus system. It includes the following name
     IHasFragmentsT : +DeleteFragmentsAtIntegral(string location)
     IHasFragmentsT : +IList<TFragment> GetFragmentsAtIntegral(string location)
     IHasFragmentsT : +IList<TFragment> GetFragmentsAt(string location)
+    IHasFragmentsT : +string GetTextAt(IPart baseTextPart, string location)
 
     abstract class IPart
     IHasVersion <|-- IPart
@@ -355,6 +356,7 @@ The *layers* namespace contains components related to the text layers. Text laye
     YXLayerPartBaseT : +DeleteFragmentsAtIntegral(string location)
     YXLayerPartBaseT : +IList<TFragment> GetFragmentsAtIntegral(string location)
     YXLayerPartBaseT : +IList<TFragment> GetFragmentsAt(string location)
+    YXLayerPartBaseT : +string GetTextAt(IPart baseTextPart, string location)
 
     abstract class "IEditOperationDiffAdapter<TOperation>" as IEditOperationDiffAdapterT
     IEditOperationDiffAdapterT : +IList<TOperation> Adapt(IList<Diff> diffs)

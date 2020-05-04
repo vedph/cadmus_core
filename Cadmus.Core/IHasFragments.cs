@@ -49,5 +49,14 @@ namespace Cadmus.Core
         /// <param name="location">The location.</param>
         /// <returns>The fragments.</returns>
         IList<TFragment> GetFragmentsAt(string location);
+
+        /// <summary>
+        /// Gets the text at the specified location from the specified
+        /// base text part.
+        /// </summary>
+        /// <param name="baseTextPart">The base text part to get text from.</param>
+        /// <param name="location">The location.</param>
+        /// <returns>The text, or null if location is invalid.</returns>
+        string GetTextAt(IPart baseTextPart, string location);
     }
 }

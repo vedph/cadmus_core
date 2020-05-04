@@ -9,7 +9,7 @@ namespace Cadmus.Parts.Test.General
 {
     public sealed class TokenTextPartTest
     {
-        private static TokenTextPart GetPart()
+        private static TokenTextPart GetPart(int lineCount)
         {
             TokenTextPart part = new TokenTextPart
             {
@@ -19,7 +19,7 @@ namespace Cadmus.Parts.Test.General
                 UserId = "another",
                 Citation = "some-citation"
             };
-            for (int y = 1; y <= 3; y++)
+            for (int y = 1; y <= lineCount; y++)
             {
                 part.Lines.Add(new TextLine
                 {
@@ -33,7 +33,7 @@ namespace Cadmus.Parts.Test.General
         [Fact]
         public void Part_Is_Serializable()
         {
-            TokenTextPart part = GetPart();
+            TokenTextPart part = GetPart(3);
 
             string json = TestHelper.SerializePart(part);
             TokenTextPart part2 = TestHelper.DeserializePart<TokenTextPart>(json);
@@ -58,7 +58,7 @@ namespace Cadmus.Parts.Test.General
         [Fact]
         public void GetDataPins_NoCitation_Empty()
         {
-            TokenTextPart part = GetPart();
+            TokenTextPart part = GetPart(3);
             part.Citation = null;
 
             Assert.Empty(part.GetDataPins());
@@ -67,7 +67,7 @@ namespace Cadmus.Parts.Test.General
         [Fact]
         public void GetDataPins_Citation_1()
         {
-            TokenTextPart part = GetPart();
+            TokenTextPart part = GetPart(3);
 
             List<DataPin> pins = part.GetDataPins().ToList();
             Assert.Single(pins);

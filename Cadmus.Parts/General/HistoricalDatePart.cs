@@ -21,14 +21,14 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>date-sort-value</c> with the date sort value or 0.
+        /// Pins: <c>date-value</c> with the date sort value or 0.
         /// </summary>
         /// <returns>Pins.</returns>
         public override IEnumerable<DataPin> GetDataPins()
         {
             return new[]
             {
-                CreateDataPin("date-sort-value",
+                CreateDataPin("date-value",
                     (Date?.GetSortValue() ?? 0).ToString(CultureInfo.InvariantCulture))
             };
         }

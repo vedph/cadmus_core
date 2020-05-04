@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,115 @@ namespace Cadmus.Parts.Test.Layers
                 Assert.Equal("fr.tag", pin.Name);
                 Assert.Equal("scholarly", pin.Value);
             }
+        }
+
+        private static TiledTextPart GetTiledTextPart(int rowCount)
+        {
+            TiledTextPart part = new TiledTextPart
+            {
+                ItemId = Guid.NewGuid().ToString(),
+                CreatorId = "zeus",
+                UserId = "zeus"
+            };
+            char c = 'a';
+
+            for (int y = 0; y < rowCount; y++)
+            {
+                TextTileRow row = new TextTileRow
+                {
+                    Y = y + 1
+                };
+                part.Rows.Add(row);
+
+                for (int x = 0; x < 3; x++)
+                {
+                    TextTile tile = new TextTile
+                    {
+                        X = x + 1,
+                    };
+                    tile.Data[TextTileRow.TEXT_DATA_NAME] = $"{c}{x + 1}";
+                    row.Tiles.Add(tile);
+                    if (++c > 'z') c = 'a';
+                }
+            }
+            return part;
+        }
+
+        [Fact]
+        public void GetTextAt_InvalidLocation_Null()
+        {
+            TiledTextPart textPart = GetTiledTextPart(3);
+            TiledTextLayerPart<CommentLayerFragment> layerPart = GetPart();
+
+            string text = layerPart.GetTextAt(textPart, "12.3");
+
+            Assert.Null(text);
+        }
+
+        [Theory]
+        [InlineData("1.1", "a1")]
+        [InlineData("1.2", "b2")]
+        [InlineData("1.3", "c3")]
+        [InlineData("2.1", "d1")]
+        [InlineData("2.2", "e2")]
+        [InlineData("2.3", "f3")]
+        public void GetTextAt_SingleToken_Ok(string location, string expectedText)
+        {
+            TiledTextPart textPart = GetTiledTextPart(2);
+            TiledTextLayerPart<CommentLayerFragment> layerPart = GetPart();
+
+            string text = layerPart.GetTextAt(textPart, location);
+
+            Assert.Equal(expectedText, text);
+        }
+
+        [Theory]
+        [InlineData("1.1-1.2", "a1 b2")]
+        [InlineData("1.2-1.3", "b2 c3")]
+        [InlineData("1.1-1.3", "a1 b2 c3")]
+        [InlineData("2.1-2.2", "d1 e2")]
+        [InlineData("2.2-2.3", "e2 f3")]
+        [InlineData("2.1-2.3", "d1 e2 f3")]
+        public void GetTextAt_SingleLineRange_Ok(string location, string expectedText)
+        {
+            TiledTextPart textPart = GetTiledTextPart(2);
+            TiledTextLayerPart<CommentLayerFragment> layerPart = GetPart();
+
+            string text = layerPart.GetTextAt(textPart, location);
+
+            Assert.Equal(expectedText, text);
+        }
+
+        [Theory]
+        [InlineData("1.1-2.3", "a1 b2 c3\r\nd1 e2 f3")]
+        [InlineData("1.2-2.3", "b2 c3\r\nd1 e2 f3")]
+        [InlineData("1.3-2.3", "c3\r\nd1 e2 f3")]
+        [InlineData("1.1-2.2", "a1 b2 c3\r\nd1 e2")]
+        [InlineData("1.1-2.1", "a1 b2 c3\r\nd1")]
+        public void GetTextAt_2LinesRange_Ok(string location, string expectedText)
+        {
+            TiledTextPart textPart = GetTiledTextPart(3);
+            TiledTextLayerPart<CommentLayerFragment> layerPart = GetPart();
+
+            string text = layerPart.GetTextAt(textPart, location);
+
+            Assert.Equal(expectedText, text);
+        }
+
+        [Theory]
+        [InlineData("1.1-3.3", "a1 b2 c3\r\nd1 e2 f3\r\ng1 h2 i3")]
+        [InlineData("1.2-3.3", "b2 c3\r\nd1 e2 f3\r\ng1 h2 i3")]
+        [InlineData("1.3-3.3", "c3\r\nd1 e2 f3\r\ng1 h2 i3")]
+        [InlineData("1.1-3.2", "a1 b2 c3\r\nd1 e2 f3\r\ng1 h2")]
+        [InlineData("1.1-3.1", "a1 b2 c3\r\nd1 e2 f3\r\ng1")]
+        public void GetTextAt_3LinesRange_Ok(string location, string expectedText)
+        {
+            TiledTextPart textPart = GetTiledTextPart(3);
+            TiledTextLayerPart<CommentLayerFragment> layerPart = GetPart();
+
+            string text = layerPart.GetTextAt(textPart, location);
+
+            Assert.Equal(expectedText, text);
         }
     }
 }

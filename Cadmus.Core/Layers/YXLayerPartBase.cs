@@ -25,7 +25,7 @@ namespace Cadmus.Core.Layers
         /// Initializes a new instance of the <see cref="YXLayerPartBase{TFragment}"/>
         /// class.
         /// Note that the <see cref="PartBase.RoleId"/> property is set here
-        /// to the tag value of the fragment type. For instance, a 
+        /// to the tag value of the fragment type. For instance, a
         /// layer part with fragments whose type has a <see cref="TagAttribute"/>
         /// value equal to <c>fr.comment</c> will have its
         /// <see cref="PartBase.RoleId"/> property equal to <c>fr.comment</c>.
@@ -140,5 +140,14 @@ namespace Cadmus.Core.Layers
                     where TokenTextLocation.Parse(fr.Location).Overlaps(requestedLoc)
                     select fr).ToList();
         }
+
+        /// <summary>
+        /// Gets the text at the specified location from the specified
+        /// base text part.
+        /// </summary>
+        /// <param name="baseTextPart">The base text part to get text from.</param>
+        /// <param name="location">The location.</param>
+        /// <returns>The text, or null if location is invalid.</returns>
+        public abstract string GetTextAt(IPart baseTextPart, string location);
     }
 }

@@ -39,8 +39,11 @@ namespace Cadmus.Archive.Parts
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>pins</returns>
-        public override IEnumerable<DataPin> GetDataPins()
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Counts?.Count == 0) return Array.Empty<DataPin>();
 

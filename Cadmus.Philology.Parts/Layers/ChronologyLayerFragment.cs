@@ -49,7 +49,11 @@ namespace Cadmus.Philology.Parts.Layers
         /// When the date is specified, the pins are <c>fr.date-value</c>,
         /// and eventually <c>fr.tag</c> when the tag is set.
         /// </summary>
-        public IEnumerable<DataPin> GetDataPins()
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
+        /// <returns>Pins.</returns>
+        public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Date == null)
                 return Enumerable.Empty<DataPin>();

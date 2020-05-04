@@ -1,4 +1,6 @@
 ﻿using Cadmus.Core;
+using Cadmus.Parts.General;
+using Cadmus.Parts.Layers;
 using Cadmus.Philology.Parts.Layers;
 using Fusi.Tools.Config;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
             OrthographyLayerFragment fr = new OrthographyLayerFragment
             {
                 Location = "1.23",
-                Standard = "bixit",
+                Standard = "vixit",
             };
             foreach (string operation in operations)
                 fr.Operations.Add(operation);
@@ -54,6 +56,53 @@ namespace Cadmus.Philology.Parts.Test.Layers
             OrthographyLayerFragment fr = GetFragment();
 
             Assert.Empty(fr.GetDataPins());
+        }
+
+        [Fact]
+        public void GetDataPins_WithItem_2()
+        {
+            Item item = new Item
+            {
+                CreatorId = "zeus",
+                UserId = "zeus",
+                Title = "Mock",
+                Description = "A mock item",
+                FacetId = "default",
+                SortKey = "mock"
+            };
+            TokenTextPart textPart = new TokenTextPart
+            {
+                ItemId = item.Id,
+                CreatorId = item.CreatorId,
+                UserId = item.UserId,
+            };
+            textPart.Lines.Add(new TextLine
+            {
+                Text = "quae bixit annis X",
+                Y = 1
+            });
+            item.Parts.Add(textPart);
+
+            TokenTextLayerPart<OrthographyLayerFragment> layerPart =
+                new TokenTextLayerPart<OrthographyLayerFragment>();
+            OrthographyLayerFragment fr;
+            layerPart.AddFragment(fr = new OrthographyLayerFragment
+            {
+                Location = "1.2",
+                Standard = "vixit",
+            });
+            item.Parts.Add(layerPart);
+
+            List<DataPin> pins = fr.GetDataPins(item).ToList();
+            Assert.Equal(2, pins.Count);
+
+            DataPin pin = pins.Find(p => p.Name == "fr.orthography-txt");
+            Assert.NotNull(pin);
+            Assert.Equal("bixit", pin.Value);
+
+            pin = pins.Find(p => p.Name == "fr.orthography-std");
+            Assert.NotNull(pin);
+            Assert.Equal("vixit", pin.Value);
         }
 
         [Fact]

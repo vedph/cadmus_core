@@ -23,8 +23,11 @@ namespace Cadmus.Parts.General
         /// Get all the key=value pairs exposed by the implementor.
         /// Pins: <c>date-value</c> with the date sort value or 0.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>Pins.</returns>
-        public override IEnumerable<DataPin> GetDataPins()
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             return new[]
             {

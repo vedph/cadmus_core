@@ -56,10 +56,13 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
-        /// Pins: <c>metre</c>=metre, suffixed with <c>*</c> when imperfect.
+        /// Pins: <c>fr.metre</c>=metre, suffixed with <c>*</c> when imperfect.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>Pins.</returns>
-        public IEnumerable<DataPin> GetDataPins()
+        public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Metre == null) return Enumerable.Empty<DataPin>();
             return new[]

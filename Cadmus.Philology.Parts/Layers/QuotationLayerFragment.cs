@@ -55,8 +55,11 @@ namespace Cadmus.Philology.Parts.Layers
         /// Get all the pins exposed by the implementor.
         /// Pins: <c>fr.author</c>=author, <c>fr.work</c>=work, in this order.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>Pins.</returns>
-        public IEnumerable<DataPin> GetDataPins()
+        public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Author == null || Work == null)
                 return Enumerable.Empty<DataPin>();

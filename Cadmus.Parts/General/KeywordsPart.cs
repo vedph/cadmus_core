@@ -58,8 +58,11 @@ namespace Cadmus.Parts.General
         /// e.g. <c>keyword.eng</c> as name and <c>sample</c> as value.
         /// The pins are returned sorted by language and then by value.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>pins</returns>
-        public override IEnumerable<DataPin> GetDataPins()
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Keywords == null || Keywords.Count == 0)
                 return Enumerable.Empty<DataPin>();

@@ -49,8 +49,11 @@ namespace Cadmus.Philology.Parts.Layers
         /// For each unique witness source ID, in their order, a pin with
         /// name=<c>fr.id</c> and value=ID is returned.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>Pins.</returns>
-        public IEnumerable<DataPin> GetDataPins()
+        public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Witnesses == null || Witnesses.Count == 0)
                 return Enumerable.Empty<DataPin>();

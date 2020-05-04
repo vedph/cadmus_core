@@ -10,6 +10,9 @@ namespace Cadmus.Core
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
-        IEnumerable<DataPin> GetDataPins();
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
+        IEnumerable<DataPin> GetDataPins(IItem item = null);
     }
 }

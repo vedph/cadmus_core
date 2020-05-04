@@ -125,8 +125,11 @@ namespace Cadmus.Parts.Layers
         /// By convention, fragment-generated pins should all start with
         /// prefix <see cref="PartBase.FR_PREFIX"/>.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>Pins.</returns>
-        public override IEnumerable<DataPin> GetDataPins()
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             List<DataPin> pins = new List<DataPin>();
             if (Fragments == null) return pins;
@@ -134,7 +137,7 @@ namespace Cadmus.Parts.Layers
             // add pins from fragments
             foreach (TFragment fr in Fragments)
             {
-                foreach (DataPin frPin in fr.GetDataPins())
+                foreach (DataPin frPin in fr.GetDataPins(item))
                 {
                     DataPin pin = CreateDataPin(frPin.Name, frPin.Value);
                     pins.Add(pin);

@@ -68,8 +68,11 @@ namespace Cadmus.Philology.Parts.Layers
         /// the variant), <c>fr.witness</c>=witness, <c>fr.author</c>=author;
         /// each distinct variant, witness, and author has a pin.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>pins</returns>
-        public IEnumerable<DataPin> GetDataPins()
+        public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             HashSet<string> witnesses = new HashSet<string>();
             HashSet<string> authors = new HashSet<string>();

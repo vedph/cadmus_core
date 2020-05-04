@@ -32,8 +32,11 @@ namespace Cadmus.Parts.General
         /// Each category is a pin, with name=<c>category</c> and value=category.
         /// Pins are sorted by their value.
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>pins</returns>
-        public override IEnumerable<DataPin> GetDataPins()
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Categories == null || Categories.Count == 0)
                 return Enumerable.Empty<DataPin>();

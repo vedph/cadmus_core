@@ -278,7 +278,7 @@ namespace Cadmus.Index.Sql
             DateTime now = DateTime.UtcNow;
             foreach (IPart part in item.Parts)
             {
-                foreach (DataPin pin in part.GetDataPins())
+                foreach (DataPin pin in part.GetDataPins(item))
                 {
                     InsertPin(new IndexPin
                     {

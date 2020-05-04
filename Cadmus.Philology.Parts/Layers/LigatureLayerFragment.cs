@@ -50,12 +50,15 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>ligature</c>=ligature type letter (one letter picked
+        /// Pins: <c>fr.ligature</c>=ligature type letter (one letter picked
         /// from <c>LIORGNCX</c>, each representing a ligature type;
         /// see <see cref="LigatureType"/>).
         /// </summary>
+        /// <param name="item">The optional item. The item with its parts
+        /// can optionally be passed to this method for those parts requiring
+        /// to access further data.</param>
         /// <returns>Data pins.</returns>
-        public IEnumerable<DataPin> GetDataPins()
+        public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             return new[]
             {

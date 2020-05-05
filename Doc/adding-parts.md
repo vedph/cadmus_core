@@ -12,7 +12,7 @@ Guidelines for **implementing a part**:
 
 - *do not add any logic* to the part. The part is just a POCO object modeling the data it represents, and should have no logic. The only piece of logic required is the method returning the part's data pins, which is just a form of reflecting on the part's data themselves, e.g. for indexing.
 
-- if creating a part representing a *base text* for text layers, implement the `IHasText` interface by providing a `GetText()` method which, whatever the part's model, produces a single string representing its whole text. The same interface should be implemented whenever your part has some rather long piece of free, unstructured text you might want to be included in processes like full-text indexing.
+- if creating a part representing a *base text* for text layers, implement the `IHasText` interface by providing a `GetText()` method which, whatever the part's model, produces a single string representing its whole text. The same interface should be implemented whenever your part has some rather long piece of free, unstructured text you might want to be included in processes like full-text indexing. Also, set the role ID to `base-text` (defined in `PartBase.BASE_TEXT_ROLE_ID`).
 
 - consider that the part will be subject to automatic serialization and deserialization. As the part is just a POCO object, this should not pose any issue.
 
@@ -30,8 +30,11 @@ public class __NAME__Part : PartBase
     /// <summary>
     /// Get all the key=value pairs (pins) exposed by the implementor.
     /// </summary>
+    /// <param name="item">The optional item. The item with its parts
+    /// can optionally be passed to this method for those parts requiring
+    /// to access further data.</param>
     /// <returns>The pins.</returns>
-    public override IEnumerable<DataPin> GetDataPins()
+    public override IEnumerable<DataPin> GetDataPins(IItem item)
     {
         // TODO: implement indexing logic...
         // sample:
@@ -133,7 +136,7 @@ For layer parts, the same guidelines already listed for the other parts are appl
 
 - give the fragment a type ID (via the usual `TagAttribute`), which *must* begin with the prefix `fr.` (=`PartBase.FR_PREFIX`; note the trailing dot).
 
-- if adding pins in the fragment, just provide the pin's name and value; the other properties will be supplied by the container part. By convention, you should prefix your pin name with the `fr.` prefix.
+- if adding pins in the fragment, just provide the pin's name and value; the other properties will be supplied by the container part. By convention, you should prefix your pin name with the `fr.` prefix (defined in `PartBase.FR_PREFIX`).
 
 Anyway, adding a new layer part would be rarely required, as there is just a generic (parameterized) layer part provided for this: one part, many fragments. You rather have to provide fragments and their tests.
 

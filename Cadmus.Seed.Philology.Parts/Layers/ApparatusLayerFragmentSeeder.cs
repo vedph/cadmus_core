@@ -21,7 +21,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
     {
         private readonly List<int> _witAndAuthorNumbers;
         private string[] _authors;
-        private string[] _witnesses;
+        private readonly string[] _witnesses;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApparatusLayerFragmentSeeder"/>
@@ -54,7 +54,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
         }
 
         /// <summary>
-        /// Creates and seeds a new part.
+        /// Creates and seeds a new fragment.
         /// </summary>
         /// <param name="item">The item this part should belong to.</param>
         /// <param name="location">The location.</param>

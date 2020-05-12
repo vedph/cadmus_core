@@ -11,7 +11,7 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Bibliography part seeder.
-    /// Tag: <c>seed.net.fusisoft.bibliography</c>
+    /// Tag: <c>seed.net.fusisoft.bibliography</c>.
     /// </summary>
     /// <seealso cref="PartSeederBase" />
     public sealed class BibliographyPartSeeder : PartSeederBase,
@@ -46,7 +46,7 @@ namespace Cadmus.Seed.Parts.General
 
         private static BibAuthor ParseAuthor(string name)
         {
-            Match m = Regex.Match(name, "(?<l>[^,])(?:,(?<f>.+))?");
+            Match m = Regex.Match(name, "(?<l>[^,]+)(?:,(?<f>.+))?");
 
             BibAuthor author = new BibAuthor();
 
@@ -139,6 +139,18 @@ namespace Cadmus.Seed.Parts.General
                         entry.Edition = (short)Randomizer.Seed.Next(1, 3);
                         break;
                 }
+
+                // keywords
+                List<Keyword> keywords = new List<Keyword>();
+                for (int j = 0; j < Randomizer.Seed.Next(0, 3); j++)
+                {
+                    keywords.Add(new Keyword
+                    {
+                        Language = SeedHelper.RandomPickOneOf(_languages),
+                        Value = f.Lorem.Word()
+                    });
+                }
+                if (keywords.Count > 0) entry.Keywords = keywords.ToArray();
 
                 part.Entries.Add(entry);
             }

@@ -86,9 +86,9 @@ namespace Cadmus.Seed.Philology.Parts.Layers
                     Work = work,
                     Citation = f.Random.Int(1, 100).ToString(CultureInfo.InvariantCulture),
                     CitationUri = $"urn:{author.ToLowerInvariant()}/{work.ToLowerInvariant()}",
-                    Variant = Randomizer.Seed.Next(1, 5) == 1?
+                    Variant = Randomizer.Seed.Next(1, 5) == 1 ?
                         f.Lorem.Sentence() : null,
-                    Tag = Randomizer.Seed.Next(1, 5) == 1?
+                    Tag = Randomizer.Seed.Next(1, 5) == 1 ?
                         f.Lorem.Word() : null,
                     Note = Randomizer.Seed.Next(1, 5) == 1 ?
                         f.Lorem.Sentence() : null

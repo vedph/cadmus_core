@@ -72,7 +72,7 @@ namespace Cadmus.Parts.General
 
             // [ed]
             if (entry.Edition > 0)
-                sb.Append('[').Append(entry.Edition).Append(']');
+                sb.Append('[').Append(entry.Edition).Append("] ");
 
             // pages
             if (entry.FirstPage > 0)

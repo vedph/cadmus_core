@@ -130,6 +130,7 @@ namespace Cadmus.Parts.General
             sb.Append("[Bibliography]");
             if (Entries?.Count > 0)
             {
+                sb.Append(' ');
                 var groups = from e in Entries
                              group e by e.TypeId into g
                              select g;

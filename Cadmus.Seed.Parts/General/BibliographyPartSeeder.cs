@@ -14,6 +14,7 @@ namespace Cadmus.Seed.Parts.General
     /// Tag: <c>seed.net.fusisoft.bibliography</c>.
     /// </summary>
     /// <seealso cref="PartSeederBase" />
+    [Tag("seed.net.fusisoft.bibliography")]
     public sealed class BibliographyPartSeeder : PartSeederBase,
         IConfigurable<BibliographyPartSeederOptions>
     {

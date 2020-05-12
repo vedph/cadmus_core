@@ -10,17 +10,29 @@ namespace Cadmus.Philology.Parts.Test.Layers
 {
     public sealed class QuotationLayerFragmentTest
     {
-        private static QuotationLayerFragment GetFragment()
+        private static QuotationLayerFragment GetFragment(int count)
         {
-            return new QuotationLayerFragment
+            QuotationLayerFragment fr = new QuotationLayerFragment
             {
-                Location = "1.23",
-                Author = "Hom.",
-                Work = "Il.",
-                Citation = "3.24",
-                VariantOf = "original",
-                Note = "note"
+                Location = "1.2"
             };
+
+            for (int i = 0; i < count; i++)
+            {
+                char c = (char)('a' + i);
+                fr.Entries.Add(new QuotationEntry
+                {
+                    Author = $"author-{c}",
+                    Work = $"work-{c}",
+                    Citation = $"{i + 1}",
+                    CitationUri = $"urn:{i + 1}",
+                    Variant = $"variant-{c}",
+                    Tag = $"tag-{c}",
+                    Note = $"note-{c}"
+                });
+            }
+
+            return fr;
         }
 
         [Fact]
@@ -36,53 +48,98 @@ namespace Cadmus.Philology.Parts.Test.Layers
         [Fact]
         public void Fragment_Is_Serializable()
         {
-            QuotationLayerFragment fr = GetFragment();
+            QuotationLayerFragment fr = GetFragment(2);
 
             string json = TestHelper.SerializeFragment(fr);
             QuotationLayerFragment fr2 =
                 TestHelper.DeserializeFragment<QuotationLayerFragment>(json);
 
             Assert.Equal(fr.Location, fr2.Location);
-            Assert.Equal(fr.Author, fr2.Author);
-            Assert.Equal(fr.Work, fr2.Work);
-            Assert.Equal(fr.Citation, fr2.Citation);
-            Assert.Equal(fr.VariantOf, fr2.VariantOf);
-            Assert.Equal(fr.Note, fr2.Note);
+            Assert.Equal(fr.Entries.Count, fr2.Entries.Count);
+            for (int i = 0; i < fr.Entries.Count; i++)
+            {
+                QuotationEntry expEntry = fr.Entries[i];
+                QuotationEntry actEntry = fr2.Entries[i];
+                Assert.Equal(expEntry.Author, actEntry.Author);
+                Assert.Equal(expEntry.Work, actEntry.Work);
+                Assert.Equal(expEntry.Citation, actEntry.Citation);
+                Assert.Equal(expEntry.CitationUri, actEntry.CitationUri);
+                Assert.Equal(expEntry.Variant, actEntry.Variant);
+                Assert.Equal(expEntry.Tag, actEntry.Tag);
+                Assert.Equal(expEntry.Note, actEntry.Note);
+            }
         }
 
         [Fact]
-        public void GetDataPins_NoAuthor_0()
+        public void GetDataPins_Empty_0()
         {
-            QuotationLayerFragment fr = GetFragment();
-            fr.Author = null;
+            QuotationLayerFragment fr = GetFragment(0);
 
             Assert.Empty(fr.GetDataPins());
         }
 
         [Fact]
-        public void GetDataPins_NoWork_0()
+        public void GetDataPins_SingleEntry_Ok()
         {
-            QuotationLayerFragment fr = GetFragment();
-            fr.Work = null;
-
-            Assert.Empty(fr.GetDataPins());
-        }
-
-        [Fact]
-        public void GetDataPins_AuthorAndWork_2()
-        {
-            QuotationLayerFragment fr = GetFragment();
+            QuotationLayerFragment fr = GetFragment(1);
 
             List<DataPin> pins = fr.GetDataPins().ToList();
 
-            Assert.Equal(2, pins.Count);
-            DataPin pin = pins[0];
-            Assert.Equal("fr.author", pin.Name);
-            Assert.Equal("Hom.", pin.Value);
+            Assert.Equal(4, pins.Count);
 
-            pin = pins[1];
-            Assert.Equal("fr.work", pin.Name);
-            Assert.Equal("Il.", pin.Value);
+            // fr.author
+            DataPin pin = pins.Find(p => p.Name == "fr.author");
+            Assert.NotNull(pin);
+            Assert.Equal("authora", pin.Value);
+
+            // fr.work
+            pin = pins.Find(p => p.Name == "fr.work");
+            Assert.NotNull(pin);
+            Assert.Equal("worka", pin.Value);
+
+            // fr.citation-uri
+            pin = pins.Find(p => p.Name == "fr.citation-uri");
+            Assert.NotNull(pin);
+            Assert.Equal("urn:1", pin.Value);
+
+            // fr.tag
+            pin = pins.Find(p => p.Name == "fr.tag");
+            Assert.NotNull(pin);
+            Assert.Equal("tag-a", pin.Value);
+        }
+
+        [Fact]
+        public void GetDataPins_MultipleEntries_Ok()
+        {
+            QuotationLayerFragment fr = GetFragment(2);
+
+            List<DataPin> pins = fr.GetDataPins().ToList();
+
+            Assert.Equal(8, pins.Count);
+
+            // fr.author
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.author" && p.Value == "authora"));
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.author" && p.Value == "authorb"));
+
+            // fr.work
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.work" && p.Value == "worka"));
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.work" && p.Value == "workb"));
+
+            // fr.citation-uri
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.citation-uri" && p.Value == "urn:1"));
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.citation-uri" && p.Value == "urn:2"));
+
+            // fr.tag
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.tag" && p.Value == "tag-a"));
+            Assert.NotNull(pins.Find(
+                p => p.Name == "fr.tag" && p.Value == "tag-b"));
         }
     }
 }

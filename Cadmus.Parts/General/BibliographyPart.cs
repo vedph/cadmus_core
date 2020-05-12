@@ -1,5 +1,4 @@
 ﻿using Cadmus.Core;
-using Fusi.Text.Unicode;
 using Fusi.Tools.Config;
 using System.Linq;
 using System.Collections.Generic;
@@ -15,8 +14,6 @@ namespace Cadmus.Parts.General
     [Tag("net.fusisoft.bibliography")]
     public sealed class BibliographyPart : PartBase
     {
-        private static UniData _ud;
-
         /// <summary>
         /// Gets or sets the bibliographic entries.
         /// </summary>
@@ -30,53 +27,13 @@ namespace Cadmus.Parts.General
             Entries = new List<BibEntry>();
         }
 
-        private static string Filter(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return null;
-
-            StringBuilder sb = new StringBuilder();
-            bool prevWs = false;
-
-            foreach (char c in text)
-            {
-                if (char.IsWhiteSpace(c))
-                {
-                    if (prevWs || sb.Length == 0) continue;
-                    sb.Append(' ');
-                    prevWs = true;
-                }
-                else
-                {
-                    prevWs = false;
-                    switch (c)
-                    {
-                        case '\u2019':
-                        case '\'': sb.Append('\'');
-                            break;
-                        default:
-                            if (char.IsLetter(c))
-                            {
-                                sb.Append(_ud.GetSegment(
-                                    char.ToLowerInvariant(c), true));
-                            }
-                            else
-                            {
-                                if (char.IsDigit(c)) sb.Append(c);
-                            }
-                            break;
-                    }
-                }
-            }
-            return sb.ToString().TrimEnd();
-        }
-
         private static void AddAuthors(IList<BibAuthor> authors,
             HashSet<string> target)
         {
             if (authors?.Count > 0)
             {
                 foreach (BibAuthor author in authors)
-                    target.Add(Filter(author.LastName));
+                    target.Add(StandardTextFilter.Apply(author.LastName));
             }
         }
 
@@ -117,8 +74,6 @@ namespace Cadmus.Parts.General
         /// <returns>The pins.</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            if (_ud == null) _ud = new UniData();
-
             // collect data from entries
             HashSet<string> typeIds = new HashSet<string>();
             HashSet<string> authors = new HashSet<string>();
@@ -136,11 +91,11 @@ namespace Cadmus.Parts.General
                 AddAuthors(entry.Contributors, authors);
 
                 // title (filtered)
-                string title = Filter(entry.Title);
+                string title = StandardTextFilter.Apply(entry.Title);
                 if (!string.IsNullOrEmpty(title)) titles.Add(title);
 
                 // container (filtered)
-                string container = Filter(entry.Container);
+                string container = StandardTextFilter.Apply(entry.Container);
                 if (!string.IsNullOrEmpty(container)) containers.Add(container);
 
                 // keywords

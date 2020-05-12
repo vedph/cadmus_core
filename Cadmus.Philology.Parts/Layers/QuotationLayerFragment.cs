@@ -26,30 +26,29 @@ namespace Cadmus.Philology.Parts.Layers
         public string Location { get; set; }
 
         /// <summary>
-        /// Gets or sets the author (e.g. <c>Hom.</c>).
+        /// Gets or sets the entries.
         /// </summary>
-        public string Author { get; set; }
+        public List<QuotationEntry> Entries { get; set; }
 
         /// <summary>
-        /// Gets or sets the work (e.g. <c>Il.</c>).
+        /// Initializes a new instance of the <see cref="QuotationLayerFragment"/>
+        /// class.
         /// </summary>
-        public string Work { get; set; }
+        public QuotationLayerFragment()
+        {
+            Entries = new List<QuotationEntry>();
+        }
 
-        /// <summary>
-        /// Gets or sets the work's passage citation (e.g. <c>3.24</c>).
-        /// </summary>
-        public string Citation { get; set; }
-
-        /// <summary>
-        /// Gets or sets the original quotation text, when the text this layer
-        /// fragment refers to  is a variant of it.
-        /// </summary>
-        public string VariantOf { get; set; }
-
-        /// <summary>
-        /// Gets or sets an optional note.
-        /// </summary>
-        public string Note { get; set; }
+        private static void AddSetToPins(HashSet<string> set, string name,
+            List<DataPin> pins)
+        {
+            pins.AddRange(from s in set
+                          select new DataPin
+                          {
+                              Name = name,
+                              Value = s
+                          });
+        }
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
@@ -61,22 +60,44 @@ namespace Cadmus.Philology.Parts.Layers
         /// <returns>Pins.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            if (Author == null || Work == null)
-                return Enumerable.Empty<DataPin>();
+            List<DataPin> pins = new List<DataPin>();
+            HashSet<string> authors = new HashSet<string>();
+            HashSet<string> works = new HashSet<string>();
+            HashSet<string> citations = new HashSet<string>();
+            HashSet<string> tags = new HashSet<string>();
+            string filtered;
 
-            return new[]
+            foreach (QuotationEntry entry in Entries)
             {
-                new DataPin
+                if (!string.IsNullOrEmpty(entry.Author))
                 {
-                    Name = PartBase.FR_PREFIX + "author",
-                    Value = Author
-                },
-                new DataPin
-                {
-                    Name = PartBase.FR_PREFIX + "work",
-                    Value = Work
+                    filtered = StandardTextFilter.Apply(entry.Author);
+                    if (filtered.Length > 0) authors.Add(filtered);
                 }
-            };
+                if (!string.IsNullOrEmpty(entry.Work))
+                {
+                    filtered = StandardTextFilter.Apply(entry.Work);
+                    if (filtered.Length > 0) works.Add(filtered);
+                }
+                if (!string.IsNullOrEmpty(entry.CitationUri))
+                    citations.Add(entry.CitationUri);
+                if (!string.IsNullOrEmpty(entry.Tag))
+                    tags.Add(entry.Tag);
+            }
+
+            // fr.author
+            AddSetToPins(authors, PartBase.FR_PREFIX + "author", pins);
+
+            // fr.work
+            AddSetToPins(works, PartBase.FR_PREFIX + "work", pins);
+
+            // fr.citation-uri
+            AddSetToPins(citations, PartBase.FR_PREFIX + "citation-uri", pins);
+
+            // fr.tag
+            AddSetToPins(tags, PartBase.FR_PREFIX + "tag", pins);
+
+            return pins;
         }
 
         /// <summary>
@@ -87,7 +108,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// </returns>
         public override string ToString()
         {
-            return $"[Quotation] {Location} {Author} {Work} {Citation}".TrimEnd();
+            return $"[Quotation] {Entries?.Count ?? 0}";
         }
     }
 }

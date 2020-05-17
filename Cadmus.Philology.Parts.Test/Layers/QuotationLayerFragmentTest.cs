@@ -10,9 +10,9 @@ namespace Cadmus.Philology.Parts.Test.Layers
 {
     public sealed class QuotationLayerFragmentTest
     {
-        private static QuotationLayerFragment GetFragment(int count)
+        private static QuotationsLayerFragment GetFragment(int count)
         {
-            QuotationLayerFragment fr = new QuotationLayerFragment
+            QuotationsLayerFragment fr = new QuotationsLayerFragment
             {
                 Location = "1.2"
             };
@@ -38,7 +38,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         [Fact]
         public void Fragment_Has_Tag()
         {
-            TagAttribute attr = typeof(QuotationLayerFragment).GetTypeInfo()
+            TagAttribute attr = typeof(QuotationsLayerFragment).GetTypeInfo()
                 .GetCustomAttribute<TagAttribute>();
             string typeId = attr != null ? attr.Tag : GetType().FullName;
             Assert.NotNull(typeId);
@@ -48,11 +48,11 @@ namespace Cadmus.Philology.Parts.Test.Layers
         [Fact]
         public void Fragment_Is_Serializable()
         {
-            QuotationLayerFragment fr = GetFragment(2);
+            QuotationsLayerFragment fr = GetFragment(2);
 
             string json = TestHelper.SerializeFragment(fr);
-            QuotationLayerFragment fr2 =
-                TestHelper.DeserializeFragment<QuotationLayerFragment>(json);
+            QuotationsLayerFragment fr2 =
+                TestHelper.DeserializeFragment<QuotationsLayerFragment>(json);
 
             Assert.Equal(fr.Location, fr2.Location);
             Assert.Equal(fr.Entries.Count, fr2.Entries.Count);
@@ -73,7 +73,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         [Fact]
         public void GetDataPins_Empty_0()
         {
-            QuotationLayerFragment fr = GetFragment(0);
+            QuotationsLayerFragment fr = GetFragment(0);
 
             Assert.Empty(fr.GetDataPins());
         }
@@ -81,7 +81,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         [Fact]
         public void GetDataPins_SingleEntry_Ok()
         {
-            QuotationLayerFragment fr = GetFragment(1);
+            QuotationsLayerFragment fr = GetFragment(1);
 
             List<DataPin> pins = fr.GetDataPins().ToList();
 
@@ -111,7 +111,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
         [Fact]
         public void GetDataPins_MultipleEntries_Ok()
         {
-            QuotationLayerFragment fr = GetFragment(2);
+            QuotationsLayerFragment fr = GetFragment(2);
 
             List<DataPin> pins = fr.GetDataPins().ToList();
 

@@ -3,7 +3,7 @@
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// A quotation entry used in <see cref="QuotationLayerFragment"/>.
+    /// A quotation entry used in <see cref="QuotationsLayerFragment"/>.
     /// </summary>
     public sealed class QuotationEntry
     {

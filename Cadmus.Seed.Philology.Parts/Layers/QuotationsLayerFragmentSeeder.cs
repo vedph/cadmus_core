@@ -11,13 +11,13 @@ using System.Linq;
 namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
-    /// Seeder for <see cref="QuotationLayerFragment"/>.
-    /// Tag: <c>seed.fr.net.fusisoft.quotation</c>.
+    /// Seeder for <see cref="QuotationsLayerFragment"/>.
+    /// Tag: <c>seed.fr.net.fusisoft.quotations</c>.
     /// </summary>
     /// <seealso cref="FragmentSeederBase" />
     /// <seealso cref="IConfigurable{QuotationLayerFragmentSeederOptions}" />
-    [Tag("seed.fr.net.fusisoft.quotation")]
-    public sealed class QuotationLayerFragmentSeeder : FragmentSeederBase,
+    [Tag("seed.fr.net.fusisoft.quotations")]
+    public sealed class QuotationsLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<QuotationLayerFragmentSeederOptions>
     {
         private readonly List<int> _authorNumbers;
@@ -25,9 +25,9 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 
         /// <summary>
         /// Initializes a new instance of the
-        /// <see cref="QuotationLayerFragmentSeeder"/> class.
+        /// <see cref="QuotationsLayerFragmentSeeder"/> class.
         /// </summary>
-        public QuotationLayerFragmentSeeder()
+        public QuotationsLayerFragmentSeeder()
         {
             _authorNumbers = Enumerable.Range(1, 10).ToList();
             _authors = (from n in _authorNumbers
@@ -38,7 +38,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
         /// Gets the type of the fragment.
         /// </summary>
         /// <returns>Type.</returns>
-        public override Type GetFragmentType() => typeof(QuotationLayerFragment);
+        public override Type GetFragmentType() => typeof(QuotationsLayerFragment);
 
         /// <summary>
         /// Configures the object with the specified options.
@@ -70,7 +70,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
                 throw new ArgumentNullException(nameof(baseText));
 
             Faker f = new Faker();
-            QuotationLayerFragment fr = new QuotationLayerFragment
+            QuotationsLayerFragment fr = new QuotationsLayerFragment
             {
                 Location = location
             };
@@ -100,7 +100,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
     }
 
     /// <summary>
-    /// Options for <see cref="QuotationLayerFragmentSeeder"/>.
+    /// Options for <see cref="QuotationsLayerFragmentSeeder"/>.
     /// </summary>
     public sealed class QuotationLayerFragmentSeederOptions
     {

@@ -26,16 +26,16 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
         [Fact]
         public void TypeHasTagAttribute()
         {
-            Type t = typeof(QuotationLayerFragmentSeeder);
+            Type t = typeof(QuotationsLayerFragmentSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.fr.net.fusisoft.quotation", attr.Tag);
+            Assert.Equal("seed.fr.net.fusisoft.quotations", attr.Tag);
         }
 
         [Fact]
         public void Seed_WithOptions_Ok()
         {
-            QuotationLayerFragmentSeeder seeder = new QuotationLayerFragmentSeeder();
+            QuotationsLayerFragmentSeeder seeder = new QuotationsLayerFragmentSeeder();
             seeder.SetSeedOptions(_seedOptions);
             seeder.Configure(new QuotationLayerFragmentSeederOptions
             {
@@ -51,7 +51,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
 
             Assert.NotNull(fragment);
 
-            QuotationLayerFragment fr = fragment as QuotationLayerFragment;
+            QuotationsLayerFragment fr = fragment as QuotationsLayerFragment;
             Assert.NotNull(fr);
 
             Assert.Equal("1.1", fr.Location);

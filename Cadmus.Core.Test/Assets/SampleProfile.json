@@ -50,7 +50,7 @@
         },
         {
           "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.quotation",
+          "roleId": "fr.net.fusisoft.quotations",
           "name": "quotations",
           "description": "Quotations in text.",
           "colorKey": "863577",

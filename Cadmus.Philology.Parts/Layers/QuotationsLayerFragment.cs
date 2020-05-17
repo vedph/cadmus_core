@@ -7,12 +7,13 @@ using Fusi.Tools.Config;
 namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
-    /// Quotation layer fragment, used to mark literary quotations in the text.
-    /// Tag: <c>fr.net.fusisoft.quotation</c>.
+    /// Quotations layer fragment, used to mark one or more literary quotations
+    /// corresponding to a specific portion of the text.
+    /// <para>Tag: <c>fr.net.fusisoft.quotations</c>.</para>
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.quotation")]
-    public sealed class QuotationLayerFragment : ITextLayerFragment
+    [Tag("fr.net.fusisoft.quotations")]
+    public sealed class QuotationsLayerFragment : ITextLayerFragment
     {
         /// <summary>
         /// Gets or sets the location of this fragment.
@@ -26,15 +27,15 @@ namespace Cadmus.Philology.Parts.Layers
         public string Location { get; set; }
 
         /// <summary>
-        /// Gets or sets the entries.
+        /// Gets or sets the quotation entries.
         /// </summary>
         public List<QuotationEntry> Entries { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuotationLayerFragment"/>
+        /// Initializes a new instance of the <see cref="QuotationsLayerFragment"/>
         /// class.
         /// </summary>
-        public QuotationLayerFragment()
+        public QuotationsLayerFragment()
         {
             Entries = new List<QuotationEntry>();
         }

@@ -12,7 +12,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// <summary>
     /// Orthography layer fragment, used to mark deviations from the
     /// orthographical norm.
-    /// Tag: <c>fr.net.fusisoft.orthography</c>.
+    /// <para>Tag: <c>fr.net.fusisoft.orthography</c>.</para>
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
     [Tag("fr.net.fusisoft.orthography")]
@@ -106,7 +106,8 @@ namespace Cadmus.Philology.Parts.Layers
                 Regex roleIdRegex = new Regex("^" + attr.Tag + "(?::.+)?$");
 
                 IHasFragments<OrthographyLayerFragment> layerPart =
-                    item.Parts.Find(p => roleIdRegex.IsMatch(p.RoleId))
+                    item.Parts.Find(p => p.RoleId != null
+                        && roleIdRegex.IsMatch(p.RoleId))
                     as IHasFragments<OrthographyLayerFragment>;
                 if (layerPart == null) return pins;
 

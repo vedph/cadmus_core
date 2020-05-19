@@ -33,7 +33,7 @@ namespace Cadmus.Seed.Philology.Parts.Layers
         /// Gets the type of the fragment.
         /// </summary>
         /// <returns>Type.</returns>
-        public override Type GetFragmentType() => typeof(QuotationsLayerFragment);
+        public override Type GetFragmentType() => typeof(ChronologyLayerFragment);
 
         /// <summary>
         /// Configures the object with the specified options.

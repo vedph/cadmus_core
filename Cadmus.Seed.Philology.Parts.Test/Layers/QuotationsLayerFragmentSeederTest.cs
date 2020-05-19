@@ -10,13 +10,13 @@ using Xunit;
 
 namespace Cadmus.Seed.Philology.Parts.Test.Layers
 {
-    public sealed class QuotationLayerFragmentSeederTest
+    public sealed class QuotationsLayerFragmentSeederTest
     {
         private static readonly PartSeederFactory _factory;
         private static readonly SeedOptions _seedOptions;
         private static readonly IItem _item;
 
-        static QuotationLayerFragmentSeederTest()
+        static QuotationsLayerFragmentSeederTest()
         {
             _factory = TestHelper.GetFactory();
             _seedOptions = _factory.GetSeedOptions();
@@ -30,6 +30,13 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
             Assert.Equal("seed.fr.net.fusisoft.quotations", attr.Tag);
+        }
+
+        [Fact]
+        public void GetFragmentType_Ok()
+        {
+            QuotationsLayerFragmentSeeder seeder = new QuotationsLayerFragmentSeeder();
+            Assert.Equal(typeof(QuotationsLayerFragment), seeder.GetFragmentType());
         }
 
         [Fact]

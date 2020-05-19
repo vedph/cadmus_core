@@ -33,6 +33,13 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
         }
 
         [Fact]
+        public void GetFragmentType_Ok()
+        {
+            ChronologyLayerFragmentSeeder seeder = new ChronologyLayerFragmentSeeder();
+            Assert.Equal(typeof(ChronologyLayerFragment), seeder.GetFragmentType());
+        }
+
+        [Fact]
         public void Seed_WithOptions_Ok()
         {
             ChronologyLayerFragmentSeeder seeder = new ChronologyLayerFragmentSeeder();

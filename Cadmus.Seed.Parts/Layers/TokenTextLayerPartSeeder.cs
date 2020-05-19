@@ -125,15 +125,13 @@ namespace Cadmus.Seed.Parts.Layers
 
             // must invoke AddFragment via reflection, as the closed type
             // is known only at runtime
-            Type t = part.GetType();
-
             foreach (var lt in locAndTexts)
             {
                 ITextLayerFragment fr = seeder.GetFragment(
                     item, lt.Item1, lt.Item2);
                 if (fr != null)
                 {
-                    t.InvokeMember("AddFragment",
+                    constructedType.InvokeMember("AddFragment",
                         BindingFlags.InvokeMethod,
                         null,
                         part,

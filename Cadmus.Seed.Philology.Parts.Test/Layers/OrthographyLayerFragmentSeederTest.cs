@@ -33,6 +33,13 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
         }
 
         [Fact]
+        public void GetFragmentType_Ok()
+        {
+            OrthographyLayerFragmentSeeder seeder = new OrthographyLayerFragmentSeeder();
+            Assert.Equal(typeof(OrthographyLayerFragment), seeder.GetFragmentType());
+        }
+
+        [Fact]
         public void Seed_WithoutTags_Ok()
         {
             OrthographyLayerFragmentSeeder seeder = new OrthographyLayerFragmentSeeder();

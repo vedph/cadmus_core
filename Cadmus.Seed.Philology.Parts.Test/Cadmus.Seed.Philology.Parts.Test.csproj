@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cadmus.Seed.Parts\Cadmus.Seed.Parts.csproj" />
     <ProjectReference Include="..\Cadmus.Seed.Philology.Parts\Cadmus.Seed.Philology.Parts.csproj" />
   </ItemGroup>
 

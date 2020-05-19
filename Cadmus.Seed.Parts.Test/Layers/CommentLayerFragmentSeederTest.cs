@@ -32,6 +32,13 @@ namespace Cadmus.Seed.Parts.Test.Layers
         }
 
         [Fact]
+        public void GetFragmentType_Ok()
+        {
+            CommentLayerFragmentSeeder seeder = new CommentLayerFragmentSeeder();
+            Assert.Equal(typeof(CommentLayerFragment), seeder.GetFragmentType());
+        }
+
+        [Fact]
         public void Seed_WithoutTags_NullTag()
         {
             CommentLayerFragmentSeeder seeder = new CommentLayerFragmentSeeder();

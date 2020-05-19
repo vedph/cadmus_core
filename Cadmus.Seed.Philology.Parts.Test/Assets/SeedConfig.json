@@ -28,6 +28,15 @@
     },
     {
       "typeId": "net.fusisoft.token-text-layer",
+      "roleId": "fr.net.fusisoft.quotations",
+      "name": "quotations",
+      "description": "Literary quotations.",
+      "colorKey": "DAA520",
+      "groupKey": "text",
+      "sortKey": "text-quotations"
+    },
+    {
+      "typeId": "net.fusisoft.token-text-layer",
       "roleId": "fr.net.fusisoft.witnesses",
       "name": "witnesses",
       "description": "Witnesses list.",
@@ -73,6 +82,16 @@
             "ph.c.occl.",
             "ph.c.liq.",
             "ph.c.nas."
+          ]
+        }
+      },
+      {
+        "id": "seed.fr.net.fusisoft.quotations",
+        "options": {
+          "authors": [
+            "Fest.",
+            "Diac.",
+            "Isid."
           ]
         }
       },

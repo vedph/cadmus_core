@@ -33,6 +33,13 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
         }
 
         [Fact]
+        public void GetFragmentType_Ok()
+        {
+            WitnessesLayerFragmentSeeder seeder = new WitnessesLayerFragmentSeeder();
+            Assert.Equal(typeof(WitnessesLayerFragment), seeder.GetFragmentType());
+        }
+
+        [Fact]
         public void Seed_NoOptions_Null()
         {
             WitnessesLayerFragmentSeeder seeder = new WitnessesLayerFragmentSeeder();

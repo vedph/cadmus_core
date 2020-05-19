@@ -1,6 +1,7 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Philology.Parts.Layers;
+using Cadmus.Seed.Parts.General;
 using Cadmus.Seed.Philology.Parts.Layers;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
 using Microsoft.Extensions.Configuration;
@@ -47,6 +48,8 @@ namespace Cadmus.Seed.Parts.Test
                 new StandardPartTypeProvider(map),
                 new[]
                 {
+                    // Cadmus.Seed.Parts
+                    typeof(NotePartSeeder).Assembly,
                     // Cadmus.Seed.Philology.Parts
                     typeof(ApparatusLayerFragmentSeeder).Assembly
                 });

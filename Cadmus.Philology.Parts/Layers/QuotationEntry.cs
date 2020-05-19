@@ -8,12 +8,12 @@ namespace Cadmus.Philology.Parts.Layers
     public sealed class QuotationEntry
     {
         /// <summary>
-        /// Gets or sets the author (e.g. <c>Hom.</c>).
+        /// Gets or sets the author (e.g. <c>verg</c>=Vergilius).
         /// </summary>
         public string Author { get; set; }
 
         /// <summary>
-        /// Gets or sets the work (e.g. <c>Il.</c>).
+        /// Gets or sets the work (e.g. <c>ecl</c>=eclogae).
         /// </summary>
         public string Work { get; set; }
 
@@ -24,7 +24,7 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Gets or sets an optional URI used to identify the quotation's
-        /// citation in an reference citational system.
+        /// citation in an external reference citational system.
         /// </summary>
         public string CitationUri { get; set; }
 

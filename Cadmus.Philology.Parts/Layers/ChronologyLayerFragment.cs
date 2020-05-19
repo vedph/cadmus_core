@@ -40,6 +40,13 @@ namespace Cadmus.Philology.Parts.Layers
         public string Label { get; set; }
 
         /// <summary>
+        /// Gets or sets an external event ID. This can be used to connect the
+        /// datation in this fragment with a specific event in an external
+        /// resource, e.g. an ontology.
+        /// </summary>
+        public string EventId { get; set; }
+
+        /// <summary>
         /// Gets or sets the date.
         /// </summary>
         public HistoricalDate Date { get; set; }
@@ -47,7 +54,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// When the date is specified, the pins are <c>fr.date-value</c>,
-        /// and eventually <c>fr.tag</c> when the tag is set.
+        /// and eventually <c>fr.tag</c> and <c>fr.event-id</c>.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
@@ -73,6 +80,15 @@ namespace Cadmus.Philology.Parts.Layers
                 {
                     Name = PartBase.FR_PREFIX + "tag",
                     Value = Tag
+                });
+            }
+
+            if (!string.IsNullOrEmpty(EventId))
+            {
+                pins.Add(new DataPin
+                {
+                    Name = PartBase.FR_PREFIX + "event-id",
+                    Value = EventId
                 });
             }
 

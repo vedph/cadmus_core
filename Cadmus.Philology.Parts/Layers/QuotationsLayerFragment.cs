@@ -53,7 +53,9 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
-        /// Pins: <c>fr.author</c>=author, <c>fr.work</c>=work, in this order.
+        /// Pins: for each entry (avoiding duplicates): <c>fr.author</c>=author
+        /// (filtered), <c>fr.work</c>=work (filtered), and optionally
+        /// <c>fr.citation-uri</c>=citation URI and <c>fr.tag</c>=tag.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring

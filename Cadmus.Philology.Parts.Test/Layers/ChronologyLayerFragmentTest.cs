@@ -12,14 +12,15 @@ namespace Cadmus.Philology.Parts.Test.Layers
 {
     public sealed class ChronologyLayerFragmentTest
     {
-        private static ChronologyLayerFragment GetFragment()
+        private static ChronologyLayerFragment GetFragment(string eventId = null)
         {
             return new ChronologyLayerFragment
             {
                 Location = "1.23",
                 Label = "Battle of Marathon",
                 Tag = "battle",
-                Date = HistoricalDate.Parse("490 BC")
+                Date = HistoricalDate.Parse("490 BC"),
+                EventId = eventId
             };
         }
 
@@ -92,6 +93,30 @@ namespace Cadmus.Philology.Parts.Test.Layers
             pin = pins.Find(p => p.Name == "fr.tag");
             Assert.NotNull(pin);
             Assert.Equal(fr.Tag, pin.Value);
+        }
+
+        [Fact]
+        public void GetDataPins_TagAndEventId_3()
+        {
+            ChronologyLayerFragment fr = GetFragment("events:marathon_battle");
+
+            List<DataPin> pins = fr.GetDataPins().ToList();
+
+            Assert.Equal(3, pins.Count);
+
+            DataPin pin = pins.Find(p => p.Name == "fr.date-value");
+            Assert.NotNull(pin);
+            Assert.Equal(
+                fr.Date.GetSortValue().ToString(CultureInfo.InvariantCulture),
+                pin.Value);
+
+            pin = pins.Find(p => p.Name == "fr.tag");
+            Assert.NotNull(pin);
+            Assert.Equal(fr.Tag, pin.Value);
+
+            pin = pins.Find(p => p.Name == "fr.event-id");
+            Assert.NotNull(pin);
+            Assert.Equal(fr.EventId, pin.Value);
         }
     }
 }

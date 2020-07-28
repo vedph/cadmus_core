@@ -17,12 +17,23 @@ namespace Cadmus.Index.Sql
         void SetFlagDefinitions(IList<FlagDefinition> definitions);
 
         /// <summary>
-        /// Builds the SQL code corresponding to the specified query and
-        /// paging options.
+        /// Builds the SQL code corresponding to the specified item query and
+        /// paging options. This query returns information about all the items
+        /// matching the specified parameters, sorted by item's sort key.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <param name="options">The paging options.</param>
         /// <returns>SQL code for both page and total.</returns>
-        Tuple<string, string> Build(string query, PagingOptions options);
+        Tuple<string, string> BuildForItem(string query, PagingOptions options);
+
+        /// <summary>
+        /// Builds the SQL code corresponding to the specified pin query and
+        /// paging options. This query returns all the pins matching the specified
+        /// parameters, sorted by name and value.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <param name="options">The paging options.</param>
+        /// <returns>SQL code for both page and total.</returns>
+        Tuple<string, string> BuildForPin(string query, PagingOptions options);
     }
 }

@@ -35,6 +35,9 @@ This is the core namespace for the Cadmus system. It includes the following name
     DataPin : +string PartId
     DataPin : +string RoleId
 
+    DataPinInfo <|-- DataPin
+    DataPinInfo : +string PartTypeId
+
     abstract class "IHasFragments<TFragment>" as IHasFragmentsT
     IHasFragmentsT : +List<TFragment> Fragments
     IHasFragmentsT : +AddFragment(TFragment fragment)

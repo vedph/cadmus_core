@@ -54,13 +54,13 @@ namespace Cadmus.Index.Sql
         protected abstract ISqlQueryBuilder GetQueryBuilder();
 
         /// <summary>
-        /// Searches the index with the specified query.
+        /// Searches for items in the index with the specified query.
         /// </summary>
         /// <param name="query">The query text.</param>
         /// <param name="options">The paging options.</param>
         /// <returns>Page of results.</returns>
         /// <exception cref="ArgumentNullException">query or options</exception>
-        public DataPage<ItemInfo> Search(string query, PagingOptions options)
+        public DataPage<ItemInfo> SearchItems(string query, PagingOptions options)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -70,7 +70,7 @@ namespace Cadmus.Index.Sql
             if (_queryBuilder == null) _queryBuilder = GetQueryBuilder();
             if (_queryBuilder == null) return null;
 
-            var pageAndTot = _queryBuilder.Build(query, options);
+            var pageAndTot = _queryBuilder.BuildForItem(query, options);
 
             if (Connection == null)
             {
@@ -138,6 +138,81 @@ namespace Cadmus.Index.Sql
                 options.PageNumber,
                 options.PageSize,
                 total, items);
+        }
+
+        /// <summary>
+        /// Searches for pins in the index with the specified query.
+        /// </summary>
+        /// <param name="query">The query text.</param>
+        /// <param name="options">The paging options.</param>
+        /// <returns>Page of results.</returns>
+        /// <exception cref="ArgumentNullException">query or options</exception>
+        public DataPage<DataPinInfo> SearchPins(string query, PagingOptions options)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (_queryBuilder == null) _queryBuilder = GetQueryBuilder();
+            if (_queryBuilder == null) return null;
+
+            var pageAndTot = _queryBuilder.BuildForPin(query, options);
+
+            if (Connection == null)
+            {
+                Connection = GetConnection();
+                Connection.Open();
+            }
+
+            DbCommand pageCommand = GetCommand();
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+            pageCommand.CommandText = pageAndTot.Item1;
+            pageCommand.Connection = Connection;
+
+            DbCommand totCommand = GetCommand();
+            totCommand.CommandText = pageAndTot.Item2;
+            totCommand.Connection = Connection;
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+
+            List<DataPinInfo> pins = new List<DataPinInfo>();
+
+            int total = Convert.ToInt32(totCommand.ExecuteScalar());
+            if (total == 0)
+            {
+                return new DataPage<DataPinInfo>(
+                    options.PageNumber,
+                    options.PageSize,
+                    0,
+                    pins);
+            }
+
+            using (DbDataReader reader = pageCommand.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    DataPinInfo pin = new DataPinInfo
+                    {
+                        ItemId = reader.GetFieldValue<string>(
+                            reader.GetOrdinal("itemId")),
+                        PartId = reader.GetFieldValue<string>(
+                            reader.GetOrdinal("partId")),
+                        PartTypeId = reader.GetFieldValue<string>(
+                            reader.GetOrdinal("partTypeId")),
+                        RoleId = reader.GetFieldValue<string>(
+                            reader.GetOrdinal("roleId")),
+                        Name = reader.GetFieldValue<string>(
+                            reader.GetOrdinal("name")),
+                        Value = reader.GetFieldValue<string>(
+                            reader.GetOrdinal("value"))
+                    };
+                    pins.Add(pin);
+                }
+            }
+            return new DataPage<DataPinInfo>(
+                options.PageNumber,
+                options.PageSize,
+                total, pins);
         }
 
         /// <summary>

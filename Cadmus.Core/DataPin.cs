@@ -8,19 +8,27 @@ namespace Cadmus.Core
     /// </summary>
     /// <remarks>
     /// A data pin is just a name/value pair derived from an item's part.
-    /// Most parts expose such pairs to the outer world mainly for indexing purposes.
-    /// For instance, a datation part might expose a numeric value representing its
-    /// content.As each part is an independent entity, with its own model, it is
-    /// only the part which can know which data could be extracted from it for
-    /// indexing.Thus, typically parts implement this interface. The data pin is
-    /// generic enough to represent different levels of granularity: it may just be a
-    /// name/value property, or a more complex entity, e.g.a triple.Note that these
-    /// pins are not stored, but calculated. The calculation is implemented in the
-    /// part's own code. Of course, this does not stop us to store the snapshot
-    /// results of such calculations, either elsewhere or in the same data store,
-    /// should this be required for publishing purposes.
+    /// Most parts expose such pairs to the outer world mainly for indexing
+    /// purposes.
+    /// <para>
+    /// For instance, a datation part might expose a numeric value representing
+    /// its content. As each part is an independent entity, with its own model,
+    /// it is only the part which can know which data could be extracted from
+    /// it for indexing. Thus, typically parts implement this interface.
+    /// </para>
+    /// <para>
+    /// The data pin is generic enough to represent different levels of
+    /// granularity: it may just be a name/value property, or a more complex
+    /// entity, e.g.a triple.
+    /// </para>
+    /// <para>
+    /// Note that these pins are not stored, but calculated. The calculation
+    /// is implemented in the part's own code. Of course, this does not stop
+    /// us to store the snapshot results of such calculations, either elsewhere
+    /// or in the same data store.
+    /// </para>
     /// </remarks>
-    public sealed class DataPin
+    public class DataPin
     {
         private static readonly Regex _keyRegex =
             new Regex(@"^[a-zA-Z0-9\-_\.]+$");

@@ -382,7 +382,7 @@ namespace Cadmus.Index.Sql
         protected abstract void AppendPaging(PagingOptions options,
             StringBuilder sb);
 
-        private string BuildFromSql()
+        private string BuildItemSqlFrom()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("FROM ").AppendLine(ET("item"))
@@ -394,15 +394,28 @@ namespace Cadmus.Index.Sql
             return sb.ToString();
         }
 
+        private string BuildPinSqlFrom()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("FROM ").AppendLine(ET("pin"))
+              .Append("INNER JOIN ").AppendLine(ET("item"))
+              .Append("ON ")
+              .Append(ETP("pin", "itemId"))
+              .Append('=')
+              .AppendLine(ETP("item", "id"));
+            return sb.ToString();
+        }
+
         /// <summary>
-        /// Builds the SQL code corresponding to the specified query and
-        /// paging options.
+        /// Builds the SQL code corresponding to the specified item query and
+        /// paging options. This query returns information about all the items
+        /// matching the specified parameters, sorted by item's sort key.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <param name="options">The paging options.</param>
         /// <returns>SQL code for both page and total.</returns>
         /// <exception cref="ArgumentNullException">options or query</exception>
-        public Tuple<string, string> Build(string query, PagingOptions options)
+        public Tuple<string, string> BuildForItem(string query, PagingOptions options)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
@@ -422,7 +435,7 @@ namespace Cadmus.Index.Sql
                    .Append(ETP("item", "id"))
                    .AppendLine(")");
 
-            string fromSql = BuildFromSql();
+            string fromSql = BuildItemSqlFrom();
             sbPage.Append(fromSql);
             sbTotal.Append(fromSql);
 
@@ -436,6 +449,57 @@ namespace Cadmus.Index.Sql
               .Append(ETP("item", "sortKey"))
               .Append(',')
               .AppendLine(ETP("item", "id"));
+
+            // paging (for page only)
+            AppendPaging(options, sbPage);
+
+            return Tuple.Create(sbPage.ToString(), sbTotal.ToString());
+        }
+
+        /// <summary>
+        /// Builds the SQL code corresponding to the specified pin query and
+        /// paging options. This query returns all the pins matching the specified
+        /// parameters, sorted by name and value.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <param name="options">The paging options.</param>
+        /// <returns>SQL code for both page and total.</returns>
+        /// <exception cref="ArgumentNullException">options or query</exception>
+        public Tuple<string, string> BuildForPin(string query, PagingOptions options)
+        {
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+            if (query == null) throw new ArgumentNullException(nameof(query));
+
+            StringBuilder sbPage = new StringBuilder();
+            StringBuilder sbTotal = new StringBuilder();
+
+            // select distinct item... inner join pin on item.id=pin.itemId
+            sbPage.AppendLine("SELECT DISTINCT")
+              .AppendLine(ETPS("pin",
+                "itemId", "partId", "partTypeId", "roleId", "name", "value"));
+
+            sbTotal.Append("SELECT COUNT(DISTINCT ")
+                   .Append(ETPS("pin",
+                        "itemId", "partId", "partTypeId", "roleId", "name", "value"))
+                   .AppendLine(")");
+
+            string fromSql = BuildPinSqlFrom();
+            sbPage.Append(fromSql);
+            sbTotal.Append(fromSql);
+
+            // where
+            string whereSql = BuildWhereSql(query);
+            sbPage.Append(whereSql);
+            sbTotal.Append(whereSql);
+
+            // order by (for page only)
+            sbPage.Append("ORDER BY ")
+              .Append(ETP("pin", "name"))
+              .Append(',')
+              .Append(ETP("pin", "value"))
+              .Append(',')
+              .AppendLine(ETP("pin", "id"));
 
             // paging (for page only)
             AppendPaging(options, sbPage);

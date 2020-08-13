@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.2.51</Version>
+    <Version>2.2.52</Version>
     <Company>Fusi</Company>
     <Authors>Daniele Fusi</Authors>
     <Product>Cadmus</Product>
@@ -16,9 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.10.4" />
-    <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.10.4" />
+    <PackageReference Include="MongoDB.Bson" Version="2.11.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.0" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.11.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -520,6 +520,14 @@ namespace Cadmus.Mongo
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
+            // creator and creation time cannot be changed once set
+            MongoItem old = items.Find(i => i.Id == item.Id).FirstOrDefault();
+            if (old?.CreatorId != null)
+            {
+                item.CreatorId = old.CreatorId;
+                item.TimeCreated = old.TimeCreated;
+            }
+
             if (history)
             {
                 // add the new item to the history, as newly created or updated
@@ -1402,6 +1410,15 @@ namespace Cadmus.Mongo
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
+
+            // creator and creation time cannot be changed once set
+            MongoPart old = parts.Find(p => p.Id == part.Id).FirstOrDefault();
+            if (old?.CreatorId != null)
+            {
+                part.CreatorId = old.CreatorId;
+                part.TimeCreated = old.TimeCreated;
+            }
+
             string json = JsonSerializer.Serialize(part, part.GetType(),
                 _jsonOptions);
 

@@ -36,6 +36,7 @@ CREATE TABLE `pin` (
   KEY `value_ix` (`value`),
   KEY `pin_itemid_fk` (`itemId`),
   CONSTRAINT `pin_itemid_fk` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`)
+  ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DELIMITER ;;

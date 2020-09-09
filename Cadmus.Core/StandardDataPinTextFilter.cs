@@ -1,15 +1,17 @@
 ﻿using Fusi.Text.Unicode;
+using System;
 using System.Text;
 
 namespace Cadmus.Core
 {
     /// <summary>
-    /// A simple general purpose text filter for pin values. This preserves
+    /// A simple, general purpose text filter for pin values. This preserves
     /// only letters, apostrophes and whitespaces, also removing any diacritics
     /// from the letters and lowercasing them. Whitespaces are flattened into
-    /// spaces and normalized.
+    /// spaces and normalized. Digits are dropped (by default) or preserved
+    /// according to the options specified.
     /// </summary>
-    public static class PinTextFilter
+    public sealed class StandardDataPinTextFilter : IDataPinTextFilter
     {
         private static UniData _ud;
 
@@ -19,17 +21,19 @@ namespace Cadmus.Core
         /// and uppercase letters are lowercased. Whitespaces are normalized
         /// and flattened into space, and get trimmed if initial or final.
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="preserveDigits">True to preserve also digits; false
-        /// to discard them.</param>
-        /// <returns>The filtered text.</returns>
-        public static string Apply(string text, bool preserveDigits = false)
+        /// <param name="text">The text to apply this filter to.</param>
+        /// <returns>Filtered text.</returns>
+        /// <param name="options">A boolean value, true to preserve digits;
+        /// false to drop them (default).</param>
+        public string Apply(string text, object options = null)
         {
             if (string.IsNullOrEmpty(text)) return text;
 
             StringBuilder sb = new StringBuilder();
             bool prevWS = true;
             if (_ud == null) _ud = new UniData();
+
+            bool preserveDigits = options != null && Convert.ToBoolean(options);
 
             foreach (char c in text)
             {

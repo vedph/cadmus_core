@@ -68,6 +68,7 @@ namespace Cadmus.Parts.General
                 return Enumerable.Empty<DataPin>();
 
             List<DataPin> pins = new List<DataPin>();
+            IDataPinTextFilter filter = new StandardDataPinTextFilter();
 
             var keysByLang = from k in Keywords
                              group k by k.Language
@@ -77,9 +78,9 @@ namespace Cadmus.Parts.General
 
             foreach (var g in keysByLang)
             {
-                string[] values = (from k in g
-                                  orderby k.Value
-                                  select k.Value).ToArray();
+                var values = from k in g
+                             orderby k.Value
+                             select filter.Apply(k.Value, true);
 
                 pins.AddRange(from value in values
                               select CreateDataPin($"keyword.{g.Key}", value));
@@ -92,7 +93,7 @@ namespace Cadmus.Parts.General
         /// Converts to string.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

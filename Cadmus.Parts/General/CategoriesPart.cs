@@ -35,14 +35,22 @@ namespace Cadmus.Parts.General
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>pins</returns>
+        /// <returns>pins: <c>tot-count</c> and a collection of pins with
+        /// keys: <c>category</c> (filtered, with digits).</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            if (Categories == null || Categories.Count == 0)
-                return Enumerable.Empty<DataPin>();
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
 
-            return from category in Categories.OrderBy(s => s)
-                select CreateDataPin("category", category);
+            builder.Set("tot", Categories?.Count ?? 0, false);
+
+            if (Categories?.Count > 0)
+            {
+                builder.AddValues("category", Categories,
+                    filter: true, filterOptions: true);
+            }
+
+            return builder.Build(this);
         }
 
         /// <summary>

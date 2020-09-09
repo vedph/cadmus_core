@@ -84,13 +84,17 @@ namespace Cadmus.Philology.Parts.Test.Layers
         }
 
         [Fact]
-        public void GetDataPins_TwoEntries_2()
+        public void GetDataPins_TwoEntries_Ok()
         {
             ApparatusLayerFragment fr = GetFragment(2);
 
             List<DataPin> pins = fr.GetDataPins().ToList();
 
-            Assert.Equal(2 + 1 + 1, pins.Count);
+            Assert.Equal(5, pins.Count);
+
+            DataPin pin = pins.Find(p => p.Name == "fr.tot-count");
+            Assert.NotNull(pin);
+            Assert.Equal("2", pin.Value);
 
             List<DataPin> variantPins =
                 pins.Where(p => p.Name == "fr.variant").ToList();

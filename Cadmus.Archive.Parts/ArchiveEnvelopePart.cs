@@ -40,7 +40,7 @@ namespace Cadmus.Archive.Parts
         /// <remarks>
         /// <list type="bullet">
         /// <item>
-        /// <term>archive-envelope-nr</term>
+        /// <term>envelope-nr</term>
         /// <description>envelope number</description>
         /// </item>
         /// </list>
@@ -50,7 +50,7 @@ namespace Cadmus.Archive.Parts
         {
             return new[]
             {
-                CreateDataPin("archive-envelope-nr",
+                CreateDataPin("envelope-nr",
                     Number.ToString(CultureInfo.InvariantCulture))
             };
         }

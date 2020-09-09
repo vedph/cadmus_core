@@ -15,7 +15,7 @@ namespace Cadmus.Archive.Parts
     /// <para>Search pins:</para>
     /// <list type="bullet">
     /// <item>
-    /// <term>counts.K where K is a key</term>
+    /// <term>count-K where K is a key</term>
     /// <description>value</description>
     /// </item>
     /// </list>
@@ -48,15 +48,15 @@ namespace Cadmus.Archive.Parts
             if (Counts?.Count == 0) return Array.Empty<DataPin>();
 
             return from p in Counts
-                select CreateDataPin($"counts.{p.Key}",
+                select CreateDataPin($"count-{p.Key}",
                     p.Value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

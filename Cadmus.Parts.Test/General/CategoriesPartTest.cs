@@ -44,11 +44,17 @@ namespace Cadmus.Parts.Test.General
         }
 
         [Fact]
-        public void GetDataPins_NoCategories_Empty()
+        public void GetDataPins_NoCategories_Ok()
         {
             CategoriesPart part = GetPart();
 
-            Assert.Empty(part.GetDataPins());
+            List<DataPin> pins = part.GetDataPins().ToList();
+
+            Assert.Single(pins);
+            DataPin pin = pins[0];
+            TestHelper.AssertPinIds(part, pin);
+            Assert.Equal("tot-count", pin.Name);
+            Assert.Equal("0", pin.Value);
         }
 
         [Fact]
@@ -57,21 +63,22 @@ namespace Cadmus.Parts.Test.General
             CategoriesPart part = GetPart("alpha", "beta");
 
             List<DataPin> pins = part.GetDataPins().ToList();
-            Assert.Equal(2, pins.Count);
+            Assert.Equal(3, pins.Count);
 
-            DataPin pin = pins[0];
-            Assert.Equal(part.ItemId, pin.ItemId);
-            Assert.Equal(part.Id, pin.PartId);
-            Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("category", pin.Name);
-            Assert.Equal("alpha", pin.Value);
+            DataPin pin = pins.Find(p => p.Name == "tot-count");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
+            Assert.Equal("2", pin.Value);
 
-            pin = pins[1];
-            Assert.Equal(part.ItemId, pin.ItemId);
-            Assert.Equal(part.Id, pin.PartId);
-            Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("category", pin.Name);
-            Assert.Equal("beta", pin.Value);
+            pin = pins.Find(p => p.Name == "category"
+                && p.Value == "alpha");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
+
+            pin = pins.Find(p => p.Name == "category"
+                && p.Value == "beta");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
         }
     }
 }

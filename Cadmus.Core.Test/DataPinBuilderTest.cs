@@ -201,6 +201,57 @@ namespace Cadmus.Core.Test
             AssertPinIds(part, pin);
             Assert.Equal("2", pin.Value);
         }
+
+        [Fact]
+        public void AddValue_MultipleWithSameKey_Once()
+        {
+            DataPinBuilder builder = new DataPinBuilder();
+
+            const string text = "The álpha!";
+            builder.AddValue("alpha", text);
+            builder.AddValue("alpha", text);
+
+            IPart part = new MockPart();
+            List<DataPin> pins = builder.Build(part);
+
+            Assert.Single(pins);
+            Assert.Equal("alpha", pins[0].Name);
+            Assert.Equal(text, pins[0].Value);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void AddValue_Unfiltered_Ok(bool preserveDigits)
+        {
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
+            builder.AddValue("alpha", " The  álpha1 is here! ", null, true,
+                preserveDigits);
+
+            IPart part = new MockPart();
+            List<DataPin> pins = builder.Build(part);
+
+            Assert.Single(pins);
+            Assert.Equal("alpha", pins[0].Name);
+            Assert.Equal(preserveDigits
+                ? "the alpha1 is here" : "the alpha is here", pins[0].Value);
+        }
+
+        [Theory]
+        [InlineData(new object[] { false, "Héllo 1!" }, "Héllo 1!")]
+        [InlineData(new object[] { true, "Héllo 1!" }, "hello")]
+        [InlineData(new object[] { "Héllo 1! ", true, "Báz!", false, " @" },
+            "Héllo 1! baz @")]
+        public void ApplyFilter_Ok(object[] filtersAndValues, string expected)
+        {
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
+
+            string actual = builder.ApplyFilter(filtersAndValues);
+
+            Assert.Equal(expected, actual);
+        }
     }
 
     internal sealed class MockPart : PartBase

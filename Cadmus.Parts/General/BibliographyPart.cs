@@ -27,94 +27,74 @@ namespace Cadmus.Parts.General
             Entries = new List<BibEntry>();
         }
 
-        private static void AddAuthors(IList<BibAuthor> authors,
-            HashSet<string> target)
-        {
-            if (authors?.Count > 0)
-            {
-                foreach (BibAuthor author in authors)
-                    target.Add(StandardTextFilter.Apply(author.LastName));
-            }
-        }
-
         /// <summary>
         /// Get all the key=value pairs (pins) exposed by the implementor.
         /// </summary>
-        /// <remarks>
-        /// For each entry, the pins emitted are (omitting duplicates):
-        /// <list type="bullet">
-        /// <item>
-        /// <term>biblio.type</term>
-        /// <description>The entry type ID.</description>
-        /// </item>
-        /// <item>
-        /// <term>biblio.author</term>
-        /// <description>The filtered last name of the author.</description>
-        /// </item>
-        /// <item>
-        /// <term>biblio.title</term>
-        /// <description>The filtered title.</description>
-        /// </item>
-        /// <item>
-        /// <term>biblio.container</term>
-        /// <description>The filtered container name.</description>
-        /// </item>
-        /// <item>
-        /// <term>biblio.keyword</term>
-        /// <description>The keyword.</description>
-        /// </item>
-        /// </list>
-        /// Filtering implies preserving only letters, digits, whitespaces
-        /// (normalized), and apostrophe. Letters are all lowercase and without
-        /// any diacritics.
-        /// </remarks>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>The pins.</returns>
+        /// <returns>The pins: <c>tot-count</c> and a collection of pins with
+        /// keys: <c>type-X-count</c>, <c>author</c> (for authors and
+        /// contributors; filtered last name only), <c>title</c> (filtered,
+        /// with digits), <c>container</c> (filtered, with digits),
+        /// <c>keyword</c> (prefixed by language between <c>[]</c>, filtered
+        /// with digits).</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            // collect data from entries
-            HashSet<string> typeIds = new HashSet<string>();
-            HashSet<string> authors = new HashSet<string>();
-            HashSet<string> titles = new HashSet<string>();
-            HashSet<string> containers = new HashSet<string>();
-            HashSet<string> keywords = new HashSet<string>();
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
 
-            foreach (BibEntry entry in Entries)
+            // tot-count
+            builder.Set("tot", Entries?.Count ?? 0, false);
+
+            if (Entries?.Count > 0)
             {
-                // type
-                if (entry.TypeId != null) typeIds.Add(entry.TypeId);
-
-                // authors (filtered last names)
-                AddAuthors(entry.Authors, authors);
-                AddAuthors(entry.Contributors, authors);
-
-                // title (filtered)
-                string title = StandardTextFilter.Apply(entry.Title);
-                if (!string.IsNullOrEmpty(title)) titles.Add(title);
-
-                // container (filtered)
-                string container = StandardTextFilter.Apply(entry.Container);
-                if (!string.IsNullOrEmpty(container)) containers.Add(container);
-
-                // keywords
-                if (entry.Keywords?.Length > 0)
+                foreach (BibEntry entry in Entries)
                 {
-                    foreach (Keyword k in entry.Keywords)
-                        keywords.Add(k.Value);
+                    // type-X-count
+                    if (!string.IsNullOrEmpty(entry.TypeId))
+                        builder.Increase(entry.TypeId, false, "type-");
+
+                    // author/contributor
+                    if (entry.Authors?.Length > 0)
+                    {
+                        builder.AddValues("author",
+                            from a in entry.Authors
+                            select a.LastName, prefix: null, filter: true);
+                    }
+                    if (entry.Contributors?.Length > 0)
+                    {
+                        builder.AddValues("author",
+                            from a in entry.Contributors
+                            select a.LastName, prefix: null, filter: true);
+                    }
+
+                    // title
+                    if (!string.IsNullOrEmpty(entry.Title))
+                    {
+                        builder.AddValue("title", entry.Title,
+                            prefix: null, filter: true, filterOptions: true);
+                    }
+
+                    // container
+                    if (!string.IsNullOrEmpty(entry.Container))
+                    {
+                        builder.AddValue("container", entry.Container,
+                            prefix: null, filter: true, filterOptions: true);
+                    }
+
+                    // keyword
+                    if (entry.Keywords?.Length > 0)
+                    {
+                        builder.AddValues("keyword",
+                            from k in entry.Keywords
+                            select builder.ApplyFilter(
+                                $"[{k.Language}]", true, k.Value));
+                    }
                 }
             }
 
-            // add pins
-            List<DataPin> pins = new List<DataPin>();
-            pins.AddRange(from s in typeIds select CreateDataPin("biblio.type", s));
-            pins.AddRange(from s in authors select CreateDataPin("biblio.author", s));
-            pins.AddRange(from s in titles select CreateDataPin("biblio.title", s));
-            pins.AddRange(from s in containers select CreateDataPin("biblio.container", s));
-            pins.AddRange(from s in keywords select CreateDataPin("biblio.keyword", s));
-
-            return pins;
+            return builder.Build(this);
         }
 
         /// <summary>

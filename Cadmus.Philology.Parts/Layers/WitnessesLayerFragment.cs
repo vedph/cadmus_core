@@ -46,8 +46,8 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// For each unique witness source ID, in their order, a pin with
-        /// name=<c>fr.id</c> and value=ID is returned.
+        /// For each unique witness source ID a pin with name=<c>fr.id</c>
+        /// and value=ID is returned.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
@@ -59,7 +59,6 @@ namespace Cadmus.Philology.Parts.Layers
                 return Enumerable.Empty<DataPin>();
 
             return (from w in Witnesses
-                    orderby w.Id
                     select w.Id)
                     .Distinct()
                     .Select(id => new DataPin

@@ -48,10 +48,11 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor. Each key is
-        /// <c>xkeyword.{indexId}.{lang}</c> where <c>{indexId}</c> is the index
-        /// ID (whic may be empty), and <c>{lang}</c> is its language value;
+        /// <c>keyword.INDEXID.LANG</c> where <c>INDEXID</c> is the index
+        /// ID (whic may be empty), and <c>LANG</c> is its language value;
         /// e.g. <c>keyword..eng</c> as name and <c>sample</c> as value.
         /// The pins are returned sorted by index ID, language and then value.
+        /// The value is filtered, with digits.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
@@ -63,6 +64,7 @@ namespace Cadmus.Parts.General
                 return Enumerable.Empty<DataPin>();
 
             List<DataPin> pins = new List<DataPin>();
+            StandardDataPinTextFilter filter = new StandardDataPinTextFilter();
 
             foreach (string indexId in Keywords.Select(k => k.IndexId ?? "")
                 .OrderBy(s => s).Distinct())
@@ -76,13 +78,12 @@ namespace Cadmus.Parts.General
 
                 foreach (var g in keysByLang)
                 {
-                    string[] values = (from k in g
-                                       orderby k.Value
-                                       select k.Value).ToArray();
+                    var values = from k in g orderby k.Value
+                                 select filter.Apply(k.Value, true);
 
                     pins.AddRange(from value in values
                                   select CreateDataPin(
-                                    $"xkeyword.{indexId}.{g.Key}", value));
+                                    $"keyword.{indexId}.{g.Key}", value));
                 }
             }
 

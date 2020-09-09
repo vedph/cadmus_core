@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace Cadmus.Core
 {
@@ -41,10 +42,18 @@ namespace Cadmus.Core
         public string CountKeySuffix { get; set; }
 
         /// <summary>
+        /// Gets the optional filter used in adding text values.
+        /// </summary>
+        public IDataPinTextFilter Filter { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DataPinBuilder"/> class.
         /// </summary>
-        public DataPinBuilder()
+        /// <param name="filter">The optional text filter to be used on request.
+        /// </param>
+        public DataPinBuilder(IDataPinTextFilter filter = null)
         {
+            Filter = filter;
             _counts = new Dictionary<string, int>();
             _values = new Dictionary<string, HashSet<string>>();
             _totKey = "tot";
@@ -220,14 +229,19 @@ namespace Cadmus.Core
         /// <param name="key">The key. If null, no value will be added.</param>
         /// <param name="value">The pin value. Nothing is added if value is null.
         /// <param name="prefix">The optional key prefix.</param>
+        /// <param name="filter">True to apply filtering.</param>
+        /// <param name="filterOptions">The options for the filter.</param>
         /// </param>
-        public void AddValue(string key, string value, string prefix = null)
+        public void AddValue(string key, string value, string prefix = null,
+            bool filter = false, object filterOptions = null)
         {
             if (key == null || value == null) return;
 
             string k = (prefix ?? "") + key;
             if (!_values.ContainsKey(k)) _values[k] = new HashSet<string>();
-            _values[k].Add(value);
+
+            _values[k].Add(filter && Filter != null
+                ? Filter.Apply(value, filterOptions) : value);
         }
 
         /// <summary>
@@ -236,8 +250,11 @@ namespace Cadmus.Core
         /// <param name="key">The key. If null, no value will be added.</param>
         /// <param name="value">The pin value.</param>
         /// <param name="prefix">The optional key prefix.</param>
-        public void AddValue(string key, bool value, string prefix = null)
-            => AddValue(key, value ? "1" : "0", prefix);
+        /// <param name="filter">True to apply filtering.</param>
+        /// <param name="filterOptions">The options for the filter.</param>
+        public void AddValue(string key, bool value, string prefix = null,
+            bool filter = false, object filterOptions = null)
+            => AddValue(key, value ? "1" : "0", prefix, filter, filterOptions);
 
         /// <summary>
         /// Adds the specified pin value.
@@ -245,8 +262,12 @@ namespace Cadmus.Core
         /// <param name="key">The key. If null, no value will be added.</param>
         /// <param name="value">The pin value.</param>
         /// <param name="prefix">The optional key prefix.</param>
-        public void AddValue(string key, int value, string prefix = null)
-            => AddValue(key, key.ToString(CultureInfo.InvariantCulture), prefix);
+        /// <param name="filter">True to apply filtering.</param>
+        /// <param name="filterOptions">The options for the filter.</param>
+        public void AddValue(string key, int value, string prefix = null,
+            bool filter = false, object filterOptions = null)
+            => AddValue(key, value.ToString(CultureInfo.InvariantCulture),
+                prefix, filter, filterOptions);
 
         /// <summary>
         /// Adds the specified pin value.
@@ -254,8 +275,12 @@ namespace Cadmus.Core
         /// <param name="key">The key. If null, no value will be added.</param>
         /// <param name="value">The pin value.</param>
         /// <param name="prefix">The optional key prefix.</param>
-        public void AddValue(string key, double value, string prefix = null)
-            => AddValue(key, value.ToString(CultureInfo.InvariantCulture), prefix);
+        /// <param name="filter">True to apply filtering.</param>
+        /// <param name="filterOptions">The options for the filter.</param>
+        public void AddValue(string key, double value, string prefix = null,
+            bool filter = false, object filterOptions = null)
+            => AddValue(key, value.ToString(CultureInfo.InvariantCulture),
+                prefix, filter, filterOptions);
 
         /// <summary>
         /// Adds all the values under the specified key.
@@ -263,13 +288,48 @@ namespace Cadmus.Core
         /// <param name="key">The key. If null, no value will be added.</param>
         /// <param name="values">The values.</param>
         /// <param name="prefix">The prefix.</param>
+        /// <param name="filter">True to apply filtering.</param>
+        /// <param name="filterOptions">The options for the filter.</param>
         public void AddValues(string key, IEnumerable<string> values,
-            string prefix = null)
+            string prefix = null, bool filter = false, object filterOptions = null)
         {
             if (key == null) return;
-            foreach (string value in values) AddValue(key, value, prefix);
+            foreach (string value in values) AddValue(key, value, prefix, filter,
+                filterOptions);
         }
         #endregion
+
+        /// <summary>
+        /// Applies or not the filter to the specified array of objects,
+        /// including a mix of booleans and strings. Every occurrence of the
+        /// boolean value toggles filtering; every string is appended,
+        /// eventually filtered if filtering is on at that position.
+        /// </summary>
+        /// <remarks>You can use this function when you want to build a string
+        /// where some portions should be filtered using <see cref="Filter"/>,
+        /// and some others not.</remarks>
+        /// <param name="filtersAndValues">The filters and values array.</param>
+        /// <returns>The resulting string.</returns>
+        public string ApplyFilter(params object[] filtersAndValues)
+        {
+            StringBuilder sb = new StringBuilder();
+            bool on = false;
+
+            for (int i = 0; i < filtersAndValues.Length; i++)
+            {
+                if (filtersAndValues[i] is bool onOff)
+                {
+                    on = onOff;
+                }
+                else
+                {
+                    string value = Convert.ToString(filtersAndValues[i]) ?? "";
+                    sb.Append(on && Filter != null ? Filter.Apply(value) : value);
+                }
+            }
+
+            return sb.ToString();
+        }
 
         private DataPin CreateDataPin(IPart part, string name, string value)
         {
@@ -277,9 +337,9 @@ namespace Cadmus.Core
 
             return new DataPin
             {
-                ItemId = part.ItemId,
-                PartId = part.Id,
-                RoleId = part.RoleId,
+                ItemId = part?.ItemId,
+                PartId = part?.Id,
+                RoleId = part?.RoleId,
                 Name = name,
                 Value = value
             };
@@ -305,16 +365,14 @@ namespace Cadmus.Core
         /// <summary>
         /// Builds the pins from the current data.
         /// </summary>
-        /// <param name="part">The part the pins refer to.</param>
-        /// <param name="zeroKeys">An optional array of count keys which should be
-        /// emitted for counts even they are equal to 0, and thus eventually
+        /// <param name="part">The part the pins refer to, or null
+        /// (for fragments).</param>
+        /// <param name="zeroKeys">An optional array of count keys which should
+        /// be emitted for counts even they are equal to 0, and thus eventually
         /// not present in this builder.</param>
         /// <returns>Pins.</returns>
-        /// <exception cref="ArgumentNullException">part</exception>
         public List<DataPin> Build(IPart part, params string[] zeroKeys)
         {
-            if (part == null) throw new ArgumentNullException(nameof(part));
-
             List<DataPin> pins = new List<DataPin>();
 
             // counts
@@ -337,10 +395,7 @@ namespace Cadmus.Core
             foreach (string key in _values.Keys)
             {
                 foreach (string value in _values[key])
-                {
-                    pins.Add(CreateDataPin(
-                        part, key, value));
-                }
+                    pins.Add(CreateDataPin(part, key, value));
             }
 
             return pins;

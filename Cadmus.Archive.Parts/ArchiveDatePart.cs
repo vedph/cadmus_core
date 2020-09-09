@@ -26,7 +26,7 @@ namespace Cadmus.Archive.Parts
         /// <remarks>
         /// <list type="bullet">
         /// <item>
-        /// <term>date-sort-value</term>
+        /// <term>date-value</term>
         /// <description>sort value</description>
         /// </item>
         /// </list>
@@ -36,16 +36,16 @@ namespace Cadmus.Archive.Parts
         {
             return new[]
             {
-                CreateDataPin("date-sort-value",
+                CreateDataPin("date-value",
                     Date?.SortValue.ToString(CultureInfo.InvariantCulture))
             };
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

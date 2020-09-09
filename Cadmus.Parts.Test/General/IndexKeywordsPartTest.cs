@@ -87,28 +87,28 @@ namespace Cadmus.Parts.Test.General
             List<DataPin> pins = part.GetDataPins().ToList();
             Assert.Equal(3, pins.Count);
 
-            // xkeyword..eng = Greek
+            // keyword..eng = Greek
             DataPin pin = pins[0];
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("xkeyword..eng", pin.Name);
-            Assert.Equal("Greek", pin.Value);
+            Assert.Equal("keyword..eng", pin.Name);
+            Assert.Equal("greek", pin.Value);
 
-            // xkeyword.colors.eng = green
+            // keyword.colors.eng = green
             pin = pins[1];
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("xkeyword.colors.eng", pin.Name);
+            Assert.Equal("keyword.colors.eng", pin.Name);
             Assert.Equal("green", pin.Value);
 
-            // xkeyword.colors.eng = red
+            // keyword.colors.eng = red
             pin = pins[2];
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("xkeyword.colors.eng", pin.Name);
+            Assert.Equal("keyword.colors.eng", pin.Name);
             Assert.Equal("red", pin.Value);
         }
     }

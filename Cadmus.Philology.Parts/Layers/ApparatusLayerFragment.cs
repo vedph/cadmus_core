@@ -49,71 +49,52 @@ namespace Cadmus.Philology.Parts.Layers
             Entries = new List<ApparatusEntry>();
         }
 
-        private static void AddPinsFromSet(HashSet<string> set, string name,
-            List<DataPin> pins)
-        {
-            foreach (string s in set.OrderBy(s => s))
-            {
-                pins.Add(new DataPin
-                {
-                    Name = PartBase.FR_PREFIX + name,
-                    Value = s
-                });
-            }
-        }
-
         /// <summary>
         /// Get all the pins exposed by the implementor.
-        /// Pins are: <c>fr.variant</c>=variant (normalized if any, else just
-        /// the variant), <c>fr.witness</c>=witness, <c>fr.author</c>=author;
-        /// each distinct variant, witness, and author has a pin.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>pins</returns>
+        /// <returns>Pins: <c>fr.tot-count</c> and a collection of pins with
+        /// keys: <c>fr.variant</c>=variant (normalized if any, else just
+        /// the variant), <c>fr.witness</c>=witness, <c>fr.author</c>=author.
+        /// </returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            HashSet<string> witnesses = new HashSet<string>();
-            HashSet<string> authors = new HashSet<string>();
-            HashSet<string> variants = new HashSet<string>();
+            DataPinBuilder builder = new DataPinBuilder();
 
-            foreach (ApparatusEntry entry in Entries)
+            builder.Set(PartBase.FR_PREFIX + "tot", Entries?.Count ?? 0, false);
+
+            if (Entries?.Count > 0)
             {
-                if (entry.Type != ApparatusEntryType.Note)
+                foreach (ApparatusEntry entry in Entries)
                 {
-                    string variant = entry.NormValue ?? entry.Value;
-                    if (!variants.Contains(variant))
-                        variants.Add(variant);
-                }
-
-                if (entry.Witnesses != null)
-                {
-                    foreach (ApparatusAnnotatedValue w in entry.Witnesses
-                        .OrderBy(w => w.Value))
+                    // fr.variant
+                    if (entry.Type != ApparatusEntryType.Note)
                     {
-                        if (!witnesses.Contains(w.Value))
-                            witnesses.Add(w.Value);
+                        string variant = entry.NormValue ?? entry.Value ?? "";
+                        builder.AddValue(PartBase.FR_PREFIX + "variant", variant);
                     }
-                }
 
-                if (entry.Authors != null)
-                {
-                    foreach (ApparatusAnnotatedValue a in entry.Authors
-                        .OrderBy(a => a.Value))
+                    // fr.witness
+                    if (entry.Witnesses?.Count > 0)
                     {
-                        if (!authors.Contains(a.Value))
-                            authors.Add(a.Value);
+                        builder.AddValues(
+                            PartBase.FR_PREFIX + "witness",
+                            from w in entry.Witnesses select w.Value);
+                    }
+
+                    // fr.author
+                    if (entry.Authors?.Count > 0)
+                    {
+                        builder.AddValues(
+                            PartBase.FR_PREFIX + "author",
+                            from w in entry.Authors select w.Value);
                     }
                 }
             }
 
-            List<DataPin> pins = new List<DataPin>();
-            AddPinsFromSet(variants, "variant", pins);
-            AddPinsFromSet(witnesses, "witness", pins);
-            AddPinsFromSet(authors, "author", pins);
-
-            return pins;
+            return builder.Build(null);
         }
 
         /// <summary>

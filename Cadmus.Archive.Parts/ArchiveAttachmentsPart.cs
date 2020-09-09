@@ -22,7 +22,8 @@ namespace Cadmus.Archive.Parts
         public List<ArchiveAttachment> Attachments { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArchiveAttachmentsPart"/> class.
+        /// Initializes a new instance of the <see cref="ArchiveAttachmentsPart"/>
+        /// class.
         /// </summary>
         public ArchiveAttachmentsPart()
         {
@@ -39,7 +40,7 @@ namespace Cadmus.Archive.Parts
         /// <para>Search pins:</para>
         /// <list type="bullet">
         /// <item>
-        /// <term>attachment.count</term>
+        /// <term>att-count</term>
         /// <description>count of attachments</description>
         /// </item>
         /// </list>
@@ -50,7 +51,7 @@ namespace Cadmus.Archive.Parts
             if (Attachments?.Count == 0) return Array.Empty<DataPin>();
 
             return from a in Attachments
-                   select CreateDataPin("attachment.count",
+                   select CreateDataPin("att-count",
                        a.Count.ToString(CultureInfo.InvariantCulture));
         }
 
@@ -88,10 +89,10 @@ namespace Cadmus.Archive.Parts
         public ArchiveDate Date { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

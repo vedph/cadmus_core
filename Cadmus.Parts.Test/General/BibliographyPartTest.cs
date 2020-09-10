@@ -150,9 +150,9 @@ namespace Cadmus.Parts.Test.General
                 p => p.Name == "container").Value);
 
             // keyword
-            Assert.Equal(1, pins.Count(p => p.Name == "keyword"));
-            Assert.Equal("[eng]gods", pins.Find(
-                p => p.Name == "keyword").Value);
+            Assert.Equal(1, pins.Count(p => p.Name == "keyword.eng"));
+            Assert.Equal("gods", pins.Find(
+                p => p.Name == "keyword.eng").Value);
 
             // type-X-count
             pin = pins.Find(p => p.Name == "type-book-chapter-count");
@@ -229,7 +229,7 @@ namespace Cadmus.Parts.Test.General
             Assert.Equal(3, pins.Count(p => p.Name == "author"));
             Assert.Equal(2, pins.Count(p => p.Name == "title"));
             Assert.Equal(1, pins.Count(p => p.Name == "container"));
-            Assert.Equal(1, pins.Count(p => p.Name == "keyword"));
+            Assert.Equal(1, pins.Count(p => p.Name == "keyword.eng"));
         }
     }
 }

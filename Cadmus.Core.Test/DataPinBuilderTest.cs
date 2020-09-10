@@ -248,7 +248,7 @@ namespace Cadmus.Core.Test
             DataPinBuilder builder = new DataPinBuilder(
                 new StandardDataPinTextFilter());
 
-            string actual = builder.ApplyFilter(filtersAndValues);
+            string actual = builder.ApplyFilter(false, filtersAndValues);
 
             Assert.Equal(expected, actual);
         }

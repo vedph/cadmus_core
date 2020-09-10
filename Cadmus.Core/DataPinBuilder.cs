@@ -308,9 +308,10 @@ namespace Cadmus.Core
         /// <remarks>You can use this function when you want to build a string
         /// where some portions should be filtered using <see cref="Filter"/>,
         /// and some others not.</remarks>
+        /// <param name="options">The options for the filter.</param>
         /// <param name="filtersAndValues">The filters and values array.</param>
         /// <returns>The resulting string.</returns>
-        public string ApplyFilter(params object[] filtersAndValues)
+        public string ApplyFilter(object options, params object[] filtersAndValues)
         {
             StringBuilder sb = new StringBuilder();
             bool on = false;
@@ -324,7 +325,8 @@ namespace Cadmus.Core
                 else
                 {
                     string value = Convert.ToString(filtersAndValues[i]) ?? "";
-                    sb.Append(on && Filter != null ? Filter.Apply(value) : value);
+                    sb.Append(on && Filter != null
+                        ? Filter.Apply(value, options) : value);
                 }
             }
 

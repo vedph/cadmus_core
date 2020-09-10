@@ -37,8 +37,7 @@ namespace Cadmus.Parts.General
         /// keys: <c>type-X-count</c>, <c>author</c> (for authors and
         /// contributors; filtered last name only), <c>title</c> (filtered,
         /// with digits), <c>container</c> (filtered, with digits),
-        /// <c>keyword</c> (prefixed by language between <c>[]</c>, filtered
-        /// with digits).</returns>
+        /// <c>keyword.LANG</c> (keyword filtered with digits).</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             DataPinBuilder builder = new DataPinBuilder(
@@ -86,10 +85,21 @@ namespace Cadmus.Parts.General
                     // keyword
                     if (entry.Keywords?.Length > 0)
                     {
-                        builder.AddValues("keyword",
-                            from k in entry.Keywords
-                            select builder.ApplyFilter(
-                                $"[{k.Language}]", true, k.Value));
+                        var keysByLang = from k in entry.Keywords
+                                         group k by k.Language
+                                         into g
+                                         orderby g.Key
+                                         select g;
+
+                        foreach (var g in keysByLang)
+                        {
+                            var values = from k in g
+                                         orderby k.Value
+                                         select builder.Filter.Apply(k.Value, true);
+
+                            foreach (var value in values)
+                                builder.AddValue($"keyword.{g.Key}", value);
+                        }
                     }
                 }
             }

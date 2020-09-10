@@ -19,8 +19,17 @@ Guidelines for **implementing a part**:
 **Part template** sample (in the following template replace `__NAME__` with your part's name, minus the `Part` suffix):
 
 ```cs
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Cadmus.Core;
+using Fusi.Tools.Config;
+
+// ...
+
 /// <summary>
-/// Tag: <c>net.fusisoft.__NAME__</c>.
+/// TODO: add summary
+/// <para>Tag: <c>net.fusisoft.__NAME__</c>.</para>
 /// </summary>
 [Tag("net.fusisoft.__NAME__")]
 public class __NAME__Part : PartBase
@@ -36,6 +45,8 @@ public class __NAME__Part : PartBase
     /// <returns>The pins.</returns>
     public override IEnumerable<DataPin> GetDataPins(IItem item)
     {
+        throw new NotImplementedException();
+
         // TODO: implement indexing logic...
         // sample:
         // return Tag != null
@@ -47,10 +58,10 @@ public class __NAME__Part : PartBase
     }
 
     /// <summary>
-    /// Returns a <see cref="String" /> that represents this instance.
+    /// Converts to string.
     /// </summary>
     /// <returns>
-    /// A <see cref="String" /> that represents this instance.
+    /// A <see cref="string" /> that represents this instance.
     /// </returns>
     public override string ToString()
     {

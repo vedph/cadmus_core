@@ -152,11 +152,11 @@ namespace Cadmus.Core.Test
         }
 
         [Fact]
-        public void Update_WithTotal_Ok()
+        public void IncreaseMulti_WithTotal_Ok()
         {
             DataPinBuilder builder = new DataPinBuilder();
 
-            builder.Update(new[] { "alpha", "beta", "beta", null }, true, "tag-");
+            builder.Increase(new[] { "alpha", "beta", "beta", null }, true, "tag-");
 
             IPart part = new MockPart();
             List<DataPin> pins = builder.Build(part);
@@ -180,11 +180,11 @@ namespace Cadmus.Core.Test
         }
 
         [Fact]
-        public void Update_WithoutTotal_Ok()
+        public void IncreaseMulti_WithoutTotal_Ok()
         {
             DataPinBuilder builder = new DataPinBuilder();
 
-            builder.Update(new[] { "alpha", "beta", "beta", null }, false, "tag-");
+            builder.Increase(new[] { "alpha", "beta", "beta", null }, false, "tag-");
 
             IPart part = new MockPart();
             List<DataPin> pins = builder.Build(part);

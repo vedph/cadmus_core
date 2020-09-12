@@ -8,7 +8,7 @@
     <Description>Cadmus fake data seed core components.</Description>
     <Copyright>by Daniele Fusi</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>1.0.49</Version>
+    <Version>1.0.50</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="30.0.4" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.16" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.17" />
   </ItemGroup>
 
   <ItemGroup>

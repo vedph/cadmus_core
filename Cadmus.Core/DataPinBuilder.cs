@@ -195,19 +195,17 @@ namespace Cadmus.Core
             string prefix = null)
             => Increase(key.ToString(CultureInfo.InvariantCulture),
                 includeTotal, prefix);
-        #endregion
 
-        #region Update
         /// <summary>
-        /// Updates the counts for all the received <paramref name="keys"/>,
+        /// Increase the counts for all the received <paramref name="keys"/>,
         /// prefixing and suffixing each of them as requested.
         /// </summary>
         /// <param name="keys">The keys.</param>
-        /// <param name="includeTotal">True to also update the count under
+        /// <param name="includeTotal">True to also increase the count under
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         /// <exception cref="ArgumentNullException">keys</exception>
-        public void Update(IEnumerable<string> keys, bool includeTotal = true,
+        public void Increase(IEnumerable<string> keys, bool includeTotal = true,
             string prefix = null)
         {
             if (keys == null) throw new ArgumentNullException(nameof(keys));

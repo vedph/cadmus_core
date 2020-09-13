@@ -1418,12 +1418,11 @@ namespace Cadmus.Mongo
                 part.CreatorId = old.CreatorId;
                 part.TimeCreated = old.TimeCreated;
             }
+            // set time modified
+            part.TimeModified = DateTime.UtcNow;
 
             string json = JsonSerializer.Serialize(part, part.GetType(),
                 _jsonOptions);
-
-            // set time modified
-            part.TimeModified = DateTime.UtcNow;
 
             MongoPart mongoPart = new MongoPart(part)
             {

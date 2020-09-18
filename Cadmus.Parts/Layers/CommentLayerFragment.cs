@@ -9,11 +9,11 @@ namespace Cadmus.Parts.Layers
     /// <summary>
     /// Generic comment fragment. This item contains a generic comment referred
     /// to a specific text portion. The text format depends on the implementor.
-    /// Tag: <c>fr.net.fusisoft.comment</c>.
+    /// Tag: <c>fr.it.vedph.comment</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
     /// <seealso cref="IHasText" />
-    [Tag("fr.net.fusisoft.comment")]
+    [Tag("fr.it.vedph.comment")]
     public sealed class CommentLayerFragment : ITextLayerFragment, IHasText
     {
         /// <summary>
@@ -51,12 +51,11 @@ namespace Cadmus.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>fr.tag</c>=tag if any.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Data pins.</returns>
+        /// <returns>The pins: <c>fr.tag</c>=tag if any.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             return Tag != null
@@ -69,6 +68,20 @@ namespace Cadmus.Parts.Layers
                     }
                 }
                 : Enumerable.Empty<DataPin>();
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "tag",
+                    "The tag if any.")
+            });
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace Cadmus.Seed.Parts.General
     /// Tiled text part seeder.
     /// </summary>
     /// <seealso cref="PartSeederBase" />
-    [Tag("seed.net.fusisoft.tiled-text")]
+    [Tag("seed.it.vedph.tiled-text")]
     public sealed class TiledTextPartSeeder : PartSeederBase
     {
         /// <summary>

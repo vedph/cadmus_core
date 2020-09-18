@@ -8,10 +8,10 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Historical date part. This part just wraps a <see cref="HistoricalDate"/>.
-    /// Tag: <c>net.fusisoft.historical-date</c>
+    /// Tag: <c>it.vedph.historical-date</c>
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.historical-date")]
+    [Tag("it.vedph.historical-date")]
     public sealed class HistoricalDatePart : PartBase
     {
         /// <summary>
@@ -21,19 +21,66 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>date-value</c> with the date sort value or 0.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Pins.</returns>
+        /// <returns>Pins: <c>date-value</c> with the date sort value or 0;
+        /// <c>hint</c> with the date's hint(s) when present (filtered, with digits).
+        /// </returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            return new[]
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
+
+            builder.AddValue("date-value",
+                (Date?.GetSortValue() ?? 0).ToString(CultureInfo.InvariantCulture));
+
+            if (Date != null)
             {
-                CreateDataPin("date-value",
-                    (Date?.GetSortValue() ?? 0).ToString(CultureInfo.InvariantCulture))
-            };
+                switch (Date.GetDateType())
+                {
+                    case HistoricalDateType.Range:
+                        if (!string.IsNullOrEmpty(Date.A.Hint))
+                        {
+                            builder.AddValue("hint", Date.A.Hint,
+                                filter: true, filterOptions: true);
+                        }
+                        if (!string.IsNullOrEmpty(Date.B.Hint))
+                        {
+                            builder.AddValue("hint", Date.B.Hint,
+                                filter: true, filterOptions: true);
+                        }
+                        break;
+                    default:
+                        if (!string.IsNullOrEmpty(Date.A.Hint))
+                        {
+                            builder.AddValue("hint", Date.A.Hint,
+                                filter: true, filterOptions: true);
+                        }
+                        break;
+                }
+            }
+
+            return builder.Build(this);
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Decimal,
+                    "date-value",
+                    "The sortable date value (0 if undefined)."),
+                new DataPinDefinition(DataPinValueType.String,
+                    "hint",
+                    "The list of date's hints, if any.",
+                    "Mf")
+            });
         }
 
         /// <summary>

@@ -27,7 +27,7 @@ namespace Cadmus.Seed.Parts.Test.General
             Type t = typeof(CategoriesPartSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.net.fusisoft.categories", attr.Tag);
+            Assert.Equal("seed.it.vedph.categories", attr.Tag);
         }
 
         [Fact]

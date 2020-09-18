@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Cadmus.Core;
@@ -12,10 +11,10 @@ namespace Cadmus.Lexicon.Parts
     /// <summary>
     /// Word etymology. This can include detailed lineages and a generic
     /// textual discussion (or just one of them).
-    /// Tag: <c>net.fusisoft.lexicon.word-etymology</c>.
+    /// Tag: <c>it.vedph.lexicon.word-etymology</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.lexicon.word-etymology")]
+    [Tag("it.vedph.lexicon.word-etymology")]
     public sealed class WordEtymologyPart : PartBase
     {
         private static readonly TextCutterOptions _options =
@@ -63,10 +62,20 @@ namespace Cadmus.Lexicon.Parts
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            // TODO pins definitions
+            return new List<DataPinDefinition>();
+        }
+
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

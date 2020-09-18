@@ -61,11 +61,16 @@ namespace Cadmus.Philology.Parts.Test.Layers
         }
 
         [Fact]
-        public void GetDataPins_NoWitnesses_0()
+        public void GetDataPins_NoWitnesses_1()
         {
             WitnessesLayerFragment fr = GetFragment(0);
 
-            Assert.Empty(fr.GetDataPins());
+            List<DataPin> pins = fr.GetDataPins().ToList();
+
+            Assert.Single(pins);
+            DataPin pin = pins[0];
+            Assert.Equal("fr.tot-count", pin.Name);
+            Assert.Equal("0", pin.Value);
         }
 
         [Fact]
@@ -75,19 +80,19 @@ namespace Cadmus.Philology.Parts.Test.Layers
 
             List<DataPin> pins = fr.GetDataPins().ToList();
 
-            Assert.Equal(3, pins.Count);
+            Assert.Equal(4, pins.Count);
 
-            DataPin pin = pins[0];
-            Assert.Equal("fr.id", pin.Name);
-            Assert.Equal("A", pin.Value);
+            DataPin pin = pins.Find(p => p.Name == "fr.wid"
+                && p.Value == "a");
+            Assert.NotNull(pin);
 
-            pin = pins[1];
-            Assert.Equal("fr.id", pin.Name);
-            Assert.Equal("B", pin.Value);
+            pin = pins.Find(p => p.Name == "fr.wid"
+                && p.Value == "b");
+            Assert.NotNull(pin);
 
-            pin = pins[2];
-            Assert.Equal("fr.id", pin.Name);
-            Assert.Equal("C", pin.Value);
+            pin = pins.Find(p => p.Name == "fr.wid"
+                && p.Value == "c");
+            Assert.NotNull(pin);
         }
     }
 }

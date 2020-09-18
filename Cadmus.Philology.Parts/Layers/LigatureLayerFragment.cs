@@ -12,7 +12,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// replacement ("sostituzione", <c>R</c>), graft ("innesto", <c>G</c>),
     /// inclusion ("inclusione", <c>N</c>), connection ("nesso", <c>C</c>),
     /// complex (<c>X</c>) (see Manzella 1987 149-151).
-    /// Tag: <c>fr.net.fusisoft.ligature</c>.
+    /// Tag: <c>fr.it.vedph.ligature</c>.
     /// </summary>
     /// <remarks>This part defines all the essential graphical connection types
     /// occurring among letters.
@@ -27,7 +27,7 @@ namespace Cadmus.Philology.Parts.Layers
     /// </item>
     /// </list>
     /// </remarks>
-    [Tag("fr.net.fusisoft.ligature")]
+    [Tag("fr.it.vedph.ligature")]
     public sealed class LigatureLayerFragment : ITextLayerFragment
     {
         private const string ABBREVIATIONS = "-LIORGNCX";
@@ -50,14 +50,13 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>fr.ligature</c>=ligature type letter (one letter picked
-        /// from <c>LIORGNCX</c>, each representing a ligature type;
-        /// see <see cref="LigatureType"/>).
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Data pins.</returns>
+        /// <returns>The pins: <c>fr.ligature</c>=ligature type letter (one
+        /// letter picked from <c>LIORGNCX</c>, each representing a ligature
+        /// type; see <see cref="LigatureType"/>).</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             return new[]
@@ -68,6 +67,22 @@ namespace Cadmus.Philology.Parts.Layers
                     Value = new string(LigatureTypeToAbbreviation(Type), 1)
                 }
             };
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "ligature",
+                    "The ligature type, a letter from LIORGNCX: L=generic " +
+                    "ligature, I=inversion, O=overlap, R=replacement, G=graft, " +
+                    "N=inclusion, C=connection, X=complex (Manzella 1987 149-151).")
+            });
         }
 
         #region Abbreviations

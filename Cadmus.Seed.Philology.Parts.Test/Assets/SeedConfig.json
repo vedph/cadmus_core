@@ -1,7 +1,7 @@
 {
   "facets": [
     {
-      "typeId": "net.fusisoft.token-text",
+      "typeId": "it.vedph.token-text",
       "name": "text",
       "description": "Item's token-based text.",
       "colorKey": "31AB54",
@@ -9,8 +9,8 @@
       "sortKey": "text"
     },
     {
-      "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.apparatus",
+      "typeId": "it.vedph.token-text-layer",
+      "roleId": "fr.it.vedph.apparatus",
       "name": "apparatus",
       "description": "Critical apparatus.",
       "colorKey": "D4E0A4",
@@ -18,8 +18,8 @@
       "sortKey": "text-apparatus"
     },
     {
-      "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.orthography",
+      "typeId": "it.vedph.token-text-layer",
+      "roleId": "fr.it.vedph.orthography",
       "name": "orthography",
       "description": "Standard orthography.",
       "colorKey": "E0D4A4",
@@ -27,8 +27,8 @@
       "sortKey": "text-apparatus"
     },
     {
-      "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.quotations",
+      "typeId": "it.vedph.token-text-layer",
+      "roleId": "fr.it.vedph.quotations",
       "name": "quotations",
       "description": "Literary quotations.",
       "colorKey": "DAA520",
@@ -36,8 +36,8 @@
       "sortKey": "text-quotations"
     },
     {
-      "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.witnesses",
+      "typeId": "it.vedph.token-text-layer",
+      "roleId": "fr.it.vedph.witnesses",
       "name": "witnesses",
       "description": "Witnesses list.",
       "colorKey": "A4E0D4",
@@ -48,17 +48,17 @@
   "seed": {
     "options": {
       "seed": 1,
-      "baseTextPartTypeId": "net.fusisoft.token-text",
+      "baseTextPartTypeId": "it.vedph.token-text",
       "users": [ "zeus" ],
       "partRoles": [],
       "fragmentRoles": []
     },
     "partSeeders": [
       {
-        "id": "seed.net.fusisoft.token-text"
+        "id": "seed.it.vedph.token-text"
       },
       {
-        "id": "seed.net.fusisoft.token-text-layer",
+        "id": "seed.it.vedph.token-text-layer",
         "options": {
           "maxFragmentCount": 3
         }
@@ -66,7 +66,7 @@
     ],
     "fragmentSeeders": [
       {
-        "id": "seed.fr.net.fusisoft.apparatus",
+        "id": "seed.fr.it.vedph.apparatus",
         "options": {
           "authors": [
             "Wil.",
@@ -76,7 +76,7 @@
         }
       },
       {
-        "id": "seed.fr.net.fusisoft.orthography",
+        "id": "seed.fr.it.vedph.orthography",
         "options": {
           "tags": [
             "ph.c.occl.",
@@ -86,7 +86,7 @@
         }
       },
       {
-        "id": "seed.fr.net.fusisoft.quotations",
+        "id": "seed.fr.it.vedph.quotations",
         "options": {
           "authors": [
             "Fest.",
@@ -96,7 +96,7 @@
         }
       },
       {
-        "id": "seed.fr.net.fusisoft.witnesses",
+        "id": "seed.fr.it.vedph.witnesses",
         "options": {
           "ids": [
             "Fest.",

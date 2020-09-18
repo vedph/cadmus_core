@@ -1,7 +1,7 @@
 {
   "facets": [
     {
-      "typeId": "net.fusisoft.categories",
+      "typeId": "it.vedph.categories",
       "name": "categories",
       "description": "Item's categories.",
       "required": true,
@@ -10,7 +10,7 @@
       "sortKey": "categories"
     },
     {
-      "typeId": "net.fusisoft.historical-date",
+      "typeId": "it.vedph.historical-date",
       "name": "date",
       "description": "Historical date.",
       "required": false,
@@ -19,7 +19,7 @@
       "sortKey": "date"
     },
     {
-      "typeId": "net.fusisoft.keywords",
+      "typeId": "it.vedph.keywords",
       "name": "keywords",
       "description": "Item's keywords.",
       "colorKey": "90C0F8",
@@ -27,7 +27,7 @@
       "sortKey": "keywords"
     },
     {
-      "typeId": "net.fusisoft.note",
+      "typeId": "it.vedph.note",
       "name": "note",
       "description": "A free text note about the document.",
       "colorKey": "B0A0F8",
@@ -35,7 +35,7 @@
       "sortKey": "note"
     },
     {
-      "typeId": "net.fusisoft.token-text",
+      "typeId": "it.vedph.token-text",
       "name": "token text",
       "description": "Item's token-based text.",
       "colorKey": "31AB54",
@@ -43,8 +43,8 @@
       "sortKey": "text"
     },
     {
-      "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.comment",
+      "typeId": "it.vedph.token-text-layer",
+      "roleId": "fr.it.vedph.comment",
       "name": "comments",
       "description": "Comments on text.",
       "colorKey": "F8D040",
@@ -52,7 +52,7 @@
       "sortKey": "text-comments"
     },
     {
-      "typeId": "net.fusisoft.tiled-text",
+      "typeId": "it.vedph.tiled-text",
       "name": "tiled text",
       "description": "Item's tiles-based text.",
       "colorKey": "31AB54",
@@ -60,8 +60,8 @@
       "sortKey": "text"
     },
     {
-      "typeId": "net.fusisoft.tiled-text-layer",
-      "roleId": "fr.net.fusisoft.comment",
+      "typeId": "it.vedph.tiled-text-layer",
+      "roleId": "fr.it.vedph.comment",
       "name": "comments",
       "description": "Comments on text.",
       "colorKey": "F8D040",
@@ -72,14 +72,14 @@
   "seed": {
     "options": {
       "seed": 1,
-      "baseTextPartTypeId": "net.fusisoft.token-text",
+      "baseTextPartTypeId": "it.vedph.token-text",
       "users": [ "zeus" ],
       "partRoles": [],
       "fragmentRoles": []
     },
     "partSeeders": [
       {
-        "id": "seed.net.fusisoft.categories",
+        "id": "seed.it.vedph.categories",
         "options": {
           "maxCategoriesPerItem": 3,
           "categories": [
@@ -92,10 +92,10 @@
         }
       },
       {
-        "id": "seed.net.fusisoft.historical-date"
+        "id": "seed.it.vedph.historical-date"
       },
       {
-        "id": "seed.net.fusisoft.keywords",
+        "id": "seed.it.vedph.keywords",
         "options": {
           "languages": [
             "eng",
@@ -107,7 +107,7 @@
         }
       },
       {
-        "id": "seed.net.fusisoft.note",
+        "id": "seed.it.vedph.note",
         "options": {
           "tags": [
             "language",
@@ -117,19 +117,19 @@
         }
       },
       {
-        "id": "seed.net.fusisoft.token-text"
+        "id": "seed.it.vedph.token-text"
       },
       {
-        "id": "seed.net.fusisoft.tiled-text"
+        "id": "seed.it.vedph.tiled-text"
       },
       {
-        "id": "seed.net.fusisoft.token-text-layer",
+        "id": "seed.it.vedph.token-text-layer",
         "options": {
           "maxFragmentCount": 3
         }
       },
       {
-        "id": "seed.net.fusisoft.tiled-text-layer",
+        "id": "seed.it.vedph.tiled-text-layer",
         "options": {
           "maxFragmentCount": 3
         }
@@ -137,7 +137,7 @@
     ],
     "fragmentSeeders": [
       {
-        "id": "seed.fr.net.fusisoft.comment",
+        "id": "seed.fr.it.vedph.comment",
         "options": {
           "tags": [
             "language",

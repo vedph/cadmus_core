@@ -13,10 +13,10 @@ namespace Cadmus.Seed.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="TiledTextLayerPart{TFragment}"/>.
-    /// Tag: <c>seed.net.fusisoft.tiled-text-layer</c>.
+    /// Tag: <c>seed.it.vedph.tiled-text-layer</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
-    [Tag("seed.net.fusisoft.tiled-text-layer")]
+    [Tag("seed.it.vedph.tiled-text-layer")]
     public sealed class TiledTextLayerPartSeeder : PartSeederBase,
         IConfigurable<TiledTextLayerPartSeederOptions>
     {

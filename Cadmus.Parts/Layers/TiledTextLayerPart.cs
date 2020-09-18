@@ -5,6 +5,7 @@ using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace Cadmus.Parts.Layers
@@ -13,7 +14,7 @@ namespace Cadmus.Parts.Layers
     /// Text layer part class, based on tiles-referenced text. Note that
     /// currently tiles-referenced text uses the same coordinates system as
     /// token-referenced text: for tiles, y=row number and x=tile number.
-    /// Tag: <c>net.fusisoft.tiled-text-layer</c>.
+    /// Tag: <c>it.vedph.tiled-text-layer</c>.
     /// </summary>
     /// <remarks>This class represents any text layer part using tiles-based
     /// coordinates. The tiles layer item part is just a wrapper for a collection
@@ -35,7 +36,7 @@ namespace Cadmus.Parts.Layers
     /// </remarks>
     /// <typeparam name="TFragment">The type of the fragment.</typeparam>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.tiled-text-layer")]
+    [Tag("it.vedph.tiled-text-layer")]
     public sealed class TiledTextLayerPart<TFragment> : YXLayerPartBase<TFragment>
         where TFragment : ITextLayerFragment, new()
     {
@@ -163,6 +164,16 @@ namespace Cadmus.Parts.Layers
             }
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            TFragment fr = Activator.CreateInstance<TFragment>();
+            return fr.GetDataPinDefinitions();
         }
 
         /// <summary>

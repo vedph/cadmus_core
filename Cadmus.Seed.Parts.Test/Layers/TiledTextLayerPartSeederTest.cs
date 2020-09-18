@@ -28,7 +28,7 @@ namespace Cadmus.Seed.Parts.Test.Layers
             Type t = typeof(TiledTextLayerPartSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.net.fusisoft.tiled-text-layer", attr.Tag);
+            Assert.Equal("seed.it.vedph.tiled-text-layer", attr.Tag);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Cadmus.Seed.Parts.Test.Layers
                 MaxFragmentCount = 3
             });
 
-            IPart part = seeder.GetPart(_item, "fr.net.fusisoft.comment", _factory);
+            IPart part = seeder.GetPart(_item, "fr.it.vedph.comment", _factory);
 
             Assert.Null(part);
         }
@@ -88,7 +88,7 @@ namespace Cadmus.Seed.Parts.Test.Layers
             textSeeder.SetSeedOptions(_seedOptions);
             item.Parts.Add(textSeeder.GetPart(_item, null, _factory));
 
-            IPart part = seeder.GetPart(item, "fr.net.fusisoft.comment", _factory);
+            IPart part = seeder.GetPart(item, "fr.it.vedph.comment", _factory);
 
             Assert.NotNull(part);
 

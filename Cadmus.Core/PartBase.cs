@@ -136,26 +136,32 @@ namespace Cadmus.Core
         public abstract IEnumerable<DataPin> GetDataPins(IItem item = null);
 
         /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public abstract IList<DataPinDefinition> GetDataPinDefinitions();
+
+        /// <summary>
         /// Build the ID used to instantiate a part via a part provider,
         /// given the specified part's type and role IDs.
         /// </summary>
         /// <remarks>
         /// <para>
         /// The result is either equal to the part's type ID (e.g.
-        /// "net.fusisoft.note"), or, for a layer part, equal to the part's
+        /// "it.vedph.note"), or, for a layer part, equal to the part's
         /// type ID + ":" + the fragment's type ID (e.g.
-        /// "net.fusisoft.token-text-layer:fr.net.fusisoft.comment").
+        /// "it.vedph.token-text-layer:fr.it.vedph.comment").
         /// </para>
         /// <para>
         /// The convention underlying this method assumes that any fragment type ID
         /// starts with the "fr." prefix, and that a layer part has the fragment type
         /// ID as its role ID. For instance, a token-based text layer part for
-        /// comments has type ID="net.fusisoft.token-text-layer", and role
-        /// ID="fr.net.fusisoft.comment". So, each layer part has the
+        /// comments has type ID="it.vedph.token-text-layer", and role
+        /// ID="fr.it.vedph.comment". So, each layer part has the
         /// corresponding fragment ID as its role. Should you want to use the
         /// same fragment type with different roles, add a new part type
         /// definition with role=fragment ID + colon + role ID,
-        /// e.g. "fr.net.fusisoft.comment:scholarly".
+        /// e.g. "fr.it.vedph.comment:scholarly".
         /// </para>
         /// </remarks>
         /// <param name="typeId">The type identifier.</param>

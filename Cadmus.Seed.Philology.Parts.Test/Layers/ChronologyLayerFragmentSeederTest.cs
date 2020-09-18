@@ -29,7 +29,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             Type t = typeof(ChronologyLayerFragmentSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.fr.net.fusisoft.chronology", attr.Tag);
+            Assert.Equal("seed.fr.it.vedph.chronology", attr.Tag);
         }
 
         [Fact]

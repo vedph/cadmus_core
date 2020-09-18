@@ -80,36 +80,35 @@ namespace Cadmus.Parts.Test.General
         }
 
         [Fact]
-        public void GetDataPins_Tag_3()
+        public void GetDataPins_Tag_4()
         {
             IndexKeywordsPart part = GetPart();
 
             List<DataPin> pins = part.GetDataPins().ToList();
-            Assert.Equal(3, pins.Count);
+            Assert.Equal(4, pins.Count);
+
+            DataPin pin = pins.Find(p => p.Name == "tot-count");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
+            Assert.Equal("3", pin.Value);
 
             // keyword..eng = Greek
-            DataPin pin = pins[0];
-            Assert.Equal(part.ItemId, pin.ItemId);
-            Assert.Equal(part.Id, pin.PartId);
-            Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("keyword..eng", pin.Name);
-            Assert.Equal("greek", pin.Value);
+            pin = pins.Find(p => p.Name == "keyword..eng"
+                && p.Value == "greek");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
 
             // keyword.colors.eng = green
-            pin = pins[1];
-            Assert.Equal(part.ItemId, pin.ItemId);
-            Assert.Equal(part.Id, pin.PartId);
-            Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("keyword.colors.eng", pin.Name);
-            Assert.Equal("green", pin.Value);
+            pin = pins.Find(p => p.Name == "keyword.colors.eng"
+                && p.Value == "green");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
 
             // keyword.colors.eng = red
-            pin = pins[2];
-            Assert.Equal(part.ItemId, pin.ItemId);
-            Assert.Equal(part.Id, pin.PartId);
-            Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("keyword.colors.eng", pin.Name);
-            Assert.Equal("red", pin.Value);
+            pin = pins.Find(p => p.Name == "keyword.colors.eng"
+                && p.Value == "red");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
         }
     }
 }

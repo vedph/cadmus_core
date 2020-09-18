@@ -12,11 +12,11 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="QuotationsLayerFragment"/>.
-    /// Tag: <c>seed.fr.net.fusisoft.quotations</c>.
+    /// Tag: <c>seed.fr.it.vedph.quotations</c>.
     /// </summary>
     /// <seealso cref="FragmentSeederBase" />
     /// <seealso cref="IConfigurable{QuotationLayerFragmentSeederOptions}" />
-    [Tag("seed.fr.net.fusisoft.quotations")]
+    [Tag("seed.fr.it.vedph.quotations")]
     public sealed class QuotationsLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<QuotationLayerFragmentSeederOptions>
     {

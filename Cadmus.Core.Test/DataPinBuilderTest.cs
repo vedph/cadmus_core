@@ -260,5 +260,10 @@ namespace Cadmus.Core.Test
         {
             return new List<DataPin>();
         }
+
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>();
+        }
     }
 }

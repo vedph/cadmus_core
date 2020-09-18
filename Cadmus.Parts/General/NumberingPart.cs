@@ -8,19 +8,10 @@ namespace Cadmus.Parts.General
     /// Generic numbering part, providing the ordinal number representing the
     /// position of an item in the context of its "sibling" items, plus an
     /// optional arbitrarily defined number label.
-    /// Tag: <c>net.fusisoft.numbering</c>.
+    /// Tag: <c>it.vedph.numbering</c>.
     /// </summary>
-    /// <remarks>
-    /// <para>Search pins:</para>
-    /// <list type="bullet">
-    /// <item>
-    /// <term>ordinal</term>
-    /// <description><see cref="Tag"/> + space + <see cref="Ordinal"/></description>
-    /// </item>
-    /// </list>
-    /// </remarks>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.numbering")]
+    [Tag("it.vedph.numbering")]
     public sealed class NumberingPart : PartBase
     {
         /// <summary>
@@ -45,18 +36,31 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>ordinal</c>=tag + space + ordinal.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Pins.</returns>
+        /// <returns>The pins: <c>ordinal</c>=tag + space + ordinal.</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             return new[]
             {
                 CreateDataPin("ordinal", $"{Tag ?? ""} {Ordinal}")
             };
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.String,
+                    "ordinal",
+                    "The value built from tag + space + ordinal.")
+            });
         }
 
         /// <summary>

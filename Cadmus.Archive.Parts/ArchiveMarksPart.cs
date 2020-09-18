@@ -8,10 +8,10 @@ namespace Cadmus.Archive.Parts
 {
     /// <summary>
     /// Archive marks part ("segnature").
-    /// Tag: <c>net.fusisoft.archive-marks</c>.
+    /// Tag: <c>it.vedph.archive-marks</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.archive-marks")]
+    [Tag("it.vedph.archive-marks")]
     public sealed class ArchiveMarksPart : PartBase
     {
         /// <summary>
@@ -57,6 +57,20 @@ namespace Cadmus.Archive.Parts
                 select CreateDataPin("mark", s);
         }
 
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "mark",
+                    "The list of marks.",
+                    "M")
+            });
+        }
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>

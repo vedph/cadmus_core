@@ -29,9 +29,9 @@ using Fusi.Tools.Config;
 
 /// <summary>
 /// TODO: add summary
-/// <para>Tag: <c>net.fusisoft.__NAME__</c>.</para>
+/// <para>Tag: <c>it.vedph.__NAME__</c>.</para>
 /// </summary>
-[Tag("net.fusisoft.__NAME__")]
+[Tag("it.vedph.__NAME__")]
 public class __NAME__Part : PartBase
 {
     // TODO: add your properties here...

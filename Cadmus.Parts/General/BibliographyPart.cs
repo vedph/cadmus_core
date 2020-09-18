@@ -8,10 +8,10 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Bibliography part. This contains any number of <see cref="BibEntry"/>
-    /// entries. Tag: <c>net.fusisoft.bibliography</c>.
+    /// entries. Tag: <c>it.vedph.bibliography</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.bibliography")]
+    [Tag("it.vedph.bibliography")]
     public sealed class BibliographyPart : PartBase
     {
         /// <summary>
@@ -105,6 +105,39 @@ namespace Cadmus.Parts.General
             }
 
             return builder.Build(this);
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "tot-count",
+                    "The total count of bibliographic entries."),
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "type-{TYPE}-count",
+                    "The count of type TYPE in the entries."),
+                new DataPinDefinition(DataPinValueType.String,
+                    "author",
+                    "List of distinct author or contributor last names.",
+                    "MF"),
+                new DataPinDefinition(DataPinValueType.String,
+                    "title",
+                    "List of distinct titles.",
+                    "Mf"),
+                new DataPinDefinition(DataPinValueType.String,
+                    "container",
+                    "List of distinct container titles.",
+                    "Mf"),
+                new DataPinDefinition(DataPinValueType.String,
+                    "keyword.{LANG}",
+                    "List of distinct keywords for language LANG.",
+                    "Mf")
+            });
         }
 
         /// <summary>

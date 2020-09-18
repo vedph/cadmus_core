@@ -10,10 +10,10 @@ namespace Cadmus.Archive.Parts
     /// An envelope including any number of items. This is not an archival unit
     /// entering the archive hierarchy, but only a physical container. Note that
     /// an envelope can never include other envelopes.
-    /// Tag: <c>net.fusisoft.archive-envelope</c>.
+    /// Tag: <c>it.vedph.archive-envelope</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.archive-envelope")]
+    [Tag("it.vedph.archive-envelope")]
     public sealed class ArchiveEnvelopePart : PartBase
     {
         /// <summary>
@@ -56,10 +56,24 @@ namespace Cadmus.Archive.Parts
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "envelope-nr",
+                    "The envelope number.")
+            });
+        }
+
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

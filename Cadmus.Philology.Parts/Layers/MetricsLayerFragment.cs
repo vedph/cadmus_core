@@ -8,10 +8,10 @@ namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
     /// Metrics layer fragment, used to mark the text as part of a metrical verse.
-    /// Tag: <c>fr.net.fusisoft.metrics</c>.
+    /// Tag: <c>fr.it.vedph.metrics</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.metrics")]
+    [Tag("fr.it.vepdh.metrics")]
     public sealed class MetricsLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -56,12 +56,12 @@ namespace Cadmus.Philology.Parts.Layers
 
         /// <summary>
         /// Get all the pins exposed by the implementor.
-        /// Pins: <c>fr.metre</c>=metre, suffixed with <c>*</c> when imperfect.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Pins.</returns>
+        /// <returns>The pins: <c>fr.metre</c>=metre, suffixed with <c>*</c>
+        /// when imperfect.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Metre == null) return Enumerable.Empty<DataPin>();
@@ -73,6 +73,20 @@ namespace Cadmus.Philology.Parts.Layers
                     Value = Metre + (IsImperfect? "*" : "")
                 }
             };
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "metre",
+                    "The metre, suffixed with * when imperfect.")
+            });
         }
 
         /// <summary>

@@ -10,10 +10,10 @@ namespace Cadmus.Parts.General
     /// <summary>
     /// Generic text note. A note just contains some text in any format chosen by
     /// the implementor, plus an optional tag to categorize notes where required.
-    /// Tag: <c>net.fusisoft.note</c>.
+    /// Tag: <c>it.vedph.note</c>.
     /// </summary>
-    [Tag("net.fusisoft.note")]
-    public class NotePart : PartBase, IHasText
+    [Tag("it.vedph.note")]
+    public sealed class NotePart : PartBase, IHasText
     {
         /// <summary>
         /// Gets or sets the optional tag linked to this note. You might want to use
@@ -52,10 +52,24 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.String,
+                    "tag",
+                    "The tag if any.")
+            });
+        }
+
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

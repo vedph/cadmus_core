@@ -21,9 +21,9 @@ namespace Cadmus.Core.Config
     /// each of these fragment classes. This way, we have a mapping for all
     /// the closed generic types representing the various text layers. In this
     /// case, the tag is prefixed with the tag from the layer part followed by
-    /// <c>:fr.</c>, e.g. <c>net.fusisoft.token-text-layer:fr.net.fusisoft.comment</c>
-    /// for a fragment with tag <c>fr.net.fusisoft.comment</c> combined with a
-    /// layer part with tag <c>net.fusisoft.token-text-layer</c>.</remarks>
+    /// <c>:fr.</c>, e.g. <c>it.vedph.token-text-layer:fr.it.vedph.comment</c>
+    /// for a fragment with tag <c>fr.it.vedph.comment</c> combined with a
+    /// layer part with tag <c>it.vedph.token-text-layer</c>.</remarks>
     public sealed class TagAttributeToTypeMap
     {
         private readonly Dictionary<string, Type> _map;

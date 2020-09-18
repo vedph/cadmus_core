@@ -32,7 +32,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             Type t = typeof(TokenTextLayerPartSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.net.fusisoft.token-text-layer", attr.Tag);
+            Assert.Equal("seed.it.vedph.token-text-layer", attr.Tag);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
                 MaxFragmentCount = 3
             });
 
-            IPart part = seeder.GetPart(_item, "fr.net.fusisoft.quotations", _factory);
+            IPart part = seeder.GetPart(_item, "fr.it.vedph.quotations", _factory);
 
             Assert.Null(part);
         }
@@ -92,7 +92,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             textSeeder.SetSeedOptions(_seedOptions);
             item.Parts.Add(textSeeder.GetPart(_item, null, _factory));
 
-            IPart part = seeder.GetPart(item, "fr.net.fusisoft.quotations", _factory);
+            IPart part = seeder.GetPart(item, "fr.it.vedph.quotations", _factory);
 
             Assert.NotNull(part);
 

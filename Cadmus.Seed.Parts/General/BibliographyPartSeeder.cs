@@ -11,10 +11,10 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Bibliography part seeder.
-    /// Tag: <c>seed.net.fusisoft.bibliography</c>.
+    /// Tag: <c>seed.it.vedph.bibliography</c>.
     /// </summary>
     /// <seealso cref="PartSeederBase" />
-    [Tag("seed.net.fusisoft.bibliography")]
+    [Tag("seed.it.vedph.bibliography")]
     public sealed class BibliographyPartSeeder : PartSeederBase,
         IConfigurable<BibliographyPartSeederOptions>
     {

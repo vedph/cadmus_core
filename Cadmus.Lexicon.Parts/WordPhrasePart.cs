@@ -8,9 +8,9 @@ namespace Cadmus.Lexicon.Parts
 {
     /// <summary>
     /// A phrase involving a special usage of a word.
-    /// Tag: <c>net.fusisoft.lexicon.word-phrase</c>.
+    /// Tag: <c>it.vedph.lexicon.word-phrase</c>.
     /// </summary>
-    [Tag("net.fusisoft.lexicon.word-phrase")]
+    [Tag("it.vedph.lexicon.word-phrase")]
     public sealed class WordPhrasePart : PartBase
     {
         /// <summary>
@@ -62,6 +62,16 @@ namespace Cadmus.Lexicon.Parts
         {
             // TODO pins
             return new DataPin[0];
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            // TODO pins definitions
+            return new List<DataPinDefinition>();
         }
 
         /// <summary>

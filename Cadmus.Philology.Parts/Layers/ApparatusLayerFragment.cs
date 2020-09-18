@@ -9,10 +9,10 @@ namespace Cadmus.Philology.Parts.Layers
 {
     /// <summary>
     /// Critical apparatus layer fragment.
-    /// Tag: <c>fr.net.fusisoft.apparatus</c>.
+    /// Tag: <c>fr.it.vedph.apparatus</c>.
     /// </summary>
     /// <seealso cref="T:Cadmus.Core.Layers.ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.apparatus")]
+    [Tag("fr.it.vedph.apparatus")]
     public sealed class ApparatusLayerFragment : ITextLayerFragment
     {
         #region Properties
@@ -57,11 +57,12 @@ namespace Cadmus.Philology.Parts.Layers
         /// to access further data.</param>
         /// <returns>Pins: <c>fr.tot-count</c> and a collection of pins with
         /// keys: <c>fr.variant</c>=variant (normalized if any, else just
-        /// the variant), <c>fr.witness</c>=witness, <c>fr.author</c>=author.
-        /// </returns>
+        /// the variant), <c>fr.witness</c>=witness (filtered, with digits),
+        /// <c>fr.author</c>=author (filtered, with digits).</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
 
             builder.Set(PartBase.FR_PREFIX + "tot", Entries?.Count ?? 0, false);
 
@@ -81,7 +82,8 @@ namespace Cadmus.Philology.Parts.Layers
                     {
                         builder.AddValues(
                             PartBase.FR_PREFIX + "witness",
-                            from w in entry.Witnesses select w.Value);
+                            from w in entry.Witnesses select w.Value,
+                            filter: true, filterOptions: true);
                     }
 
                     // fr.author
@@ -89,12 +91,39 @@ namespace Cadmus.Philology.Parts.Layers
                     {
                         builder.AddValues(
                             PartBase.FR_PREFIX + "author",
-                            from w in entry.Authors select w.Value);
+                            from w in entry.Authors select w.Value,
+                            filter: true, filterOptions: true);
                     }
                 }
             }
 
             return builder.Build(null);
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    PartBase.FR_PREFIX + "tot-count",
+                    "The total count of apparatus entries in fragment."),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "variant",
+                    "The list of variants (using their normalized form if any).",
+                    "M"),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "witness",
+                    "The list of witnesses.",
+                    "Mf"),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "author",
+                    "The list of authors.",
+                    "Mf")
+            });
         }
 
         /// <summary>

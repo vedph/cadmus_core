@@ -23,10 +23,10 @@ namespace Cadmus.Mongo
     /// The browser collects all such parts for the specified parent item ID
     /// (or null for the root item), with paging, sorted first by X and then
     /// by the item's sort key.
-    /// <para>Tag: <c>net.fusisoft.item-browser.mongo.hierarchy</c>.</para>
+    /// <para>Tag: <c>it.vedph.item-browser.mongo.hierarchy</c>.</para>
     /// </summary>
     /// <seealso cref="IItemBrowser" />
-    [Tag("net.fusisoft.item-browser.mongo.hierarchy")]
+    [Tag("it.vedph.item-browser.mongo.hierarchy")]
     public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
         IItemBrowser,
         IConfigurable<ItemBrowserOptions>
@@ -62,7 +62,7 @@ namespace Cadmus.Mongo
 
             // "$match" : {
             return new BsonDocument("$match", new BsonDocument()
-                // "typeId" : "net.fusisoft.hierarchy",
+                // "typeId" : "it.vedph.hierarchy",
                 .Add("typeId", _partTypeId)
                 // "$and" : [
                 .Add("$and", new BsonArray()
@@ -83,7 +83,7 @@ namespace Cadmus.Mongo
             //   [
             //     { 
             //       "$match" : { 
-            //         "typeId" : "net.fusisoft.hierarchy", 
+            //         "typeId" : "it.vedph.hierarchy", 
             //         "$and" : [
             //           { 
             //             "content.parentId" : "..."
@@ -174,7 +174,7 @@ namespace Cadmus.Mongo
             //   [
             //     { 
             //       "$match" : { 
-            //         "typeId" : "net.fusisoft.hierarchy", 
+            //         "typeId" : "it.vedph.hierarchy", 
             //         "$and" : [
             //           { 
             //             "content.parentId" : "..."

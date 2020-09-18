@@ -9,10 +9,10 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Seeder for <see cref="HistoricalDatePart"/>.
-    /// Tag: <c>seed.net.fusisoft.historical-date</c>.
+    /// Tag: <c>seed.it.vedph.historical-date</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
-    [Tag("seed.net.fusisoft.historical-date")]
+    [Tag("seed.it.vedph.historical-date")]
     public sealed class HistoricalDatePartSeeder : PartSeederBase
     {
         private static Datation GetRandomDatation()

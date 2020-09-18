@@ -23,7 +23,7 @@ namespace Cadmus.Core.Test
         {
             NotePart part = new NotePart();
 
-            Assert.Equal("net.fusisoft.note", part.TypeId);
+            Assert.Equal("it.vedph.note", part.TypeId);
         }
 
         [Fact]
@@ -39,31 +39,31 @@ namespace Cadmus.Core.Test
         [Fact]
         public void BuildProviderId_NoRole_EqualsTypeId()
         {
-            string id = PartBase.BuildProviderId("net.fusisoft.note", null);
-            Assert.Equal("net.fusisoft.note", id);
+            string id = PartBase.BuildProviderId("it.vedph.note", null);
+            Assert.Equal("it.vedph.note", id);
         }
 
         [Fact]
         public void BuildProviderId_RoleNonFr_EqualsTypeId()
         {
-            string id = PartBase.BuildProviderId("net.fusisoft.date", "copy");
-            Assert.Equal("net.fusisoft.date", id);
+            string id = PartBase.BuildProviderId("it.vedph.date", "copy");
+            Assert.Equal("it.vedph.date", id);
         }
 
         [Fact]
         public void BuildProviderId_RoleFr_EqualsTypeIdAndRoleId()
         {
             string id = PartBase.BuildProviderId(
-                "net.fusisoft.token-text-layer", "fr.comment");
-            Assert.Equal("net.fusisoft.token-text-layer:fr.comment", id);
+                "it.vedph.token-text-layer", "fr.comment");
+            Assert.Equal("it.vedph.token-text-layer:fr.comment", id);
         }
 
         [Fact]
         public void BuildProviderId_RoleFrPlusDot_EqualsTypeIdAndRoleId()
         {
-            string id = PartBase.BuildProviderId("net.fusisoft.token-text-layer",
-                "fr.net.fusisoft.comment:scholarly");
-            Assert.Equal("net.fusisoft.token-text-layer:fr.net.fusisoft.comment", id);
+            string id = PartBase.BuildProviderId("it.vedph.token-text-layer",
+                "fr.it.vedph.comment:scholarly");
+            Assert.Equal("it.vedph.token-text-layer:fr.it.vedph.comment", id);
         }
 
         [Fact]

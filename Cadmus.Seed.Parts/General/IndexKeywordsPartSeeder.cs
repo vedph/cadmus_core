@@ -8,11 +8,11 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Seeder for <see cref="IndexKeywordsPart"/>.
-    /// Tag: <c>seed.net.fusisoft.index-keywords</c>.
+    /// Tag: <c>seed.it.vedph.index-keywords</c>.
     /// </summary>
     /// <seealso cref="PartSeederBase" />
     /// <seealso cref="IConfigurable{IndexKeywordsPartSeederOptions}" />
-    [Tag("seed.net.fusisoft.index-keywords")]
+    [Tag("seed.it.vedph.index-keywords")]
     public sealed class IndexKeywordsPartSeeder : PartSeederBase,
         IConfigurable<IndexKeywordsPartSeederOptions>
     {

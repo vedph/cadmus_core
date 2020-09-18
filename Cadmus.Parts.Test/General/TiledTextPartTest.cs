@@ -48,7 +48,7 @@ namespace Cadmus.Parts.Test.General
             return rows;
         }
 
-        private static TiledTextPart GetPart()
+        private static TiledTextPart GetPart(int count)
         {
             return new TiledTextPart
             {
@@ -57,14 +57,14 @@ namespace Cadmus.Parts.Test.General
                 CreatorId = "zeus",
                 UserId = "another",
                 Citation = "some-citation",
-                Rows = GetRows(3)
+                Rows = GetRows(count)
             };
         }
 
         [Fact]
         public void Part_Is_Serializable()
         {
-            TiledTextPart part = GetPart();
+            TiledTextPart part = GetPart(2);
 
             string json = TestHelper.SerializePart(part);
             TiledTextPart part2 = TestHelper.DeserializePart<TiledTextPart>(json);
@@ -76,7 +76,7 @@ namespace Cadmus.Parts.Test.General
             Assert.Equal(part.CreatorId, part2.CreatorId);
             Assert.Equal(part.UserId, part2.UserId);
 
-            List<TextTileRow> expectedRows = GetRows(3);
+            List<TextTileRow> expectedRows = GetRows(2);
             Assert.Equal(expectedRows.Count, part.Rows.Count);
             for (int i = 0; i < expectedRows.Count; i++)
             {
@@ -87,27 +87,36 @@ namespace Cadmus.Parts.Test.General
         }
 
         [Fact]
-        public void GetDataPins_NoCitation_Empty()
+        public void GetDataPins_NoCitation_1()
         {
-            TiledTextPart part = GetPart();
+            TiledTextPart part = GetPart(0);
             part.Citation = null;
 
-            Assert.Empty(part.GetDataPins());
+            List<DataPin> pins = part.GetDataPins(null).ToList();
+
+            Assert.Single(pins);
+            Assert.Equal("row-count", pins[0].Name);
+            Assert.Equal("0", pins[0].Value);
+            TestHelper.AssertPinIds(part, pins[0]);
         }
 
         [Fact]
-        public void GetDataPins_Citation_1()
+        public void GetDataPins_Citation_2()
         {
-            TiledTextPart part = GetPart();
+            TiledTextPart part = GetPart(3);
 
             List<DataPin> pins = part.GetDataPins().ToList();
-            Assert.Single(pins);
 
-            DataPin pin = pins[0];
-            Assert.Equal(part.ItemId, pin.ItemId);
-            Assert.Equal(part.Id, pin.PartId);
-            Assert.Equal(part.RoleId, pin.RoleId);
-            Assert.Equal("citation", pin.Name);
+            Assert.Equal(2, pins.Count);
+
+            DataPin pin = pins.Find(p => p.Name == "row-count");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
+            Assert.Equal("3", pin.Value);
+
+            pin = pins.Find(p => p.Name == "citation");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
             Assert.Equal("some-citation", pin.Value);
         }
     }

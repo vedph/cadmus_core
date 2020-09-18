@@ -51,7 +51,7 @@ The following code is a facet sample:
       "colorKey": "86ACEB",
       "partDefinitions": [
         {
-          "typeId": "net.fusisoft.categories",
+          "typeId": "it.vedph.categories",
           "name": "categories",
           "description": "Item's categories.",
           "required": true,
@@ -60,7 +60,7 @@ The following code is a facet sample:
           "sortKey": "categories"
         },
         {
-          "typeId": "net.fusisoft.historical-date",
+          "typeId": "it.vedph.historical-date",
           "name": "date",
           "description": "Historical date.",
           "required": false,
@@ -69,7 +69,7 @@ The following code is a facet sample:
           "sortKey": "date"
         },
         {
-          "typeId": "net.fusisoft.keywords",
+          "typeId": "it.vedph.keywords",
           "name": "keywords",
           "description": "Item's keywords.",
           "colorKey": "90C0F8",
@@ -77,7 +77,7 @@ The following code is a facet sample:
           "sortKey": "keywords"
         },
         {
-          "typeId": "net.fusisoft.note",
+          "typeId": "it.vedph.note",
           "name": "note",
           "description": "A free text note about the document.",
           "colorKey": "B0A0F8",
@@ -85,7 +85,7 @@ The following code is a facet sample:
           "sortKey": "note"
         },
         {
-          "typeId": "net.fusisoft.token-text",
+          "typeId": "it.vedph.token-text",
           "roleId": "base-text",
           "name": "text",
           "description": "Item's token-based text.",
@@ -94,8 +94,8 @@ The following code is a facet sample:
           "sortKey": "text"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.comment",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.comment",
           "name": "comments",
           "description": "Comments on text.",
           "colorKey": "F8D040",
@@ -103,8 +103,8 @@ The following code is a facet sample:
           "sortKey": "text-comments"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.apparatus",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.apparatus",
           "name": "apparatus",
           "description": "Critical apparatus.",
           "colorKey": "D4E0A4",
@@ -112,8 +112,8 @@ The following code is a facet sample:
           "sortKey": "text-apparatus"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.orthography",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.orthography",
           "name": "orthography",
           "description": "Standard orthography.",
           "colorKey": "E0D4A4",
@@ -121,8 +121,8 @@ The following code is a facet sample:
           "sortKey": "text-apparatus"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.witnesses",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.witnesses",
           "name": "witnesses",
           "description": "Witnesses list.",
           "colorKey": "A4E0D4",
@@ -230,7 +230,7 @@ Here is a profile sample for thesauri, representing a set of language names, loc
 ]
 ```
 
-Note that currently the web UI frontend implements a convention by which if a thesaurus with id `model-types@en` exists, it will be used to map raw part type IDs like `net.fusisoft.note` to user-friendly names like `note`. If such thesaurus does not exist, or is not complete, no error will occur; rather, the raw type IDs will be used instead of the corresponding user-friendly names.
+Note that currently the web UI frontend implements a convention by which if a thesaurus with id `model-types@en` exists, it will be used to map raw part type IDs like `it.vedph.note` to user-friendly names like `note`. If such thesaurus does not exist, or is not complete, no error will occur; rather, the raw type IDs will be used instead of the corresponding user-friendly names.
 
 ### Thesauri Aliases
 
@@ -299,7 +299,7 @@ For instance, here is the configuration for the hierarchy items browser:
 ```json
 "browsers": [
   {
-    "id": "net.fusisoft.item-browser.mongo.hierarchy"
+    "id": "it.vedph.item-browser.mongo.hierarchy"
   }
 ]
 ```
@@ -311,7 +311,7 @@ A corresponding thesaurus in the [profile](profiles.md), with ID `item-browsers@
   "id": "item-browsers@en",
   "entries": [
     {
-      "id": "net.fusisoft.item-browser.mongo.hierarchy",
+      "id": "it.vedph.item-browser.mongo.hierarchy",
       "value": "items hierarchy"
     }
   ]

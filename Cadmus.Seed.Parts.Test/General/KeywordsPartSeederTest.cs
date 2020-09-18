@@ -27,7 +27,7 @@ namespace Cadmus.Seed.Parts.Test.General
             Type t = typeof(KeywordsPartSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.net.fusisoft.keywords", attr.Tag);
+            Assert.Equal("seed.it.vedph.keywords", attr.Tag);
         }
 
         [Fact]

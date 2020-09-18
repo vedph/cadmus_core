@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Collections.Generic;
-using System.Linq;
 using Cadmus.Core;
 using Fusi.Tools.Config;
 using System;
@@ -10,10 +9,10 @@ namespace Cadmus.Archive.Parts
     /// <summary>
     /// Archive document's attachments part. This list any number of attachments
     /// to a document, represented by a list of <see cref="ArchiveAttachment"/>'s.
-    /// Tag: <c>net.fusisoft.archive-attachments</c>.
+    /// Tag: <c>it.vedph.archive-attachments</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.archive-attachments")]
+    [Tag("it.vedph.archive-attachments")]
     public sealed class ArchiveAttachmentsPart : PartBase
     {
         /// <summary>
@@ -37,24 +36,29 @@ namespace Cadmus.Archive.Parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
         /// <remarks>
-        /// <para>Search pins:</para>
-        /// <list type="bullet">
-        /// <item>
-        /// <term>att-count</term>
-        /// <description>count of attachments</description>
-        /// </item>
-        /// </list>
-        /// </remarks>
-        /// <returns>pins</returns>
+        /// <returns>The pins: <c>tot-count</c>.</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            if (Attachments?.Count == 0) return Array.Empty<DataPin>();
-
-            return from a in Attachments
-                   select CreateDataPin("att-count",
-                       a.Count.ToString(CultureInfo.InvariantCulture));
+            return new DataPin[]
+            {
+                CreateDataPin("tot-count",
+                    Attachments?.Count.ToString(CultureInfo.InvariantCulture) ?? "0")
+            };
         }
 
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "tot-count",
+                    "The total count of attachments.")
+            });
+        }
         /// <summary>
         /// Converts to string.
         /// </summary>

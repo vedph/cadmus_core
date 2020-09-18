@@ -9,9 +9,9 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="WitnessesLayerFragment"/>.
-    /// Tag: <c>seed.fr.net.fusisoft.witnesses</c>.
+    /// Tag: <c>seed.fr.it.vedph.witnesses</c>.
     /// </summary>
-    [Tag("seed.fr.net.fusisoft.witnesses")]
+    [Tag("seed.fr.it.vedph.witnesses")]
     public sealed class WitnessesLayerFragmentSeeder :
         FragmentSeederBase,
         IConfigurable<WitnessesLayerFragmentSeederOptions>

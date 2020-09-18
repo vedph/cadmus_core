@@ -29,7 +29,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             Type t = typeof(WitnessesLayerFragmentSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.fr.net.fusisoft.witnesses", attr.Tag);
+            Assert.Equal("seed.fr.it.vedph.witnesses", attr.Tag);
         }
 
         [Fact]

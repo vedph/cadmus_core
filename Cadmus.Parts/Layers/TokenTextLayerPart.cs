@@ -11,7 +11,7 @@ namespace Cadmus.Parts.Layers
 {
     /// <summary>
     /// Text layer part class, based on token-referenced text.
-    /// Tag: <c>net.fusisoft.token-text-layer</c>.
+    /// Tag: <c>it.vedph.token-text-layer</c>.
     /// </summary>
     /// <remarks>This class represents any text layer part using token-based
     /// coordinates. The text layer item part is just a wrapper for a collection
@@ -31,7 +31,7 @@ namespace Cadmus.Parts.Layers
     /// type of its fragments.
     /// </para>
     /// </remarks>
-    [Tag("net.fusisoft.token-text-layer")]
+    [Tag("it.vedph.token-text-layer")]
     public sealed class TokenTextLayerPart<TFragment> : YXLayerPartBase<TFragment>
         where TFragment : ITextLayerFragment, new()
     {
@@ -145,6 +145,16 @@ namespace Cadmus.Parts.Layers
             }
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            TFragment fr = Activator.CreateInstance<TFragment>();
+            return fr.GetDataPinDefinitions();
         }
 
         /// <summary>

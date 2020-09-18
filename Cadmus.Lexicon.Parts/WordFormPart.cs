@@ -7,9 +7,9 @@ namespace Cadmus.Lexicon.Parts
 {
     /// <summary>
     /// Word phonetic and graphic form part.
-    /// Tag: <c>net.fusisoft.lexicon.word-form</c>.
+    /// Tag: <c>it.vedph.lexicon.word-form</c>.
     /// </summary>
-    [Tag("net.fusisoft.lexicon.word-form")]
+    [Tag("it.vedph.lexicon.word-form")]
     public sealed class WordFormPart : PartBase
     {
         /// <summary>
@@ -80,6 +80,16 @@ namespace Cadmus.Lexicon.Parts
         {
             // TODO pins
             return new DataPin[0];
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            // TODO pins definitions
+            return new List<DataPinDefinition>();
         }
 
         /// <summary>

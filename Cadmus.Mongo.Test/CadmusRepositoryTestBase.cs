@@ -969,7 +969,7 @@ namespace Cadmus.TestBase
             facet.PartDefinitions.Add(
                 new PartDefinition
                 {
-                    TypeId = "net.fusisoft.token-text",
+                    TypeId = "it.vedph.token-text",
                     RoleId = "base-text",
                     Name = "text",
                     Description = "Text",
@@ -981,8 +981,8 @@ namespace Cadmus.TestBase
             facet.PartDefinitions.Add(
                 new PartDefinition
                 {
-                    TypeId = "net.fusisoft.token-text-layer",
-                    RoleId = "fr.net.fusisoft.comment",
+                    TypeId = "it.vedph.token-text-layer",
+                    RoleId = "fr.it.vedph.comment",
                     Name = "comments layer",
                     Description = "Generic comments",
                     IsRequired = false,
@@ -993,8 +993,8 @@ namespace Cadmus.TestBase
             facet.PartDefinitions.Add(
                 new PartDefinition
                 {
-                    TypeId = "net.fusisoft.token-text-layer",
-                    RoleId = "fr.net.fusisoft.apparatus",
+                    TypeId = "it.vedph.token-text-layer",
+                    RoleId = "fr.it.vedph.apparatus",
                     Name = "apparatus layer",
                     Description = "Critical apparatus",
                     IsRequired = false,
@@ -1063,16 +1063,16 @@ namespace Cadmus.TestBase
 
             // comments
             LayerPartInfo part = parts.FirstOrDefault(
-                p => p.RoleId == "fr.net.fusisoft.comment");
+                p => p.RoleId == "fr.it.vedph.comment");
             Assert.NotNull(part);
-            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.Equal("it.vedph.token-text-layer", part.TypeId);
             Assert.Equal(0, part.FragmentCount);
 
             // apparatus
             part = parts.FirstOrDefault(
-                p => p.RoleId == "fr.net.fusisoft.apparatus");
+                p => p.RoleId == "fr.it.vedph.apparatus");
             Assert.NotNull(part);
-            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.Equal("it.vedph.token-text-layer", part.TypeId);
             Assert.Equal(0, part.FragmentCount);
         }
 
@@ -1089,17 +1089,17 @@ namespace Cadmus.TestBase
 
             // comments
             LayerPartInfo part = parts.FirstOrDefault(
-                p => p.RoleId == "fr.net.fusisoft.comment");
+                p => p.RoleId == "fr.it.vedph.comment");
             Assert.NotNull(part);
-            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.Equal("it.vedph.token-text-layer", part.TypeId);
             Assert.False(part.IsAbsent);
             Assert.Equal(1, part.FragmentCount);
 
             // apparatus
             part = parts.FirstOrDefault(
-                p => p.RoleId == "fr.net.fusisoft.apparatus");
+                p => p.RoleId == "fr.it.vedph.apparatus");
             Assert.NotNull(part);
-            Assert.Equal("net.fusisoft.token-text-layer", part.TypeId);
+            Assert.Equal("it.vedph.token-text-layer", part.TypeId);
             Assert.True(part.IsAbsent);
             Assert.Equal(0, part.FragmentCount);
         }
@@ -1119,20 +1119,20 @@ namespace Cadmus.TestBase
             // categories
             PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("net.fusisoft.categories", info.TypeId);
+            Assert.Equal("it.vedph.categories", info.TypeId);
             Assert.Equal("categories", info.RoleId);
 
             // note
             info = page.Items[1];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("net.fusisoft.note", info.TypeId);
+            Assert.Equal("it.vedph.note", info.TypeId);
             Assert.Equal("note", info.RoleId);
 
             // layer
             info = page.Items[2];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("net.fusisoft.token-text-layer", info.TypeId);
-            Assert.Equal("fr.net.fusisoft.comment", info.RoleId);
+            Assert.Equal("it.vedph.token-text-layer", info.TypeId);
+            Assert.Equal("fr.it.vedph.comment", info.RoleId);
         }
 
         protected void DoGetPartsPage_1TypeId_1()
@@ -1140,7 +1140,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            var page = repository.GetParts(new PartFilter {TypeId = "net.fusisoft.note" });
+            var page = repository.GetParts(new PartFilter {TypeId = "it.vedph.note" });
 
             Assert.Equal(1, page.Items.Count);
             Assert.Equal(1, page.Total);
@@ -1148,7 +1148,7 @@ namespace Cadmus.TestBase
             // note
             PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("net.fusisoft.note", info.TypeId);
+            Assert.Equal("it.vedph.note", info.TypeId);
             Assert.Equal("note", info.RoleId);
         }
 
@@ -1165,7 +1165,7 @@ namespace Cadmus.TestBase
             // note
             PartInfo info = page.Items[0];
             Assert.Equal("item-001", info.ItemId);
-            Assert.Equal("net.fusisoft.note", info.TypeId);
+            Assert.Equal("it.vedph.note", info.TypeId);
             Assert.Equal("note", info.RoleId);
         }
 
@@ -1214,7 +1214,7 @@ namespace Cadmus.TestBase
             // act
             var page = repository.GetParts(new PartFilter
             {
-                TypeId = "net.fusisoft.hierarchy",
+                TypeId = "it.vedph.hierarchy",
                 SortExpressions = new[]
                 {
                     Tuple.Create("RoleId", true),
@@ -1239,7 +1239,7 @@ namespace Cadmus.TestBase
             var page = repository.GetParts(new PartFilter
             {
                 ItemIds = new[] {"item-001"},
-                TypeId = "net.fusisoft.hierarchy"
+                TypeId = "it.vedph.hierarchy"
             });
 
             // assert
@@ -1666,7 +1666,7 @@ namespace Cadmus.TestBase
             facet.PartDefinitions.Add(new PartDefinition
             {
                 Name = "text",
-                TypeId = "net.fusisoft.token-text",
+                TypeId = "it.vedph.token-text",
                 ColorKey = "FF0000",
                 IsRequired = true,
                 GroupKey = "text",
@@ -1678,12 +1678,12 @@ namespace Cadmus.TestBase
             facet.PartDefinitions.Add(new PartDefinition
             {
                 Name = "comments",
-                TypeId = "net.fusisoft.token-text-layer",
+                TypeId = "it.vedph.token-text-layer",
                 ColorKey = "FF0000",
                 IsRequired = true,
                 GroupKey = "text",
                 Description = "The base text",
-                RoleId = "fr.net.fusisoft.comment",
+                RoleId = "fr.it.vedph.comment",
                 SortKey = "comments"
             });
             return facet;

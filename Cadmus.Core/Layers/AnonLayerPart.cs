@@ -37,6 +37,15 @@ namespace Cadmus.Core.Layers
         }
 
         /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>No data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>();
+        }
+
+        /// <summary>
         /// Deletes all the non-range fragments at the integral location
         /// specified by the given Y,X coordinates. Fragments including this
         /// location but with a larger extent (ranges) are not deleted;

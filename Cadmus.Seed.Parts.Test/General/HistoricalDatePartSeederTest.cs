@@ -27,7 +27,7 @@ namespace Cadmus.Seed.Parts.Test.General
             Type t = typeof(HistoricalDatePartSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.net.fusisoft.historical-date", attr.Tag);
+            Assert.Equal("seed.it.vedph.historical-date", attr.Tag);
         }
 
         [Fact]

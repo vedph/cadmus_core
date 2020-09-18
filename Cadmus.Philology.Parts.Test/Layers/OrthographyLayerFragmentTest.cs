@@ -96,11 +96,11 @@ namespace Cadmus.Philology.Parts.Test.Layers
             List<DataPin> pins = fr.GetDataPins(item).ToList();
             Assert.Equal(2, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "fr.orthography-txt");
+            DataPin pin = pins.Find(p => p.Name == "fr.orth-txt");
             Assert.NotNull(pin);
             Assert.Equal("bixit", pin.Value);
 
-            pin = pins.Find(p => p.Name == "fr.orthography-std");
+            pin = pins.Find(p => p.Name == "fr.orth-std");
             Assert.NotNull(pin);
             Assert.Equal("vixit", pin.Value);
         }
@@ -125,11 +125,11 @@ namespace Cadmus.Philology.Parts.Test.Layers
 
             Assert.Equal(2, pins.Count);
             DataPin pin = pins[0];
-            Assert.Equal("fr.msp.c", pin.Name);
+            Assert.Equal("fr.msp-c-count", pin.Name);
             Assert.Equal("2", pin.Value);
 
             pin = pins[1];
-            Assert.Equal("fr.msp.v", pin.Name);
+            Assert.Equal("fr.msp-v-count", pin.Name);
             Assert.Equal("1", pin.Value);
         }
     }

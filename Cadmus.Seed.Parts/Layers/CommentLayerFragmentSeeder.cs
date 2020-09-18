@@ -9,11 +9,11 @@ namespace Cadmus.Seed.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="CommentLayerFragment"/>'s.
-    /// Tag: <c>seed.fr.net.fusisoft.comment</c>.
+    /// Tag: <c>seed.fr.it.vedph.comment</c>.
     /// </summary>
     /// <seealso cref="FragmentSeederBase" />
     /// <seealso cref="IConfigurable{CommentLayerFragmentSeederOptions}" />
-    [Tag("seed.fr.net.fusisoft.comment")]
+    [Tag("seed.fr.it.vedph.comment")]
     public sealed class CommentLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<CommentLayerFragmentSeederOptions>
     {

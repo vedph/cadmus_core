@@ -2,6 +2,7 @@
 using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Cadmus.Parts.General
@@ -10,10 +11,10 @@ namespace Cadmus.Parts.General
     /// Index keywords part. This parts contains a list of index keywords,
     /// which are a specialization of <see cref="Keyword"/>'s to represent
     /// entries in a traditional index.
-    /// Tag: <c>net.fusisoft.index-keywords</c>.
+    /// Tag: <c>it.vedph.index-keywords</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.index-keywords")]
+    [Tag("it.vedph.index-keywords")]
     public sealed class IndexKeywordsPart : PartBase
     {
         /// <summary>
@@ -47,23 +48,29 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Get all the key=value pairs exposed by the implementor. Each key is
-        /// <c>keyword.INDEXID.LANG</c> where <c>INDEXID</c> is the index
-        /// ID (whic may be empty), and <c>LANG</c> is its language value;
-        /// e.g. <c>keyword..eng</c> as name and <c>sample</c> as value.
-        /// The pins are returned sorted by index ID, language and then value.
-        /// The value is filtered, with digits.
+        /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>pins</returns>
+        /// <returns>The pins: <c>tot-count</c> and the list of keys in the form
+        /// <c>keyword.INDEXID.LANG</c> where <c>INDEXID</c> is the index
+        /// ID (which may be empty), and <c>LANG</c> is its language value;
+        /// e.g. <c>keyword..eng</c> as name and <c>sample</c> as value.
+        /// The pins are returned sorted by index ID, language and then value.
+        /// The value is filtered, with digits.
+        /// </returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Keywords == null || Keywords.Count == 0)
                 return Enumerable.Empty<DataPin>();
 
-            List<DataPin> pins = new List<DataPin>();
+            List<DataPin> pins = new List<DataPin>
+            {
+                CreateDataPin("tot-count",
+                    (Keywords?.Count ?? 0).ToString(CultureInfo.InvariantCulture))
+            };
+
             StandardDataPinTextFilter filter = new StandardDataPinTextFilter();
 
             foreach (string indexId in Keywords.Select(k => k.IndexId ?? "")
@@ -88,6 +95,24 @@ namespace Cadmus.Parts.General
             }
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "tot-count",
+                    "The total count of keywords."),
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "keyword.{INDEXID}.{LANG}",
+                    "The list of keywords grouped by index ID and language.",
+                    "Mf"),
+            });
         }
 
         /// <summary>

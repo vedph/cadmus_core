@@ -11,11 +11,11 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="ApparatusLayerFragment"/>'s.
-    /// Tag: <c>seed.fr.net.fusisoft.apparatus</c>.
+    /// Tag: <c>seed.fr.it.vedph.apparatus</c>.
     /// </summary>
     /// <seealso cref="FragmentSeederBase" />
     /// <seealso cref="IConfigurable{ApparatusLayerFragmentSeederOptions}" />
-    [Tag("seed.fr.net.fusisoft.apparatus")]
+    [Tag("seed.fr.it.vedph.apparatus")]
     public sealed class ApparatusLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<ApparatusLayerFragmentSeederOptions>
     {

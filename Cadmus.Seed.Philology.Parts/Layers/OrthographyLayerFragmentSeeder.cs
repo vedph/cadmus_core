@@ -10,11 +10,11 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="OrthographyLayerFragment"/>.
-    /// Tag: <c>seed.fr.net.fusisoft.orthography</c>.
+    /// Tag: <c>seed.fr.it.vedph.orthography</c>.
     /// </summary>
     /// <seealso cref="FragmentSeederBase" />
     /// <seealso cref="IConfigurable{OrthographyLayerFragmentSeederOptions}" />
-    [Tag("seed.fr.net.fusisoft.orthography")]
+    [Tag("seed.fr.it.vedph.orthography")]
     public sealed class OrthographyLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<OrthographyLayerFragmentSeederOptions>
     {

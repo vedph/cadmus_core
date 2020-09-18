@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Cadmus.Core;
 using Fusi.Tools.Config;
@@ -8,12 +9,12 @@ namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Keywords part.
-    /// Tag: <c>net.fusisoft.keywords</c>.
+    /// Tag: <c>it.vedph.keywords</c>.
     /// </summary>
     /// <remarks>This part contains any number of <see cref="Keyword"/>'s,
     /// each with its own language and value.
     /// </remarks>
-    [Tag("net.fusisoft.keywords")]
+    [Tag("it.vedph.keywords")]
     public sealed class KeywordsPart : PartBase
     {
         /// <summary>
@@ -53,21 +54,26 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Get all the key=value pairs exposed by the implementor. Each key is
-        /// <c>keyword.{lang}</c> where <c>{lang}</c> is its language value,
-        /// e.g. <c>keyword.eng</c> as name and <c>sample</c> as value.
-        /// The pins are returned sorted by language and then by value.
+        /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>pins</returns>
+        /// <returns>The pins: <c>tot-count</c> and a list of keywords, with
+        /// form <c>keyword.LANG</c> where <c>LANG</c> is its language value,
+        /// e.g. <c>keyword.eng</c> as name and <c>sample</c> as value.
+        /// The pins are returned sorted by language and then by value.</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             if (Keywords == null || Keywords.Count == 0)
                 return Enumerable.Empty<DataPin>();
 
-            List<DataPin> pins = new List<DataPin>();
+            List<DataPin> pins = new List<DataPin>
+            {
+                CreateDataPin("tot-count",
+                    (Keywords?.Count ?? 0).ToString(CultureInfo.InvariantCulture))
+            };
+
             IDataPinTextFilter filter = new StandardDataPinTextFilter();
 
             var keysByLang = from k in Keywords
@@ -87,6 +93,24 @@ namespace Cadmus.Parts.General
             }
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "tot-count",
+                    "The total count of keywords."),
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "keyword.{LANG}",
+                    "The list of keywords grouped by language.",
+                    "Mf"),
+            });
         }
 
         /// <summary>

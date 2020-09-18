@@ -11,10 +11,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// <summary>
     /// Chronology layer fragment: a chronological indication linked to a
     /// specific portion of text.
-    /// Tag: <c>fr.net.fusisoft.chronology</c>.
+    /// Tag: <c>fr.it.vedph.chronology</c>.
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.chronology")]
+    [Tag("fr.it.vedph.chronology")]
     public sealed class ChronologyLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -62,8 +62,7 @@ namespace Cadmus.Philology.Parts.Layers
         /// <returns>Pins.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            if (Date == null)
-                return Enumerable.Empty<DataPin>();
+            if (Date == null) return Enumerable.Empty<DataPin>();
 
             List<DataPin> pins = new List<DataPin>
             {
@@ -93,6 +92,26 @@ namespace Cadmus.Philology.Parts.Layers
             }
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Decimal,
+                    PartBase.FR_PREFIX + "date-value",
+                    "The sortable date value (0=undefined)."),
+                new DataPinDefinition(DataPinValueType.Decimal,
+                    PartBase.FR_PREFIX + "tag",
+                    "The tag, if any."),
+                new DataPinDefinition(DataPinValueType.Decimal,
+                    PartBase.FR_PREFIX + "event-id",
+                    "The event ID, if any.")
+            });
         }
 
         /// <summary>

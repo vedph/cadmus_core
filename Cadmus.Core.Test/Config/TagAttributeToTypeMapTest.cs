@@ -30,7 +30,7 @@ namespace Cadmus.Core.Test.Config
         {
             TagAttributeToTypeMap map = GetMap();
 
-            Type t = map.Get("net.fusisoft.note");
+            Type t = map.Get("it.vedph.note");
 
             Assert.Equal(typeof(NotePart), t);
         }
@@ -41,7 +41,7 @@ namespace Cadmus.Core.Test.Config
             TagAttributeToTypeMap map = GetMap();
 
             Type t = map.Get(
-                "net.fusisoft.token-text-layer:fr.net.fusisoft.comment");
+                "it.vedph.token-text-layer:fr.it.vedph.comment");
 
             Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);
         }

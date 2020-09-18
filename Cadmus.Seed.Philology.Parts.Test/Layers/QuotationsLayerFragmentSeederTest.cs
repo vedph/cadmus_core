@@ -29,7 +29,7 @@ namespace Cadmus.Seed.Philology.Parts.Test.Layers
             Type t = typeof(QuotationsLayerFragmentSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.fr.net.fusisoft.quotations", attr.Tag);
+            Assert.Equal("seed.fr.it.vedph.quotations", attr.Tag);
         }
 
         [Fact]

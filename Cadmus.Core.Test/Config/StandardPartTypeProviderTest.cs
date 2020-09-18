@@ -27,7 +27,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void Get_NotePart_Ok()
         {
-            Type t = GetProvider().Get("net.fusisoft.note");
+            Type t = GetProvider().Get("it.vedph.note");
 
             Assert.Equal(typeof(NotePart), t);
         }
@@ -36,7 +36,7 @@ namespace Cadmus.Core.Test.Config
         public void Get_CommentLayerPart_Ok()
         {
             Type t = GetProvider().Get(
-                "net.fusisoft.token-text-layer:fr.net.fusisoft.comment");
+                "it.vedph.token-text-layer:fr.it.vedph.comment");
 
             Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);
         }

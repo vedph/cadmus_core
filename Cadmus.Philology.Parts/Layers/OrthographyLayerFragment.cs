@@ -12,10 +12,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// <summary>
     /// Orthography layer fragment, used to mark deviations from the
     /// orthographical norm.
-    /// <para>Tag: <c>fr.net.fusisoft.orthography</c>.</para>
+    /// <para>Tag: <c>fr.it.vedph.orthography</c>.</para>
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.orthography")]
+    [Tag("fr.it.vedph.orthography")]
     public sealed class OrthographyLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -60,16 +60,15 @@ namespace Cadmus.Philology.Parts.Layers
         /// to access further data.</param>
         /// <remarks>If operations have tags, the operations with tags are
         /// grouped by them, and a pin is returned for each group, with its name
-        /// equal to <c>fr.msp</c> + the grouped operations tag, and its value
-        /// equal to the count of such operations. These pins are sorted
-        /// by their name.
+        /// equal to <c>fr.msp-TAG-count</c>, and its value equal to the count of
+        /// the operations with that tag. These pins are sorted by their name.
         /// <para>Also, if <paramref name="item"/> is received and it has
         /// a base text part and an orthography layer part, two additional pins
-        /// are returned: <c>fr.orthography-txt</c> with the original orthography
-        /// got from the base text, and <c>fr.orthography.std</c> with the
+        /// are returned: <c>fr.orth-txt</c> with the original orthography
+        /// got from the base text, and <c>fr.orth.std</c> with the
         /// <see cref="Standard"/> orthography from this fragment.</para>
         /// </remarks>
-        /// <returns>pins</returns>
+        /// <returns>The pins.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             List<DataPin> pins = new List<DataPin>();
@@ -88,7 +87,7 @@ namespace Cadmus.Philology.Parts.Layers
                     orderby g.Key
                     select new DataPin
                     {
-                        Name = PartBase.FR_PREFIX + $"msp.{g.Key}",
+                        Name = PartBase.FR_PREFIX + $"msp-{g.Key}-count",
                         Value = g.Count().ToString(CultureInfo.InvariantCulture)
                     });
             }
@@ -116,18 +115,38 @@ namespace Cadmus.Philology.Parts.Layers
                 {
                     pins.Add(new DataPin
                     {
-                        Name = PartBase.FR_PREFIX + "orthography-txt",
+                        Name = PartBase.FR_PREFIX + "orth-txt",
                         Value = baseText
                     });
                     pins.Add(new DataPin
                     {
-                        Name = PartBase.FR_PREFIX + "orthography-std",
+                        Name = PartBase.FR_PREFIX + "orth-std",
                         Value = Standard
                     });
                 }
             }
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    PartBase.FR_PREFIX + "msp-{TAG}-count",
+                    "The count of each type of misspelling operations."),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "orth-txt",
+                    "The original orthography from the base text."),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "orth-std",
+                    "The standard orthography from the fragment."),
+            });
         }
 
         /// <summary>

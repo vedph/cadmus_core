@@ -32,43 +32,43 @@ namespace Cadmus.Seed.Parts.Test
             Assert.NotNull(seeders);
             Assert.Equal(8, seeders.Count);
 
-            string key = "net.fusisoft.categories";
+            string key = "it.vedph.categories";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as CategoriesPartSeeder);
 
-            key = "net.fusisoft.historical-date";
+            key = "it.vedph.historical-date";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as HistoricalDatePartSeeder);
 
-            key = "net.fusisoft.keywords";
+            key = "it.vedph.keywords";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as KeywordsPartSeeder);
 
-            key = "net.fusisoft.note";
+            key = "it.vedph.note";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as NotePartSeeder);
 
-            key = "net.fusisoft.token-text";
+            key = "it.vedph.token-text";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TokenTextPartSeeder);
 
-            key = "net.fusisoft.token-text-layer";
+            key = "it.vedph.token-text-layer";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TokenTextLayerPartSeeder);
 
-            key = "net.fusisoft.token-text";
+            key = "it.vedph.token-text";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TokenTextPartSeeder);
 
-            key = "net.fusisoft.token-text-layer";
+            key = "it.vedph.token-text-layer";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TokenTextLayerPartSeeder);
 
-            key = "net.fusisoft.tiled-text";
+            key = "it.vedph.tiled-text";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TiledTextPartSeeder);
 
-            key = "net.fusisoft.tiled-text-layer";
+            key = "it.vedph.tiled-text-layer";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as TiledTextLayerPartSeeder);
         }
@@ -77,7 +77,7 @@ namespace Cadmus.Seed.Parts.Test
         public void GetFragmentSeeder_Comment_Ok()
         {
             IFragmentSeeder seeder = _factory.GetFragmentSeeder(
-                "seed.fr.net.fusisoft.comment");
+                "seed.fr.it.vedph.comment");
             Assert.NotNull(seeder);
         }
     }

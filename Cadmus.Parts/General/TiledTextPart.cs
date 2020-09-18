@@ -2,13 +2,14 @@
 using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Cadmus.Parts.General
 {
     /// <summary>
     /// Tiled text part.
-    /// <para>Tag: <c>net.fusisoft.tiled-text</c>.</para>
+    /// <para>Tag: <c>it.vedph.tiled-text</c>.</para>
     /// </summary>
     /// <remarks>A tiled text part is a general-purpose text laid out in 2
     /// dimensions: it has any number of <see cref="Rows"/>, each having
@@ -23,7 +24,7 @@ namespace Cadmus.Parts.General
     /// a subset of the text inside a tile, but the architecture does not rule
     /// this out.</remarks>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.tiled-text")]
+    [Tag("it.vedph.tiled-text")]
     public sealed class TiledTextPart : PartBase, IHasText
     {
         /// <summary>
@@ -51,20 +52,41 @@ namespace Cadmus.Parts.General
 
         /// <summary>
         /// Get all the key=value pairs (pins) exposed by the implementor.
-        /// Pins: <c>citation</c>=citation.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>The pins.</returns>
+        /// <returns>The pins: <c>row-count</c>, <c>citation</c>=citation if any.
+        /// </returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            return Citation != null ?
-                new[]
-                {
-                    CreateDataPin("citation", Citation)
-                }
-                : Enumerable.Empty<DataPin>();
+            List<DataPin> pins = new List<DataPin>
+            {
+                CreateDataPin("row-count",
+                Rows?.Count.ToString(CultureInfo.InvariantCulture) ?? "0")
+            };
+
+            if (!string.IsNullOrEmpty(Citation))
+                pins.Add(CreateDataPin("citation", Citation));
+
+            return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "row-count",
+                    "The rows count."),
+                new DataPinDefinition(DataPinValueType.String,
+                    "citation",
+                    "The citation if any.")
+            });
         }
 
         /// <summary>

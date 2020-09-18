@@ -109,7 +109,7 @@ A JSON template for the seeder configuration follows:
 {
   "facets": [
     {
-      "typeId": "net.fusisoft.categories",
+      "typeId": "it.vedph.categories",
       "name": "categories",
       "description": "Item's categories.",
       "required": true,
@@ -118,7 +118,7 @@ A JSON template for the seeder configuration follows:
       "sortKey": "categories"
     },
     {
-      "typeId": "net.fusisoft.historical-date",
+      "typeId": "it.vedph.historical-date",
       "name": "date",
       "description": "Historical date.",
       "required": false,
@@ -127,7 +127,7 @@ A JSON template for the seeder configuration follows:
       "sortKey": "date"
     },
     {
-      "typeId": "net.fusisoft.keywords",
+      "typeId": "it.vedph.keywords",
       "name": "keywords",
       "description": "Item's keywords.",
       "colorKey": "90C0F8",
@@ -135,7 +135,7 @@ A JSON template for the seeder configuration follows:
       "sortKey": "keywords"
     },
     {
-      "typeId": "net.fusisoft.note",
+      "typeId": "it.vedph.note",
       "name": "note",
       "description": "A free text note about the document.",
       "colorKey": "B0A0F8",
@@ -143,7 +143,7 @@ A JSON template for the seeder configuration follows:
       "sortKey": "note"
     },
     {
-      "typeId": "net.fusisoft.token-text",
+      "typeId": "it.vedph.token-text",
       "name": "text",
       "description": "Item's token-based text.",
       "colorKey": "31AB54",
@@ -151,8 +151,8 @@ A JSON template for the seeder configuration follows:
       "sortKey": "text"
     },
     {
-      "typeId": "net.fusisoft.token-text-layer",
-      "roleId": "fr.net.fusisoft.comment",
+      "typeId": "it.vedph.token-text-layer",
+      "roleId": "fr.it.vedph.comment",
       "name": "comments",
       "description": "Comments on text.",
       "colorKey": "F8D040",
@@ -169,7 +169,7 @@ A JSON template for the seeder configuration follows:
     },
     "partSeeders": [
       {
-        "id": "seed.net.fusisoft.categories",
+        "id": "seed.it.vedph.categories",
         "options": {
           "maxCategoriesPerItem": 3,
           "categories": [
@@ -182,10 +182,10 @@ A JSON template for the seeder configuration follows:
         }
       },
       {
-        "id": "seed.net.fusisoft.historical-date"
+        "id": "seed.it.vedph.historical-date"
       },
       {
-        "id": "seed.net.fusisoft.keywords",
+        "id": "seed.it.vedph.keywords",
         "options": {
           "languages": [
             "eng",
@@ -197,7 +197,7 @@ A JSON template for the seeder configuration follows:
         }
       },
       {
-        "id": "seed.net.fusisoft.note",
+        "id": "seed.it.vedph.note",
         "options": {
           "tags": [
             "language",
@@ -207,12 +207,12 @@ A JSON template for the seeder configuration follows:
         }
       },
       {
-        "id": "seed.net.fusisoft.token-text"
+        "id": "seed.it.vedph.token-text"
       }
     ],
     "fragmentSeeders": [
       {
-        "id": "seed.fr.net.fusisoft.comment",
+        "id": "seed.fr.it.vedph.comment",
         "options": {
           "tags": [
             "language",
@@ -266,7 +266,7 @@ As each part has its own schema, each part also has its own seeder. Each part se
 - `Configure`: configure the seeder with the seed options. These come from the `seedOptions` section of the configuration.
 - `GetPart`: get the seeded part.
 
-Also, each part seeder has a `TagAttribute` whose value is equal to the corresponding part's type ID, prefixed by `seed.`. For instance, the seeder ID for the part type ID `net.fusisoft.categories` is `seed.net.fusisoft.categories`.
+Also, each part seeder has a `TagAttribute` whose value is equal to the corresponding part's type ID, prefixed by `seed.`. For instance, the seeder ID for the part type ID `it.vedph.categories` is `seed.it.vedph.categories`.
 
 Part seeders requiring parameters can have them specified in the `options` property in the configuration. This property has a free schema, fit to each seeder's task and part. Note that if required options are not supplied, or are invalid, the seeder will return `null` and thus no part will be added.
 
@@ -278,10 +278,10 @@ The layer type is defined by the layer part's role ID, which is equal to the fra
 
 For instance, consider these part's IDs:
 
-- `typeId`: `net.fusisoft.token-text-layer`
-- `roleId`: `fr.net.fusisoft.comment`
+- `typeId`: `it.vedph.token-text-layer`
+- `roleId`: `fr.it.vedph.comment`
 
-This is a text layer part for comment fragments. The comment fragment ID is given by the `roleId`. Should this have a role, like e.g. `fr.net.fusisoft.comment:scholarly`, the role and its colon prefix would be ignored for the sake of instantiating the seeder.
+This is a text layer part for comment fragments. The comment fragment ID is given by the `roleId`. Should this have a role, like e.g. `fr.it.vedph.comment:scholarly`, the role and its colon prefix would be ignored for the sake of instantiating the seeder.
 
 Fragment seeders requiring parameters can have them specified in the `options` property in the configuration. This property has a free schema, fit to each seeder's task and fragment. Note that if required options are not supplied, or are invalid, the seeder will return `null` and thus no fragment will be added.
 
@@ -308,10 +308,10 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// __NAME__ part seeder.
-    /// Tag: <c>seed.net.fusisoft.__NAME__</c>.
+    /// Tag: <c>seed.it.vedph.__NAME__</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
-    [Tag("seed.net.fusisoft.__NAME__")]
+    [Tag("seed.it.vedph.__NAME__")]
     public sealed class __NAME__PartSeeder : PartSeederBase,
         IConfigurable<__NAME__PartSeederOptions>
     {
@@ -385,11 +385,11 @@ namespace Cadmus.Seed.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="__NAME__LayerFragment"/>'s.
-    /// Tag: <c>seed.fr.net.fusisoft.__NAME__</c>.
+    /// Tag: <c>seed.fr.it.vedph.__NAME__</c>.
     /// </summary>
     /// <seealso cref="FragmentSeederBase" />
     /// <seealso cref="IConfigurable{__NAME__LayerFragmentSeederOptions}" />
-    [Tag("seed.fr.net.fusisoft.__NAME__")]
+    [Tag("seed.fr.it.vedph.__NAME__")]
     public sealed class __NAME__LayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<__NAME__LayerFragmentSeederOptions>
     {

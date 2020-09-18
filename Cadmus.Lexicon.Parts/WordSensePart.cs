@@ -9,9 +9,9 @@ namespace Cadmus.Lexicon.Parts
 {
     /// <summary>
     /// Word sense part.
-    /// Tag: <c>net.fusisoft.lexicon.word-sense</c>.
+    /// Tag: <c>it.vedph.lexicon.word-sense</c>.
     /// </summary>
-    [Tag("net.fusisoft.lexicon.word-sense")]
+    [Tag("it.vedph.lexicon.word-sense")]
     public sealed class WordSensePart : PartBase
     {
         /// <summary>
@@ -82,6 +82,16 @@ namespace Cadmus.Lexicon.Parts
         {
             // TODO pins
             return new DataPin[0];
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            // TODO pins definitions
+            return new List<DataPinDefinition>();
         }
 
         /// <summary>

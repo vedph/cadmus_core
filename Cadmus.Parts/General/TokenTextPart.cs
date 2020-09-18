@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Cadmus.Core;
@@ -12,10 +13,10 @@ namespace Cadmus.Parts.General
     /// <summary>
     /// Token-based text part, to be used as the base text for token-based
     /// text layers.
-    /// Tag: <c>net.fusisoft.token-text</c>.
+    /// Tag: <c>it.vedph.token-text</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.token-text")]
+    [Tag("it.vedph.token-text")]
     public sealed class TokenTextPart : PartBase, IHasText
     {
         /// <summary>
@@ -42,21 +43,42 @@ namespace Cadmus.Parts.General
         }
 
         /// <summary>
-        /// Get all the key=value pairs exposed by the implementor.
-        /// Pins: <c>citation</c>=citation.
+        /// Get all the key=value pairs (pins) exposed by the implementor.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Pins.</returns>
+        /// <returns>The pins: <c>line-count</c>, <c>citation</c>=citation if any.
+        /// </returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            return Citation != null ?
-                new[]
-                {
-                    CreateDataPin("citation", Citation)
-                }
-                : Enumerable.Empty<DataPin>();
+            List<DataPin> pins = new List<DataPin>
+            {
+                CreateDataPin("line-count",
+                Lines?.Count.ToString(CultureInfo.InvariantCulture) ?? "0")
+            };
+
+            if (!string.IsNullOrEmpty(Citation))
+                pins.Add(CreateDataPin("citation", Citation));
+
+            return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "line-count",
+                    "The lines count."),
+                new DataPinDefinition(DataPinValueType.String,
+                    "citation",
+                    "The citation if any.")
+            });
         }
 
         /// <summary>

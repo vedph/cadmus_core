@@ -28,7 +28,7 @@ namespace Cadmus.Seed.Parts.Test.Layers
             Type t = typeof(CommentLayerFragmentSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.fr.net.fusisoft.comment", attr.Tag);
+            Assert.Equal("seed.fr.it.vedph.comment", attr.Tag);
         }
 
         [Fact]

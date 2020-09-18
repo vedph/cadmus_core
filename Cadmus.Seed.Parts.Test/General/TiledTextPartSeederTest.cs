@@ -27,7 +27,7 @@ namespace Cadmus.Seed.Parts.Test.General
             Type t = typeof(TiledTextPartSeeder);
             TagAttribute attr = t.GetTypeInfo().GetCustomAttribute<TagAttribute>();
             Assert.NotNull(attr);
-            Assert.Equal("seed.net.fusisoft.tiled-text", attr.Tag);
+            Assert.Equal("seed.it.vedph.tiled-text", attr.Tag);
         }
 
         [Fact]

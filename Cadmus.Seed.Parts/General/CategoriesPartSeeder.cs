@@ -8,10 +8,10 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Categories part seeder.
-    /// Tag: <c>seed.net.fusisoft.categories</c>.
+    /// Tag: <c>seed.it.vedph.categories</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
-    [Tag("seed.net.fusisoft.categories")]
+    [Tag("seed.it.vedph.categories")]
     public sealed class CategoriesPartSeeder : PartSeederBase,
         IConfigurable<CategoriesPartSeederOptions>
     {

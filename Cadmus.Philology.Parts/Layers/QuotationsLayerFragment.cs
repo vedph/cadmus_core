@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Cadmus.Core;
 using Cadmus.Core.Layers;
 using Fusi.Tools.Config;
@@ -9,10 +8,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// <summary>
     /// Quotations layer fragment, used to mark one or more literary quotations
     /// corresponding to a specific portion of the text.
-    /// <para>Tag: <c>fr.net.fusisoft.quotations</c>.</para>
+    /// <para>Tag: <c>fr.it.vedph.quotations</c>.</para>
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.quotations")]
+    [Tag("fr.it.vedph.quotations")]
     public sealed class QuotationsLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -48,7 +47,8 @@ namespace Cadmus.Philology.Parts.Layers
         /// to access further data.</param>
         /// <returns>Pins: <c>fr.tot-count</c>, and a collection of pins with
         /// keys: <c>fr.author</c> (filtered, with digits), <c>fr.work</c>
-        /// (filtered, with digits), <c>fr.cit-uri</c>, <c>fr.tag-X-count</c>.</returns>
+        /// (filtered, with digits), <c>fr.cit-uri</c>, <c>fr.tag-TAG-count</c>.
+        /// </returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             DataPinBuilder builder = new DataPinBuilder(
@@ -82,6 +82,35 @@ namespace Cadmus.Philology.Parts.Layers
             }
 
             return builder.Build(null);
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    PartBase.FR_PREFIX + "tot-count",
+                    "The total count of quotations."),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "author",
+                    "The list of authors.",
+                    "Mf"),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "work",
+                    "The list of works.",
+                    "Mf"),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "cit-uri",
+                    "The list of citation URIs.",
+                    "M"),
+                new DataPinDefinition(DataPinValueType.Integer,
+                    PartBase.FR_PREFIX + "tag-{TAG}-count",
+                    "The count of each tag.")
+            });
         }
 
         /// <summary>

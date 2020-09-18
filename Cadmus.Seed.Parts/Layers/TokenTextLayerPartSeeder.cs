@@ -13,10 +13,10 @@ namespace Cadmus.Seed.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="TokenTextLayerPart{TFragment}"/>.
-    /// Tag: <c>seed.net.fusisoft.token-text-layer</c>.
+    /// Tag: <c>seed.it.vedph.token-text-layer</c>.
     /// </summary>
     /// <seealso cref="Cadmus.Seed.PartSeederBase" />
-    [Tag("seed.net.fusisoft.token-text-layer")]
+    [Tag("seed.it.vedph.token-text-layer")]
     public sealed class TokenTextLayerPartSeeder : PartSeederBase,
         IConfigurable<TokenTextLayerPartSeederOptions>
     {

@@ -7,7 +7,7 @@
       "description": "The default facet",
       "partDefinitions": [
         {
-          "typeId": "net.fusisoft.categories",
+          "typeId": "it.vedph.categories",
           "name": "categories",
           "description": "Item's categories.",
           "required": true,
@@ -16,7 +16,7 @@
           "sortKey": "categories"
         },
         {
-          "typeId": "net.fusisoft.keywords",
+          "typeId": "it.vedph.keywords",
           "name": "keywords",
           "description": "Item's keywords.",
           "colorKey": "90C0F8",
@@ -24,7 +24,7 @@
           "sortKey": "keywords"
         },
         {
-          "typeId": "net.fusisoft.note",
+          "typeId": "it.vedph.note",
           "name": "note",
           "description": "A free text note about the document.",
           "colorKey": "B0A0F8",
@@ -32,7 +32,7 @@
           "sortKey": "note"
         },
         {
-          "typeId": "net.fusisoft.token-text",
+          "typeId": "it.vedph.token-text",
           "name": "text",
           "description": "Item's token-based text.",
           "colorKey": "31AB54",
@@ -40,8 +40,8 @@
           "sortKey": "text"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.comment",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.comment",
           "name": "comments",
           "description": "Comments on text.",
           "colorKey": "F8D040",
@@ -49,8 +49,8 @@
           "sortKey": "text-comments"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.quotations",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.quotations",
           "name": "quotations",
           "description": "Quotations in text.",
           "colorKey": "863577",
@@ -58,8 +58,8 @@
           "sortKey": "text-quotations"
         },
         {
-          "typeId": "net.fusisoft.token-text-layer",
-          "roleId": "fr.net.fusisoft.apparatus",
+          "typeId": "it.vedph.token-text-layer",
+          "roleId": "fr.it.vedph.apparatus",
           "name": "apparatus",
           "description": "Critical apparatus.",
           "colorKey": "4B18D7",

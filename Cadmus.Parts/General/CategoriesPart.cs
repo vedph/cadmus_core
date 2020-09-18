@@ -9,9 +9,9 @@ namespace Cadmus.Parts.General
     /// <summary>
     /// Categories part. This is just a collection of any number of categories.
     /// Usually the categories correspond to the IDs of a <see cref="Thesaurus"/>.
-    /// Tag: <c>net.fusisoft.categories</c>.
+    /// Tag: <c>it.vedph.categories</c>.
     /// </summary>
-    [Tag("net.fusisoft.categories")]
+    [Tag("it.vedph.categories")]
     public sealed class CategoriesPart : PartBase
     {
         /// <summary>
@@ -51,6 +51,24 @@ namespace Cadmus.Parts.General
             }
 
             return builder.Build(this);
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "tot-count",
+                    "The total count of categories."),
+                new DataPinDefinition(DataPinValueType.String,
+                    "category",
+                    "The list of categories.",
+                    "Mf"),
+            });
         }
 
         /// <summary>

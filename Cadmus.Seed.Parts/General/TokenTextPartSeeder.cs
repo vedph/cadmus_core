@@ -9,9 +9,9 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Token-based text part seeder.
-    /// Tag: <c>seed.net.fusisoft.token-text</c>.
+    /// Tag: <c>seed.it.vedph.token-text</c>.
     /// </summary>
-    [Tag("seed.net.fusisoft.token-text")]
+    [Tag("seed.it.vedph.token-text")]
     public sealed class TokenTextPartSeeder : PartSeederBase
     {
         /// <summary>

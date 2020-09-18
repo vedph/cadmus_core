@@ -7,9 +7,9 @@ namespace Cadmus.Archive.Parts
 {
     /// <summary>
     /// Date assigned to any archive's content.
-    /// Tag: <c>net.fusisoft.archive-date</c>.
+    /// Tag: <c>it.vedph.archive-date</c>.
     /// </summary>
-    [Tag("net.fusisoft.archive-date")]
+    [Tag("it.vedph.archive-date")]
     public sealed class ArchiveDatePart : PartBase
     {
         /// <summary>
@@ -39,6 +39,20 @@ namespace Cadmus.Archive.Parts
                 CreateDataPin("date-value",
                     Date?.SortValue.ToString(CultureInfo.InvariantCulture))
             };
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "date-value",
+                    "The sortable date value.")
+            });
         }
 
         /// <summary>

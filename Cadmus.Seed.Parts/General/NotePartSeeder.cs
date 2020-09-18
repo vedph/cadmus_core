@@ -8,10 +8,10 @@ namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
     /// Note part seeder.
-    /// Tag: <c>seed.net.fusisoft.note</c>.
+    /// Tag: <c>seed.it.vedph.note</c>.
     /// </summary>
     /// <seealso cref="PartSeederBase" />
-    [Tag("seed.net.fusisoft.note")]
+    [Tag("seed.it.vedph.note")]
     public sealed class NotePartSeeder : PartSeederBase,
         IConfigurable<NotePartSeederOptions>
     {

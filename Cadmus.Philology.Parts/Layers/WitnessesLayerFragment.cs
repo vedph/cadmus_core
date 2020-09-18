@@ -12,10 +12,10 @@ namespace Cadmus.Philology.Parts.Layers
     /// which uniquely identifies the source (e.g. <c>Fest.</c> for
     /// <c>Festus grammaticus</c>), a citation (e.g. <c>p.236</c>), a Markdown
     /// text, and an optional short note.
-    /// <para>Tag: <c>fr.net.fusisoft.witnesses</c>.</para>
+    /// <para>Tag: <c>fr.it.vedph.witnesses</c>.</para>
     /// </summary>
     /// <seealso cref="ITextLayerFragment" />
-    [Tag("fr.net.fusisoft.witnesses")]
+    [Tag("fr.it.vedph.witnesses")]
     public sealed class WitnessesLayerFragment : ITextLayerFragment
     {
         /// <summary>
@@ -52,20 +52,41 @@ namespace Cadmus.Philology.Parts.Layers
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>Pins.</returns>
+        /// <returns>Pins: <c>fr.tot-count</c>, and a list of pins with keys
+        /// <c>fr.wid</c>=witness ID (filtered, with digits).</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            if (Witnesses == null || Witnesses.Count == 0)
-                return Enumerable.Empty<DataPin>();
+            DataPinBuilder builder = new DataPinBuilder(
+                new StandardDataPinTextFilter());
 
-            return (from w in Witnesses
-                    select w.Id)
-                    .Distinct()
-                    .Select(id => new DataPin
-                    {
-                        Name = PartBase.FR_PREFIX + "id",
-                        Value = id
-                    });
+            builder.Set(PartBase.FR_PREFIX + "tot", Witnesses?.Count ?? 0, false);
+
+            if (Witnesses?.Count > 0)
+            {
+                builder.AddValues(PartBase.FR_PREFIX + "wid",
+                    from w in Witnesses select w.Id,
+                    filter: true, filterOptions: true);
+            }
+
+            return builder.Build(null);
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    PartBase.FR_PREFIX + "tot-count",
+                    "The total count of witnesses."),
+                new DataPinDefinition(DataPinValueType.String,
+                    PartBase.FR_PREFIX + "wid",
+                    "The list of witnesses IDs.",
+                    "Mf")
+            });
         }
 
         /// <summary>

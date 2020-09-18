@@ -11,9 +11,9 @@ namespace Cadmus.Seed.Philology.Parts.Layers
 {
     /// <summary>
     /// Seeder for <see cref="ChronologyLayerFragment"/>.
-    /// Tag: <c>seed.fr.net.fusisoft.chronology</c>.
+    /// Tag: <c>seed.fr.it.vedph.chronology</c>.
     /// </summary>
-    [Tag("seed.fr.net.fusisoft.chronology")]
+    [Tag("seed.fr.it.vedph.chronology")]
     public sealed class ChronologyLayerFragmentSeeder : FragmentSeederBase,
         IConfigurable<ChronologyLayerFragmentSeederOptions>
     {

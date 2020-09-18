@@ -13,10 +13,10 @@ namespace Cadmus.Parts.General
     /// hierarchy tree, by setting its <see cref="Y"/> and <see cref="X"/>
     /// values. Finally, a <see cref="Tag"/> can be used to apply several
     /// different hierarchies to the same items.
-    /// Tag: <c>net.fusisoft.hierarchy</c>.
+    /// Tag: <c>it.vedph.hierarchy</c>.
     /// </summary>
     /// <seealso cref="PartBase" />
-    [Tag("net.fusisoft.hierarchy")]
+    [Tag("it.vedph.hierarchy")]
     public sealed class HierarchyPart : PartBase
     {
         /// <summary>
@@ -94,6 +94,26 @@ namespace Cadmus.Parts.General
             if (Tag != null) pins.Add(CreateDataPin("tag", Tag));
 
             return pins;
+        }
+
+        /// <summary>
+        /// Gets the definitions of data pins used by the implementor.
+        /// </summary>
+        /// <returns>Data pins definitions.</returns>
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            return new List<DataPinDefinition>(new[]
+            {
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "y",
+                    "The Y value."),
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "x",
+                    "The X value."),
+                new DataPinDefinition(DataPinValueType.Integer,
+                    "tag",
+                    "The tag value, when present."),
+            });
         }
 
         /// <summary>

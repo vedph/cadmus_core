@@ -412,7 +412,7 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.FacetId))
             {
                 f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.Description.Contains(filter.FacetId)));
+                    i => i.FacetId.Equals(filter.FacetId)));
             }
 
             if (!string.IsNullOrEmpty(filter.GroupId))
@@ -423,7 +423,8 @@ namespace Cadmus.Mongo
 
             if (filter.Flags.HasValue)
             {
-                f = builder.And(builder.BitsAllSet(i => i.Flags, filter.Flags.Value));
+                f = builder.And(builder.BitsAllSet(
+                    i => i.Flags, filter.Flags.Value));
             }
 
             if (!string.IsNullOrEmpty(filter.UserId))

@@ -7,7 +7,7 @@
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
-    <PackageReference Include="MySql.Data" Version="8.0.21" />
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 

@@ -2,4 +2,4 @@
 
 Cadmus data layer and business layer.
 
-See the conceptual documentation under `doc`.
+Please see the conceptual documentation under [cadmus_doc](https://github.com/vedph/cadmus_doc).

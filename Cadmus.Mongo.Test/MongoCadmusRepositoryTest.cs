@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Cadmus.Core;
@@ -489,6 +488,12 @@ namespace Cadmus.Mongo.Test
         public void GetItemsPage_10_Empty()
         {
             DoGetItemsPage_10_Empty();
+        }
+
+        [Fact]
+        public void GetItemsPage_Filtered_Ok()
+        {
+            DoGetItemsPage_Filtered_Ok();
         }
 
         [Fact]

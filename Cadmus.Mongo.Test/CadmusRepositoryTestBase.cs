@@ -613,6 +613,39 @@ namespace Cadmus.TestBase
             Assert.Equal(20, result.Total);
         }
 
+        protected void DoGetItemsPage_Filtered_Ok()
+        {
+            PrepareDatabase();
+            ICadmusRepository repository = GetRepository();
+
+            var result = repository.GetItems(new ItemFilter
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                FacetId = "alpha",
+                UserId = "Even"
+            });
+
+            Assert.Equal(0, result.Items.Count);
+            Assert.Equal(0, result.Total);
+
+            result = repository.GetItems(new ItemFilter
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                FacetId = "alpha",
+                UserId = "Odd"
+            });
+
+            Assert.Equal(10, result.Items.Count);
+            Assert.Equal(10, result.Total);
+
+            for (int i = 0, n = 1; n <= 19; i++, n += 2)
+            {
+                Assert.Equal($"Item {n}", result.Items[i].Title);
+            }
+        }
+
         protected void DoGetItem_NotExisting_Null()
         {
             PrepareDatabase();

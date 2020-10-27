@@ -394,55 +394,54 @@ namespace Cadmus.Mongo
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
-            var builder = new FilterDefinitionBuilder<MongoItem>();
-            FilterDefinition<MongoItem> f = builder.Empty;
+            FilterDefinition<MongoItem> f = Builders<MongoItem>.Filter.Empty;
 
             if (!string.IsNullOrEmpty(filter.Title))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.Title.Contains(filter.Title)));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.Title.Contains(filter.Title));
             }
 
             if (!string.IsNullOrEmpty(filter.Description))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.Description.Contains(filter.Description)));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.Description.Contains(filter.Description));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.FacetId.Equals(filter.FacetId)));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.FacetId.Equals(filter.FacetId));
             }
 
             if (!string.IsNullOrEmpty(filter.GroupId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.GroupId.Equals(filter.GroupId)));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.GroupId.Equals(filter.GroupId));
             }
 
             if (filter.Flags.HasValue)
             {
-                f = builder.And(builder.BitsAllSet(
-                    i => i.Flags, filter.Flags.Value));
+                f = f & Builders<MongoItem>.Filter.BitsAllSet(
+                    i => i.Flags, filter.Flags.Value);
             }
 
             if (!string.IsNullOrEmpty(filter.UserId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.UserId.Equals(filter.UserId)));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.UserId.Equals(filter.UserId));
             }
 
             if (filter.MinModified.HasValue)
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.TimeModified >= filter.MinModified.Value));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.TimeModified >= filter.MinModified.Value);
             }
 
             if (filter.MaxModified.HasValue)
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoItem>(
-                    i => i.TimeModified <= filter.MaxModified.Value));
+                f = f & new ExpressionFilterDefinition<MongoItem>(
+                    i => i.TimeModified <= filter.MaxModified.Value);
             }
 
             int total = (int)items.CountDocuments(f);
@@ -946,65 +945,66 @@ namespace Cadmus.Mongo
             var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
             var builder = new FilterDefinitionBuilder<MongoHistoryItem>();
-            FilterDefinition<MongoHistoryItem> f = builder.Empty;
+            FilterDefinition<MongoHistoryItem> f =
+                Builders<MongoHistoryItem>.Filter.Empty;
 
             if (!string.IsNullOrEmpty(filter.Title))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Title.Contains(filter.Title)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Title.Contains(filter.Title));
             }
 
             if (!string.IsNullOrEmpty(filter.Description))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Description.Contains(filter.Title)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Description.Contains(filter.Title));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Description.Contains(filter.FacetId)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Description.Contains(filter.FacetId));
             }
 
             if (!string.IsNullOrEmpty(filter.GroupId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.GroupId.Equals(filter.GroupId)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.GroupId.Equals(filter.GroupId));
             }
 
             if (filter.Flags.HasValue)
             {
-                f = builder.And(builder.BitsAllSet(i => i.Flags, filter.Flags.Value));
+                f = f & builder.BitsAllSet(i => i.Flags, filter.Flags.Value);
             }
 
             if (!string.IsNullOrEmpty(filter.ReferenceId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.ReferenceId.Equals(filter.ReferenceId)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.ReferenceId.Equals(filter.ReferenceId));
             }
 
             if (filter.Status.HasValue)
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Status.Equals(filter.Status.Value)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Status.Equals(filter.Status.Value));
             }
 
             if (!string.IsNullOrEmpty(filter.UserId))
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.UserId.Equals(filter.UserId)));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.UserId.Equals(filter.UserId));
             }
 
             if (filter.MinModified.HasValue)
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.TimeModified >= filter.MinModified.Value));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.TimeModified >= filter.MinModified.Value);
             }
 
             if (filter.MaxModified.HasValue)
             {
-                f = builder.And(new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.TimeModified <= filter.MaxModified.Value));
+                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.TimeModified <= filter.MaxModified.Value);
             }
 
             int total = (int)items.CountDocuments(f);

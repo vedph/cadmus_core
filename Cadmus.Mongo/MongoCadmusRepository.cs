@@ -399,13 +399,13 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.Title))
             {
                 f = f & new ExpressionFilterDefinition<MongoItem>(
-                    i => i.Title.Contains(filter.Title));
+                    i => i.Title.ToLower().Contains(filter.Title.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.Description))
             {
                 f = f & new ExpressionFilterDefinition<MongoItem>(
-                    i => i.Description.Contains(filter.Description));
+                    i => i.Description.ToLower().Contains(filter.Description.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))
@@ -951,13 +951,13 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.Title))
             {
                 f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Title.Contains(filter.Title));
+                    i => i.Title.ToLower().Contains(filter.Title.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.Description))
             {
                 f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Description.Contains(filter.Title));
+                    i => i.Description.ToLower().Contains(filter.Description.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))

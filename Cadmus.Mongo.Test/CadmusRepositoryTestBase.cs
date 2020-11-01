@@ -634,7 +634,8 @@ namespace Cadmus.TestBase
                 PageNumber = 1,
                 PageSize = 10,
                 FacetId = "alpha",
-                UserId = "Odd"
+                UserId = "Odd",
+                Title = "item"
             });
 
             Assert.Equal(10, result.Items.Count);

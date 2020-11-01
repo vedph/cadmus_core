@@ -262,7 +262,11 @@ namespace Cadmus.Index.Sql
         private string BuildClause(Match m)
         {
             string name = GetFieldName(m.Groups["n"].Value);
-            if (name == null) return "";
+            if (name == null)
+            {
+                throw new CadmusQueryException(
+                    $"Unknown field name: \"{m.Groups["n"].Value}\"");
+            }
             string value = UnescapeValue(m.Groups["v"].Value);
 
             StringBuilder sb = new StringBuilder();
@@ -415,6 +419,7 @@ namespace Cadmus.Index.Sql
         /// <param name="options">The paging options.</param>
         /// <returns>SQL code for both page and total.</returns>
         /// <exception cref="ArgumentNullException">options or query</exception>
+        /// <exception cref="CadmusQueryException">invalid query</exception>
         public Tuple<string, string> BuildForItem(string query, PagingOptions options)
         {
             if (options == null)
@@ -465,6 +470,7 @@ namespace Cadmus.Index.Sql
         /// <param name="options">The paging options.</param>
         /// <returns>SQL code for both page and total.</returns>
         /// <exception cref="ArgumentNullException">options or query</exception>
+        /// <exception cref="CadmusQueryException">invalid query</exception>
         public Tuple<string, string> BuildForPin(string query, PagingOptions options)
         {
             if (options == null)

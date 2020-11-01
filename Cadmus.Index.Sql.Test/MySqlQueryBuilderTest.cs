@@ -61,6 +61,21 @@ namespace Cadmus.Index.Sql.Test
             return builder;
         }
 
+        [Fact]
+        public void BuildForItem_WrongField_Throws()
+        {
+            MySqlQueryBuilder builder = GetBuilder();
+
+            Assert.Throws<CadmusQueryException>(() =>
+            {
+                builder.BuildForItem("[fact=default]", new PagingOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 20
+                });
+            });
+        }
+
         [Theory]
         [InlineData("title")]
         [InlineData("description")]

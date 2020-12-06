@@ -8,6 +8,8 @@ namespace Cadmus.Core.Config
     /// </summary>
     public sealed class ThesaurusEntry
     {
+        private string _id;
+
         /// <summary>
         /// Gets or sets the tag's unique identifier.
         /// </summary>
@@ -15,19 +17,39 @@ namespace Cadmus.Core.Config
         /// (a-z or A-Z), digits (0-9), underscores, dashes, and dots (which can
         /// be used to represent a hierarchy, e.g. <c>inscription.funerary</c>).
         /// </value>
-        public string Id { get; }
+        /// <exception cref="ArgumentException">invalid ID</exception>
+        public string Id
+        {
+            get { return _id; }
+            set
+            {
+                if (!Regex.IsMatch(value, @"^[a-zA-Z0-9_\-\.]+$"))
+                {
+                    throw new ArgumentException(LocalizedStrings.Format(
+                        Properties.Resources.InvalidTagId, value));
+                }
+                _id = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the entry's human-readable value.
         /// </summary>
-        public string Value { get; }
+        public string Value { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThesaurusEntry"/> class.
+        /// </summary>
+        public ThesaurusEntry()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThesaurusEntry"/> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="value">The value.</param>
-        /// <exception cref="ArgumentNullException">id or value</exception>
+        /// <exception cref="ArgumentNullException">ID</exception>
         /// <exception cref="ArgumentException">invalid ID</exception>
         public ThesaurusEntry(string id, string value)
         {
@@ -38,9 +60,9 @@ namespace Cadmus.Core.Config
                 throw new ArgumentException(LocalizedStrings.Format(
                     Properties.Resources.InvalidTagId, id));
             }
-            Id = id;
+            _id = id;
 
-            Value = value ?? throw new ArgumentNullException(nameof(value));
+            Value = value;
         }
 
         /// <summary>
@@ -49,7 +71,7 @@ namespace Cadmus.Core.Config
         /// <returns>New instance.</returns>
         public ThesaurusEntry Clone()
         {
-            return new ThesaurusEntry(Id, Value);
+            return new ThesaurusEntry(_id, Value);
         }
 
         /// <summary>

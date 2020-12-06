@@ -50,12 +50,12 @@ namespace Cadmus.Philology.Parts.Layers
         /// <summary>
         /// Witnesses of this variant.
         /// </summary>
-        public List<ApparatusAnnotatedValue> Witnesses { get; set; }
+        public List<AnnotatedValue> Witnesses { get; set; }
 
         /// <summary>
         /// Authors of this variant.
         /// </summary>
-        public List<ApparatusAnnotatedValue> Authors { get; set; }
+        public List<LocAnnotatedValue> Authors { get; set; }
 
         /// <summary>
         /// An optional short note.
@@ -67,8 +67,8 @@ namespace Cadmus.Philology.Parts.Layers
         /// </summary>
         public ApparatusEntry()
         {
-            Witnesses = new List<ApparatusAnnotatedValue>();
-            Authors = new List<ApparatusAnnotatedValue>();
+            Witnesses = new List<AnnotatedValue>();
+            Authors = new List<LocAnnotatedValue>();
         }
 
         /// <summary>
@@ -107,33 +107,6 @@ namespace Cadmus.Philology.Parts.Layers
             }
 
             return sb.ToString();
-        }
-    }
-
-    /// <summary>
-    /// An optionally annotated value used in an <see cref="ApparatusEntry"/>.
-    /// </summary>
-    public sealed class ApparatusAnnotatedValue
-    {
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        public string Value { get; set; }
-
-        /// <summary>
-        /// Gets or sets the optional note.
-        /// </summary>
-        public string Note { get; set; }
-
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="string" /> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return string.IsNullOrEmpty(Note)? Value : $"{Value} ({Note})";
         }
     }
 

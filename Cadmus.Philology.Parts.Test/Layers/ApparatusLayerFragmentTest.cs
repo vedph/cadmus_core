@@ -28,14 +28,15 @@ namespace Cadmus.Philology.Parts.Test.Layers
                     IsAccepted = i == 1,
                     GroupId = "group-id",
                 };
-                entry.Witnesses.Add(new ApparatusAnnotatedValue
+                entry.Witnesses.Add(new AnnotatedValue
                 {
                     Value = "w1",
                     Note = "note to w1"
                 });
-                entry.Authors.Add(new ApparatusAnnotatedValue
+                entry.Authors.Add(new LocAnnotatedValue
                 {
                     Value = "a1",
+                    Location = "loc",
                     Note = "note to a1"
                 });
 

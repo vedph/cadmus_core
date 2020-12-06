@@ -20,6 +20,21 @@ namespace Cadmus.Parts.General
         public HistoricalDate Date { get; set; }
 
         /// <summary>
+        /// Gets or sets the short documental references connected to this
+        /// datation.
+        /// </summary>
+        public List<DocReference> References { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HistoricalDatePart"/>
+        /// class.
+        /// </summary>
+        public HistoricalDatePart()
+        {
+            References = new List<DocReference>();
+        }
+
+        /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts

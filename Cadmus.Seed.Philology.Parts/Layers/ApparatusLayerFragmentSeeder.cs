@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using Cadmus.Core;
 using Cadmus.Core.Layers;
+using Cadmus.Philology.Parts;
 using Cadmus.Philology.Parts.Layers;
 using Fusi.Tools.Config;
 using System;
@@ -95,7 +96,11 @@ namespace Cadmus.Seed.Philology.Parts.Layers
                     foreach (string author in SeedHelper.RandomPickOf(_authors, 2))
                     {
                         entry.Authors.Add(
-                            new ApparatusAnnotatedValue { Value = author });
+                            new LocAnnotatedValue
+                            {
+                                Value = author,
+                                Location = $"{f.Random.Number(1, 24)}.{f.Random.Number(1, 100)}"
+                            });
                     }
                 }
                 // variant
@@ -108,15 +113,19 @@ namespace Cadmus.Seed.Philology.Parts.Layers
                     // witnesses
                     foreach (string witness in SeedHelper.RandomPickOf(_witnesses, 2))
                     {
-                        entry.Authors.Add(
-                            new ApparatusAnnotatedValue { Value = witness });
+                        entry.Witnesses.Add(
+                            new AnnotatedValue { Value = witness });
                     }
 
                     // authors
                     foreach (string author in SeedHelper.RandomPickOf(_authors, 1))
                     {
                         entry.Authors.Add(
-                            new ApparatusAnnotatedValue { Value = author });
+                            new LocAnnotatedValue
+                            {
+                                Value = author,
+                                Location = $"{f.Random.Number(1, 24)}.{f.Random.Number(1, 100)}"
+                            });
                     }
                 }
 

@@ -1,9 +1,11 @@
 ﻿using Bogus;
 using Cadmus.Core;
+using Cadmus.Parts;
 using Cadmus.Parts.General;
 using Fusi.Antiquity.Chronology;
 using Fusi.Tools.Config;
 using System;
+using System.Collections.Generic;
 
 namespace Cadmus.Seed.Parts.General
 {
@@ -61,6 +63,32 @@ namespace Cadmus.Seed.Parts.General
         }
 
         /// <summary>
+        /// Gets a random number of document references.
+        /// </summary>
+        /// <param name="min">The min number of references to get.</param>
+        /// <param name="max">The max number of references to get.</param>
+        /// <returns>References.</returns>
+        private static List<DocReference> GetDocReferences(int min, int max)
+        {
+            List<DocReference> refs = new List<DocReference>();
+
+            for (int n = 1; n <= Randomizer.Seed.Next(min, max + 1); n++)
+            {
+                refs.Add(new Faker<DocReference>()
+                    .RuleFor(r => r.Tag, f => f.PickRandom(null, "tag"))
+                    .RuleFor(r => r.Author, f => f.Lorem.Word())
+                    .RuleFor(r => r.Work, f => f.Lorem.Word())
+                    .RuleFor(r => r.Location,
+                        f => $"{f.Random.Number(1, 24)}.{f.Random.Number(1, 1000)}")
+                    .RuleFor(r => r.Note,
+                        f => f.Random.Bool(0.25f)? f.Lorem.Sentence() : null)
+                    .Generate());
+            }
+
+            return refs;
+        }
+
+        /// <summary>
         /// Creates and seeds a new part.
         /// </summary>
         /// <param name="item">The item this part should belong to.</param>
@@ -81,6 +109,8 @@ namespace Cadmus.Seed.Parts.General
             SetPartMetadata(part, roleId, item);
 
             part.Date = GetRandomDate();
+            if (Randomizer.Seed.Next(2) == 1)
+                part.References = GetDocReferences(1, 3);
 
             return part;
         }

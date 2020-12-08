@@ -62,18 +62,26 @@ namespace Cadmus.Index.Sql.Test
         }
 
         [Fact]
-        public void BuildForItem_WrongField_Throws()
+        public void BuildForItem_CustomField_Name()
         {
             MySqlQueryBuilder builder = GetBuilder();
-
-            Assert.Throws<CadmusQueryException>(() =>
+            var sql = builder.BuildForItem("[category=geography]", new PagingOptions
             {
-                builder.BuildForItem("[fact=default]", new PagingOptions
-                {
-                    PageNumber = 1,
-                    PageSize = 20
-                });
+                PageNumber = 1,
+                PageSize = 20
             });
+
+            const string clause =
+                "(\r\n`pin`.`name`='category' AND\r\n`pin`.`value`='geography'\r\n)\r\n";
+
+            string expected = SQL_ITEM_PAG_HEAD +
+                clause +
+                SQL_ITEM_ORDER +
+                "\r\nLIMIT 20\r\nOFFSET 0\r\n";
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_ITEM_TOT_HEAD + clause;
+            Assert.Equal(expected, sql.Item2);
         }
 
         [Theory]

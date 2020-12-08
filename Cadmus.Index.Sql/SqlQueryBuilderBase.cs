@@ -262,14 +262,23 @@ namespace Cadmus.Index.Sql
         private string BuildClause(Match m)
         {
             string name = GetFieldName(m.Groups["n"].Value);
-            if (name == null)
-            {
-                throw new CadmusQueryException(
-                    $"Unknown field name: \"{m.Groups["n"].Value}\"");
-            }
             string value = UnescapeValue(m.Groups["v"].Value);
 
             StringBuilder sb = new StringBuilder();
+            bool bracket = false;
+
+            // a null name means we are using a pin's name, so we must add
+            // 2 clauses: pin.name=name AND pin.value=value
+            if (name == null)
+            {
+                sb.AppendLine("(")
+                  .Append(ETP("pin", "name"))
+                  .Append('=')
+                  .Append(SQE(m.Groups["n"].Value, false, true, false))
+                  .AppendLine(" AND");
+                name = GetFieldName("value");
+                bracket = true;
+            }
 
             switch (m.Groups["o"].Value)
             {
@@ -354,6 +363,7 @@ namespace Cadmus.Index.Sql
                     AppendFlagsSql(name, "!:", value, sb);
                     break;
             }
+            if (bracket) sb.AppendLine(")");
 
             return sb.ToString();
         }

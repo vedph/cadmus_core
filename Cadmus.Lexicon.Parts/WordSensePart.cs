@@ -106,10 +106,10 @@ namespace Cadmus.Lexicon.Parts
 
             sb.Append($"#{SenseId} | {Rank} {Pos}: {Explanation}");
 
-            if (!String.IsNullOrEmpty(Usage))
+            if (!string.IsNullOrEmpty(Usage))
                 sb.Append(" [").Append(Usage).Append("]");
 
-            if (!String.IsNullOrEmpty(Tip))
+            if (!string.IsNullOrEmpty(Tip))
                 sb.Append(" (").Append(Tip).Append(")");
 
             if (Examples?.Count > 0)

@@ -88,18 +88,18 @@ namespace Cadmus.Lexicon.Parts
             sb.Append("[").Append(Rank).Append("] ");
 
             // usage
-            if (!String.IsNullOrEmpty(Usage))
+            if (!string.IsNullOrEmpty(Usage))
                 sb.Append(" (").Append(Usage).Append(") ");
 
             // value
             sb.Append(Value);
 
             // tip
-            if (!String.IsNullOrEmpty(Tip))
+            if (!string.IsNullOrEmpty(Tip))
                 sb.Append(" (").Append(Tip).Append(") ");
 
             // explanation
-            if (!String.IsNullOrEmpty(Explanation))
+            if (!string.IsNullOrEmpty(Explanation))
                 sb.Append(" = ").Append(Explanation);
 
             return sb.ToString();

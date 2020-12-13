@@ -46,19 +46,19 @@ namespace Cadmus.Lexicon.Parts
             StringBuilder sb = new StringBuilder(Value);
 
             // usage
-            if (!String.IsNullOrEmpty(Usage))
+            if (!string.IsNullOrEmpty(Usage))
                 sb.Append(" [").Append(Usage).Append("]");
 
             // tip
-            if (!String.IsNullOrEmpty(Tip))
+            if (!string.IsNullOrEmpty(Tip))
                 sb.Append(" (").Append(Tip).Append(")");
 
             // source
-            if (!String.IsNullOrEmpty(Source))
+            if (!string.IsNullOrEmpty(Source))
                 sb.Append(" <").Append(Source).Append(">");
 
             // explanation
-            if (!String.IsNullOrEmpty(Explanation))
+            if (!string.IsNullOrEmpty(Explanation))
                 sb.Append(" = ").Append(Explanation);
 
             return sb.ToString();

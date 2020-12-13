@@ -29,18 +29,18 @@ namespace Cadmus.Lexicon.Parts
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
 
-            if (Words?.Count > 0) sb.Append(String.Join(", ", Words));
+            if (Words?.Count > 0) sb.Append(string.Join(", ", Words));
 
-            if (!String.IsNullOrEmpty(Value))
+            if (!string.IsNullOrEmpty(Value))
             {
                 if (sb.Length > 0) sb.Append(": ");
                 sb.Append(Value);

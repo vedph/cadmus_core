@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace Cadmus.Lexicon.Parts
 {
@@ -51,27 +50,27 @@ namespace Cadmus.Lexicon.Parts
         public string Sense { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
 
             // indirect
-            if (!String.IsNullOrEmpty(Usage)) sb.Append("from ");
+            if (!string.IsNullOrEmpty(Usage)) sb.Append("from ");
 
             // language
-            if (!String.IsNullOrEmpty(Language))
+            if (!string.IsNullOrEmpty(Language))
                 sb.Append(Language).Append(" ");
 
             // value
             sb.Append(Value).Append(" ");
 
             // usage
-            if (!String.IsNullOrEmpty(Usage))
+            if (!string.IsNullOrEmpty(Usage))
                 sb.Append(" (").Append(Usage).Append(") ");
 
             // confidence
@@ -79,7 +78,7 @@ namespace Cadmus.Lexicon.Parts
                 sb.Append(" [").Append(Usage).Append("] ");
 
             // sense
-            if (!String.IsNullOrEmpty(Sense))
+            if (!string.IsNullOrEmpty(Sense))
                 sb.Append(": ").Append(Sense);
 
             return sb.ToString();

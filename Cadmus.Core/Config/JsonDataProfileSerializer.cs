@@ -45,8 +45,11 @@ namespace Cadmus.Core.Config
                     {
                         TargetId = to.TargetId
                     };
-                    foreach (ThesaurusEntryOptions eo in to.Entries)
-                        thesaurus.AddEntry(new ThesaurusEntry(eo.Id, eo.Value));
+                    if (to.Entries?.Length > 0)
+                    {
+                        foreach (ThesaurusEntryOptions eo in to.Entries)
+                            thesaurus.AddEntry(new ThesaurusEntry(eo.Id, eo.Value));
+                    }
 
                     profile.Thesauri[i++] = thesaurus;
                 }

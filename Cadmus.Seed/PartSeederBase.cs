@@ -51,7 +51,7 @@ namespace Cadmus.Seed
             if (roleId?.StartsWith(PartBase.FR_PREFIX) == true)
             {
                 if (roleId.IndexOf(':') == -1
-                    && Options.FragmentRoles?.Length > 0
+                    && Options?.FragmentRoles?.Length > 0
                     && Randomizer.Seed.Next(0, ASSIGN_ROLE_MAX) == 1)
                 {
                     part.RoleId += ":" + SeedHelper.RandomPickOneOf(
@@ -61,7 +61,7 @@ namespace Cadmus.Seed
             else
             {
                 if (string.IsNullOrEmpty(roleId)
-                    && Options.PartRoles?.Length > 0
+                    && Options?.PartRoles?.Length > 0
                     && Randomizer.Seed.Next(0, ASSIGN_ROLE_MAX) == 1)
                 {
                     part.RoleId = SeedHelper.RandomPickOneOf(Options.PartRoles);

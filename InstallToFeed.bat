@@ -10,7 +10,8 @@ c:\exe\nuget add .\Cadmus.Lexicon.Parts\bin\Debug\Cadmus.Lexicon.Parts.2.3.2.nup
 c:\exe\nuget add .\Cadmus.Mongo\bin\Debug\Cadmus.Mongo.2.3.5.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Parts\bin\Debug\Cadmus.Parts.2.3.2.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Philology.Parts\bin\Debug\Cadmus.Philology.Parts.2.3.2.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Seed\bin\Debug\Cadmus.Seed.1.1.3.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Seed.Parts\bin\Debug\Cadmus.Seed.Parts.1.1.3.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Seed.Philology.Parts\bin\Debug\Cadmus.Seed.Philology.Parts.1.1.3.nupkg -source C:\Projects\_NuGet
+
+c:\exe\nuget add .\Cadmus.Seed\bin\Debug\Cadmus.Seed.1.1.4.nupkg -source C:\Projects\_NuGet
+c:\exe\nuget add .\Cadmus.Seed.Parts\bin\Debug\Cadmus.Seed.Parts.1.1.4.nupkg -source C:\Projects\_NuGet
+c:\exe\nuget add .\Cadmus.Seed.Philology.Parts\bin\Debug\Cadmus.Seed.Philology.Parts.1.1.4.nupkg -source C:\Projects\_NuGet
 pause

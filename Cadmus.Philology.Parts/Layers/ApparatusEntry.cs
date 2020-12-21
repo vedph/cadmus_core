@@ -16,6 +16,29 @@ namespace Cadmus.Philology.Parts.Layers
         public ApparatusEntryType Type { get; set; }
 
         /// <summary>
+        /// Gets or sets the optional token-based sub-range of the base text
+        /// this entry refers to. This is useful for those cases where 2 or
+        /// more fragments are linked to a same, wider extent of text, but some
+        /// of them should be referred to only a part of it. The range is
+        /// either a single ordinal number (1=first token of the reference
+        /// text), or two ordinals separated by a dash.
+        /// </summary>
+        /// <remarks>As a sample, consider the base text
+        /// <c>de nominibus dubiis</c>, where one variant A is represented by
+        /// the insertion of <c>incipit</c> before <c>de</c>; and another
+        /// variant B is the replacement of the whole reference text with
+        /// <c>de dubiis nominibus</c>. Now, as we can't overlap two fragments
+        /// in the same layer, we have a single fragment for the wider extent,
+        /// covering the whole <c>de dubiis nominibus</c> text; in this fragment,
+        /// entry A has subrange=1, while entry B has no subrange.
+        /// The alternative treatment would be treating both A and B as
+        /// replacements with no subrange, but this would be less granular.
+        /// This usually is the scenario of apparatus entries imported from TEI
+        /// documents, where tags cannot overlap.
+        /// </remarks>
+        public string Subrange { get; set; }
+
+        /// <summary>
         /// Gets or sets the tag, an optional arbitrary string representing a
         /// categorization of some sort for that fragment, e.g. "margin",
         /// "interlinear", etc. This can be overridden by variants tag.

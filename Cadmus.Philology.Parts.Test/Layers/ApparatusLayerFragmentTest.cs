@@ -22,6 +22,7 @@ namespace Cadmus.Philology.Parts.Test.Layers
                 ApparatusEntry entry = new ApparatusEntry
                 {
                     Type = ApparatusEntryType.Replacement,
+                    Subrange = "1",
                     Tag = "tag" + i,
                     Value = "value" + i,
                     NormValue = "norm-value" + i,

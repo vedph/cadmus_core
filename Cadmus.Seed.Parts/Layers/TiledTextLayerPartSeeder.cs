@@ -115,7 +115,7 @@ namespace Cadmus.Seed.Parts.Layers
             IPart part = (IPart)Activator.CreateInstance(constructedType);
 
             // seed metadata
-            SetPartMetadata(part, frTypeId, item);
+            SetPartMetadata(part, roleId, item);
 
             // seed by adding fragments
             int count = Randomizer.Seed.Next(1, _options.MaxFragmentCount);

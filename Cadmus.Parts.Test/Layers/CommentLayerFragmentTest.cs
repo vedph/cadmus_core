@@ -1,5 +1,8 @@
 ﻿using Cadmus.Core;
+using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
+using Cadmus.Seed.Parts.General;
+using Cadmus.Seed.Parts.Layers;
 using Fusi.Tools.Config;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +15,19 @@ namespace Cadmus.Parts.Test.Layers
     {
         private static CommentLayerFragment GetFragment()
         {
-            return new CommentLayerFragment
+            CommentLayerFragmentSeeder seeder = new CommentLayerFragmentSeeder();
+            seeder.Configure(new CommentPartSeederOptions());
+            IItem item = new Item
             {
-                Location = "1.23",
-                Tag = "some-tag",
-                Text = "This is a comment\n.End."
+                FacetId = "default",
+                CreatorId = "zeus",
+                UserId = "zeus",
+                Description = "Test item",
+                Title = "Test Item",
+                SortKey = ""
             };
+            return (CommentLayerFragment)
+                seeder.GetFragment(item, "1.2", "hello world");
         }
 
         [Fact]
@@ -42,28 +52,67 @@ namespace Cadmus.Parts.Test.Layers
             Assert.Equal(fr.Location, fr2.Location);
             Assert.Equal(fr.Tag, fr2.Tag);
             Assert.Equal(fr.Text, fr2.Text);
+            Assert.Equal(fr.References.Count, fr2.References.Count);
+            Assert.Equal(fr.ExternalIds.Count, fr2.ExternalIds.Count);
+            Assert.Equal(fr.Categories.Count, fr2.Categories.Count);
+            Assert.Equal(fr.Keywords.Count, fr2.Keywords.Count);
         }
 
         [Fact]
-        public void GetDataPins_NoTag_0()
+        public void GetDataPins_Ok()
         {
-            CommentLayerFragment fr = GetFragment();
-            fr.Tag = null;
+            CommentLayerFragment fr = new CommentLayerFragment
+            {
+                Tag = "tag"
+            };
+            for (int n = 1; n <= 3; n++)
+            {
+                bool even = n % 2 == 0;
 
-            Assert.Empty(fr.GetDataPins());
-        }
-
-        [Fact]
-        public void GetDataPins_Tag_1()
-        {
-            CommentLayerFragment fr = GetFragment();
+                fr.References.Add(new DocReference
+                {
+                    Work = $"w{n}"
+                });
+                fr.ExternalIds.Add($"i{n}");
+                fr.Categories.Add($"c{n}");
+                fr.Keywords.Add(new IndexKeyword
+                {
+                    IndexId = even ? "even" : "odd",
+                    Language = "eng",
+                    Value = $"k{(char)('a' - 1 + n)}"
+                });
+            }
 
             List<DataPin> pins = fr.GetDataPins().ToList();
+            Assert.Equal(13, pins.Count);
 
-            Assert.Single(pins);
-            DataPin pin = pins[0];
-            Assert.Equal("fr.tag", pin.Name);
-            Assert.Equal("some-tag", pin.Value);
+            // fr.tag
+            DataPin pin = pins.Find(p => p.Name == "fr.tag");
+            Assert.Equal("tag", pin.Value);
+
+            // fr.key.odd.eng=ka
+            pin = pins.Find(p => p.Name == "fr.key.odd.eng" && p.Value == "ka");
+
+            // fr.key.even.eng=kb
+            pin = pins.Find(p => p.Name == "fr.key.even.eng" && p.Value == "kb");
+
+            // fr.key.odd.eng=kc
+            pin = pins.Find(p => p.Name == "fr.key.odd.eng" && p.Value == "kc");
+
+            for (int n = 1; n <= 3; n++)
+            {
+                // ref
+                pin = pins.Find(p => p.Name == "fr.ref" && p.Value == $"w{n}");
+                Assert.NotNull(pin);
+
+                // id
+                pin = pins.Find(p => p.Name == "fr.id" && p.Value == $"i{n}");
+                Assert.NotNull(pin);
+
+                // cat
+                pin = pins.Find(p => p.Name == "fr.cat" && p.Value == $"c{n}");
+                Assert.NotNull(pin);
+            }
         }
     }
 }

@@ -108,7 +108,7 @@ namespace Cadmus.Parts.General
                 new DataPinDefinition(DataPinValueType.Integer,
                     "tot-count",
                     "The total count of keywords."),
-                new DataPinDefinition(DataPinValueType.Integer,
+                new DataPinDefinition(DataPinValueType.String,
                     "keyword.{INDEXID}.{LANG}",
                     "The list of keywords grouped by index ID and language.",
                     "Mf"),

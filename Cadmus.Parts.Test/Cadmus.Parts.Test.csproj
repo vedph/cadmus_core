@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cadmus.Parts\Cadmus.Parts.csproj" />
+    <ProjectReference Include="..\Cadmus.Seed.Parts\Cadmus.Seed.Parts.csproj" />
   </ItemGroup>
 
 </Project>

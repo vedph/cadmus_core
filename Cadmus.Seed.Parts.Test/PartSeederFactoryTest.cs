@@ -30,7 +30,7 @@ namespace Cadmus.Seed.Parts.Test
             Dictionary<string, IPartSeeder> seeders = _factory.GetPartSeeders();
 
             Assert.NotNull(seeders);
-            Assert.Equal(8, seeders.Count);
+            Assert.Equal(9, seeders.Count);
 
             string key = "it.vedph.categories";
             Assert.True(seeders.ContainsKey(key));
@@ -43,6 +43,10 @@ namespace Cadmus.Seed.Parts.Test
             key = "it.vedph.keywords";
             Assert.True(seeders.ContainsKey(key));
             Assert.NotNull(seeders[key] as KeywordsPartSeeder);
+
+            key = "it.vedph.comment";
+            Assert.True(seeders.ContainsKey(key));
+            Assert.NotNull(seeders[key] as CommentPartSeeder);
 
             key = "it.vedph.note";
             Assert.True(seeders.ContainsKey(key));

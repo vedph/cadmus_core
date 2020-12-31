@@ -1,32 +1,22 @@
 ﻿using Bogus;
 using Cadmus.Core;
-using Cadmus.Core.Layers;
 using Cadmus.Parts.General;
-using Cadmus.Parts.Layers;
-using Cadmus.Seed.Parts.General;
 using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
 
-namespace Cadmus.Seed.Parts.Layers
+namespace Cadmus.Seed.Parts.General
 {
     /// <summary>
-    /// Seeder for <see cref="CommentLayerFragment"/>'s.
-    /// Tag: <c>seed.fr.it.vedph.comment</c>.
+    /// Comment part seeder.
+    /// Tag: <c>seed.it.vedph.comment</c>.
     /// </summary>
-    /// <seealso cref="FragmentSeederBase" />
-    /// <seealso cref="IConfigurable{CommentLayerFragmentSeederOptions}" />
-    [Tag("seed.fr.it.vedph.comment")]
-    public sealed class CommentLayerFragmentSeeder : FragmentSeederBase,
+    /// <seealso cref="PartSeederBase" />
+    [Tag("seed.it.vedph.comment")]
+    public sealed class CommentPartSeeder : PartSeederBase,
         IConfigurable<CommentPartSeederOptions>
     {
         private CommentPartSeederOptions _options;
-
-        /// <summary>
-        /// Gets the type of the fragment.
-        /// </summary>
-        /// <returns>Type.</returns>
-        public override Type GetFragmentType() => typeof(CommentLayerFragment);
 
         /// <summary>
         /// Configures the object with the specified options.
@@ -72,23 +62,18 @@ namespace Cadmus.Seed.Parts.Layers
         /// Creates and seeds a new part.
         /// </summary>
         /// <param name="item">The item this part should belong to.</param>
-        /// <param name="location">The location.</param>
-        /// <param name="baseText">The base text.</param>
-        /// <returns>A new fragment.</returns>
-        /// <exception cref="ArgumentNullException">item or location or
-        /// baseText</exception>
-        public override ITextLayerFragment GetFragment(
-            IItem item, string location, string baseText)
+        /// <param name="roleId">The optional part role ID.</param>
+        /// <param name="factory">The part seeder factory. This is used
+        /// for layer parts, which need to seed a set of fragments.</param>
+        /// <returns>A new part.</returns>
+        /// <exception cref="ArgumentNullException">item or factory</exception>
+        public override IPart GetPart(IItem item, string roleId,
+            PartSeederFactory factory)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
-            if (location == null)
-                throw new ArgumentNullException(nameof(location));
-            if (baseText == null)
-                throw new ArgumentNullException(nameof(baseText));
 
-            return new Faker<CommentLayerFragment>()
-                .RuleFor(fr => fr.Location, location)
+            CommentPart part = new Faker<CommentPart>()
                 .RuleFor(p => p.Tag, f => f.PickRandom("scholarly", "general"))
                 .RuleFor(p => p.Text, f => f.Lorem.Sentence())
                 .RuleFor(p => p.References, SeederHelper.GetDocReferences(1, 3))
@@ -97,6 +82,25 @@ namespace Cadmus.Seed.Parts.Layers
                     new[] { f.PickRandom(_options.Categories) }))
                 .RuleFor(p => p.Keywords, f => GetKeywords(f.Random.Number(1, 3)))
                 .Generate();
+            SetPartMetadata(part, roleId, item);
+
+            return part;
         }
+    }
+
+    /// <summary>
+    /// Options for <see cref="CommentPartSeeder"/>.
+    /// </summary>
+    public sealed class CommentPartSeederOptions
+    {
+        /// <summary>
+        /// Gets or sets the categories to pick from.
+        /// </summary>
+        public string[] Categories { get; set; }
+
+        /// <summary>
+        /// Gets or sets the languages codes to pick from.
+        /// </summary>
+        public string[] Languages { get; set; }
     }
 }

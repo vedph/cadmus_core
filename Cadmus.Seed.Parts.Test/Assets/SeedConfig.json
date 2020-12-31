@@ -107,6 +107,19 @@
         }
       },
       {
+        "id": "seed.it.vedph.comment",
+        "options": {
+          "languages": [
+            "eng",
+            "ita"
+          ],
+          "categories": [
+            "alpha",
+            "beta"
+          ]
+        }
+      },
+      {
         "id": "seed.it.vedph.note",
         "options": {
           "tags": [

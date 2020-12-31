@@ -11,6 +11,15 @@ namespace Cadmus.Parts.General
             new StandardBibEntryRenderer();
 
         /// <summary>
+        /// Gets or sets an optional, human-friendly key which can be used
+        /// to reference this item. For instance, typical keys are built from
+        /// author names + year, like <c>Rossi 1963</c>, author names + container
+        /// + number, like <c>Rossi in RFIC 1965</c>, etc. The criteria for
+        /// building this key are up to the consumer.
+        /// </summary>
+        public string Key { get; set; }
+
+        /// <summary>
         /// Gets or sets the type identifier for the entry and its container:
         /// e.g. book, journal article, book article, proceedings article,
         /// journal review, ebook, site, magazine, newspaper, tweet, TV series,

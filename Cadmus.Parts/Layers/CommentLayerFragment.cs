@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Cadmus.Core;
+﻿using Cadmus.Core;
 using Cadmus.Core.Layers;
+using Cadmus.Parts.General;
 using Fusi.Tools.Config;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Cadmus.Parts.Layers
 {
@@ -14,7 +16,7 @@ namespace Cadmus.Parts.Layers
     /// <seealso cref="ITextLayerFragment" />
     /// <seealso cref="IHasText" />
     [Tag("fr.it.vedph.comment")]
-    public sealed class CommentLayerFragment : ITextLayerFragment, IHasText
+    public sealed class CommentLayerFragment : Comment, ITextLayerFragment
     {
         /// <summary>
         /// Gets or sets the location of this fragment.
@@ -28,46 +30,18 @@ namespace Cadmus.Parts.Layers
         public string Location { get; set; }
 
         /// <summary>
-        /// Gets or sets the optional tag linked to this comment. You might want
-        /// to use this value to categorize or group comments according to some
-        /// criteria.
-        /// </summary>
-        public string Tag { get; set; }
-
-        /// <summary>
-        /// Gets or sets the text. The format of the text is chosen by the
-        /// implementor (it might be plain text, Markdown, RTF, HTML, XML, etc).
-        /// </summary>
-        public string Text { get; set; }
-
-        /// <summary>
-        /// Gets the text.
-        /// </summary>
-        /// <returns>full text</returns>
-        public string GetText()
-        {
-            return Text;
-        }
-
-        /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <returns>The pins: <c>fr.tag</c>=tag if any.</returns>
+        /// <returns>The pins: <c>fr.tag</c>=tag if any, plus these list of
+        /// pins: <c>fr.ref</c>=references (built with author and work,
+        /// both filtered), <c>fr.id</c>=external IDs, <c>fr.cat</c>=categories,
+        /// <c>fr.key.{INDEXID}.{LANG}</c>=keywords.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
-            return Tag != null
-                ? new[]
-                {
-                    new DataPin
-                    {
-                        Name = PartBase.FR_PREFIX + "tag",
-                        Value = Tag
-                    }
-                }
-                : Enumerable.Empty<DataPin>();
+            return GetDataPins(item, null, PartBase.FR_PREFIX);
         }
 
         /// <summary>
@@ -76,23 +50,7 @@ namespace Cadmus.Parts.Layers
         /// <returns>Data pins definitions.</returns>
         public IList<DataPinDefinition> GetDataPinDefinitions()
         {
-            return new List<DataPinDefinition>(new[]
-            {
-                new DataPinDefinition(DataPinValueType.String,
-                    PartBase.FR_PREFIX + "tag",
-                    "The tag if any.")
-            });
-        }
-
-        /// <summary>
-        /// Returns a <see cref="string" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="string" /> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return $"Comment [{Tag}]: {(Text?.Length > 80 ? Text.Substring(0, 80) + "..." : Text)}";
+            return GetDataPinDefinitions(PartBase.FR_PREFIX);
         }
     }
 }

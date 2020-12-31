@@ -1,6 +1,7 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Layers;
 using Cadmus.Parts.Layers;
+using Cadmus.Seed.Parts.General;
 using Cadmus.Seed.Parts.Layers;
 using Fusi.Tools.Config;
 using System;
@@ -39,37 +40,11 @@ namespace Cadmus.Seed.Parts.Test.Layers
         }
 
         [Fact]
-        public void Seed_WithoutTags_NullTag()
+        public void Seed_Ok()
         {
             CommentLayerFragmentSeeder seeder = new CommentLayerFragmentSeeder();
             seeder.SetSeedOptions(_seedOptions);
-
-            ITextLayerFragment fragment = seeder.GetFragment(_item, "1.1", "alpha");
-
-            Assert.NotNull(fragment);
-
-            CommentLayerFragment fr = fragment as CommentLayerFragment;
-            Assert.NotNull(fr);
-
-            Assert.Equal("1.1", fr.Location);
-            Assert.Null(fr.Tag);
-            Assert.NotNull(fr.Text);
-        }
-
-        [Fact]
-        public void Seed_WithTags_Ok()
-        {
-            CommentLayerFragmentSeeder seeder = new CommentLayerFragmentSeeder();
-            seeder.SetSeedOptions(_seedOptions);
-            seeder.Configure(new CommentLayerFragmentSeederOptions
-            {
-                Tags = new[]
-                {
-                    "alpha",
-                    "beta",
-                    "gamma"
-                }
-            });
+            seeder.Configure(new CommentPartSeederOptions());
 
             ITextLayerFragment fragment = seeder.GetFragment(_item, "1.1", "alpha");
 
@@ -81,6 +56,10 @@ namespace Cadmus.Seed.Parts.Test.Layers
             Assert.Equal("1.1", fr.Location);
             Assert.NotNull(fr.Tag);
             Assert.NotNull(fr.Text);
+            Assert.NotEmpty(fr.References);
+            Assert.NotEmpty(fr.ExternalIds);
+            Assert.NotEmpty(fr.Categories);
+            Assert.NotEmpty(fr.Keywords);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Cadmus.Parts.Test.General
             {
                 part.Entries.Add(new BibEntry
                 {
+                    Key = $"e{i + 1}",
                     Authors = new[]
                     {
                         new BibAuthor
@@ -78,6 +79,7 @@ namespace Cadmus.Parts.Test.General
 
             BibEntry entry = new BibEntry
             {
+                Key = "heller & pomeroy 2020",
                 // type (1)
                 TypeId = "book-chapter",
                 // authors (2)
@@ -124,12 +126,18 @@ namespace Cadmus.Parts.Test.General
 
             List<DataPin> pins = part.GetDataPins().ToList();
 
-            Assert.Equal(8, pins.Count);
+            Assert.Equal(9, pins.Count);
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
             TestHelper.AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
+
+            // key
+            pin = pins.Find(p => p.Name == "key");
+            Assert.NotNull(pin);
+            TestHelper.AssertPinIds(part, pin);
+            Assert.Equal("heller & pomeroy 2020", pin.Value);
 
             // authors + contributors
             Assert.Equal(3, pins.Count(p => p.Name == "author"));
@@ -168,6 +176,7 @@ namespace Cadmus.Parts.Test.General
 
             BibEntry book = new BibEntry
             {
+                Key = "heller & pomeroy 2020",
                 TypeId = "book",
                 Authors = new[]
                 {
@@ -190,6 +199,7 @@ namespace Cadmus.Parts.Test.General
 
             BibEntry paper = new BibEntry
             {
+                Key = "Fusi 2018",
                 TypeId = "journal-paper",
                 Authors = new[]
                 {
@@ -219,13 +229,14 @@ namespace Cadmus.Parts.Test.General
 
             List<DataPin> pins = part.GetDataPins().ToList();
 
-            Assert.Equal(10, pins.Count);
+            Assert.Equal(12, pins.Count);
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
             TestHelper.AssertPinIds(part, pin);
             Assert.Equal("2", pin.Value);
 
+            Assert.Equal(2, pins.Count(p => p.Name == "key"));
             Assert.Equal(3, pins.Count(p => p.Name == "author"));
             Assert.Equal(2, pins.Count(p => p.Name == "title"));
             Assert.Equal(1, pins.Count(p => p.Name == "container"));

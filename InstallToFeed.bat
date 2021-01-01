@@ -8,7 +8,7 @@ c:\exe\nuget add .\Cadmus.Index\bin\Debug\Cadmus.Index.1.1.3.nupkg -source C:\Pr
 c:\exe\nuget add .\Cadmus.Index.Sql\bin\Debug\Cadmus.Index.Sql.1.1.5.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Lexicon.Parts\bin\Debug\Cadmus.Lexicon.Parts.2.3.2.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Mongo\bin\Debug\Cadmus.Mongo.2.3.5.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Parts\bin\Debug\Cadmus.Parts.2.3.4.nupkg -source C:\Projects\_NuGet
+c:\exe\nuget add .\Cadmus.Parts\bin\Debug\Cadmus.Parts.2.3.5.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Philology.Parts\bin\Debug\Cadmus.Philology.Parts.2.3.3.nupkg -source C:\Projects\_NuGet
 
 c:\exe\nuget add .\Cadmus.Seed\bin\Debug\Cadmus.Seed.1.1.4.nupkg -source C:\Projects\_NuGet

@@ -34,7 +34,7 @@ namespace Cadmus.Parts.General
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
         /// <returns>The pins: <c>tot-count</c> and a collection of pins with
-        /// keys: <c>type-X-count</c>, <c>author</c> (for authors and
+        /// keys: <c>type-X-count</c>, <c>key</c>, <c>author</c> (for authors and
         /// contributors; filtered last name only), <c>title</c> (filtered,
         /// with digits), <c>container</c> (filtered, with digits),
         /// <c>keyword.LANG</c> (keyword filtered with digits).</returns>
@@ -50,6 +50,10 @@ namespace Cadmus.Parts.General
             {
                 foreach (BibEntry entry in Entries)
                 {
+                    // key
+                    if (!string.IsNullOrEmpty(entry.Key))
+                        builder.AddValue("key", entry.Key);
+
                     // type-X-count
                     if (!string.IsNullOrEmpty(entry.TypeId))
                         builder.Increase(entry.TypeId, false, "type-");
@@ -115,6 +119,10 @@ namespace Cadmus.Parts.General
         {
             return new List<DataPinDefinition>(new[]
             {
+                new DataPinDefinition(DataPinValueType.String,
+                    "key",
+                    "List of bibliographic entries keys.",
+                    "M"),
                 new DataPinDefinition(DataPinValueType.Integer,
                     "tot-count",
                     "The total count of bibliographic entries."),

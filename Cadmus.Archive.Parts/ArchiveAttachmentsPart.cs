@@ -35,7 +35,6 @@ namespace Cadmus.Archive.Parts
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        /// <remarks>
         /// <returns>The pins: <c>tot-count</c>.</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {

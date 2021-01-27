@@ -57,7 +57,7 @@ namespace Cadmus.Philology.Parts.Layers
         public IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             DataPinBuilder builder = new DataPinBuilder(
-                new StandardDataPinTextFilter());
+                DataPinHelper.DefaultFilter);
 
             builder.Set(PartBase.FR_PREFIX + "tot", Witnesses?.Count ?? 0, false);
 

@@ -111,9 +111,8 @@ namespace Cadmus.Parts.General
         /// <c>fr.key.{INDEXID}.{LANG}</c>=keywords.</returns>
         public IEnumerable<DataPin> GetDataPins(IItem item, IPart part, string prefix)
         {
-            StandardDataPinTextFilter filter = new StandardDataPinTextFilter();
             DataPinBuilder builder = new DataPinBuilder(
-                new StandardDataPinTextFilter());
+                DataPinHelper.DefaultFilter);
 
             // fr.tag
             builder.AddValue(prefix + "tag", Tag);
@@ -161,7 +160,8 @@ namespace Cadmus.Parts.General
                     {
                         var values = from k in g
                                      orderby k.Value
-                                     select filter.Apply(k.Value, true);
+                                     select DataPinHelper.DefaultFilter
+                                        .Apply(k.Value, true);
                         foreach (string value in values)
                         {
                             builder.AddValue(

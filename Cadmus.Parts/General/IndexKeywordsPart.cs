@@ -71,7 +71,7 @@ namespace Cadmus.Parts.General
                     (Keywords?.Count ?? 0).ToString(CultureInfo.InvariantCulture))
             };
 
-            StandardDataPinTextFilter filter = new StandardDataPinTextFilter();
+            IDataPinTextFilter filter = DataPinHelper.DefaultFilter;
 
             foreach (string indexId in Keywords.Select(k => k.IndexId ?? "")
                 .OrderBy(s => s).Distinct())

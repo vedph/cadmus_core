@@ -46,7 +46,7 @@ namespace Cadmus.Parts.General
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             DataPinBuilder builder = new DataPinBuilder(
-                new StandardDataPinTextFilter());
+                DataPinHelper.DefaultFilter);
 
             builder.AddValue("date-value",
                 (Date?.GetSortValue() ?? 0).ToString(CultureInfo.InvariantCulture));

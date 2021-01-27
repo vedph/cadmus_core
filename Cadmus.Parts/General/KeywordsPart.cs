@@ -74,8 +74,6 @@ namespace Cadmus.Parts.General
                     (Keywords?.Count ?? 0).ToString(CultureInfo.InvariantCulture))
             };
 
-            IDataPinTextFilter filter = new StandardDataPinTextFilter();
-
             var keysByLang = from k in Keywords
                              group k by k.Language
                                  into g
@@ -86,7 +84,7 @@ namespace Cadmus.Parts.General
             {
                 var values = from k in g
                              orderby k.Value
-                             select filter.Apply(k.Value, true);
+                             select DataPinHelper.DefaultFilter.Apply(k.Value, true);
 
                 pins.AddRange(from value in values
                               select CreateDataPin($"keyword.{g.Key}", value));

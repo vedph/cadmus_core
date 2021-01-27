@@ -40,7 +40,7 @@ namespace Cadmus.Parts.General
         public override IEnumerable<DataPin> GetDataPins(IItem item = null)
         {
             DataPinBuilder builder = new DataPinBuilder(
-                new StandardDataPinTextFilter());
+                DataPinHelper.DefaultFilter);
 
             builder.Set("tot", Categories?.Count ?? 0, false);
 

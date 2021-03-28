@@ -48,7 +48,7 @@ namespace Cadmus.Parts.Test
             return JsonSerializer.Deserialize<T>(json, _options);
         }
 
-        public static void AssertPinIds(IPart part, DataPin pin)
+        public static void AssertValidDataPinNames(IPart part, DataPin pin)
         {
             Assert.Equal(part.ItemId, pin.ItemId);
             Assert.Equal(part.Id, pin.PartId);

@@ -86,7 +86,7 @@ namespace Cadmus.Parts.Test.General
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("3", pin.Value);
 
             // labels
@@ -95,17 +95,17 @@ namespace Cadmus.Parts.Test.General
                 pin = pins.Find(p => p.Name == "label"
                     && p.Value == $"title {n}");
                 Assert.NotNull(pin);
-                TestHelper.AssertPinIds(part, pin);
+                TestHelper.AssertValidDataPinNames(part, pin);
             }
 
             // tags
             pin = pins.Find(p => p.Name == "tag" && p.Value == "even");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             pin = pins.Find(p => p.Name == "tag" && p.Value == "odd");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
         }
     }
 }

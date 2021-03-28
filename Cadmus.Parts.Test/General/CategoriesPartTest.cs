@@ -52,7 +52,7 @@ namespace Cadmus.Parts.Test.General
 
             Assert.Single(pins);
             DataPin pin = pins[0];
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("tot-count", pin.Name);
             Assert.Equal("0", pin.Value);
         }
@@ -67,18 +67,18 @@ namespace Cadmus.Parts.Test.General
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("2", pin.Value);
 
             pin = pins.Find(p => p.Name == "category"
                 && p.Value == "alpha");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             pin = pins.Find(p => p.Name == "category"
                 && p.Value == "beta");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
         }
     }
 }

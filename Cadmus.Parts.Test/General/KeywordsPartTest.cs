@@ -69,26 +69,26 @@ namespace Cadmus.Parts.Test.General
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("3", pin.Value);
 
             // keyword.eng = green
             pin = pins.Find(p => p.Name == "keyword.eng"
                 && p.Value == "green");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             // keyword.eng = red
             pin = pins.Find(p => p.Name == "keyword.eng"
                 && p.Value == "red");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             // keyword.ita = rosso
             pin = pins.Find(p => p.Name == "keyword.ita"
                 && p.Value == "rosso");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
         }
     }
 }

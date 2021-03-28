@@ -66,7 +66,7 @@ namespace Cadmus.Parts.Test.General
             Assert.Single(pins);
             Assert.Equal("line-count", pins[0].Name);
             Assert.Equal("0", pins[0].Value);
-            TestHelper.AssertPinIds(part, pins[0]);
+            TestHelper.AssertValidDataPinNames(part, pins[0]);
         }
 
         [Fact]
@@ -80,12 +80,12 @@ namespace Cadmus.Parts.Test.General
 
             DataPin pin = pins.Find(p => p.Name == "line-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("3", pin.Value);
 
             pin = pins.Find(p => p.Name == "citation");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("some-citation", pin.Value);
         }
     }

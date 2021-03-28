@@ -68,7 +68,7 @@ namespace Cadmus.Parts.Test.General
             Assert.Single(pins);
             DataPin pin = pins[0];
             Assert.Equal("tot-count", pin.Name);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("0", pin.Value);
         }
 
@@ -130,13 +130,13 @@ namespace Cadmus.Parts.Test.General
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("1", pin.Value);
 
             // key
             pin = pins.Find(p => p.Name == "key");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("heller & pomeroy 2020", pin.Value);
 
             // authors + contributors
@@ -165,7 +165,7 @@ namespace Cadmus.Parts.Test.General
             // type-X-count
             pin = pins.Find(p => p.Name == "type-book-chapter-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("1", pin.Value);
         }
 
@@ -233,7 +233,7 @@ namespace Cadmus.Parts.Test.General
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("2", pin.Value);
 
             Assert.Equal(2, pins.Count(p => p.Name == "key"));

@@ -91,37 +91,37 @@ namespace Cadmus.Parts.Test.General
 
             // tag
             DataPin pin = pins.Find(p => p.Name == "tag");
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("tag", pin.Value);
 
             // key.odd.eng=ka
             pin = pins.Find(p => p.Name == "key.odd.eng" && p.Value == "ka");
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             // key.even.eng=kb
             pin = pins.Find(p => p.Name == "key.even.eng" && p.Value == "kb");
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             // key.odd.eng=kc
             pin = pins.Find(p => p.Name == "key.odd.eng" && p.Value == "kc");
-            TestHelper.AssertPinIds(part, pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
 
             for (int n = 1; n <= 3; n++)
             {
                 // ref
                 pin = pins.Find(p => p.Name == "ref" && p.Value == $"w{n}");
                 Assert.NotNull(pin);
-                TestHelper.AssertPinIds(part, pin);
+                TestHelper.AssertValidDataPinNames(part, pin);
 
                 // id
                 pin = pins.Find(p => p.Name == "id" && p.Value == $"i{n}");
                 Assert.NotNull(pin);
-                TestHelper.AssertPinIds(part, pin);
+                TestHelper.AssertValidDataPinNames(part, pin);
 
                 // cat
                 pin = pins.Find(p => p.Name == "cat" && p.Value == $"c{n}");
                 Assert.NotNull(pin);
-                TestHelper.AssertPinIds(part, pin);
+                TestHelper.AssertValidDataPinNames(part, pin);
             }
         }
     }

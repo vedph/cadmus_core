@@ -26,15 +26,16 @@ namespace Cadmus.Index.Sql.Test
 
         private const string SQL_PIN_PAG_HEAD =
             "SELECT DISTINCT\r\n" +
-            "`pin`.`itemId`,`pin`.`partId`,`pin`.`partTypeId`,`pin`.`roleId`," +
+            "`pin`.`id`,`pin`.`itemId`,`pin`.`partId`,`pin`.`partTypeId`,`pin`.`roleId`," +
             "`pin`.`name`,`pin`.`value`\r\n" +
             "FROM `pin`\r\n" +
             "INNER JOIN `item`\r\n" +
             "ON `pin`.`itemId`=`item`.`id`\r\n" +
             "WHERE\r\n";
         private const string SQL_PIN_TOT_HEAD =
-            "SELECT COUNT(DISTINCT `pin`.`itemId`,`pin`.`partId`," +
-            "`pin`.`partTypeId`,`pin`.`roleId`,`pin`.`name`,`pin`.`value`)\r\n" +
+            "SELECT COUNT(*) FROM (SELECT DISTINCT\r\n" +
+            "`pin`.`id`,`pin`.`itemId`,`pin`.`partId`," +
+            "`pin`.`partTypeId`,`pin`.`roleId`,`pin`.`name`,`pin`.`value`\r\n" +
             "FROM `pin`\r\n" +
             "INNER JOIN `item`\r\n" +
             "ON `pin`.`itemId`=`item`.`id`\r\n" +
@@ -134,7 +135,7 @@ namespace Cadmus.Index.Sql.Test
             Assert.Equal(expected, sql.Item1);
 
             expected = SQL_PIN_TOT_HEAD +
-                $"`item`.`{field}`='hello'\r\n";
+                $"`item`.`{field}`='hello'\r\n) AS tmp";
             Assert.Equal(expected, sql.Item2);
         }
 

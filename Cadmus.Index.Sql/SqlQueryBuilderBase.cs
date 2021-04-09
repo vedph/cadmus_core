@@ -493,12 +493,11 @@ namespace Cadmus.Index.Sql
             // select distinct item... inner join pin on item.id=pin.itemId
             sbPage.AppendLine("SELECT DISTINCT")
               .AppendLine(ETPS("pin",
-                "itemId", "partId", "partTypeId", "roleId", "name", "value"));
+                "id", "itemId", "partId", "partTypeId", "roleId", "name", "value"));
 
-            sbTotal.Append("SELECT COUNT(DISTINCT ")
-                   .Append(ETPS("pin",
-                        "itemId", "partId", "partTypeId", "roleId", "name", "value"))
-                   .AppendLine(")");
+            sbTotal.AppendLine("SELECT COUNT(*) FROM (SELECT DISTINCT")
+                   .AppendLine(ETPS("pin",
+                       "id", "itemId", "partId", "partTypeId", "roleId", "name", "value"));
 
             string fromSql = BuildPinSqlFrom();
             sbPage.Append(fromSql);
@@ -508,6 +507,7 @@ namespace Cadmus.Index.Sql
             string whereSql = BuildWhereSql(query);
             sbPage.Append(whereSql);
             sbTotal.Append(whereSql);
+            sbTotal.Append(") AS tmp");
 
             // order by (for page only)
             sbPage.Append("ORDER BY ")

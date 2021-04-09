@@ -193,18 +193,14 @@ namespace Cadmus.Index.Sql
                 {
                     DataPinInfo pin = new DataPinInfo
                     {
-                        ItemId = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("itemId")),
-                        PartId = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("partId")),
-                        PartTypeId = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("partTypeId")),
-                        RoleId = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("roleId")),
-                        Name = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("name")),
-                        Value = reader.GetFieldValue<string>(
-                            reader.GetOrdinal("value"))
+                        ItemId = reader.GetValue(reader.GetOrdinal("itemId"))
+                            .ToString(),
+                        PartId = reader.GetValue(reader.GetOrdinal("partId"))
+                            .ToString(),
+                        PartTypeId = reader["partTypeId"] as string,
+                        RoleId = reader["roleId"] as string,
+                        Name = reader["name"] as string,
+                        Value = reader["value"] as string
                     };
                     pins.Add(pin);
                 }

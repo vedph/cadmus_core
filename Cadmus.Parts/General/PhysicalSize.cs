@@ -30,6 +30,11 @@ namespace Cadmus.Parts.General
         public PhysicalDimension D { get; set; }
 
         /// <summary>
+        /// Gets or sets an optional note.
+        /// </summary>
+        public string Note {get; set; }
+
+        /// <summary>
         /// Converts to string.
         /// </summary>
         /// <returns>

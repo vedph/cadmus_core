@@ -43,6 +43,10 @@ namespace Cadmus.Parts.General
             // [type]
             sb.Append('[').Append(entry.TypeId).Append("] ");
 
+            // (tag)
+            if (!string.IsNullOrEmpty(entry.Tag))
+                sb.Append('(').Append(entry.Tag).Append(") ");
+
             // author(s) --
             if (entry.Authors?.Length > 0) AppendAuthors(entry.Authors, sb);
 

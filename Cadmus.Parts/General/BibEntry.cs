@@ -28,6 +28,12 @@ namespace Cadmus.Parts.General
         public string TypeId { get; set; }
 
         /// <summary>
+        /// Gets or sets an optional tag, which can be used to categorize or
+        /// group an entry in some way.
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
         /// Gets or sets the authors, in their desired order.
         /// </summary>
         public BibAuthor[] Authors { get; set; }

@@ -102,6 +102,7 @@ namespace Cadmus.Seed.Parts.General
                 BibEntry entry = new BibEntry
                 {
                     TypeId = SeedHelper.RandomPickOneOf(_typeIds),
+                    Tag = f.PickRandom(null, "alpha", "beta"),
                     Authors = (from a in SeedHelper.RandomPickOf(_authors,
                         Randomizer.Seed.Next(1, 5) == 1? 2:1)
                               select ParseAuthor(a)).ToArray(),

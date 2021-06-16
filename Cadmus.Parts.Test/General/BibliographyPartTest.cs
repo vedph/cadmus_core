@@ -32,6 +32,7 @@ namespace Cadmus.Parts.Test.General
                         }
                     },
                     Title = $"Title {i}",
+                    Tag = "tag",
                     PlacePub = "Somewhere",
                     YearPub = 2020
                 });

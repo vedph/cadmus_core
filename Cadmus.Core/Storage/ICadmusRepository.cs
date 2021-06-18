@@ -68,10 +68,12 @@ namespace Cadmus.Core.Storage
 
         #region Thesaurus
         /// <summary>
-        /// Gets the IDs of all the thesauri.
+        /// Gets the IDs of all the thesauri, or of all those matching the
+        /// specified filter.
         /// </summary>
+        /// <param name="filter">The optional filter.</param>
         /// <returns>IDs</returns>
-        IList<string> GetThesaurusIds();
+        IList<string> GetThesaurusIds(ThesaurusFilter filter = null);
 
         /// <summary>
         /// Gets the specified page of thesauri.

@@ -221,19 +221,57 @@ namespace Cadmus.Mongo
 
         #region Thesauri
         /// <summary>
-        /// Gets the IDs of all the thesauri.
+        /// Gets the IDs of all the thesauri, or of all those matching the
+        /// specified filter.
         /// </summary>
+        /// <param name="filter">The optional filter.</param>
         /// <returns>IDs</returns>
-        public IList<string> GetThesaurusIds()
+        public IList<string> GetThesaurusIds(ThesaurusFilter filter = null)
         {
             EnsureClientCreated(_options.ConnectionString);
 
             IMongoDatabase db = Client.GetDatabase(_databaseName);
-            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
+            var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
+                    .AsQueryable();
+            if (filter == null)
+            {
+                return (from set in thesauri
+                        orderby set.Id
+                        select set.Id).ToList();
+            }
+            else
+            {
+                thesauri = ApplyThesaurusFilters(thesauri, filter);
+                return filter.PageSize == 0 ?
+                    (from set in thesauri
+                     orderby set.Id
+                     select set.Id).ToList() :
+                    (from set in thesauri
+                     orderby set.Id
+                     select set.Id).Skip(filter.GetSkipCount()).Take(filter.PageSize).ToList();
+            }
+        }
 
-            return (from set in thesauri.AsQueryable()
-                orderby set.Id
-                select set.Id).ToList();
+        private static IMongoQueryable<MongoThesaurus> ApplyThesaurusFilters(
+            IMongoQueryable<MongoThesaurus> thesauri, ThesaurusFilter filter)
+        {
+            if (!string.IsNullOrEmpty(filter.Id))
+                thesauri = thesauri.Where(t => t.Id.Contains(filter.Id));
+
+            if (filter.IsAlias != null)
+            {
+                thesauri = filter.IsAlias.Value
+                    ? thesauri.Where(t => t.TargetId != null)
+                    : thesauri.Where(t => t.TargetId == null);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Language))
+            {
+                string suffix = "@" + filter.Language;
+                thesauri = thesauri.Where(t => t.Id.EndsWith(suffix));
+            }
+
+            return thesauri;
         }
 
         /// <summary>
@@ -252,21 +290,7 @@ namespace Cadmus.Mongo
                 .AsQueryable();
 
             // apply filters
-            if (!string.IsNullOrEmpty(filter.Id))
-                thesauri = thesauri.Where(t => t.Id.Contains(filter.Id));
-
-            if (filter.IsAlias != null)
-            {
-                thesauri = filter.IsAlias.Value
-                    ? thesauri.Where(t => t.TargetId != null)
-                    : thesauri.Where(t => t.TargetId == null);
-            }
-
-            if (!string.IsNullOrEmpty(filter.Language))
-            {
-                string suffix = "@" + filter.Language;
-                thesauri = thesauri.Where(t => t.Id.EndsWith(suffix));
-            }
+            thesauri = ApplyThesaurusFilters(thesauri, filter);
 
             // get total
             int total = thesauri.Count();

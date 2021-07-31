@@ -54,5 +54,12 @@ namespace Cadmus.Parts.Test
             Assert.Equal(part.Id, pin.PartId);
             Assert.Equal(part.RoleId, pin.RoleId);
         }
+
+        public static void AssertPinIds(IPart part, DataPin pin)
+        {
+            Assert.Equal(part.ItemId, pin.ItemId);
+            Assert.Equal(part.Id, pin.PartId);
+            Assert.Equal(part.RoleId, pin.RoleId);
+        }
     }
 }

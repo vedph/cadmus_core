@@ -1,4 +1,5 @@
-﻿using Cadmus.Core;
+﻿using Cadmus.Bricks;
+using Cadmus.Core;
 using Fusi.Tools.Config;
 using System.Collections.Generic;
 using System.Text;

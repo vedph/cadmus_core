@@ -51,6 +51,13 @@ namespace Cadmus.Core.Config
         /// <summary>
         /// Initializes a new instance of the <see cref="Thesaurus"/> class.
         /// </summary>
+        public Thesaurus()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Thesaurus"/> class.
+        /// </summary>
         /// <param name="id">The identifier.</param>
         /// <exception cref="ArgumentNullException">id</exception>
         public Thesaurus(string id)

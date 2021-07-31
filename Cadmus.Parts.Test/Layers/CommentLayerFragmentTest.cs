@@ -1,4 +1,5 @@
-﻿using Cadmus.Core;
+﻿using Cadmus.Bricks;
+using Cadmus.Core;
 using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
 using Cadmus.Seed.Parts.General;

@@ -5,6 +5,7 @@ using Cadmus.Parts.General;
 using Cadmus.Seed.Parts.General;
 using System.Collections.Generic;
 using System.Linq;
+using Cadmus.Bricks;
 
 namespace Cadmus.Parts.Test.General
 {

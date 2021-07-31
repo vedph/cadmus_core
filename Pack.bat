@@ -1,25 +1,16 @@
 @echo off
 echo BUILD Cadmus packages
-del .\Cadmus.Core\bin\Debug\*.nupkg
-del .\Cadmus.Core\bin\Debug\*.snupkg
-del .\Cadmus.Index\bin\Debug\*.nupkg
-del .\Cadmus.Index\bin\Debug\*.snupkg
+del .\Cadmus.Core\bin\Debug\*.*nupkg
+del .\Cadmus.Index\bin\Debug\*.*nupkg
 del .\Cadmus.Index.Sql\bin\Debug\*.nupkg
-del .\Cadmus.Index.Sql\bin\Debug\*.snupkg
-del .\Cadmus.Parts\bin\Debug\*.nupkg
-del .\Cadmus.Parts\bin\Debug\*.snupkg
-del .\Cadmus.Archive.Parts\bin\Debug\*.nupkg
-del .\Cadmus.Archive.Parts\bin\Debug\*.snupkg
-del .\Cadmus.Philology.Parts\bin\Debug\*.nupkg
-del .\Cadmus.Philology.Parts\bin\Debug\*.snupkg
-del .\Cadmus.Seed\bin\Debug\*.nupkg
-del .\Cadmus.Seed\bin\Debug\*.snupkg
-del .\Cadmus.Seed.Parts\bin\Debug\*.nupkg
-del .\Cadmus.Seed.Parts\bin\Debug\*.snupkg
-del .\Cadmus.Seed.Philology.Parts\bin\Debug\*.nupkg
-del .\Cadmus.Seed.Philology.Parts\bin\Debug\*.snupkg
-del .\Cadmus.Mongo\bin\Debug\*.nupkg
-del .\Cadmus.Mongo\bin\Debug\*.snupkg
+del .\Cadmus.Lexicon.Parts\bin\Debug\*.*nupkg
+del .\Cadmus.Parts\bin\Debug\*.*nupkg
+del .\Cadmus.Archive.Parts\bin\Debug\*.*nupkg
+del .\Cadmus.Philology.Parts\bin\Debug\*.*nupkg
+del .\Cadmus.Seed\bin\Debug\*.*nupkg
+del .\Cadmus.Seed.Parts\bin\Debug\*.*nupkg
+del .\Cadmus.Seed.Philology.Parts\bin\Debug\*.*nupkg
+del .\Cadmus.Mongo\bin\Debug\*.*nupkg
 
 cd .\Cadmus.Core
 dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg

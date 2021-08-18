@@ -4,7 +4,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.3.9</Version>
+    <Version>2.3.10</Version>
     <Authors>Daniele Fusi</Authors>
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
@@ -26,8 +26,8 @@
   <ItemGroup>
     <PackageReference Include="DiffMatchPatch" Version="1.0.2" />
     <PackageReference Include="Fusi.Text" Version="1.1.13" />
-    <PackageReference Include="Fusi.Tools" Version="1.1.16" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.18" />
+    <PackageReference Include="Fusi.Tools" Version="1.1.17" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.19" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />

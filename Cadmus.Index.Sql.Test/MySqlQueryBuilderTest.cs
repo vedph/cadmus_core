@@ -63,6 +63,28 @@ namespace Cadmus.Index.Sql.Test
         }
 
         [Fact]
+        public void BuildForItem_NoSquares_Title()
+        {
+            MySqlQueryBuilder builder = GetBuilder();
+            var sql = builder.BuildForItem("hello", new PagingOptions
+            {
+                PageNumber = 1,
+                PageSize = 20
+            });
+
+            string clause = "`item`.`title`='hello'\r\n";
+
+            string expected = SQL_ITEM_PAG_HEAD +
+                clause +
+                SQL_ITEM_ORDER +
+                "\r\nLIMIT 20\r\nOFFSET 0\r\n";
+            Assert.Equal(expected, sql.Item1);
+
+            expected = SQL_ITEM_TOT_HEAD + clause;
+            Assert.Equal(expected, sql.Item2);
+        }
+
+        [Fact]
         public void BuildForItem_CustomField_Name()
         {
             MySqlQueryBuilder builder = GetBuilder();

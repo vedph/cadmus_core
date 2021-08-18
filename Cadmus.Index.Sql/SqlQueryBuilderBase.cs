@@ -376,6 +376,10 @@ namespace Cadmus.Index.Sql
             // normalize whitespace
             query = _wsRegex.Replace(query, " ").Trim();
 
+            // if no square bracket, assume title as default field
+            if (!query.StartsWith("[", StringComparison.Ordinal))
+                query = $"[title={query}]";
+
             // replace \[ or \] with an escape
             query = query.Replace("\\[", "\\005B");
             query = query.Replace("\\]", "\\005D");

@@ -1,4 +1,5 @@
 ﻿using Cadmus.Index.Config;
+using Cadmus.Index.MySql;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;

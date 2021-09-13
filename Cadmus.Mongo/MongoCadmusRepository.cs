@@ -422,49 +422,49 @@ namespace Cadmus.Mongo
 
             if (!string.IsNullOrEmpty(filter.Title))
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.Title.ToLower().Contains(filter.Title.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.Description))
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.Description.ToLower().Contains(filter.Description.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.FacetId.Equals(filter.FacetId));
             }
 
             if (!string.IsNullOrEmpty(filter.GroupId))
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.GroupId.Equals(filter.GroupId));
             }
 
             if (filter.Flags.HasValue)
             {
-                f = f & Builders<MongoItem>.Filter.BitsAllSet(
+                f &= Builders<MongoItem>.Filter.BitsAllSet(
                     i => i.Flags, filter.Flags.Value);
             }
 
             if (!string.IsNullOrEmpty(filter.UserId))
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.UserId.Equals(filter.UserId));
             }
 
             if (filter.MinModified.HasValue)
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.TimeModified >= filter.MinModified.Value);
             }
 
             if (filter.MaxModified.HasValue)
             {
-                f = f & new ExpressionFilterDefinition<MongoItem>(
+                f &= new ExpressionFilterDefinition<MongoItem>(
                     i => i.TimeModified <= filter.MaxModified.Value);
             }
 

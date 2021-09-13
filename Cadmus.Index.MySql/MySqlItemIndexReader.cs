@@ -1,17 +1,18 @@
-﻿using Fusi.Tools.Config;
+﻿using Cadmus.Index.Sql;
+using Fusi.Tools.Config;
+using MySql.Data.MySqlClient;
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
 
-namespace Cadmus.Index.Sql
+namespace Cadmus.Index.MySql
 {
     /// <summary>
-    /// Sql Server item index reader.
-    /// <para>Tag: <c>item-index-reader.mssql</c>.</para>
+    /// MySql item index reader.
+    /// <para>Tag: <c>item-index-reader.mysql</c>.</para>
     /// </summary>
     /// <seealso cref="SqlItemIndexReaderBase" />
-    [Tag("item-index-reader.mssql")]
-    public sealed class MsSqlItemIndexReader : SqlItemIndexReaderBase,
+    [Tag("item-index-reader.mysql")]
+    public sealed class MySqlItemIndexReader : SqlItemIndexReaderBase,
         IConfigurable<SqlOptions>, IItemIndexReader
     {
         /// <summary>
@@ -28,16 +29,18 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Gets the connection.
         /// </summary>
-        /// <returns>Connection.</returns>
+        /// <returns>
+        /// Connection.
+        /// </returns>
         protected override DbConnection GetConnection() =>
-            new SqlConnection(ConnectionString);
+            new MySqlConnection(ConnectionString);
 
         /// <summary>
         /// Gets a new command object.
         /// </summary>
         /// <returns>Command.</returns>
         protected override DbCommand GetCommand() =>
-            new SqlCommand();
+            new MySqlCommand();
 
         /// <summary>
         /// Gets the SQL query builder.
@@ -46,6 +49,6 @@ namespace Cadmus.Index.Sql
         /// SQL query builder.
         /// </returns>
         protected override ISqlQueryBuilder GetQueryBuilder() =>
-            new MsSqlQueryBuilder();
+            new MySqlQueryBuilder();
     }
 }

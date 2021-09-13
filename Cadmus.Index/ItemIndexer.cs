@@ -43,7 +43,7 @@ namespace Cadmus.Index
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            _writer.Write(item);
+            _writer.WriteItem(item);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Cadmus.Index
                 {
                     IItem item = repository.GetItem(info.Id);
                     if (item == null) continue;
-                    _writer.Write(item);
+                    _writer.WriteItem(item);
                 }
 
                 // handle cancel and progress

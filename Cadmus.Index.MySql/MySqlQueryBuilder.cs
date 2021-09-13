@@ -1,8 +1,9 @@
-﻿using Fusi.Tools.Data;
+﻿using Cadmus.Index.Sql;
+using Fusi.Tools.Data;
 using System.Globalization;
 using System.Text;
 
-namespace Cadmus.Index.Sql
+namespace Cadmus.Index.MySql
 {
     /// <summary>
     /// MySql query builder.

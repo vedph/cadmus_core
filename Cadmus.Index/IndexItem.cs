@@ -82,11 +82,11 @@ namespace Cadmus.Index
         /// Initializes a new instance of the <see cref="IndexItem"/> class.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <exception cref="System.ArgumentNullException">item</exception>
+        /// <exception cref="ArgumentNullException">item</exception>
         public IndexItem(IItem item)
         {
             if (item == null)
-                throw new System.ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(item));
 
             Id = item.Id;
             Title = item.Title;

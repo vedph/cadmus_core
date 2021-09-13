@@ -1,4 +1,6 @@
-﻿namespace Cadmus.Index.Sql
+﻿using Cadmus.Index.Sql;
+
+namespace Cadmus.Index.MsSql
 {
     /// <summary>
     /// Sql Server SQL token helper.

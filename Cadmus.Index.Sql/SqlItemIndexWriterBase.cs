@@ -4,6 +4,10 @@ using System.Linq;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
+using Fusi.DbManager;
+using System.Collections.Generic;
+using System.Threading;
+using Fusi.Tools;
 
 namespace Cadmus.Index.Sql
 {
@@ -16,9 +20,6 @@ namespace Cadmus.Index.Sql
         private readonly ISqlTokenHelper _tokenHelper;
         private string _connectionString;
         private bool _exists;
-        private DbCommand _insertItemCommand;
-        private DbCommand _insertPinCommand;
-        private DbCommand _deleteItemCommand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase" />
@@ -108,12 +109,12 @@ namespace Cadmus.Index.Sql
             command.Parameters.Add(p);
         }
 
-        private void BuildInsertCommands()
+        private DbCommand GetInsertItemCommand(bool upsert, DbTransaction tr = null)
         {
-            // item
-            _insertItemCommand = GetCommand();
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-            _insertItemCommand.CommandText =
+            DbCommand cmd = GetCommand();
+            cmd.Connection = Connection;
+            cmd.Transaction = tr;
+            cmd.CommandText =
                 $"INSERT INTO {ET("item")}(" +
                 ETS("id", "title", "description", "facetId", "groupId",
                     "sortKey", "flags", "timeCreated", "creatorId",
@@ -129,29 +130,49 @@ namespace Cadmus.Index.Sql
                 "@timeCreated," +
                 "@creatorId," +
                 "@timeModified," +
-                "@userId" +
-                ");";
-            _insertItemCommand.Connection = Connection;
-            AddParameter(_insertItemCommand, "@id", DbType.String);
-            AddParameter(_insertItemCommand, "@title", DbType.String);
-            AddParameter(_insertItemCommand, "@description", DbType.String);
-            AddParameter(_insertItemCommand, "@facetId", DbType.String);
-            AddParameter(_insertItemCommand, "@groupId", DbType.String);
-            AddParameter(_insertItemCommand, "@sortKey", DbType.String);
-            AddParameter(_insertItemCommand, "@flags", DbType.Int32);
-            AddParameter(_insertItemCommand, "@timeCreated", DbType.DateTime);
-            AddParameter(_insertItemCommand, "@creatorId", DbType.String);
-            AddParameter(_insertItemCommand, "@timeModified", DbType.DateTime);
-            AddParameter(_insertItemCommand, "@userId", DbType.String);
+                "@userId)";
 
-            _deleteItemCommand = GetCommand();
-            _deleteItemCommand.CommandText = "DELETE FROM `item` WHERE `id`=@id";
-            _deleteItemCommand.Connection = Connection;
-            AddParameter(_deleteItemCommand, "@id", DbType.String);
+            if (upsert)
+            {
+                cmd.CommandText += "\nON DUPLICATE KEY UPDATE " +
+                $"{ET("title")}=@title, {ET("description")}=@description, " +
+                $"{ET("facetId")}=@facetId, {ET("groupId")}=@groupId, " +
+                $"{ET("sortKey")}=@sortKey, {ET("flags")}=@flags, " +
+                $"{ET("timeCreated")}=@timeCreated, {ET("creatorId")}=@creatorId, " +
+                $"{ET("timeModified")}=@timeModified, {ET("userId")}=@userId;";
+            }
 
-            // pin
-            _insertPinCommand = GetCommand();
-            _insertPinCommand.CommandText =
+            AddParameter(cmd, "@id", DbType.String);
+            AddParameter(cmd, "@title", DbType.String);
+            AddParameter(cmd, "@description", DbType.String);
+            AddParameter(cmd, "@facetId", DbType.String);
+            AddParameter(cmd, "@groupId", DbType.String);
+            AddParameter(cmd, "@sortKey", DbType.String);
+            AddParameter(cmd, "@flags", DbType.Int32);
+            AddParameter(cmd, "@timeCreated", DbType.DateTime);
+            AddParameter(cmd, "@creatorId", DbType.String);
+            AddParameter(cmd, "@timeModified", DbType.DateTime);
+            AddParameter(cmd, "@userId", DbType.String);
+            return cmd;
+        }
+
+        private DbCommand GetDeleteItemCommand(DbTransaction tr = null)
+        {
+            // delete item (and its pins by FK constraints)
+            DbCommand cmd = GetCommand();
+            cmd.Connection = Connection;
+            cmd.Transaction = tr;
+            cmd.CommandText = "DELETE FROM `item` WHERE `id`=@id";
+            AddParameter(cmd, "@id", DbType.String);
+            return cmd;
+        }
+
+        private DbCommand GetInsertPinCommand(DbTransaction tr = null)
+        {
+            DbCommand cmd = GetCommand();
+            cmd.Connection = Connection;
+            cmd.Transaction = tr;
+            cmd.CommandText =
                 $"INSERT INTO {ET("pin")}(" +
                 ETS("itemId", "partId", "partTypeId", "roleId",
                 "name", "value", "timeIndexed") +
@@ -163,15 +184,25 @@ namespace Cadmus.Index.Sql
                 "@name," +
                 "@value," +
                 "@timeIndexed);";
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-            _insertPinCommand.Connection = Connection;
-            AddParameter(_insertPinCommand, "@itemId", DbType.String);
-            AddParameter(_insertPinCommand, "@partId", DbType.String);
-            AddParameter(_insertPinCommand, "@partTypeId", DbType.String);
-            AddParameter(_insertPinCommand, "@roleId", DbType.String);
-            AddParameter(_insertPinCommand, "@name", DbType.String);
-            AddParameter(_insertPinCommand, "@value", DbType.String);
-            AddParameter(_insertPinCommand, "@timeIndexed", DbType.DateTime);
+            AddParameter(cmd, "@itemId", DbType.String);
+            AddParameter(cmd, "@partId", DbType.String);
+            AddParameter(cmd, "@partTypeId", DbType.String);
+            AddParameter(cmd, "@roleId", DbType.String);
+            AddParameter(cmd, "@name", DbType.String);
+            AddParameter(cmd, "@value", DbType.String);
+            AddParameter(cmd, "@timeIndexed", DbType.DateTime);
+            return cmd;
+        }
+
+        private DbCommand GetDeletePartPinsCommand(DbTransaction tr = null)
+        {
+            // delete part pins
+            DbCommand cmd = GetCommand();
+            cmd.Connection = Connection;
+            cmd.Transaction = tr;
+            cmd.CommandText = "DELETE FROM `pin` WHERE `partId`=@partId;";
+            AddParameter(cmd, "@partId", DbType.String);
+            return cmd;
         }
 
         /// <summary>
@@ -201,64 +232,111 @@ namespace Cadmus.Index.Sql
             if (Connection.State == ConnectionState.Closed)
             {
                 Connection.Open();
-                _insertItemCommand = null;
-                _insertPinCommand = null;
-                _deleteItemCommand = null;
             }
+        }
 
-            // ensure the insert commands are built
-            if (_insertItemCommand == null)
-                BuildInsertCommands();
+        private void InsertItem(IndexItem item, DbCommand cmd)
+        {
+            cmd.Parameters["@id"].Value = item.Id;
+            cmd.Parameters["@title"].Value = item.Title;
+            cmd.Parameters["@description"].Value = item.Description;
+            cmd.Parameters["@facetId"].Value = item.FacetId;
+            cmd.Parameters["@groupId"].Value = item.GroupId;
+            cmd.Parameters["@sortKey"].Value = item.SortKey;
+            cmd.Parameters["@flags"].Value = item.Flags;
+            cmd.Parameters["@timeCreated"].Value = item.TimeCreated;
+            cmd.Parameters["@creatorId"].Value = item.CreatorId;
+            cmd.Parameters["@timeModified"].Value = item.TimeModified;
+            cmd.Parameters["@userId"].Value = item.UserId;
+            cmd.ExecuteNonQuery();
+        }
+
+        private void InsertPin(IndexPin pin, DbCommand cmd)
+        {
+            cmd.Parameters["@itemId"].Value = pin.ItemId;
+            cmd.Parameters["@partId"].Value = pin.PartId;
+            cmd.Parameters["@partTypeId"].Value = pin.PartTypeId;
+            cmd.Parameters["@roleId"].Value = pin.RoleId;
+            cmd.Parameters["@name"].Value = pin.Name;
+            cmd.Parameters["@value"].Value = pin.Value ?? "";
+            cmd.Parameters["@timeIndexed"].Value = pin.TimeIndexed;
+            cmd.ExecuteNonQuery();
+        }
+
+        private void DeleteItem(string id, DbCommand cmd)
+        {
+            cmd.Parameters["@id"].Value = id;
+            cmd.ExecuteNonQuery();
+        }
+
+        private void DeletePartPins(string partId, DbCommand cmd)
+        {
+            cmd.Parameters["@partId"].Value = partId;
+            cmd.ExecuteNonQuery();
+        }
+
+        private static IndexPin GetIndexPin(DataPin pin, string partTypeId,
+            DateTime now)
+        {
+            return new IndexPin
+            {
+                ItemId = pin.ItemId,
+                PartId = pin.PartId,
+                RoleId = pin.RoleId,
+                PartTypeId = partTypeId,
+                Name = pin.Name,
+                Value = pin.Value,
+                TimeIndexed = now
+            };
         }
 
         /// <summary>
-        /// Inserts the item.
+        /// Bulk-writes the specified items, assuming that they do not exist.
+        /// This can be used to populate an empty index with higher performance.
         /// </summary>
-        /// <param name="item">The item.</param>
-        /// <exception cref="ArgumentNullException">item</exception>
-        protected void InsertItem(IndexItem item)
+        /// <param name="items">The items.</param>
+        /// <param name="cancel">The cancellation token.</param>
+        /// <param name="progress">The optional progress reporter.</param>
+        /// <exception cref="ArgumentNullException">items</exception>
+        public Task WriteItems(IEnumerable<IItem> items,
+            CancellationToken cancel, IProgress<ProgressReport> progress = null)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            if (items == null) throw new ArgumentNullException(nameof(items));
 
             EnsureConnected();
+            ProgressReport report = progress != null ? new ProgressReport() : null;
+            DbCommand cmd = GetInsertItemCommand(false);
 
-            // remove item and its pins
-            _deleteItemCommand.Parameters["@id"].Value = item.Id;
-            _deleteItemCommand.ExecuteNonQuery();
+            foreach (IItem item in items)
+            {
+                InsertItem(new IndexItem(item), cmd);
 
-            // add item
-            _insertItemCommand.Parameters["@id"].Value = item.Id;
-            _insertItemCommand.Parameters["@title"].Value = item.Title;
-            _insertItemCommand.Parameters["@description"].Value = item.Description;
-            _insertItemCommand.Parameters["@facetId"].Value = item.FacetId;
-            _insertItemCommand.Parameters["@groupId"].Value = item.GroupId;
-            _insertItemCommand.Parameters["@sortKey"].Value = item.SortKey;
-            _insertItemCommand.Parameters["@flags"].Value = item.Flags;
-            _insertItemCommand.Parameters["@timeCreated"].Value = item.TimeCreated;
-            _insertItemCommand.Parameters["@creatorId"].Value = item.CreatorId;
-            _insertItemCommand.Parameters["@timeModified"].Value = item.TimeModified;
-            _insertItemCommand.Parameters["@userId"].Value = item.UserId;
-            _insertItemCommand.ExecuteNonQuery();
-        }
+                // parts
+                if (item.Parts?.Count > 0)
+                {
+                    DbCommand delPinsCommand = GetDeletePartPinsCommand();
+                    DbCommand insPinCmd = GetInsertPinCommand();
+                    DateTime now = DateTime.UtcNow;
 
-        /// <summary>
-        /// Inserts the pin.
-        /// </summary>
-        /// <param name="pin">The pin.</param>
-        /// <exception cref="ArgumentNullException">pin</exception>
-        protected void InsertPin(IndexPin pin)
-        {
-            if (pin == null) throw new ArgumentNullException(nameof(pin));
+                    foreach (IPart part in item.Parts)
+                    {
+                        // insert all the new part's pins
+                        foreach (DataPin pin in part.GetDataPins(item))
+                        {
+                            InsertPin(GetIndexPin(pin, part.TypeId, now),
+                                insPinCmd);
+                        }
+                    }
+                }
 
-            _insertPinCommand.Parameters["@itemId"].Value = pin.ItemId;
-            _insertPinCommand.Parameters["@partId"].Value = pin.PartId;
-            _insertPinCommand.Parameters["@partTypeId"].Value = pin.PartTypeId;
-            _insertPinCommand.Parameters["@roleId"].Value = pin.RoleId;
-            _insertPinCommand.Parameters["@name"].Value = pin.Name;
-            _insertPinCommand.Parameters["@value"].Value = pin.Value ?? "";
-            _insertPinCommand.Parameters["@timeIndexed"].Value = pin.TimeIndexed;
-            _insertPinCommand.ExecuteNonQuery();
+                // progress
+                if (progress != null && ++report.Count % 10 == 0)
+                    progress.Report(report);
+
+                if (cancel.IsCancellationRequested) break;
+            }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -267,49 +345,122 @@ namespace Cadmus.Index.Sql
         /// </summary>
         /// <param name="item">The item.</param>
         /// <exception cref="ArgumentNullException">item</exception>
-        public Task Write(IItem item)
+        public Task WriteItem(IItem item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
             EnsureConnected();
 
-            InsertItem(new IndexItem(item));
-
-            DateTime now = DateTime.UtcNow;
-            foreach (IPart part in item.Parts)
+            using (DbTransaction tr = Connection.BeginTransaction())
             {
-                foreach (DataPin pin in part.GetDataPins(item))
+                try
                 {
-                    InsertPin(new IndexPin
+                    // upsert the item (so that its pins are not removed;
+                    // pins from a removed part are deleted when the part is removed)
+                    DbCommand cmd = GetInsertItemCommand(true, tr);
+                    InsertItem(new IndexItem(item), cmd);
+
+                    // write its parts pins
+                    if (item.Parts?.Count > 0)
                     {
-                        ItemId = pin.ItemId,
-                        PartId = pin.PartId,
-                        RoleId = pin.RoleId,
-                        PartTypeId = part.TypeId,
-                        Name = pin.Name,
-                        Value = pin.Value,
-                        TimeIndexed = now
-                    });
+                        DbCommand delPinsCommand = GetDeletePartPinsCommand(tr);
+                        DbCommand insPinCmd = GetInsertPinCommand(tr);
+                        DateTime now = DateTime.UtcNow;
+
+                        foreach (IPart part in item.Parts)
+                        {
+                            // delete all the part's pins
+                            DeletePartPins(part.Id, delPinsCommand);
+
+                            // insert all the new part's pins
+                            foreach (DataPin pin in part.GetDataPins(item))
+                            {
+                                InsertPin(GetIndexPin(pin, part.TypeId, now),
+                                    insPinCmd);
+                            }
+                        }
+                    }
+                    tr.Commit();
+                }
+                catch (Exception)
+                {
+                    tr.Rollback();
+                    throw;
                 }
             }
+
             return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Deletes the item with the specified identifier with all its pins
-        /// entries.
+        /// Deletes the item with the specified identifier with all its pins.
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <exception cref="ArgumentNullException">itemId</exception>
-        public Task Delete(string itemId)
+        public Task DeleteItem(string itemId)
         {
             if (itemId == null) throw new ArgumentNullException(nameof(itemId));
 
             EnsureConnected();
 
-            // remove item and its pins
-            _deleteItemCommand.Parameters["@id"].Value = itemId;
-            _deleteItemCommand.ExecuteNonQuery();
+            DbCommand cmd = GetDeleteItemCommand();
+            DeleteItem(itemId, cmd);
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Writes the specified part's pins to the index.
+        /// </summary>
+        /// <param name="item">The item the part belongs to.</param>
+        /// <param name="part">The part.</param>
+        /// <exception cref="ArgumentNullException">Null part.</exception>
+        public Task WritePart(IItem item, IPart part)
+        {
+            if (part == null) throw new ArgumentNullException(nameof(part));
+
+            EnsureConnected();
+
+            using (DbTransaction tr = Connection.BeginTransaction())
+            {
+                try
+                {
+                    // delete all the part's pins
+                    DbCommand cmd = GetDeletePartPinsCommand(tr);
+                    DeletePartPins(part.Id, cmd);
+
+                    // insert all the new part's pins
+                    DateTime now = DateTime.UtcNow;
+                    DbCommand pinCmd = GetInsertPinCommand(tr);
+
+                    foreach (DataPin pin in part.GetDataPins(item))
+                        InsertPin(GetIndexPin(pin, part.TypeId, now), pinCmd);
+
+                    tr.Commit();
+                }
+                catch (Exception)
+                {
+                    tr.Rollback();
+                    throw;
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Deletes the pins of the part with the specified ID from the index.
+        /// </summary>
+        /// <param name="partId">The part identifier.</param>
+        /// <exception cref="ArgumentNullException">partId</exception>
+        public Task DeletePart(string partId)
+        {
+            if (partId == null)
+                throw new ArgumentNullException(nameof(partId));
+
+            EnsureConnected();
+            DbCommand cmd = GetDeletePartPinsCommand();
+            DeletePartPins(partId, cmd);
 
             return Task.CompletedTask;
         }

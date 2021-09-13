@@ -2,7 +2,7 @@ using Cadmus.Core.Config;
 using Fusi.Tools.Data;
 using Xunit;
 
-namespace Cadmus.Index.Sql.Test
+namespace Cadmus.Index.MySql.Test
 {
     public sealed class MySqlQueryBuilderTest
     {

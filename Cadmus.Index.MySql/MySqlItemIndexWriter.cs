@@ -107,8 +107,16 @@ namespace Cadmus.Index.MySql
         /// <summary>
         /// Gets a new command object.
         /// </summary>
+        /// <param name="connection">The connection to use, or null to use
+        /// <see cref="SqlRepositoryBase.Connection" />.</param>
         /// <returns>Command.</returns>
-        protected override DbCommand GetCommand() =>
-            new MySqlCommand();
+        protected override DbCommand GetCommand(DbConnection connection = null)
+        {
+            return new MySqlCommand
+            {
+                Connection = (MySqlConnection)
+                    (connection as MySqlConnection ?? Connection)
+            };
+        }
     }
 }

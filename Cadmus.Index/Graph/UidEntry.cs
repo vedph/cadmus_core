@@ -1,14 +1,21 @@
-﻿namespace Cadmus.Index.Graph
+﻿using System.Globalization;
+
+namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// An entry in the SIDs lookup set.
+    /// An entry in the UID lookup set.
     /// </summary>
-    public class SidEntry
+    public class UidEntry
     {
         /// <summary>
-        /// Gets or sets the source identifier (SID).
+        /// Gets the entry numeric ID.
         /// </summary>
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SID.
+        /// </summary>
+        public string Sid { get; set; }
 
         /// <summary>
         /// Gets or sets the unsuffixed portion of the SID.
@@ -19,7 +26,7 @@
         /// Gets or sets the numeric suffix added to <see cref="Unsuffixed"/>
         /// to build the full SID.
         /// </summary>
-        public int Suffix { get; set; }
+        public bool HasSuffix { get; set; }
 
         /// <summary>
         /// Converts to string.
@@ -29,7 +36,8 @@
         /// </returns>
         public override string ToString()
         {
-            return Id;
+            return Unsuffixed + (HasSuffix
+                ? Id.ToString(CultureInfo.InvariantCulture) : "");
         }
     }
 }

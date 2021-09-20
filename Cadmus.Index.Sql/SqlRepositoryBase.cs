@@ -87,8 +87,47 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Gets a new command object.
         /// </summary>
+        /// <param name="connection">The connection to use, or null to use
+        /// <see cref="Connection"/>.</param>
         /// <returns>Command.</returns>
-        protected abstract DbCommand GetCommand();
+        protected abstract DbCommand GetCommand(DbConnection connection = null);
+
+        /// <summary>
+        /// Adds the specified parameter to <paramref name="command"/>.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="value">The optional value.</param>
+        protected static void AddParameter(DbCommand command, string name,
+            DbType type, object value = null)
+        {
+            DbParameter p = command.CreateParameter();
+            p.ParameterName = name;
+            p.DbType = type;
+            if (value != null) p.Value = value;
+            command.Parameters.Add(p);
+        }
+
+        /// <summary>
+        /// Adds the specified parameter to <paramref name="command"/>.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="direction">The direction.</param>
+        /// <param name="value">The optional value.</param>
+        protected static void AddParameter(DbCommand command, string name,
+            DbType type, ParameterDirection direction,
+            object value = null)
+        {
+            DbParameter p = command.CreateParameter();
+            p.ParameterName = name;
+            p.DbType = type;
+            p.Direction = direction;
+            if (value != null) p.Value = value;
+            command.Parameters.Add(p);
+        }
 
         /// <summary>
         /// Ensures that the database exists and the connection is open.

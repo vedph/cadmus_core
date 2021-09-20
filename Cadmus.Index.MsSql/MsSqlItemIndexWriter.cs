@@ -107,8 +107,14 @@ namespace Cadmus.Index.MsSql
         /// Gets a new command object.
         /// </summary>
         /// <returns>Command.</returns>
-        protected override DbCommand GetCommand() =>
-            new SqlCommand();
+        protected override DbCommand GetCommand(DbConnection connection = null)
+        {
+            return new SqlCommand
+            {
+                Connection = (SqlConnection)
+                    (connection as SqlConnection ?? Connection)
+            };
+        }
 
         #region IDisposable Support
         private bool _disposedValue; // to detect redundant calls

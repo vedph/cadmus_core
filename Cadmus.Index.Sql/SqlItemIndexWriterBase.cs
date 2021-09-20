@@ -50,19 +50,10 @@ namespace Cadmus.Index.Sql
         /// <returns>SQL code.</returns>
         protected abstract string GetSchemaSql();
 
-        private static void AddParameter(DbCommand command, string name,
-            DbType type)
-        {
-            DbParameter p = command.CreateParameter();
-            p.ParameterName = name;
-            p.DbType = type;
-            command.Parameters.Add(p);
-        }
-
         private DbCommand GetInsertItemCommand(bool upsert, DbTransaction tr = null)
         {
             DbCommand cmd = GetCommand();
-            cmd.Connection = Connection;
+            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText =
                 $"INSERT INTO {ET("item")}(" +
@@ -110,7 +101,7 @@ namespace Cadmus.Index.Sql
         {
             // delete item (and its pins by FK constraints)
             DbCommand cmd = GetCommand();
-            cmd.Connection = Connection;
+            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText = "DELETE FROM `item` WHERE `id`=@id";
             AddParameter(cmd, "@id", DbType.String);
@@ -120,7 +111,7 @@ namespace Cadmus.Index.Sql
         private DbCommand GetInsertPinCommand(DbTransaction tr = null)
         {
             DbCommand cmd = GetCommand();
-            cmd.Connection = Connection;
+            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText =
                 $"INSERT INTO {ET("pin")}(" +
@@ -148,7 +139,7 @@ namespace Cadmus.Index.Sql
         {
             // delete part pins
             DbCommand cmd = GetCommand();
-            cmd.Connection = Connection;
+            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText = "DELETE FROM `pin` WHERE `partId`=@partId;";
             AddParameter(cmd, "@partId", DbType.String);

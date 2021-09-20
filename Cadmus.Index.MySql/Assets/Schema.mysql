@@ -63,14 +63,15 @@ CREATE TABLE `uri_lookup` (
   KEY `uri_lookup_uri_IDX` (`uri`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- sid_lookup
-CREATE TABLE `sid_lookup` (
-  `id` varchar(500) NOT NULL,
+-- uid_lookup
+CREATE TABLE `uid_lookup` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sid` varchar(500) NOT NULL,
   `unsuffixed` varchar(500) NOT NULL,
-  `suffix` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `sid_lookup_unsuffixed_IDX` (`unsuffixed`) USING BTREE
+  `has-suffix` bit(1) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE INDEX uid_lookup_unsuffixed_IDX USING BTREE ON cadmus.uid_lookup (unsuffixed);
 
 -- node_mapping
 CREATE TABLE `node_mapping` (

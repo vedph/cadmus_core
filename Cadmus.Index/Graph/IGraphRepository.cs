@@ -55,26 +55,13 @@ namespace Cadmus.Index.Graph
         void DeleteNamespaceByUri(string uri);
 
         /// <summary>
-        /// Adds the specified SID lookup entry.
+        /// Adds the specified UID, eventually completing it with a suffix.
         /// </summary>
-        /// <param name="entry">The entry.</param>
-        void AddSid(SidEntry entry);
-
-        /// <summary>
-        /// Deletes the specified SID lookup entry.
-        /// </summary>
-        /// <param name="id">The identifier (SID).</param>
-        void DeleteSid(string id);
-
-        /// <summary>
-        /// Gets the suffix for the specified unsuffixed SID.
-        /// If no SID exists with the same unsuffixed form, 0 is returned.
-        /// Otherwise, the SID gets a suffix and is stored in the lookup set,
-        /// while returning its suffix.
-        /// </summary>
-        /// <param name="unsuffixed">The SID without any suffix.</param>
-        /// <returns>Suffix number (0-N).</returns>
-        int GetSuffixFor(string unsuffixed);
+        /// <param name="uid">The UID as calculated from its source, without any
+        /// suffix.</param>
+        /// <param name="sid">The SID identifying the source for this UID.</param>
+        /// <returns>The UID, eventually suffixed.</returns>
+        string AddUid(string uid, string sid);
 
         /// <summary>
         /// Adds the specified URI to the mapped URIs set.

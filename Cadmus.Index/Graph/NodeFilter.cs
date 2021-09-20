@@ -1,0 +1,45 @@
+﻿using Fusi.Tools.Data;
+
+namespace Cadmus.Index.Graph
+{
+    /// <summary>
+    /// A filter for searching nodes.
+    /// </summary>
+    public class NodeFilter : PagingOptions
+    {
+        /// <summary>
+        /// Gets or sets any portion of the label to match.
+        /// </summary>
+        public string Label { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the source.
+        /// </summary>
+        public NodeSourceType SourceType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sid.
+        /// </summary>
+        public string Sid { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="Sid"/> represents
+        /// the initial portion of the SID being searched, rather than the
+        /// full SID.
+        /// </summary>
+        public bool IsSidPrefix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of a node which is directly linked
+        /// to the nodes being searched.
+        /// </summary>
+        public int LinkedNodeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating the role of the node identified by
+        /// <see cref="LinkedNodeId"/>: <c>s</c>=subject, <c>o</c>=object,
+        /// else no role filtering.
+        /// </summary>
+        public char LinkedNodeRole { get; set; }
+    }
+}

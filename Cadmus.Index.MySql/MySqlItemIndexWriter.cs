@@ -6,6 +6,9 @@ using Fusi.Tools.Config;
 using MySql.Data.MySqlClient;
 using System;
 using System.Data.Common;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -24,7 +27,7 @@ namespace Cadmus.Index.MySql
         /// Initializes a new instance of the <see cref="MySqlItemIndexWriter"/>
         /// class.
         /// </summary>
-        public MySqlItemIndexWriter() : base("MySql", new MySqlTokenHelper())
+        public MySqlItemIndexWriter() : base(new MySqlTokenHelper())
         {
         }
 
@@ -66,6 +69,22 @@ namespace Cadmus.Index.MySql
                 RegexOptions.IgnoreCase);
             return m.Success ? m.Groups[1].Value : null;
         }
+
+        static private string LoadResource(string name)
+        {
+            using (StreamReader reader = new StreamReader(
+                Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                    $"Cadmus.Index.MySql.Assets.{name}"), Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// Gets the schema SQL used to populate a created database.
+        /// </summary>
+        /// <returns>SQL code.</returns>
+        protected override string GetSchemaSql() => LoadResource("Schema.mysql");
 
         /// <summary>
         /// Gets the database manager.

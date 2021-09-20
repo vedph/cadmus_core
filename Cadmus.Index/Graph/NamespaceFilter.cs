@@ -3,7 +3,7 @@
 namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// A filter used by <see cref="IGraphRepository"/>.
+    /// Filter for <see cref="NamespaceEntry"/>.
     /// </summary>
     public class NamespaceFilter : PagingOptions
     {

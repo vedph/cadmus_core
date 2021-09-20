@@ -20,14 +20,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\MySql.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\MySql.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Fusi.DbManager" Version="1.0.6" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="MySql.Data" Version="8.0.26" />

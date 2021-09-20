@@ -1,6 +1,5 @@
 ﻿using Cadmus.Core;
 using System;
-using System.Linq;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -14,67 +13,30 @@ namespace Cadmus.Index.Sql
     /// <summary>
     /// Base class for <see cref="IItemIndexWriter"/> implementors.
     /// </summary>
-    public abstract class SqlItemIndexWriterBase
+    public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     {
-        private readonly string _resScriptName;
-        private readonly ISqlTokenHelper _tokenHelper;
-        private string _connectionString;
         private bool _exists;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase" />
         /// class.
         /// </summary>
-        /// <param name="resScriptName">Name of the resource SQL script
-        /// for seeding the database schema.</param>
         /// <param name="tokenHelper">The SQL token helper to be used.</param>
         /// <exception cref="ArgumentNullException">resScriptName</exception>
-        protected SqlItemIndexWriterBase(string resScriptName,
-            ISqlTokenHelper tokenHelper)
+        protected SqlItemIndexWriterBase(ISqlTokenHelper tokenHelper)
+            : base(tokenHelper)
         {
-            _resScriptName = resScriptName ??
-                throw new ArgumentNullException(nameof(resScriptName));
-            _tokenHelper = tokenHelper ??
-                throw new ArgumentNullException(nameof(tokenHelper));
         }
 
         /// <summary>
-        /// Wraps the specified non-keyword token according to the syntax
-        /// of the SQL dialect being handled. For instance, in MySql this
-        /// wraps a token into backticks, or in SQL Server into square brackets.
+        /// Called when <see cref="SqlRepositoryBase.ConnectionString" /> has
+        /// changed. This resets the exists flag for the current database.
         /// </summary>
-        /// <param name="token">The token.</param>
-        /// <returns>The wrapped token.</returns>
-        protected string ET(string token) => _tokenHelper.ET(token);
-
-        /// <summary>
-        /// Wraps the specified non-keyword tokens according to the syntax
-        /// of the SQL dialect being handled. For instance, in MySql this
-        /// wraps a token into backticks, or in SQL Server into square brackets.
-        /// </summary>
-        /// <param name="tokens">The tokens.</param>
-        /// <returns>The wrapped tokens separated by comma.</returns>
-        protected string ETS(params string[] tokens) =>
-            string.Join(",", from k in tokens select ET(k));
-
-        /// <summary>
-        /// Gets or sets the connection string.
-        /// </summary>
-        protected string ConnectionString
+        /// <param name="cs">The cs.</param>
+        protected override void OnConnectionStringChanged(string cs)
         {
-            get { return _connectionString; }
-            set
-            {
-                if (_connectionString == value) return;
-                _connectionString = value;
-                _exists = false;
-            }
+            _exists = false;
         }
-
-        /// <summary>
-        /// Gets or sets the connection.
-        /// </summary>
-        protected DbConnection Connection { get; private set; }
 
         /// <summary>
         /// Gets the database manager.
@@ -83,22 +45,10 @@ namespace Cadmus.Index.Sql
         protected abstract IDbManager GetDbManager();
 
         /// <summary>
-        /// Gets the name of the database from the connection string.
+        /// Gets the schema SQL used to populate a created database.
         /// </summary>
-        /// <returns>Database name or null.</returns>
-        protected abstract string GetDbName();
-
-        /// <summary>
-        /// Gets the connection.
-        /// </summary>
-        /// <returns>Connection.</returns>
-        protected abstract DbConnection GetConnection();
-
-        /// <summary>
-        /// Gets a new command object.
-        /// </summary>
-        /// <returns>Command.</returns>
-        protected abstract DbCommand GetCommand();
+        /// <returns>SQL code.</returns>
+        protected abstract string GetSchemaSql();
 
         private static void AddParameter(DbCommand command, string name,
             DbType type)
@@ -208,7 +158,7 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Ensures that the database exists and the connection is open.
         /// </summary>
-        protected void EnsureConnected()
+        protected override void EnsureConnected()
         {
             // ensure the database exists
             if (!_exists)
@@ -221,18 +171,13 @@ namespace Cadmus.Index.Sql
                 if (!manager.Exists(name))
                 {
                     manager.CreateDatabase(name,
-                        ResourceHelper.LoadResource(_resScriptName + ".sql"),
+                        GetSchemaSql(),
                         null);
                     _exists = true;
                 }
             }
 
-            // ensure the connection is open
-            if (Connection == null) Connection = GetConnection();
-            if (Connection.State == ConnectionState.Closed)
-            {
-                Connection.Open();
-            }
+            base.EnsureConnected();
         }
 
         private void InsertItem(IndexItem item, DbCommand cmd)

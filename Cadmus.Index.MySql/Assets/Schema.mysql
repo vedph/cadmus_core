@@ -1,0 +1,199 @@
+﻿-- --------------------------------------------------------
+-- index 
+-- --------------------------------------------------------
+
+-- item
+CREATE TABLE `item` (
+  `id` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `description` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `facetId` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `groupId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `sortKey` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `flags` int NOT NULL,
+  `timeCreated` datetime NOT NULL,
+  `creatorId` varchar(100),
+  `timeModified` datetime NOT NULL,
+  `userId` varchar(100),
+  PRIMARY KEY (`id`),
+  KEY `title_ix` (`title`) /*!80000 INVISIBLE */,
+  KEY `facetid_ix` (`facetId`) /*!80000 INVISIBLE */,
+  KEY `groupid_ix` (`groupId`) /*!80000 INVISIBLE */,
+  KEY `sortkey-ix` (`sortKey`) /*!80000 INVISIBLE */,
+  KEY `flags-ix` (`flags`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- pin
+CREATE TABLE `pin` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `itemId` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `partId` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `partTypeId` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `roleId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `value` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `timeIndexed` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `parttypeid_ix` (`partTypeId`) /*!80000 INVISIBLE */,
+  KEY `roleid_ix` (`roleId`) /*!80000 INVISIBLE */,
+  KEY `name_ix` (`name`) /*!80000 INVISIBLE */,
+  KEY `value_ix` (`value`),
+  KEY `pin_itemid_fk` (`itemId`),
+  CONSTRAINT `pin_itemid_fk` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+-- graph 
+-- --------------------------------------------------------
+
+-- namespace_lookup
+CREATE TABLE `namespace_lookup` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uri` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `namespace_lookup_uri_IDX` (`uri`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- uri_lookup
+CREATE TABLE `uri_lookup` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uri` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uri_lookup_uri_IDX` (`uri`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- sid_lookup
+CREATE TABLE `sid_lookup` (
+  `id` varchar(500) NOT NULL,
+  `unsuffixed` varchar(500) NOT NULL,
+  `suffix` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sid_lookup_unsuffixed_IDX` (`unsuffixed`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- node_mapping
+CREATE TABLE `node_mapping` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `parent_id` int DEFAULT NULL,
+  `ordinal` int NOT NULL,
+  `facet_filter` varchar(100) DEFAULT NULL,
+  `group_filter` varchar(500) DEFAULT NULL,
+  `flags_filter` int unsigned NOT NULL,
+  `title_filter` varchar(500) DEFAULT NULL,
+  `part_type` varchar(100) DEFAULT NULL,
+  `part_role` varchar(100) DEFAULT NULL,
+  `pin_name` varchar(100) DEFAULT NULL,
+  `source_type` int NOT NULL,
+  `prefix` varchar(200) DEFAULT NULL,
+  `label_template` varchar(500) DEFAULT NULL,
+  `triple_s` varchar(500) DEFAULT NULL,
+  `triple_p` varchar(500) DEFAULT NULL,
+  `triple_o` varchar(500) DEFAULT NULL,
+  `triple_o_prefix` varchar(200) DEFAULT NULL,
+  `reversed` bit(1) NOT NULL,
+  `description` varchar(5000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `node_mapping_FK` (`parent_id`),
+  CONSTRAINT `node_mapping_FK` FOREIGN KEY (`parent_id`) REFERENCES `node_mapping` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- node
+CREATE TABLE `node` (
+  `id` int NOT NULL,
+  `label` varchar(500) DEFAULT NULL,
+  `source_type` int NOT NULL,
+  `sid` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- property
+CREATE TABLE `property` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `data_type` varchar(100) DEFAULT NULL,
+  `lit_editor` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `description` varchar(5000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `property_FK` FOREIGN KEY (`id`) REFERENCES `uri_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- property_restriction
+CREATE TABLE `property_restriction` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `property_id` int NOT NULL,
+  `restriction` varchar(500) NOT NULL,
+  `o_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `property_restriction_FK` (`property_id`),
+  KEY `property_restriction_FK_1` (`o_id`),
+  CONSTRAINT `property_restriction_FK` FOREIGN KEY (`property_id`) REFERENCES `property` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `property_restriction_FK_1` FOREIGN KEY (`o_id`) REFERENCES `node` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- triple
+CREATE TABLE `triple` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `s_id` int NOT NULL,
+  `p_id` int NOT NULL,
+  `o_id` int DEFAULT NULL,
+  `o_lit` varchar(15000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `triple_FK` (`s_id`),
+  KEY `triple_FK_2` (`o_id`),
+  KEY `triple_FK_1` (`p_id`),
+  CONSTRAINT `triple_FK` FOREIGN KEY (`s_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `triple_FK_1` FOREIGN KEY (`p_id`) REFERENCES `property` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `triple_FK_2` FOREIGN KEY (`o_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+-- index functions 
+-- --------------------------------------------------------
+
+DELIMITER ;;
+CREATE FUNCTION `COMPARE_STRING`( s1 text, s2 text) RETURNS int
+    DETERMINISTIC
+BEGIN 
+    DECLARE s1_len, s2_len, i, j, c, c_temp, cost INT; 
+    DECLARE s1_char CHAR; 
+    DECLARE cv0, cv1 text; 
+    SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), cv1 = 0x00, j = 1, i = 1, c = 0; 
+    IF s1 = s2 THEN 
+      RETURN 0; 	
+    ELSEIF s1_len = 0 THEN 
+      RETURN s2_len; 
+    ELSEIF s2_len = 0 THEN 
+      RETURN s1_len; 
+    ELSE 
+      WHILE j <= s2_len DO 
+        SET cv1 = CONCAT(cv1, UNHEX(HEX(j))), j = j + 1; 
+      END WHILE; 
+      WHILE i <= s1_len DO 
+        SET s1_char = SUBSTRING(s1, i, 1), c = i, cv0 = UNHEX(HEX(i)), j = 1; 
+        WHILE j <= s2_len DO 
+          SET c = c + 1; 
+          IF s1_char = SUBSTRING(s2, j, 1) THEN  
+            SET cost = 0; ELSE SET cost = 1; 
+          END IF; 
+          SET c_temp = CONV(HEX(SUBSTRING(cv1, j, 1)), 16, 10) + cost; 
+          IF c > c_temp THEN SET c = c_temp; END IF; 
+            SET c_temp = CONV(HEX(SUBSTRING(cv1, j+1, 1)), 16, 10) + 1; 
+            IF c > c_temp THEN  
+              SET c = c_temp;  
+            END IF; 
+            SET cv0 = CONCAT(cv0, UNHEX(HEX(c))), j = j + 1; 
+        END WHILE; 
+        SET cv1 = cv0, i = i + 1; 
+      END WHILE; 
+    END IF; 
+    RETURN c; 
+  END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE FUNCTION `SIMILARITY_STRING`(a text, b text) RETURNS double
+    DETERMINISTIC
+BEGIN
+RETURN ABS(((COMPARE_STRING(a, b) / length(b)) * 100) - 100);
+END ;;
+DELIMITER ;

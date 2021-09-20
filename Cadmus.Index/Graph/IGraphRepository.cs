@@ -108,5 +108,65 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="id">The node identifier.</param>
         void DeleteNode(int id);
+
+        /// <summary>
+        /// Gets the specified page of properties.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Page.</returns>
+        DataPage<Property> GetProperties(PropertyFilter filter);
+
+        /// <summary>
+        /// Adds the specified property.
+        /// </summary>
+        /// <param name="property">The property.</param>
+        void AddProperty(Property property);
+
+        /// <summary>
+        /// Deletes the property with the specified ID.
+        /// </summary>
+        /// <param name="id">The property identifier.</param>
+        void DeleteProperty(int id);
+
+        /// <summary>
+        /// Gets the specified page of restrictions.
+        /// </summary>
+        /// <param name="filter">The filter. Set page size=0 to get all
+        /// the mappings at once.</param>
+        /// <returns>Page.</returns>
+        DataPage<PropertyRestriction> GetRestrictions(
+            PropertyRestrictionFilter filter);
+
+        /// <summary>
+        /// Adds the specified property restriction.
+        /// </summary>
+        /// <param name="restriction">The restriction.</param>
+        void AddRestriction(PropertyRestriction restriction);
+
+        /// <summary>
+        /// Deletes the restriction with the specified ID.
+        /// </summary>
+        /// <param name="id">The restriction identifier.</param>
+        void DeleteRestriction(int id);
+
+        /// <summary>
+        /// Gets the specified page of node mappings.
+        /// </summary>
+        /// <param name="filter">The filter. Set page size=0 to get all
+        /// the mappings at once.</param>
+        /// <returns>The page.</returns>
+        DataPage<NodeMapping> GetNodeMappings(NodeMappingFilter filter);
+
+        /// <summary>
+        /// Adds the specified node mapping.
+        /// </summary>
+        /// <param name="mapping">The mapping.</param>
+        void AddNodeMapping(NodeMapping mapping);
+
+        /// <summary>
+        /// Deletes the specified node mapping.
+        /// </summary>
+        /// <param name="id">The mapping identifier.</param>
+        void DeleteMapping(int id);
     }
 }

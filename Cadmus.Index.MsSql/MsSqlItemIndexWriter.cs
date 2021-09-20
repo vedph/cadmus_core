@@ -5,6 +5,9 @@ using Fusi.Tools.Config;
 using System;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -24,7 +27,7 @@ namespace Cadmus.Index.MsSql
         /// Initializes a new instance of the <see cref="MsSqlItemIndexWriter"/>
         /// class.
         /// </summary>
-        public MsSqlItemIndexWriter() : base("MsSql", new MsSqlTokenHelper())
+        public MsSqlItemIndexWriter() : base(new MsSqlTokenHelper())
         {
         }
 
@@ -65,6 +68,22 @@ namespace Cadmus.Index.MsSql
                 RegexOptions.IgnoreCase);
             return m.Success ? m.Groups[1].Value : null;
         }
+
+        static private string LoadResource(string name)
+        {
+            using (StreamReader reader = new StreamReader(
+                Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                    $"Cadmus.Index.MsSql.Assets.{name}"), Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// Gets the schema SQL used to populate a created database.
+        /// </summary>
+        /// <returns>SQL code.</returns>
+        protected override string GetSchemaSql() => LoadResource("Schema.sql");
 
         /// <summary>
         /// Gets the database manager.

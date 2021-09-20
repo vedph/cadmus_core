@@ -31,11 +31,12 @@
         /// SQL-encode the specified text, according to the SQL dialect.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <param name="hasWildcards">if set to <c>true</c> [has wildcards].
+        /// <param name="hasWildcards">if set to <c>true</c> has wildcards.
         /// </param>
-        /// <param name="wrapInQuotes">if set to <c>true</c> [wrap in quotes].
+        /// <param name="wrapInQuotes">if set to <c>true</c> wrap in quotes.
         /// </param>
-        /// <param name="unicode">if set to <c>true</c> [unicode].</param>
+        /// <param name="unicode">if set to <c>true</c> add unicode modifier.
+        /// </param>
         /// <returns>Encoded text.</returns>
         string SQE(string text, bool hasWildcards = false,
             bool wrapInQuotes = false, bool unicode = true);

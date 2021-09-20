@@ -1,9 +1,10 @@
 ﻿using Fusi.Tools.Data;
+using System.Collections.Generic;
 
 namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// A filter for searching nodes.
+    /// A filter for <see cref="Node"/>.
     /// </summary>
     public class NodeFilter : PagingOptions
     {
@@ -41,5 +42,11 @@ namespace Cadmus.Index.Graph
         /// else no role filtering.
         /// </summary>
         public char LinkedNodeRole { get; set; }
+
+        /// <summary>
+        /// Gets or sets the classes identifiers to match only those nodes
+        /// which are inside any of the listed classes.
+        /// </summary>
+        public List<string> ClassIds { get; set; }
     }
 }

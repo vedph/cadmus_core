@@ -16,6 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Schema.mysql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Schema.mysql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Fusi.DbManager.MySql" Version="1.0.7" />
   </ItemGroup>
 

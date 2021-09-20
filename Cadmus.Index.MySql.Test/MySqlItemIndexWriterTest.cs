@@ -232,7 +232,7 @@ namespace Cadmus.Index.MySql.Test
             using IDbConnection connection = GetConnection();
             connection.Open();
             ExpectItemInIndex(item, connection);
-            ExpectItemPins(part.Id, new[] { "tag=tag" }, connection);
+            ExpectItemPins(item.Id, new[] { "tag=tag" }, connection);
         }
 
         [Fact]

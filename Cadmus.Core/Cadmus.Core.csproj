@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DiffMatchPatch" Version="1.0.2" />
+    <PackageReference Include="DiffMatchPatch" Version="1.0.3" />
     <PackageReference Include="Fusi.Text" Version="1.1.13" />
     <PackageReference Include="Fusi.Tools" Version="1.1.17" />
     <PackageReference Include="Fusi.Tools.Config" Version="1.0.19" />

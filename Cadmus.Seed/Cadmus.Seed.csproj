@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="33.0.2" />
+    <PackageReference Include="Bogus" Version="33.1.1" />
     <PackageReference Include="Fusi.Tools.Config" Version="1.0.19" />
   </ItemGroup>
 

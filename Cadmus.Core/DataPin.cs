@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
-
-namespace Cadmus.Core
+﻿namespace Cadmus.Core
 {
     /// <summary>
     /// Part data pin.
@@ -22,19 +19,13 @@ namespace Cadmus.Core
     /// entity, e.g.a triple.
     /// </para>
     /// <para>
-    /// Note that these pins are not stored, but calculated. The calculation
-    /// is implemented in the part's own code. Of course, this does not stop
-    /// us to store the snapshot results of such calculations, either elsewhere
-    /// or in the same data store.
+    /// Note that these pins are not stored with parts, but calculated, and
+    /// stored in a separate index. The calculation is implemented in the
+    /// part's own code.
     /// </para>
     /// </remarks>
     public class DataPin
     {
-        private static readonly Regex _keyRegex =
-            new Regex(@"^[a-zA-Z0-9\-_\.]+$");
-
-        private string _name;
-
         /// <summary>
         /// Gets or sets the item identifier.
         /// </summary>
@@ -54,23 +45,7 @@ namespace Cadmus.Core
         /// Gets or sets the pin name.
         /// </summary>
         /// <value>The name.</value>
-        /// <exception cref="ArgumentNullException">null name</exception>
-        /// <exception cref="ArgumentException">invalid name</exception>
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (value == null) throw new ArgumentNullException(nameof(value));
-                if (!_keyRegex.IsMatch(value))
-                {
-                    throw new ArgumentException(LocalizedStrings.Format(
-                        Properties.Resources.InvalidDataPinName, value));
-                }
-
-                _name = value;
-            }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the value.
@@ -78,14 +53,14 @@ namespace Cadmus.Core
         public string Value { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
-            return $"{ItemId}.{PartId}: {_name}=[{Value}]";
+            return $"{ItemId}.{PartId}: {Name}=[{Value}]";
         }
     }
 }

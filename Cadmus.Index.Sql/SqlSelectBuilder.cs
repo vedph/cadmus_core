@@ -1,31 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
 
-namespace Cadmus.Index.Sql.Graph
+namespace Cadmus.Index.Sql
 {
     /// <summary>
     /// Simple helper for building SQL select commands.
     /// </summary>
     public class SqlSelectBuilder
     {
-        private readonly StringBuilder _what;
-        private readonly StringBuilder _from;
-        private readonly StringBuilder _where;
-        private readonly StringBuilder _order;
+        private readonly Func<DbCommand> _getCommand;
+        private readonly List<string> _what;
+        private readonly List<string> _from;
+        private readonly List<string> _where;
+        private readonly List<string> _order;
         private readonly Dictionary<string, DbParameter> _params;
+        private DbCommand _command;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlSelectBuilder"/> class.
+        /// Initializes a new instance of the <see cref="SqlSelectBuilder" /> class.
         /// </summary>
-        public SqlSelectBuilder()
+        /// <param name="getCommand">The function to get a new instance of a
+        /// command.</param>
+        /// <exception cref="ArgumentNullException">getCommand</exception>
+        public SqlSelectBuilder(Func<DbCommand> getCommand)
         {
-            _what = new StringBuilder();
-            _from = new StringBuilder();
-            _where = new StringBuilder();
-            _order = new StringBuilder();
+            _getCommand = getCommand ?? throw new ArgumentNullException(nameof(getCommand));
+            _what = new List<string>();
+            _from = new List<string>();
+            _where = new List<string>();
+            _order = new List<string>();
             _params = new Dictionary<string, DbParameter>();
         }
 
@@ -59,7 +66,8 @@ namespace Cadmus.Index.Sql.Graph
         /// after adding SQL.</param>
         public SqlSelectBuilder AddWhat(string sql, bool endLine = false)
         {
-            Add(sql, ',', endLine, _what);
+            _what.Add(sql);
+            if (endLine) _what.Add(Environment.NewLine);
             return this;
         }
 
@@ -80,7 +88,8 @@ namespace Cadmus.Index.Sql.Graph
         /// after adding SQL.</param>
         public SqlSelectBuilder AddFrom(string sql, bool endLine = false)
         {
-            Add(sql, ' ', endLine, _from);
+            _from.Add(sql);
+            if (endLine) _from.Add(Environment.NewLine);
             return this;
         }
 
@@ -101,7 +110,8 @@ namespace Cadmus.Index.Sql.Graph
         /// after adding SQL.</param>
         public SqlSelectBuilder AddWhere(string sql, bool endLine = false)
         {
-            Add(sql, ' ', endLine, _where);
+            _where.Add(sql);
+            if (endLine) _where.Add(Environment.NewLine);
             return this;
         }
 
@@ -122,7 +132,8 @@ namespace Cadmus.Index.Sql.Graph
         /// after adding SQL.</param>
         public SqlSelectBuilder AddOrder(string sql, bool endLine = false)
         {
-            Add(sql, ',', endLine, _order);
+            _order.Add(sql);
+            if (endLine) _order.Add(Environment.NewLine);
             return this;
         }
 
@@ -174,31 +185,17 @@ namespace Cadmus.Index.Sql.Graph
             }
         }
 
-        /// <summary>
-        /// Gets the SQL from this builder.
-        /// </summary>
-        /// <returns>SQL code.</returns>
-        public string GetSql()
+        private static StringBuilder AppendJoin(string delimiter,
+            IEnumerable<string> strings,
+            StringBuilder sb)
         {
-            StringBuilder sql = new StringBuilder();
-            sql.Append("SELECT ").Append(_what);
-            AppendLine(sql);
-
-            sql.Append("FROM ").Append(_from);
-            AppendLine(sql);
-
-            if (_where.Length > 0)
+            int n = 0;
+            foreach (string s in strings)
             {
-                sql.Append("WHERE ").Append(_where);
-                AppendLine(sql);
+                if (++n > 1) sb.Append(delimiter);
+                sb.Append(s);
             }
-            if (_order.Length > 0)
-            {
-                sql.Append("ORDER BY ").Append(_order);
-                AppendLine(sql);
-            }
-
-            return sql.ToString();
+            return sb;
         }
 
         /// <summary>
@@ -206,5 +203,95 @@ namespace Cadmus.Index.Sql.Graph
         /// </summary>
         /// <returns>List of parameters.</returns>
         public IList<DbParameter> GetParameters() => _params.Values.ToList();
+
+        /// <summary>
+        /// Adds the specified parameter.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="value">The optional value.</param>
+        public SqlSelectBuilder AddParameter(string name, DbType type, object value = null)
+        {
+            if (_command == null) _command = _getCommand();
+            DbParameter p = _command.CreateParameter();
+            p.ParameterName = name;
+            p.DbType = type;
+            if (value != null) p.Value = value;
+            _params[name] = p;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified parameter.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="direction">The direction.</param>
+        /// <param name="value">The optional value.</param>
+        public SqlSelectBuilder AddParameter(string name, DbType type,
+            ParameterDirection direction, object value = null)
+        {
+            if (_command == null) _command = _getCommand();
+            DbParameter p = _command.CreateParameter();
+            p.ParameterName = name;
+            p.DbType = type;
+            p.Direction = direction;
+            if (value != null) p.Value = value;
+            _params[name] = p;
+            return this;
+        }
+
+        /// <summary>
+        /// Removes the specified parameter.
+        /// </summary>
+        /// <param name="name">The parameter's name.</param>
+        /// <returns>This builder.</returns>
+        public SqlSelectBuilder RemoveParameter(string name)
+        {
+            if (_params.ContainsKey(name))
+                _params.Remove(name);
+            return this;
+        }
+
+        /// <summary>
+        /// Clears the parameters.
+        /// </summary>
+        /// <returns>This builder.</returns>
+        public SqlSelectBuilder ClearParameters()
+        {
+            _params.Clear();
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the SQL from this builder.
+        /// </summary>
+        /// <returns>SQL code.</returns>
+        public string GetSql()
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.Append("SELECT ");
+            AppendJoin(",", _what, sql);
+            AppendLine(sql);
+
+            sql.Append("FROM ");
+            AppendJoin("\n", _from, sql);
+            AppendLine(sql);
+
+            if (_where.Count > 0)
+            {
+                sql.Append("WHERE ");
+                AppendJoin(" ", _where, sql);
+                AppendLine(sql);
+            }
+            if (_order.Count > 0)
+            {
+                sql.Append("ORDER BY ");
+                AppendJoin(" ", _what, sql);
+                AppendLine(sql);
+            }
+
+            return sql.ToString();
+        }
     }
 }

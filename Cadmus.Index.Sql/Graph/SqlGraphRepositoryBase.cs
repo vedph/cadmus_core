@@ -3,7 +3,6 @@ using Fusi.Tools.Data;
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 
 namespace Cadmus.Index.Sql.Graph
 {
@@ -201,7 +200,7 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            SqlSelectBuilder builder = new SqlSelectBuilder();
+            SqlSelectBuilder builder = GetSelectBuilder();
             builder.AddWhat("id,label,source_type,sid")
                    .AddFrom("node")
                    .AddOrder("label,id");
@@ -209,9 +208,58 @@ namespace Cadmus.Index.Sql.Graph
             // uid
             if (!string.IsNullOrEmpty(filter.Uid))
             {
-                builder.AddWhat(",")
-                builder.AddFrom("\nINNER JOIN uri_lookup ul ON node.id=ul.id");
+                builder.AddFrom("INNER JOIN uri_lookup ul ON node.id=ul.id")
+                       .AddWhere("uid LIKE '%@uid%'")
+                       .AddParameter("@uid", DbType.String, filter.Uid);
             }
+
+            // label
+            if (!string.IsNullOrEmpty(filter.Label))
+            {
+                builder.AddWhere("label LIKE '%@label%'")
+                       .AddParameter("@label", DbType.String, filter.Label);
+            }
+
+            // source type
+            if (filter.SourceType != null)
+            {
+                builder.AddWhere("source_type=@source_type")
+                       .AddParameter("@source_type",
+                            DbType.Int32, filter.SourceType.Value);
+            }
+
+            // sid
+            if (!string.IsNullOrEmpty(filter.Sid))
+            {
+                builder.AddWhere(filter.IsSidPrefix?
+                        "sid LIKE '@sid%'" : "sid=@sid")
+                       .AddParameter("@sid", DbType.String, filter.Sid);
+            }
+
+            // linked node ID and role
+            if (filter.LinkedNodeId > 0)
+            {
+                builder.AddParameter("@lnid", DbType.Int32, filter.LinkedNodeId);
+
+                switch (char.ToUpperInvariant(filter.LinkedNodeRole))
+                {
+                    case 'S':
+                        builder.AddFrom("INNER JOIN triple t " +
+                            "ON t.s_id=@lnid AND t.o_id=node.id");
+                        break;
+                    case 'O':
+                        builder.AddFrom("INNER JOIN triple t " +
+                            "ON t.o_id=@lnid AND t.s_id=node.id");
+                        break;
+                    default:
+                        builder.AddFrom("INNER JOIN triple t " +
+                            "ON (t.s_id=@lnid AND t.o_id=node.id) OR " +
+                            "(t.o_id=@lnid AND t.s_id=node.id)");
+                        break;
+                }
+            }
+
+            // class IDs
 
             // TODO
             throw new NotImplementedException();

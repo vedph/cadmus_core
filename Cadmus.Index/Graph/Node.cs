@@ -11,6 +11,15 @@
         public int Id { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this node is a class.
+        /// This is a shortcut property for a node being the subject of a triple
+        /// with S=class URI, predicate="a" and object=rdfs:Class (or eventually
+        /// owl:Class -- note that owl:Class is defined as a subclass of
+        /// rdfs:Class).
+        /// </summary>
+        public bool IsClass { get; set; }
+
+        /// <summary>
         /// Gets or sets the optional node's label. Most nodes have a label
         /// to ease their editing.
         /// </summary>

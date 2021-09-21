@@ -21,7 +21,7 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets or sets the type of the source.
         /// </summary>
-        public NodeSourceType SourceType { get; set; }
+        public NodeSourceType? SourceType { get; set; }
 
         /// <summary>
         /// Gets or sets the sid.
@@ -43,7 +43,7 @@ namespace Cadmus.Index.Graph
 
         /// <summary>
         /// Gets or sets a value indicating the role of the node identified by
-        /// <see cref="LinkedNodeId"/>: <c>s</c>=subject, <c>o</c>=object,
+        /// <see cref="LinkedNodeId"/>: <c>S</c>=subject, <c>O</c>=object,
         /// else no role filtering.
         /// </summary>
         public char LinkedNodeRole { get; set; }

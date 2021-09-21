@@ -3,6 +3,7 @@ using Fusi.Tools.Data;
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 
 namespace Cadmus.Index.Sql.Graph
 {
@@ -190,16 +191,8 @@ namespace Cadmus.Index.Sql.Graph
             return cmd.ExecuteScalar() as string;
         }
 
-        /// <summary>
-        /// Gets the requested page of nodes.
-        /// </summary>
-        /// <param name="filter">The nodes filter.</param>
-        /// <returns>The page.</returns>
-        /// <exception cref="ArgumentNullException">filter</exception>
-        public DataPage<Node> GetNodes(NodeFilter filter)
+        private SqlSelectBuilder GetBuilderForFilter(NodeFilter filter)
         {
-            if (filter == null) throw new ArgumentNullException(nameof(filter));
-
             SqlSelectBuilder builder = GetSelectBuilder();
             builder.AddWhat("id,label,source_type,sid")
                    .AddFrom("node")
@@ -231,7 +224,7 @@ namespace Cadmus.Index.Sql.Graph
             // sid
             if (!string.IsNullOrEmpty(filter.Sid))
             {
-                builder.AddWhere(filter.IsSidPrefix?
+                builder.AddWhere(filter.IsSidPrefix ?
                         "sid LIKE '@sid%'" : "sid=@sid")
                        .AddParameter("@sid", DbType.String, filter.Sid);
             }
@@ -260,6 +253,29 @@ namespace Cadmus.Index.Sql.Graph
             }
 
             // class IDs
+            if (filter.ClassIds?.Count > 0)
+            {
+                string ids = string.Join(",",
+                    filter.ClassIds.Select(
+                        id => SqlHelper.SqlEncode(id, false, true)));
+
+                builder.AddFrom("INNER JOIN node_class nc " +
+                    $"ON node.id=nc.node_id AND nc.class_id IN({ids})");
+            }
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Gets the requested page of nodes.
+        /// </summary>
+        /// <param name="filter">The nodes filter.</param>
+        /// <returns>The page.</returns>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public DataPage<Node> GetNodes(NodeFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
 
             // TODO
             throw new NotImplementedException();

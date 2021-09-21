@@ -49,7 +49,7 @@ CREATE TABLE `pin` (
 
 -- namespace_lookup
 CREATE TABLE `namespace_lookup` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` varchar(50) NOT NULL,
   `uri` varchar(500) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `namespace_lookup_uri_IDX` (`uri`) USING BTREE
@@ -108,6 +108,19 @@ CREATE TABLE `node` (
   `sid` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `node_FK` FOREIGN KEY (`id`) REFERENCES `uri_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- node_class
+CREATE TABLE `node_class` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `node_id` int NOT NULL,
+  `class_id` int NOT NULL,
+  `level` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `node_class_FK` (`node_id`),
+  KEY `node_class_FK_1` (`class_id`),
+  CONSTRAINT `node_class_FK` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `node_class_FK_1` FOREIGN KEY (`class_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- property
@@ -200,3 +213,61 @@ BEGIN
 RETURN ABS(((COMPARE_STRING(a, b) / length(b)) * 100) - 100);
 END ;;
 DELIMITER ;
+
+-- --------------------------------------------------------
+-- graph stored procedures
+-- --------------------------------------------------------
+
+DELIMITER $$
+CREATE PROCEDURE `populate_node_class`(IN instance_id INT)
+BEGIN
+INSERT INTO node_class(node_id, class_id, level)
+WITH RECURSIVE cn AS (
+	-- ANCHOR
+	-- get object class node
+	SELECT t.o_id AS id, 1 AS level FROM node n
+	-- of a triple having S=start node P=a O=class node
+	INNER JOIN triple t ON t.s_id=n.id AND t.p="a"
+	LEFT JOIN node n2 ON t.o_id=n2.id AND n2.is_class=true
+	WHERE n.id=instance_id
+	UNION DISTINCT
+	-- RECURSIVE
+	SELECT t.o_id AS id, level+1 AS level FROM cn
+    -- 8 is the ID of rdfs:subClassOf
+	INNER JOIN triple t ON t.s_id=cn.id AND t.p_id=8
+	LEFT JOIN node n2 ON t.o_id=n2.id AND n2.is_class=true
+) 
+SELECT instance_id, cn.id, cn.level;
+END$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+-- graph preset data
+-- --------------------------------------------------------
+
+-- core namespaces
+INSERT INTO namespace_lookup(id, uri) VALUES('owl', 'http://www.w3.org/2002/07/owl#');
+INSERT INTO namespace_lookup(id, uri) VALUES('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+INSERT INTO namespace_lookup(id, uri) VALUES('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
+INSERT INTO namespace_lookup(id, uri) VALUES('xml', 'http://www.w3.org/XML/1998/namespace');
+INSERT INTO namespace_lookup(id, uri) VALUES('xsd', 'http://www.w3.org/2001/XMLSchema#');
+
+-- core classes
+-- NOTE: if you modify this, update the above stored procedure rdfs:subClassOf ID
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Resource');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Literal');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:XMLLiteral');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Class');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Property');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:DataType');
+
+-- core properties
+INSERT INTO uri_lookup(uri) VALUES('rdf:type');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:subClassOf');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:subPropertyOf');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:domain');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:range');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:label');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:comment');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:seeAlso');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:isDefinedBy');

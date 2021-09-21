@@ -9,6 +9,11 @@ namespace Cadmus.Index.Graph
     public class NodeFilter : PagingOptions
     {
         /// <summary>
+        /// Gets or sets any portion of the node's UID to match.
+        /// </summary>
+        public string Uid { get; set; }
+
+        /// <summary>
         /// Gets or sets any portion of the label to match.
         /// </summary>
         public string Label { get; set; }

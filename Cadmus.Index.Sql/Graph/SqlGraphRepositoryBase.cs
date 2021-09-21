@@ -3,6 +3,7 @@ using Fusi.Tools.Data;
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Text;
 
 namespace Cadmus.Index.Sql.Graph
 {
@@ -150,6 +151,70 @@ namespace Cadmus.Index.Sql.Graph
             cmdIns.ExecuteNonQuery();
             int id = (int)cmdIns.Parameters["@id"].Value;
             return uid + "#" + id;
+        }
+
+        /// <summary>
+        /// Adds the specified URI to the mapped URIs set.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>ID assigned to the URI.</returns>
+        /// <exception cref="ArgumentNullException">uri</exception>
+        public int AddUri(string uri)
+        {
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            EnsureConnected();
+
+            DbCommand cmd = GetCommand();
+            cmd.Transaction = Transaction;
+            cmd.CommandText = "INSERT INTO uri_lookup(id,uri) VALUES(@id,@uri);";
+            AddParameter(cmd, "@uri", DbType.String, uri);
+            AddParameter(cmd, "@id", DbType.Int32, ParameterDirection.Output);
+
+            cmd.ExecuteNonQuery();
+            return (int)cmd.Parameters["@id"].Value;
+        }
+
+        /// <summary>
+        /// Lookups the URI from its numeric ID.
+        /// </summary>
+        /// <param name="id">The numeric ID for the URI.</param>
+        /// <returns>The URI, or null if not found.</returns>
+        public string LookupUri(int id)
+        {
+            EnsureConnected();
+
+            DbCommand cmd = GetCommand();
+            cmd.Transaction = Transaction;
+            cmd.CommandText = "SELECT uri FROM uri_lookup WHERE id=@id;";
+            AddParameter(cmd, "@id", DbType.Int32, id);
+            return cmd.ExecuteScalar() as string;
+        }
+
+        /// <summary>
+        /// Gets the requested page of nodes.
+        /// </summary>
+        /// <param name="filter">The nodes filter.</param>
+        /// <returns>The page.</returns>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public DataPage<Node> GetNodes(NodeFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            SqlSelectBuilder builder = new SqlSelectBuilder();
+            builder.AddWhat("id,label,source_type,sid")
+                   .AddFrom("node")
+                   .AddOrder("label,id");
+
+            // uid
+            if (!string.IsNullOrEmpty(filter.Uid))
+            {
+                builder.AddWhat(",")
+                builder.AddFrom("\nINNER JOIN uri_lookup ul ON node.id=ul.id");
+            }
+
+            // TODO
+            throw new NotImplementedException();
         }
     }
 }

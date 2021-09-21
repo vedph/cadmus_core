@@ -105,7 +105,8 @@ CREATE TABLE `node` (
   `label` varchar(500) DEFAULT NULL,
   `source_type` int NOT NULL,
   `sid` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `node_FK` FOREIGN KEY (`id`) REFERENCES `uri_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- property

@@ -1,6 +1,7 @@
 ﻿using Cadmus.Index.Graph;
 using Fusi.Tools.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Gets the currently active transaction if any.
         /// </summary>
+        /// <remarks>All the write operations use this transaction, when set.
+        /// </remarks>
         protected DbTransaction Transaction { get; set; }
 
         /// <summary>
@@ -27,6 +30,14 @@ namespace Cadmus.Index.Sql.Graph
         {
         }
 
+        /// <summary>
+        /// Gets the paging SQL for the specified options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <returns>SQL code.</returns>
+        protected abstract string GetPagingSql(PagingOptions options);
+
+        #region Transaction
         /// <summary>
         /// Commits a write transaction.
         /// </summary>
@@ -46,7 +57,9 @@ namespace Cadmus.Index.Sql.Graph
             Transaction?.Rollback();
             Transaction = null;
         }
+        #endregion
 
+        #region Namespace Lookup
         /// <summary>
         /// Gets the specified page of namespaces with their prefixes.
         /// </summary>
@@ -97,7 +110,9 @@ namespace Cadmus.Index.Sql.Graph
 
             throw new NotImplementedException();
         }
+        #endregion
 
+        #region UID Lookup
         /// <summary>
         /// Adds the specified UID, eventually completing it with a suffix.
         /// </summary>
@@ -112,47 +127,56 @@ namespace Cadmus.Index.Sql.Graph
 
             EnsureConnected();
 
-            // prepare the insertion
-            DbCommand cmdIns = GetCommand();
-            cmdIns.Transaction = Transaction;
-            cmdIns.CommandText =
-                "INSERT INTO uid_lookup(id,sid,unsuffixed,has_suffix) " +
-                "VALUES(@id,@sid,@unsuffixed,@has_suffix);";
-            AddParameter(cmdIns, "@sid", DbType.String, sid);
-            AddParameter(cmdIns, "@unsuffixed", DbType.String, uid);
-            AddParameter(cmdIns, "@has_suffix", DbType.Boolean, false);
-            AddParameter(cmdIns, "@id", DbType.Int32, ParameterDirection.Output);
-
-            // check if any unsuffixed UID is already in use
-            DbCommand cmdSel = GetCommand();
-            cmdSel.CommandText = "SELECT 1 FROM uid_lookup WHERE unsuffixed=@uid;";
-            AddParameter(cmdSel, "@uid", DbType.String, uid);
-            int? result = cmdSel.ExecuteScalar() as int?;
-
-            // no: just insert the unsuffixed UID
-            if (result == null)
+            try
             {
+                // prepare the insertion
+                DbCommand cmdIns = GetCommand();
+                cmdIns.Transaction = Transaction;
+                cmdIns.CommandText =
+                    "INSERT INTO uid_lookup(id,sid,unsuffixed,has_suffix) " +
+                    "VALUES(@id,@sid,@unsuffixed,@has_suffix);";
+                AddParameter(cmdIns, "@sid", DbType.String, sid);
+                AddParameter(cmdIns, "@unsuffixed", DbType.String, uid);
+                AddParameter(cmdIns, "@has_suffix", DbType.Boolean, false);
+                AddParameter(cmdIns, "@id", DbType.Int32, ParameterDirection.Output);
+
+                // check if any unsuffixed UID is already in use
+                DbCommand cmdSel = GetCommand();
+                cmdSel.CommandText = "SELECT 1 FROM uid_lookup WHERE unsuffixed=@uid;";
+                AddParameter(cmdSel, "@uid", DbType.String, uid);
+                int? result = cmdSel.ExecuteScalar() as int?;
+
+                // no: just insert the unsuffixed UID
+                if (result == null)
+                {
+                    cmdIns.ExecuteNonQuery();
+                    return uid;
+                }
+
+                // yes: check if a record with the same UID & SID exists;
+                // if so, reuse it; otherwise, add a new suffixed UID
+                cmdSel.CommandText = "SELECT id FROM uid_lookup " +
+                    "WHERE unsuffixed=@uid AND sid=@sid;";
+                AddParameter(cmdSel, "@sid", DbType.String, sid);
+                result = cmdSel.ExecuteScalar() as int?;
+
+                // yes: reuse it, nothing gets inserted
+                if (result != null) return sid + "#" + result.Value;
+
+                // no: add a new suffix
+                cmdIns.Parameters["@has_suffix"].Value = true;
                 cmdIns.ExecuteNonQuery();
-                return uid;
+                int id = (int)cmdIns.Parameters["@id"].Value;
+                return uid + "#" + id;
             }
-
-            // yes: check if a record with the same UID & SID exists;
-            // if so, reuse it; otherwise, add a new suffixed UID
-            cmdSel.CommandText = "SELECT id FROM uid_lookup " +
-                "WHERE unsuffixed=@uid AND sid=@sid;";
-            AddParameter(cmdSel, "@sid", DbType.String, sid);
-            result = cmdSel.ExecuteScalar() as int?;
-
-            // yes: reuse it, nothing gets inserted
-            if (result != null) return sid + "#" + result.Value;
-
-            // no: add a new suffix
-            cmdIns.Parameters["@has_suffix"].Value = true;
-            cmdIns.ExecuteNonQuery();
-            int id = (int)cmdIns.Parameters["@id"].Value;
-            return uid + "#" + id;
+            finally
+            {
+                Disconnect();
+            }
         }
+        #endregion
 
+        #region URI Lookup
         /// <summary>
         /// Adds the specified URI to the mapped URIs set.
         /// </summary>
@@ -165,14 +189,21 @@ namespace Cadmus.Index.Sql.Graph
 
             EnsureConnected();
 
-            DbCommand cmd = GetCommand();
-            cmd.Transaction = Transaction;
-            cmd.CommandText = "INSERT INTO uri_lookup(id,uri) VALUES(@id,@uri);";
-            AddParameter(cmd, "@uri", DbType.String, uri);
-            AddParameter(cmd, "@id", DbType.Int32, ParameterDirection.Output);
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO uri_lookup(id,uri) VALUES(@id,@uri);";
+                AddParameter(cmd, "@uri", DbType.String, uri);
+                AddParameter(cmd, "@id", DbType.Int32, ParameterDirection.Output);
 
-            cmd.ExecuteNonQuery();
-            return (int)cmd.Parameters["@id"].Value;
+                cmd.ExecuteNonQuery();
+                return (int)cmd.Parameters["@id"].Value;
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
 
         /// <summary>
@@ -184,70 +215,85 @@ namespace Cadmus.Index.Sql.Graph
         {
             EnsureConnected();
 
-            DbCommand cmd = GetCommand();
-            cmd.Transaction = Transaction;
-            cmd.CommandText = "SELECT uri FROM uri_lookup WHERE id=@id;";
-            AddParameter(cmd, "@id", DbType.Int32, id);
-            return cmd.ExecuteScalar() as string;
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT uri FROM uri_lookup WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+                return cmd.ExecuteScalar() as string;
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
+        #endregion
 
-        private SqlSelectBuilder GetBuilderForFilter(NodeFilter filter)
+        #region Node
+        private SqlSelectBuilder GetBuilderFor(NodeFilter filter)
         {
             SqlSelectBuilder builder = GetSelectBuilder();
-            builder.AddWhat("id,label,source_type,sid")
-                   .AddFrom("node")
+            builder.EnsureSlots(null, "c");
+
+            builder.AddWhat("id,is_class,label,source_type,sid")
+                   .AddWhat("COUNT(id)", slotId: "c")
+                   .AddFrom("node", slotId: "*")
                    .AddOrder("label,id");
 
             // uid
             if (!string.IsNullOrEmpty(filter.Uid))
             {
-                builder.AddFrom("INNER JOIN uri_lookup ul ON node.id=ul.id")
-                       .AddWhere("uid LIKE '%@uid%'")
-                       .AddParameter("@uid", DbType.String, filter.Uid);
+                builder.AddFrom("INNER JOIN uri_lookup ul ON node.id=ul.id", slotId: "*")
+                       .AddWhere("uid LIKE '%@uid%'", slotId: "*")
+                       .AddParameter("@uid", DbType.String, filter.Uid, slotId: "*");
             }
 
             // label
             if (!string.IsNullOrEmpty(filter.Label))
             {
-                builder.AddWhere("label LIKE '%@label%'")
-                       .AddParameter("@label", DbType.String, filter.Label);
+                builder.AddWhere("label LIKE '%@label%'", slotId: "*")
+                       .AddParameter("@label", DbType.String, filter.Label, slotId: "*");
             }
 
             // source type
             if (filter.SourceType != null)
             {
-                builder.AddWhere("source_type=@source_type")
+                builder.AddWhere("source_type=@source_type", slotId: "*")
                        .AddParameter("@source_type",
-                            DbType.Int32, filter.SourceType.Value);
+                            DbType.Int32, filter.SourceType.Value, slotId: "*");
             }
 
             // sid
             if (!string.IsNullOrEmpty(filter.Sid))
             {
                 builder.AddWhere(filter.IsSidPrefix ?
-                        "sid LIKE '@sid%'" : "sid=@sid")
-                       .AddParameter("@sid", DbType.String, filter.Sid);
+                        "sid LIKE '@sid%'" : "sid=@sid", slotId: "*")
+                       .AddParameter("@sid", DbType.String, filter.Sid, slotId: "*");
             }
 
             // linked node ID and role
             if (filter.LinkedNodeId > 0)
             {
-                builder.AddParameter("@lnid", DbType.Int32, filter.LinkedNodeId);
+                builder.AddParameter("@lnid", DbType.Int32, filter.LinkedNodeId,
+                    slotId: "*");
 
                 switch (char.ToUpperInvariant(filter.LinkedNodeRole))
                 {
                     case 'S':
                         builder.AddFrom("INNER JOIN triple t " +
-                            "ON t.s_id=@lnid AND t.o_id=node.id");
+                            "ON t.s_id=@lnid AND t.o_id=node.id",
+                            slotId: "*");
                         break;
                     case 'O':
                         builder.AddFrom("INNER JOIN triple t " +
-                            "ON t.o_id=@lnid AND t.s_id=node.id");
+                            "ON t.o_id=@lnid AND t.s_id=node.id",
+                            slotId: "*");
                         break;
                     default:
                         builder.AddFrom("INNER JOIN triple t " +
                             "ON (t.s_id=@lnid AND t.o_id=node.id) OR " +
-                            "(t.o_id=@lnid AND t.s_id=node.id)");
+                            "(t.o_id=@lnid AND t.s_id=node.id)",
+                            slotId: "*");
                         break;
                 }
             }
@@ -260,8 +306,13 @@ namespace Cadmus.Index.Sql.Graph
                         id => SqlHelper.SqlEncode(id, false, true)));
 
                 builder.AddFrom("INNER JOIN node_class nc " +
-                    $"ON node.id=nc.node_id AND nc.class_id IN({ids})");
+                    $"ON node.id=nc.node_id AND nc.class_id IN({ids})",
+                    slotId: "*");
             }
+
+            // order and limit
+            builder.AddOrder("label,id");
+            builder.AddLimit(GetPagingSql(filter));
 
             return builder;
         }
@@ -276,9 +327,101 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
+            EnsureConnected();
 
-            // TODO
-            throw new NotImplementedException();
+            try
+            {
+                SqlSelectBuilder builder = GetBuilderFor(filter);
+
+                // get count and ret if no result
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build("c");
+                builder.AddParametersTo(cmd, "c");
+
+                long? count = cmd.ExecuteScalar() as long?;
+                if (count == null || count == 0)
+                {
+                    return new DataPage<Node>(
+                        filter.PageNumber, filter.PageSize, 0, Array.Empty<Node>());
+                }
+
+                // get page
+                cmd.CommandText = builder.Build();
+                List<Node> nodes = new List<Node>();
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        nodes.Add(new Node
+                        {
+                            Id = reader.GetInt32(0),
+                            IsClass = reader.GetBoolean(1),
+                            Label = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                            SourceType = (NodeSourceType)reader.GetInt32(3),
+                            Sid = reader.IsDBNull(4) ? reader.GetString(4) : null
+                        });
+                    }
+                }
+                return new DataPage<Node>(filter.PageNumber, filter.PageSize,
+                    (int)count, nodes);
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
+
+        /// <summary>
+        /// Adds the specified node.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        /// <exception cref="ArgumentNullException">node</exception>
+        public void AddNode(Node node)
+        {
+            if (node == null) throw new ArgumentNullException(nameof(node));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO node(is_class,label,source_type,sid) " +
+                    "VALUES(@is_class,@label,@source_type,@sid);";
+                AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
+                AddParameter(cmd, "@label", DbType.String, node.Label);
+                AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
+                AddParameter(cmd, "@sid", DbType.String, node.Sid);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the node with the specified ID.
+        /// </summary>
+        /// <param name="id">The node identifier.</param>
+        public void DeleteNode(int id)
+        {
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM node WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+        #endregion
     }
 }

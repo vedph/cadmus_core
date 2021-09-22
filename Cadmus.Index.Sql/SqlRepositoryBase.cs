@@ -12,6 +12,7 @@ namespace Cadmus.Index.Sql
     {
         private readonly ISqlTokenHelper _tokenHelper;
         private string _connectionString;
+        private bool _autoConnected;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlRepositoryBase"/>
@@ -139,15 +140,39 @@ namespace Cadmus.Index.Sql
         }
 
         /// <summary>
-        /// Ensures that the database exists and the connection is open.
+        /// Ensures that <see cref="Connection"/> is not null and open.
         /// </summary>
         protected virtual void EnsureConnected()
         {
             // ensure the connection is open
-            if (Connection == null) Connection = GetConnection();
+            if (Connection == null)
+            {
+                Connection = GetConnection();
+                _autoConnected = true;
+            }
+            else _autoConnected = false;
+
             if (Connection.State == ConnectionState.Closed)
             {
                 Connection.Open();
+            }
+        }
+
+        /// <summary>
+        /// If <see cref="Connection"/> was automatically created and opened
+        /// (by <see cref="EnsureConnected"/>), disconnect and set it to null;
+        /// else do nothing. This is typically used by implementors methods
+        /// which use the connection for a single operation, to close it once
+        /// done. When instead you need a connection for longer time, because
+        /// e.g. you are using a transaction, you must set it manually, and
+        /// manually disconnect when done.
+        /// </summary>
+        protected void Disconnect()
+        {
+            if (_autoConnected)
+            {
+                Connection?.Close();
+                Connection = null;
             }
         }
     }

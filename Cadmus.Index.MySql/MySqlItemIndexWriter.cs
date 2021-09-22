@@ -81,6 +81,12 @@ namespace Cadmus.Index.MySql
         }
 
         /// <summary>
+        /// Gets the MySql schema used to populate a created database.
+        /// </summary>
+        /// <returns>SQL code.</returns>
+        public static string GetMySqlSchema() => LoadResource("Schema.mysql");
+
+        /// <summary>
         /// Gets the schema SQL used to populate a created database.
         /// </summary>
         /// <returns>SQL code.</returns>

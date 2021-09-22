@@ -1,6 +1,7 @@
 ﻿using Cadmus.Index.Graph;
 using Cadmus.Index.Sql;
 using Cadmus.Index.Sql.Graph;
+using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
 using System;
@@ -15,7 +16,7 @@ namespace Cadmus.Index.MySql
     /// </summary>
     /// <seealso cref="SqlGraphRepositoryBase" />
     public sealed class MySqlGraphRepository : SqlGraphRepositoryBase,
-        IGraphRepository
+        IGraphRepository, IConfigurable<SqlOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MySqlGraphRepository"/>
@@ -25,6 +26,17 @@ namespace Cadmus.Index.MySql
         public MySqlGraphRepository(ISqlTokenHelper tokenHelper)
             : base(tokenHelper)
         {
+        }
+
+        /// <summary>
+        /// Configures the object with the specified options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <exception cref="ArgumentNullException">options</exception>
+        public void Configure(SqlOptions options)
+        {
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            ConnectionString = options.ConnectionString;
         }
 
         /// <summary>

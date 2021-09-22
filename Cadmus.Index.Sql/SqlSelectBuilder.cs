@@ -526,7 +526,6 @@ namespace Cadmus.Index.Sql
             if (slot.Limit.IsValueCreated)
             {
                 AppendLine(sql);
-                sql.Append("ORDER BY ");
                 AppendJoin(" ", slot.Order.Value, sql);
             }
 

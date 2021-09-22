@@ -76,7 +76,8 @@ namespace Cadmus.Index.Sql
         {
             foreach (string id in slotIds)
             {
-                if (!_slots.ContainsKey(id)) _slots[id] = new SqlBuilderSlot();
+                string sid = id ?? "";
+                if (!_slots.ContainsKey(sid)) _slots[sid] = new SqlBuilderSlot();
             }
             return this;
         }
@@ -116,6 +117,7 @@ namespace Cadmus.Index.Sql
                     return this;
                 }
             }
+            if (slotId == null) slotId = "";
 
             if (!_slots.ContainsKey(slotId))
                 _slots[slotId] = new SqlBuilderSlot();
@@ -131,6 +133,8 @@ namespace Cadmus.Index.Sql
         /// default slot.</param>
         public SqlSelectBuilder ClearWhat(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (_slots.ContainsKey(slotId))
                 _slots[slotId].What.Value.Clear();
 
@@ -156,6 +160,7 @@ namespace Cadmus.Index.Sql
                     return this;
                 }
             }
+            if (slotId == null) slotId = "";
 
             if (!_slots.ContainsKey(slotId))
                 _slots[slotId] = new SqlBuilderSlot();
@@ -171,6 +176,8 @@ namespace Cadmus.Index.Sql
         /// default slot.</param>
         public SqlSelectBuilder ClearFrom(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (_slots.ContainsKey(slotId))
                 _slots[slotId].From.Value.Clear();
 
@@ -196,6 +203,7 @@ namespace Cadmus.Index.Sql
                     return this;
                 }
             }
+            if (slotId == null) slotId = "";
 
             if (!_slots.ContainsKey(slotId))
                 _slots[slotId] = new SqlBuilderSlot();
@@ -211,6 +219,8 @@ namespace Cadmus.Index.Sql
         /// default slot.</param>
         public SqlSelectBuilder ClearWhere(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (_slots.ContainsKey(slotId))
                 _slots[slotId].Where.Value .Clear();
 
@@ -236,6 +246,7 @@ namespace Cadmus.Index.Sql
                     return this;
                 }
             }
+            if (slotId == null) slotId = "";
 
             if (!_slots.ContainsKey(slotId))
                 _slots[slotId] = new SqlBuilderSlot();
@@ -251,6 +262,8 @@ namespace Cadmus.Index.Sql
         /// default slot.</param>
         public SqlSelectBuilder ClearOrder(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (_slots.ContainsKey(slotId))
                 _slots[slotId].Order.Value.Clear();
 
@@ -276,6 +289,7 @@ namespace Cadmus.Index.Sql
                     return this;
                 }
             }
+            if (slotId == null) slotId = "";
 
             if (!_slots.ContainsKey(slotId))
                 _slots[slotId] = new SqlBuilderSlot();
@@ -291,6 +305,8 @@ namespace Cadmus.Index.Sql
         /// default slot.</param>
         public SqlSelectBuilder ClearLimit(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (_slots.ContainsKey(slotId))
                 _slots[slotId].Limit.Value.Clear();
 
@@ -303,7 +319,7 @@ namespace Cadmus.Index.Sql
         /// <param name="slotId">The target slot ID.</param>
         public SqlSelectBuilder Clear(string slotId = null)
         {
-            _slots.Remove(slotId);
+            _slots.Remove(slotId ?? "");
             return this;
         }
 
@@ -337,6 +353,8 @@ namespace Cadmus.Index.Sql
         /// <returns>List of parameters.</returns>
         public IList<DbParameter> GetParameters(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             return _slots.ContainsKey(slotId)
                 ? (IList<DbParameter>)_slots[slotId].Parameters.Value.Values.ToList()
                 : Array.Empty<DbParameter>();
@@ -360,6 +378,7 @@ namespace Cadmus.Index.Sql
                     return this;
                 }
             }
+            if (slotId == null) slotId = "";
 
             if (parameter == null)
                 throw new ArgumentNullException(nameof(parameter));
@@ -428,6 +447,7 @@ namespace Cadmus.Index.Sql
                 foreach (string id in _slots.Keys)
                     RemoveParameter(name, id);
             }
+            if (slotId == null) slotId = "";
 
             if (_slots.ContainsKey(slotId) &&
                 _slots[slotId].Parameters.IsValueCreated)
@@ -446,6 +466,8 @@ namespace Cadmus.Index.Sql
         /// <returns>This builder.</returns>
         public SqlSelectBuilder ClearParameters(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (_slots.ContainsKey(slotId) &&
                 _slots[slotId].Parameters.IsValueCreated)
             {
@@ -465,6 +487,9 @@ namespace Cadmus.Index.Sql
         public void AddParametersTo(DbCommand command, string slotId = null)
         {
             if (command == null) throw new ArgumentNullException(nameof(command));
+
+            if (slotId == null) slotId = "";
+
             if (!_slots.ContainsKey(slotId) ||
                 !_slots[slotId].Parameters.IsValueCreated) return;
 
@@ -479,6 +504,8 @@ namespace Cadmus.Index.Sql
         /// <exception cref="InvalidOperationException">slot ID not found</exception>
         public string Build(string slotId = null)
         {
+            if (slotId == null) slotId = "";
+
             if (!_slots.ContainsKey(slotId))
             {
                 throw new InvalidOperationException(

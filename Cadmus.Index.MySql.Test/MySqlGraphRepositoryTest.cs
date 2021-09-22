@@ -42,11 +42,18 @@ namespace Cadmus.Index.MySql.Test
             return repository;
         }
 
+        private static void AddNamespaces(int count, IGraphRepository repository)
+        {
+            for (int i = 0; i < count; i++)
+                repository.AddNamespace("p" + i, $"http://www.ns{i}.org");
+        }
+
         [Fact]
         public void GetNamespaces_Ok()
         {
             Reset();
             IGraphRepository repository = GetRepository();
+            AddNamespaces(3, repository);
 
             DataPage<NamespaceEntry> page = repository.GetNamespaces(
                 new NamespaceFilter
@@ -55,7 +62,7 @@ namespace Cadmus.Index.MySql.Test
                     PageSize = 10,
                 });
 
-            Assert.Equal(5, page.Total);
+            Assert.Equal(3, page.Total);
         }
     }
 }

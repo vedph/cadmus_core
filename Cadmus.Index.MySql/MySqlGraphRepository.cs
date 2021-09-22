@@ -83,13 +83,14 @@ namespace Cadmus.Index.MySql
                 throw new ArgumentNullException(nameof(options));
 
             StringBuilder sb = new StringBuilder();
-            if (options.PageNumber > 0)
-            {
-                sb.Append("OFFSET ").Append(options.PageNumber * options.PageSize);
-            }
             if (options.PageSize > 0)
             {
                 sb.Append("LIMIT ").Append(options.PageSize);
+            }
+            if (options.PageNumber > 1)
+            {
+                if (sb.Length > 0) sb.Append(' ');
+                sb.Append("OFFSET ").Append(options.GetSkipCount());
             }
             return sb.ToString();
         }

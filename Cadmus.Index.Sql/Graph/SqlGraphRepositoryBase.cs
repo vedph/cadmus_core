@@ -104,7 +104,7 @@ namespace Cadmus.Index.Sql.Graph
 
             builder.AddWhat("id, uri")
                    .AddWhat("COUNT(id)", slotId: "c")
-                   .AddFrom("FROM namespace_lookup", slotId: "*")
+                   .AddFrom("namespace_lookup", slotId: "*")
                    .AddOrder("id")
                    .AddLimit(GetPagingSql(filter));
 

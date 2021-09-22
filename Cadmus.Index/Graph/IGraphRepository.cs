@@ -82,7 +82,21 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="filter">The nodes filter.</param>
         /// <returns>The page.</returns>
-        DataPage<Node> GetNodes(NodeFilter filter);
+        DataPage<NodeResult> GetNodes(NodeFilter filter);
+
+        /// <summary>
+        /// Gets the node with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The node or null if not found.</returns>
+        NodeResult GetNode(int id);
+
+        /// <summary>
+        /// Gets the node by its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The node or null if not found.</returns>
+        NodeResult GetNodeByUri(string uri);
 
         /// <summary>
         /// Adds the specified node.
@@ -101,7 +115,21 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>Page.</returns>
-        DataPage<Property> GetProperties(PropertyFilter filter);
+        DataPage<PropertyResult> GetProperties(PropertyFilter filter);
+
+        /// <summary>
+        /// Gets the property with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The property or null if not found.</returns>
+        PropertyResult GetProperty(int id);
+
+        /// <summary>
+        /// Gets the property by its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The property or null if not found.</returns>
+        PropertyResult GetPropertyByUri(string uri);
 
         /// <summary>
         /// Adds the specified property.

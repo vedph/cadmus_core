@@ -235,10 +235,12 @@ namespace Cadmus.Index.Sql.Graph
             SqlSelectBuilder builder = GetSelectBuilder();
             builder.EnsureSlots(null, "c");
 
-            builder.AddWhat("id,is_class,label,source_type,sid")
+            builder.AddWhat("node.id, node.is_class, node.label, " +
+                "node.source_type, node.sid, ul.uri")
                    .AddWhat("COUNT(id)", slotId: "c")
                    .AddFrom("node", slotId: "*")
-                   .AddOrder("label,id");
+                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=node.id")
+                   .AddOrder("label, id");
 
             // uid
             if (!string.IsNullOrEmpty(filter.Uid))
@@ -311,7 +313,6 @@ namespace Cadmus.Index.Sql.Graph
             }
 
             // order and limit
-            builder.AddOrder("label,id");
             builder.AddLimit(GetPagingSql(filter));
 
             return builder;
@@ -323,7 +324,7 @@ namespace Cadmus.Index.Sql.Graph
         /// <param name="filter">The nodes filter.</param>
         /// <returns>The page.</returns>
         /// <exception cref="ArgumentNullException">filter</exception>
-        public DataPage<Node> GetNodes(NodeFilter filter)
+        public DataPage<NodeResult> GetNodes(NodeFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -341,29 +342,106 @@ namespace Cadmus.Index.Sql.Graph
                 long? count = cmd.ExecuteScalar() as long?;
                 if (count == null || count == 0)
                 {
-                    return new DataPage<Node>(
-                        filter.PageNumber, filter.PageSize, 0, Array.Empty<Node>());
+                    return new DataPage<NodeResult>(
+                        filter.PageNumber, filter.PageSize, 0,
+                        Array.Empty<NodeResult>());
                 }
 
                 // get page
                 cmd.CommandText = builder.Build();
-                List<Node> nodes = new List<Node>();
+                List<NodeResult> nodes = new List<NodeResult>();
                 using (DbDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        nodes.Add(new Node
+                        nodes.Add(new NodeResult
                         {
                             Id = reader.GetInt32(0),
                             IsClass = reader.GetBoolean(1),
                             Label = reader.IsDBNull(2) ? reader.GetString(2) : null,
                             SourceType = (NodeSourceType)reader.GetInt32(3),
-                            Sid = reader.IsDBNull(4) ? reader.GetString(4) : null
+                            Sid = reader.IsDBNull(4) ? reader.GetString(4) : null,
+                            Uri = reader.GetString(5)
                         });
                     }
                 }
-                return new DataPage<Node>(filter.PageNumber, filter.PageSize,
+                return new DataPage<NodeResult>(filter.PageNumber, filter.PageSize,
                     (int)count, nodes);
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Gets the node with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The node or null if not found.</returns>
+        public NodeResult GetNode(int id)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT n.is_class, n.label, " +
+                    "n.source_type, n.sid, ul.uri FROM node n\n" +
+                    "INNER JOIN uri_lookup ul ON n.id=ul.id WHERE n.id=@id";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return new NodeResult
+                    {
+                        Id = id,
+                        IsClass = reader.GetBoolean(0),
+                        Label = reader.IsDBNull(1) ? reader.GetString(1) : null,
+                        SourceType = (NodeSourceType)reader.GetInt32(2),
+                        Sid = reader.IsDBNull(3) ? reader.GetString(3) : null,
+                        Uri = reader.GetString(4)
+                    };
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Gets the node by its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The node or null if not found.</returns>
+        /// <exception cref="ArgumentNullException">uri</exception>
+        public NodeResult GetNodeByUri(string uri)
+        {
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT n.id, n.is_class, n.label, " +
+                    "n.source_type, n.sid FROM node n\n" +
+                    "INNER JOIN uri_lookup ul ON n.id=ul.id WHERE ul.uri=@uri";
+                AddParameter(cmd, "@uri", DbType.String, uri);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return new NodeResult
+                    {
+                        Id = reader.GetInt32(0),
+                        IsClass = reader.GetBoolean(1),
+                        Label = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                        SourceType = (NodeSourceType)reader.GetInt32(3),
+                        Sid = reader.IsDBNull(4) ? reader.GetString(4) : null,
+                        Uri = uri
+                    };
+                }
             }
             finally
             {
@@ -414,6 +492,222 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "DELETE FROM node WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+        #endregion
+
+        #region Property
+        private SqlSelectBuilder GetBuilderFor(PropertyFilter filter)
+        {
+            SqlSelectBuilder builder = GetSelectBuilder();
+            builder.EnsureSlots(null, "c");
+
+            builder.AddWhat("id, data_type, lit_editor, description, ul.uri")
+                   .AddWhat("COUNT(id)", slotId: "c")
+                   .AddFrom("property", slotId: "*")
+                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=node.id")
+                   .AddOrder("ul.uri");
+
+            if (!string.IsNullOrEmpty(filter.DataType))
+            {
+                builder.AddWhere("data_type=@data_type", slotId: "*")
+                       .AddParameter("@data_type", DbType.String,
+                            filter.DataType, slotId: "*");
+            }
+
+            if (!string.IsNullOrEmpty(filter.LiteralEditor))
+            {
+                builder.AddWhere("lit_editor=@lit_editor", slotId: "*")
+                       .AddParameter("@lit_editor", DbType.String,
+                            filter.LiteralEditor, slotId: "*");
+            }
+
+            // limit
+            builder.AddLimit(GetPagingSql(filter));
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Gets the specified page of properties.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Page.</returns>
+        public DataPage<PropertyResult> GetProperties(PropertyFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            EnsureConnected();
+
+            try
+            {
+                SqlSelectBuilder builder = GetBuilderFor(filter);
+
+                // get count and ret if no result
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build("c");
+                builder.AddParametersTo(cmd, "c");
+
+                long? count = cmd.ExecuteScalar() as long?;
+                if (count == null || count == 0)
+                {
+                    return new DataPage<PropertyResult>(
+                        filter.PageNumber, filter.PageSize, 0,
+                        Array.Empty<PropertyResult>());
+                }
+
+                // get page
+                cmd.CommandText = builder.Build();
+                List<PropertyResult> props = new List<PropertyResult>();
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        props.Add(new PropertyResult
+                        {
+                            Id = reader.GetInt32(0),
+                            DataType = reader.IsDBNull(1)
+                                ? reader.GetString(1) : null,
+                            LiteralEditor = reader.IsDBNull(2)
+                                ? reader.GetString(2) : null,
+                            Description = reader.IsDBNull(3)
+                                ? reader.GetString(3) : null,
+                            Uri = reader.GetString(4)
+                        });
+                    }
+                }
+                return new DataPage<PropertyResult>(filter.PageNumber,
+                    filter.PageSize, (int)count, props);
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Gets the property with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The property or null if not found.</returns>
+        public PropertyResult GetProperty(int id)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT p.data_type, p.lit_editor, " +
+                    "p.description, ul.uri FROM property p\n" +
+                    "INNER JOIN uri_lookup ul ON p.id=ul.id WHERE p.id=@id";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return new PropertyResult
+                    {
+                        Id = id,
+                        DataType = reader.IsDBNull(0)? reader.GetString(0) : null,
+                        LiteralEditor = reader.IsDBNull(1) ? reader.GetString(1) : null,
+                        Description = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                        Uri = reader.GetString(3)
+                    };
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Gets the property by its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The property or null if not found.</returns>
+        /// <exception cref="ArgumentNullException">uri</exception>
+        public PropertyResult GetPropertyByUri(string uri)
+        {
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT p.id, p.data_type, p.lit_editor, " +
+                    "p.description FROM property p\n" +
+                    "INNER JOIN uri_lookup ul ON p.id=ul.id WHERE ul.uri=@uri";
+                AddParameter(cmd, "@uri", DbType.String, uri);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return new PropertyResult
+                    {
+                        Id = reader.GetInt32(0),
+                        DataType = reader.IsDBNull(1) ? reader.GetString(1) : null,
+                        LiteralEditor = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                        Description = reader.IsDBNull(3) ? reader.GetString(3) : null,
+                        Uri = uri
+                    };
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Adds the specified property.
+        /// </summary>
+        /// <param name="property">The property.</param>
+        /// <exception cref="ArgumentNullException">property</exception>
+        public void AddProperty(Property property)
+        {
+            if (property == null)
+                throw new ArgumentNullException(nameof(property));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO property(" +
+                    "data_type, lit_editor, description) " +
+                    "VALUES(@data_type, @lit_editor, @description);";
+                AddParameter(cmd, "@data_type", DbType.String, property.DataType);
+                AddParameter(cmd, "@lit_editor", DbType.String, property.LiteralEditor);
+                AddParameter(cmd, "@description", DbType.String, property.Description);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the property with the specified ID.
+        /// </summary>
+        /// <param name="id">The property identifier.</param>
+        public void DeleteProperty(int id)
+        {
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM property WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.Int32, id);
                 cmd.ExecuteNonQuery();
             }

@@ -149,8 +149,15 @@ namespace Cadmus.Index.Graph
         /// <param name="filter">The filter. Set page size=0 to get all
         /// the mappings at once.</param>
         /// <returns>Page.</returns>
-        DataPage<PropertyRestriction> GetRestrictions(
+        DataPage<PropertyRestrictionResult> GetRestrictions(
             PropertyRestrictionFilter filter);
+
+        /// <summary>
+        /// Gets the restriction with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The restriction or null if not found.</returns>
+        PropertyRestrictionResult GetRestriction(int id);
 
         /// <summary>
         /// Adds the specified property restriction.

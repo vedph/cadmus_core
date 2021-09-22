@@ -358,9 +358,9 @@ namespace Cadmus.Index.Sql.Graph
                         {
                             Id = reader.GetInt32(0),
                             IsClass = reader.GetBoolean(1),
-                            Label = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                            Label = reader.IsDBNull(2) ? null : reader.GetString(2),
                             SourceType = (NodeSourceType)reader.GetInt32(3),
-                            Sid = reader.IsDBNull(4) ? reader.GetString(4) : null,
+                            Sid = reader.IsDBNull(4) ? null : reader.GetString(4),
                             Uri = reader.GetString(5)
                         });
                     }
@@ -397,9 +397,9 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = id,
                         IsClass = reader.GetBoolean(0),
-                        Label = reader.IsDBNull(1) ? reader.GetString(1) : null,
+                        Label = reader.IsDBNull(1) ? null : reader.GetString(1),
                         SourceType = (NodeSourceType)reader.GetInt32(2),
-                        Sid = reader.IsDBNull(3) ? reader.GetString(3) : null,
+                        Sid = reader.IsDBNull(3) ? null : reader.GetString(3),
                         Uri = reader.GetString(4)
                     };
                 }
@@ -436,9 +436,9 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = reader.GetInt32(0),
                         IsClass = reader.GetBoolean(1),
-                        Label = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                        Label = reader.IsDBNull(2) ? null : reader.GetString(2),
                         SourceType = (NodeSourceType)reader.GetInt32(3),
-                        Sid = reader.IsDBNull(4) ? reader.GetString(4) : null,
+                        Sid = reader.IsDBNull(4) ? null : reader.GetString(4),
                         Uri = uri
                     };
                 }
@@ -573,11 +573,11 @@ namespace Cadmus.Index.Sql.Graph
                         {
                             Id = reader.GetInt32(0),
                             DataType = reader.IsDBNull(1)
-                                ? reader.GetString(1) : null,
+                                ? null : reader.GetString(1),
                             LiteralEditor = reader.IsDBNull(2)
-                                ? reader.GetString(2) : null,
+                                ? null : reader.GetString(2),
                             Description = reader.IsDBNull(3)
-                                ? reader.GetString(3) : null,
+                                ? null : reader.GetString(3),
                             Uri = reader.GetString(4)
                         });
                     }
@@ -613,9 +613,9 @@ namespace Cadmus.Index.Sql.Graph
                     return new PropertyResult
                     {
                         Id = id,
-                        DataType = reader.IsDBNull(0)? reader.GetString(0) : null,
-                        LiteralEditor = reader.IsDBNull(1) ? reader.GetString(1) : null,
-                        Description = reader.IsDBNull(2) ? reader.GetString(2) : null,
+                        DataType = reader.IsDBNull(0)? null : reader.GetString(0),
+                        LiteralEditor = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        Description = reader.IsDBNull(2) ? null : reader.GetString(2),
                         Uri = reader.GetString(3)
                     };
                 }
@@ -651,9 +651,9 @@ namespace Cadmus.Index.Sql.Graph
                     return new PropertyResult
                     {
                         Id = reader.GetInt32(0),
-                        DataType = reader.IsDBNull(1) ? reader.GetString(1) : null,
-                        LiteralEditor = reader.IsDBNull(2) ? reader.GetString(2) : null,
-                        Description = reader.IsDBNull(3) ? reader.GetString(3) : null,
+                        DataType = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        LiteralEditor = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        Description = reader.IsDBNull(3) ? null : reader.GetString(3),
                         Uri = uri
                     };
                 }
@@ -708,6 +708,205 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "DELETE FROM property WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+        #endregion
+
+        #region Restriction
+        private SqlSelectBuilder GetBuilderFor(PropertyRestrictionFilter filter)
+        {
+            SqlSelectBuilder builder = GetSelectBuilder();
+            builder.EnsureSlots(null, "c");
+
+            builder.AddWhat("pr.id, pr.property_id, pr.restriction, pr.o_id, " +
+                "ul.uri AS puri, ul2.uri AS ouri")
+                   .AddWhat("COUNT(id)", slotId: "c")
+                   .AddFrom("property_restriction pr", slotId: "*")
+                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=pr.property_id")
+                   .AddFrom("LEFT JOIN uri_lookup ul2 ON ul2.id=pr.o_id")
+                   .AddOrder("ul.uri, id");
+
+            if (filter.PropertyId > 0)
+            {
+                builder.AddWhere("property_id=@property_id", slotId: "*")
+                       .AddParameter("@property_id", DbType.Int32,
+                            filter.PropertyId, slotId: "*");
+            }
+
+            if (!string.IsNullOrEmpty(filter.Restriction))
+            {
+                builder.AddWhere("restriction=@restriction", slotId: "*")
+                       .AddParameter("@restriction", DbType.String,
+                            filter.Restriction, slotId: "*");
+            }
+
+            if (filter.ObjectId > 0)
+            {
+                builder.AddWhere("o_id=@o_id", slotId: "*")
+                       .AddParameter("@o_id", DbType.Int32,
+                            filter.ObjectId, slotId: "*");
+            }
+
+            // limit
+            builder.AddLimit(GetPagingSql(filter));
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Gets the specified page of restrictions.
+        /// </summary>
+        /// <param name="filter">The filter. Set page size=0 to get all
+        /// the mappings at once.</param>
+        /// <returns>Page.</returns>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public DataPage<PropertyRestrictionResult> GetRestrictions(
+            PropertyRestrictionFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            EnsureConnected();
+
+            try
+            {
+                SqlSelectBuilder builder = GetBuilderFor(filter);
+
+                // get count and ret if no result
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build("c");
+                builder.AddParametersTo(cmd, "c");
+
+                long? count = cmd.ExecuteScalar() as long?;
+                if (count == null || count == 0)
+                {
+                    return new DataPage<PropertyRestrictionResult>(
+                        filter.PageNumber, filter.PageSize, 0,
+                        Array.Empty<PropertyRestrictionResult>());
+                }
+
+                // get page
+                cmd.CommandText = builder.Build();
+                List<PropertyRestrictionResult> restrs =
+                    new List<PropertyRestrictionResult>();
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        restrs.Add(new PropertyRestrictionResult
+                        {
+                            Id = reader.GetInt32(0),
+                            PropertyId = reader.GetInt32(1),
+                            Restriction = reader.GetString(2),
+                            ObjectId = reader.IsDBNull(3)
+                                ? 0 : reader.GetInt32(3),
+                            PropertyUri = reader.GetString(4),
+                            ObjectUri = reader.IsDBNull(5)
+                                ? null : reader.GetString(5)
+                        });
+                    }
+                }
+                return new DataPage<PropertyRestrictionResult>(filter.PageNumber,
+                    filter.PageSize, (int)count, restrs);
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Gets the restriction with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The restriction or null if not found.</returns>
+        public PropertyRestrictionResult GetRestriction(int id)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT pr.property_id, pr.restriction, pr.o_id " +
+                    "ul.uri AS puri, ul2.uri AS ouri\n" +
+                    "FROM property_restriction pr\n" +
+                    "INNER JOIN uri_lookup ul ON ul.id=pr.property_id\n" +
+                    "LEFT JOIN uri_lookup ul2 ON ul2.id=pr.o_id\n" +
+                    "WHERE pr.id=@id";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return new PropertyRestrictionResult
+                    {
+                        Id = reader.GetInt32(0),
+                        PropertyId = reader.GetInt32(1),
+                        Restriction = reader.GetString(2),
+                        ObjectId = reader.IsDBNull(3)
+                                ? 0 : reader.GetInt32(3),
+                        PropertyUri = reader.GetString(4),
+                        ObjectUri = reader.IsDBNull(5)
+                                ? null : reader.GetString(5)
+                    };
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Adds the specified property restriction.
+        /// </summary>
+        /// <param name="restriction">The restriction.</param>
+        /// <exception cref="ArgumentNullException">restriction</exception>
+        public void AddRestriction(PropertyRestriction restriction)
+        {
+            if (restriction == null)
+                throw new ArgumentNullException(nameof(restriction));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO property_restriction(" +
+                    "property_id, restriction, o_id) " +
+                    "VALUES(@property_id, @restriction, @o_id);";
+                AddParameter(cmd, "@property_id", DbType.Int32,
+                    restriction.PropertyId);
+                AddParameter(cmd, "@restriction", DbType.String,
+                    restriction.Restriction);
+                AddParameter(cmd, "@o_id", DbType.Int32, restriction.ObjectId);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the restriction with the specified ID.
+        /// </summary>
+        /// <param name="id">The restriction identifier.</param>
+        public void DeleteRestriction(int id)
+        {
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM property_restriction WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.Int32, id);
                 cmd.ExecuteNonQuery();
             }

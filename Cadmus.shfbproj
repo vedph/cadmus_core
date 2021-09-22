@@ -45,7 +45,9 @@
 <DocumentationSource sourceFile="Cadmus.Index\bin\Debug\netstandard2.0\Cadmus.Index.dll" />
 <DocumentationSource sourceFile="Cadmus.Index\bin\Debug\netstandard2.0\Cadmus.Index.xml" />
 <DocumentationSource sourceFile="Cadmus.Index.Sql\bin\Debug\netstandard2.0\Cadmus.Index.Sql.dll" />
-<DocumentationSource sourceFile="Cadmus.Index.Sql\bin\Debug\netstandard2.0\Cadmus.Index.Sql.xml" /></DocumentationSources>
+<DocumentationSource sourceFile="Cadmus.Index.Sql\bin\Debug\netstandard2.0\Cadmus.Index.Sql.xml" />
+<DocumentationSource sourceFile="Cadmus.Index.MySql\bin\Debug\netstandard2.0\Cadmus.Index.MySql.dll" />
+<DocumentationSource sourceFile="Cadmus.Index.MySql\bin\Debug\netstandard2.0\Cadmus.Index.MySql.xml" /></DocumentationSources>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
@@ -72,10 +74,12 @@
           <ignoreIfUnresolved>
             <assemblyIdentity name="Bogus" />
             <assemblyIdentity name="BusinessObjects.Licensing.KeycodeDecoder" />
+            <assemblyIdentity name="Cadmus.Refs.Bricks" />
             <assemblyIdentity name="DiffMatchPatch" />
             <assemblyIdentity name="DiffPlex" />
             <assemblyIdentity name="Fusi.Antiquity" />
             <assemblyIdentity name="Fusi.Config" />
+            <assemblyIdentity name="Fusi.DbManager" />
             <assemblyIdentity name="Fusi.Text" />
             <assemblyIdentity name="Fusi.Tools" />
             <assemblyIdentity name="Microsoft.VisualStudio.TestTools.UITest.Playback" />

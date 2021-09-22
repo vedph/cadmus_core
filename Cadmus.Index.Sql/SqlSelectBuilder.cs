@@ -111,11 +111,8 @@ namespace Cadmus.Index.Sql
         {
             if (slotId == "*")
             {
-                foreach (string id in _slots.Keys)
-                {
-                    AddWhat(sql, endLine, id);
-                    return this;
-                }
+                foreach (string id in _slots.Keys) AddWhat(sql, endLine, id);
+                return this;
             }
             if (slotId == null) slotId = "";
 
@@ -154,11 +151,8 @@ namespace Cadmus.Index.Sql
         {
             if (slotId == "*")
             {
-                foreach (string id in _slots.Keys)
-                {
-                    AddFrom(sql, endLine, id);
-                    return this;
-                }
+                foreach (string id in _slots.Keys) AddFrom(sql, endLine, id);
+                return this;
             }
             if (slotId == null) slotId = "";
 
@@ -197,11 +191,8 @@ namespace Cadmus.Index.Sql
         {
             if (slotId == "*")
             {
-                foreach (string id in _slots.Keys)
-                {
-                    AddWhere(sql, endLine, id);
-                    return this;
-                }
+                foreach (string id in _slots.Keys) AddWhere(sql, endLine, id);
+                return this;
             }
             if (slotId == null) slotId = "";
 
@@ -240,11 +231,8 @@ namespace Cadmus.Index.Sql
         {
             if (slotId == "*")
             {
-                foreach (string id in _slots.Keys)
-                {
-                    AddOrder(sql, endLine, id);
-                    return this;
-                }
+                foreach (string id in _slots.Keys) AddOrder(sql, endLine, id);
+                return this;
             }
             if (slotId == null) slotId = "";
 
@@ -283,11 +271,8 @@ namespace Cadmus.Index.Sql
         {
             if (slotId == "*")
             {
-                foreach (string id in _slots.Keys)
-                {
-                    AddLimit(sql, endLine, id);
-                    return this;
-                }
+                foreach (string id in _slots.Keys) AddLimit(sql, endLine, id);
+                return this;
             }
             if (slotId == null) slotId = "";
 
@@ -327,7 +312,7 @@ namespace Cadmus.Index.Sql
         {
             if (sb.Length > 0 &&
                 sb[sb.Length - 1] != '\n' &&
-                sb[sb.Length - 1] == '\r')
+                sb[sb.Length - 1] != '\r')
             {
                 sb.AppendLine();
             }
@@ -372,11 +357,8 @@ namespace Cadmus.Index.Sql
         {
             if (slotId == "*")
             {
-                foreach (string id in _slots.Keys)
-                {
-                    AddParameter(parameter, id);
-                    return this;
-                }
+                foreach (string id in _slots.Keys) AddParameter(parameter, id);
+                return this;
             }
             if (slotId == null) slotId = "";
 
@@ -519,7 +501,7 @@ namespace Cadmus.Index.Sql
             if (slot.What.IsValueCreated)
             {
                 sql.Append("SELECT ");
-                AppendJoin(",", slot.What.Value, sql);
+                AppendJoin(", ", slot.What.Value, sql);
             }
 
             if (slot.From.IsValueCreated)

@@ -30,6 +30,11 @@ namespace Cadmus.Index.Graph
         public NodeSourceType SourceType { get; set; }
 
         /// <summary>
+        /// Gets or sets a user friendly name for this mapping.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets or sets the ordinal. This is usually 0, but can be set to
         /// any number to force some mappings to be executed before or after
         /// some other mappings in the context of the same depth level
@@ -163,9 +168,9 @@ namespace Cadmus.Index.Graph
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(Name);
 
-            sb.Append('[').Append(SOURCE_TYPES[(int)SourceType]).Append("] ");
+            sb.Append(": [").Append(SOURCE_TYPES[(int)SourceType]).Append("] ");
 
             sb.Append('#').Append(Id);
             if (ParentId > 0) sb.Append("<-").Append(ParentId);

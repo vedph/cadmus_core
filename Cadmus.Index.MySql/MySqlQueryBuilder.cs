@@ -23,14 +23,14 @@ namespace Cadmus.Index.MySql
         /// Appends the regex clause.
         /// </summary>
         /// <param name="fieldName">Name of the field.</param>
-        /// <param name="value">The value.</param>
+        /// <param name="pattern">The regular expression pattern.</param>
         /// <param name="sb">The string builder to append to.</param>
-        protected override void AppendRegexClause(string fieldName, string value,
+        protected override void AppendRegexClause(string fieldName, string pattern,
             StringBuilder sb)
         {
             sb.Append(fieldName)
               .Append(" REGEXP ")
-              .AppendLine(SQE(value, false, true, false));
+              .AppendLine(SQE(pattern, false, true, false));
         }
 
         /// <summary>

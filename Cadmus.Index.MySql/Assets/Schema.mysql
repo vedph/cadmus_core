@@ -77,6 +77,8 @@ CREATE INDEX uid_lookup_unsuffixed_IDX USING BTREE ON cadmus.uid_lookup (unsuffi
 CREATE TABLE `node_mapping` (
   `id` int NOT NULL AUTO_INCREMENT,
   `parent_id` int DEFAULT NULL,
+  `source_type` int NOT NULL,
+  `name` varchar(200) NOT NULL,
   `ordinal` int NOT NULL,
   `facet_filter` varchar(100) DEFAULT NULL,
   `group_filter` varchar(500) DEFAULT NULL,
@@ -85,7 +87,6 @@ CREATE TABLE `node_mapping` (
   `part_type` varchar(100) DEFAULT NULL,
   `part_role` varchar(100) DEFAULT NULL,
   `pin_name` varchar(100) DEFAULT NULL,
-  `source_type` int NOT NULL,
   `prefix` varchar(200) DEFAULT NULL,
   `label_template` varchar(500) DEFAULT NULL,
   `triple_s` varchar(500) DEFAULT NULL,

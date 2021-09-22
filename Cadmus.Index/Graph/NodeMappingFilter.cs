@@ -20,6 +20,11 @@ namespace Cadmus.Index.Graph
         public List<NodeSourceType> SourceTypes { get; set; }
 
         /// <summary>
+        /// Gets or sets any portion of the name to match.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets or sets the facet ID to match.
         /// </summary>
         public string Facet { get; set; }

@@ -35,7 +35,14 @@ namespace Cadmus.Index.Graph
         DataPage<NamespaceEntry> GetNamespaces(NamespaceFilter filter);
 
         /// <summary>
-        /// Adds the specified namespace.
+        /// Looks up the namespace from its prefix.
+        /// </summary>
+        /// <param name="prefix">The prefix.</param>
+        /// <returns>The namespace, or null if not found.</returns>
+        string LookupNamespace(string prefix);
+
+        /// <summary>
+        /// Adds or updates the specified namespace prefix.
         /// </summary>
         /// <param name="prefix">The namespace prefix.</param>
         /// <param name="uri">The namespace URI corresponding to
@@ -178,6 +185,13 @@ namespace Cadmus.Index.Graph
         /// the mappings at once.</param>
         /// <returns>The page.</returns>
         DataPage<NodeMapping> GetNodeMappings(NodeMappingFilter filter);
+
+        /// <summary>
+        /// Gets the node mapping witht the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The mapping or null if not found.</returns>
+        NodeMapping GetNodeMapping(int id);
 
         /// <summary>
         /// Adds the specified node mapping.

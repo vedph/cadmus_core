@@ -37,7 +37,24 @@ namespace Cadmus.Index.Sql.Graph
         /// <returns>SQL code.</returns>
         protected abstract string GetPagingSql(PagingOptions options);
 
-        #region Transaction
+        /// <summary>
+        /// Gets the SQL code for a regular expression clause.
+        /// </summary>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="pattern">The regular expression pattern.</param>
+        protected abstract string GetRegexClauseSql(string fieldName,
+            string pattern);
+
+        #region Transaction        
+        /// <summary>
+        /// Begins the transaction.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        public void BeginTransaction(object context)
+        {
+            Transaction = Connection.BeginTransaction();
+        }
+
         /// <summary>
         /// Commits a write transaction.
         /// </summary>
@@ -74,18 +91,26 @@ namespace Cadmus.Index.Sql.Graph
         }
 
         /// <summary>
-        /// Adds the specified namespace.
+        /// Looks up the namespace from its prefix.
         /// </summary>
-        /// <param name="prefix">The namespace prefix.</param>
-        /// <param name="uri">The namespace URI corresponding to
-        /// <paramref name="prefix" />.</param>
-        /// <exception cref="ArgumentNullException">prefix or uri</exception>
-        public void AddNamespace(string prefix, string uri)
+        /// <param name="prefix">The prefix.</param>
+        /// <returns>The namespace, or null if not found.</returns>
+        /// <exception cref="ArgumentNullException">prefix</exception>
+        public string LookupNamespace(string prefix)
         {
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
-            if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-            throw new NotImplementedException();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT uri FROM namespace_lookup WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.String, prefix);
+                return cmd.ExecuteScalar() as string;
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
 
         /// <summary>
@@ -97,7 +122,20 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
-            throw new NotImplementedException();
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM node_mapping WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.String, prefix);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
 
         /// <summary>
@@ -108,7 +146,20 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (uri is null) throw new ArgumentNullException(nameof(uri));
 
-            throw new NotImplementedException();
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM namespace WHERE uri=@uri;";
+                AddParameter(cmd, "@uri", DbType.String, uri);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
         #endregion
 
@@ -358,9 +409,9 @@ namespace Cadmus.Index.Sql.Graph
                         {
                             Id = reader.GetInt32(0),
                             IsClass = reader.GetBoolean(1),
-                            Label = reader.IsDBNull(2) ? null : reader.GetString(2),
+                            Label = reader.GetValue<string>(2),
                             SourceType = (NodeSourceType)reader.GetInt32(3),
-                            Sid = reader.IsDBNull(4) ? null : reader.GetString(4),
+                            Sid = reader.GetValue<string>(4),
                             Uri = reader.GetString(5)
                         });
                     }
@@ -397,9 +448,9 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = id,
                         IsClass = reader.GetBoolean(0),
-                        Label = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        Label = reader.GetValue<string>(1),
                         SourceType = (NodeSourceType)reader.GetInt32(2),
-                        Sid = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        Sid = reader.GetValue<string>(3),
                         Uri = reader.GetString(4)
                     };
                 }
@@ -436,9 +487,9 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = reader.GetInt32(0),
                         IsClass = reader.GetBoolean(1),
-                        Label = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        Label = reader.GetValue<string>(2),
                         SourceType = (NodeSourceType)reader.GetInt32(3),
-                        Sid = reader.IsDBNull(4) ? null : reader.GetString(4),
+                        Sid = reader.GetValue<string>(4),
                         Uri = uri
                     };
                 }
@@ -572,12 +623,9 @@ namespace Cadmus.Index.Sql.Graph
                         props.Add(new PropertyResult
                         {
                             Id = reader.GetInt32(0),
-                            DataType = reader.IsDBNull(1)
-                                ? null : reader.GetString(1),
-                            LiteralEditor = reader.IsDBNull(2)
-                                ? null : reader.GetString(2),
-                            Description = reader.IsDBNull(3)
-                                ? null : reader.GetString(3),
+                            DataType = reader.GetValue<string>(1),
+                            LiteralEditor = reader.GetValue<string>(2),
+                            Description = reader.GetValue<string>(3),
                             Uri = reader.GetString(4)
                         });
                     }
@@ -613,9 +661,9 @@ namespace Cadmus.Index.Sql.Graph
                     return new PropertyResult
                     {
                         Id = id,
-                        DataType = reader.IsDBNull(0)? null : reader.GetString(0),
-                        LiteralEditor = reader.IsDBNull(1) ? null : reader.GetString(1),
-                        Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        DataType = reader.GetValue<string>(0),
+                        LiteralEditor = reader.GetValue<string>(1),
+                        Description = reader.GetValue<string>(2),
                         Uri = reader.GetString(3)
                     };
                 }
@@ -651,9 +699,9 @@ namespace Cadmus.Index.Sql.Graph
                     return new PropertyResult
                     {
                         Id = reader.GetInt32(0),
-                        DataType = reader.IsDBNull(1) ? null : reader.GetString(1),
-                        LiteralEditor = reader.IsDBNull(2) ? null : reader.GetString(2),
-                        Description = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        DataType = reader.GetValue<string>(1),
+                        LiteralEditor = reader.GetValue<string>(2),
+                        Description = reader.GetValue<string>(3),
                         Uri = uri
                     };
                 }
@@ -803,11 +851,9 @@ namespace Cadmus.Index.Sql.Graph
                             Id = reader.GetInt32(0),
                             PropertyId = reader.GetInt32(1),
                             Restriction = reader.GetString(2),
-                            ObjectId = reader.IsDBNull(3)
-                                ? 0 : reader.GetInt32(3),
+                            ObjectId = reader.GetValue<int>(3),
                             PropertyUri = reader.GetString(4),
-                            ObjectUri = reader.IsDBNull(5)
-                                ? null : reader.GetString(5)
+                            ObjectUri = reader.GetValue<string>(5)
                         });
                     }
                 }
@@ -847,11 +893,9 @@ namespace Cadmus.Index.Sql.Graph
                         Id = reader.GetInt32(0),
                         PropertyId = reader.GetInt32(1),
                         Restriction = reader.GetString(2),
-                        ObjectId = reader.IsDBNull(3)
-                                ? 0 : reader.GetInt32(3),
+                        ObjectId = reader.GetValue<int>(3),
                         PropertyUri = reader.GetString(4),
-                        ObjectUri = reader.IsDBNull(5)
-                                ? null : reader.GetString(5)
+                        ObjectUri = reader.GetValue<string>(5)
                     };
                 }
             }
@@ -907,6 +951,278 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "DELETE FROM property_restriction WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+        #endregion
+
+        #region Node Mapping
+        private SqlSelectBuilder GetBuilderFor(NodeMappingFilter filter)
+        {
+            SqlSelectBuilder builder = GetSelectBuilder();
+            builder.EnsureSlots(null, "c");
+
+            builder.AddWhat("id, parent_id, source_type, name, ordinal, " +
+                "facet_filter, group_filter, flags_filter, title_filter, " +
+                "part_type, part_role, pin_name, prefix, label_template, " +
+                "triple_s, triple_p, triple_o, triple_o_prefix, reversed, " +
+                "description")
+                   .AddWhat("COUNT(id)", slotId: "c")
+                   .AddFrom("node_mapping", slotId: "*")
+                   .AddOrder("ul.uri, id");
+
+            if (filter.ParentId > 0)
+            {
+                builder.AddWhere("parent_id=@parent_id", slotId: "*")
+                       .AddParameter("@parent_id", DbType.Int32, filter.ParentId);
+            }
+
+            if (filter.SourceTypes?.Count > 0)
+            {
+                string ids = string.Join(", ", filter.SourceTypes);
+                builder.AddWhere($"source_type IN ({ids})", slotId: "*");
+            }
+
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                builder.AddWhere("name LIKE '%@name%'", slotId: "*")
+                       .AddParameter("@name", DbType.String, filter.Name);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Facet))
+            {
+                builder.AddWhere("facet=@facet", slotId: "*")
+                       .AddParameter("@facet", DbType.String, filter.Facet);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Group))
+            {
+                builder.AddWhere(GetRegexClauseSql("group", "@group"), slotId: "*")
+                       .AddParameter("@group", DbType.String, filter.Group);
+            }
+
+            if (filter.Flags > 0)
+            {
+                builder.AddWhere("(flags & @flags)=@flags", slotId: "*")
+                       .AddParameter("@flags", DbType.Int32, filter.Flags);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Title))
+            {
+                builder.AddWhere(GetRegexClauseSql("title", "@title"), slotId: "*")
+                       .AddParameter("@title", DbType.String, filter.Title);
+            }
+
+            if (!string.IsNullOrEmpty(filter.PartType))
+            {
+                builder.AddWhere("part_type=@part_type", slotId: "*")
+                       .AddParameter("@part_type", DbType.String, filter.PartType);
+            }
+
+            if (!string.IsNullOrEmpty(filter.PartRole))
+            {
+                builder.AddWhere("part_role=@part_role", slotId: "*")
+                       .AddParameter("@part_role", DbType.String, filter.PartRole);
+            }
+
+            if (!string.IsNullOrEmpty(filter.PinName))
+            {
+                builder.AddWhere("pin_name=@pin_name", slotId: "*")
+                       .AddParameter("@pin_name", DbType.String, filter.PinName);
+            }
+
+            // limit
+            builder.AddLimit(GetPagingSql(filter));
+
+            return builder;
+        }
+
+        private static NodeMapping ReadNodeMapping(DbDataReader reader)
+        {
+            return new NodeMapping
+            {
+                Id = reader.GetInt32(0),
+                ParentId = reader.GetValue<int>(1),
+                SourceType = (NodeSourceType)reader.GetInt32(2),
+                Name = reader.GetString(3),
+                Ordinal = reader.GetValue<int>(4),
+                FacetFilter = reader.GetValue<string>(5),
+                GroupFilter = reader.GetValue<string>(6),
+                FlagsFilter = reader.GetInt32(7),
+                TitleFilter = reader.GetValue<string>(8),
+                PartType = reader.GetValue<string>(9),
+                PartRole = reader.GetValue<string>(10),
+                PinName = reader.GetValue<string>(11),
+                Prefix = reader.GetValue<string>(12),
+                LabelTemplate = reader.GetValue<string>(13),
+                TripleS = reader.GetValue<string>(14),
+                TripleP = reader.GetValue<string>(15),
+                TripleO = reader.GetValue<string>(16),
+                TripleOPrefix = reader.GetValue<string>(17),
+                IsReversed = reader.GetBoolean(18),
+                Description = reader.GetValue<string>(19)
+            };
+        }
+
+        /// <summary>
+        /// Gets the specified page of node mappings.
+        /// </summary>
+        /// <param name="filter">The filter. Set page size=0 to get all
+        /// the mappings at once.</param>
+        /// <returns>The page.</returns>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public DataPage<NodeMapping> GetNodeMappings(NodeMappingFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            EnsureConnected();
+
+            try
+            {
+                SqlSelectBuilder builder = GetBuilderFor(filter);
+
+                // get count and ret if no result
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build("c");
+                builder.AddParametersTo(cmd, "c");
+
+                long? count = cmd.ExecuteScalar() as long?;
+                if (count == null || count == 0)
+                {
+                    return new DataPage<NodeMapping>(
+                        filter.PageNumber, filter.PageSize, 0,
+                        Array.Empty<NodeMapping>());
+                }
+
+                // get page
+                cmd.CommandText = builder.Build();
+                List<NodeMapping> mappings =
+                    new List<NodeMapping>();
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        mappings.Add(ReadNodeMapping(reader));
+                    }
+                }
+                return new DataPage<NodeMapping>(filter.PageNumber,
+                    filter.PageSize, (int)count, mappings);
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Gets the node mapping witht the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The mapping or null if not found.</returns>
+        public NodeMapping GetNodeMapping(int id)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT id, parent_id, ordinal, facet_filter, " +
+                    "group_filter, flags_filter, title_filter, part_type, " +
+                    "part_role, pin_name, source_type, prefix, label_template, " +
+                    "triple_s, triple_p, triple_o, triple_o_prefix, reversed, " +
+                    "description FROM node_mapping WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return ReadNodeMapping(reader);
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Adds the specified node mapping.
+        /// </summary>
+        /// <param name="mapping">The mapping.</param>
+        /// <exception cref="ArgumentNullException">mapping</exception>
+        public void AddNodeMapping(NodeMapping mapping)
+        {
+            if (mapping == null) throw new ArgumentNullException(nameof(mapping));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO node_mapping(" +
+                    "parent_id, ordinal, facet_filter, group_filter, " +
+                    "flags_filter, title_filter, part_type, part_role, " +
+                    "pin_name, source_type, prefix, label_template, " +
+                    "triple_s, triple_p, triple_o, triple_o_prefix, " +
+                    "reversed, description) " +
+                    "VALUES(@parent_id, @ordinal, @facet_filter, @group_filter, " +
+                    "@flags_filter, @title_filter, @part_type, @part_role, " +
+                    "@pin_name, @source_type, @prefix, @label_template, " +
+                    "@triple_s, @triple_p, @triple_o, @triple_o_prefix, " +
+                    "@reversed, @description);";
+
+                AddParameter(cmd, "@parent_id", DbType.Int32, mapping.ParentId);
+                AddParameter(cmd, "@ordinal", DbType.Int32, mapping.Ordinal);
+                AddParameter(cmd, "@facet_filter", DbType.String,
+                    mapping.FacetFilter);
+                AddParameter(cmd, "@group_filter", DbType.String,
+                    mapping.GroupFilter);
+                AddParameter(cmd, "@flags_filter", DbType.Int32,
+                    mapping.FlagsFilter);
+                AddParameter(cmd, "@title_filter", DbType.String,
+                    mapping.TitleFilter);
+                AddParameter(cmd, "@part_type", DbType.String, mapping.PartType);
+                AddParameter(cmd, "@part_role", DbType.String, mapping.PartRole);
+                AddParameter(cmd, "@pin_name", DbType.String, mapping.PinName);
+                AddParameter(cmd, "@source_type", DbType.Int32, mapping.SourceType);
+                AddParameter(cmd, "@prefix", DbType.String, mapping.Prefix);
+                AddParameter(cmd, "@label_template", DbType.String,
+                    mapping.LabelTemplate);
+                AddParameter(cmd, "@triple_s", DbType.String, mapping.TripleS);
+                AddParameter(cmd, "@triple_p", DbType.String, mapping.TripleP);
+                AddParameter(cmd, "@triple_o", DbType.String, mapping.TripleO);
+                AddParameter(cmd, "@triple_o_prefix", DbType.String,
+                    mapping.TripleOPrefix);
+                AddParameter(cmd, "@reversed", DbType.Boolean, mapping.IsReversed);
+                AddParameter(cmd, "@description", DbType.String,
+                    mapping.Description);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the specified node mapping.
+        /// </summary>
+        /// <param name="id">The mapping identifier.</param>
+        public void DeleteMapping(int id)
+        {
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM node_mapping WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.Int32, id);
                 cmd.ExecuteNonQuery();
             }

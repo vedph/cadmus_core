@@ -1,4 +1,8 @@
-﻿using Fusi.Tools.Data;
+﻿using Fusi.Tools;
+using Fusi.Tools.Data;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cadmus.Index.Graph
 {
@@ -106,7 +110,7 @@ namespace Cadmus.Index.Graph
         NodeResult GetNodeByUri(string uri);
 
         /// <summary>
-        /// Adds the specified node.
+        /// Adds or updates the specified node.
         /// </summary>
         /// <param name="node">The node.</param>
         void AddNode(Node node);
@@ -139,7 +143,7 @@ namespace Cadmus.Index.Graph
         PropertyResult GetPropertyByUri(string uri);
 
         /// <summary>
-        /// Adds the specified property.
+        /// Adds or updates the specified property.
         /// </summary>
         /// <param name="property">The property.</param>
         void AddProperty(Property property);
@@ -167,7 +171,7 @@ namespace Cadmus.Index.Graph
         PropertyRestrictionResult GetRestriction(int id);
 
         /// <summary>
-        /// Adds the specified property restriction.
+        /// Adds or updates the specified property restriction.
         /// </summary>
         /// <param name="restriction">The restriction.</param>
         void AddRestriction(PropertyRestriction restriction);
@@ -194,7 +198,7 @@ namespace Cadmus.Index.Graph
         NodeMapping GetNodeMapping(int id);
 
         /// <summary>
-        /// Adds the specified node mapping.
+        /// Adds or updates the specified node mapping.
         /// </summary>
         /// <param name="mapping">The mapping.</param>
         void AddNodeMapping(NodeMapping mapping);
@@ -204,5 +208,13 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="id">The mapping identifier.</param>
         void DeleteMapping(int id);
+
+        /// <summary>
+        /// Updates the classes for all the nodes belonging to any class.
+        /// </summary>
+        /// <param name="cancel">The cancel.</param>
+        /// <param name="progress">The progress.</param>
+        Task UpdateNodeClassesAsync(CancellationToken cancel,
+            IProgress<ProgressReport> progress = null);
     }
 }

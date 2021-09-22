@@ -1,10 +1,13 @@
 ﻿using Cadmus.Index.Graph;
+using Fusi.Tools;
 using Fusi.Tools.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cadmus.Index.Sql.Graph
 {
@@ -45,6 +48,23 @@ namespace Cadmus.Index.Sql.Graph
         protected abstract string GetRegexClauseSql(string fieldName,
             string pattern);
 
+        /// <summary>
+        /// Gets the upsert tail SQL. This is the SQL code appended to a
+        /// standard INSERT statement to make it work as an UPSERT. The code
+        /// differs according to the RDBMS implementation, but for most RDBMS
+        /// it follows the INSERT statement, so this is a quick working solution.
+        /// </summary>
+        /// <param name="fields">The names of all the inserted fields,
+        /// assuming that the corresponding parameter names are equal but
+        /// prefixed by <c>@</c>.</param>
+        /// <returns>SQL.</returns>
+        /// <remarks>MySql: https://www.techbeamers.com/mysql-upsert/;
+        /// PostgreSQL: https://www.postgresqltutorial.com/postgresql-upsert/;
+        /// SQLServer: https://stackoverflow.com/questions/1197733/
+        /// does-sql-server-offer-anything-like-mysqls-on-duplicate-key-update
+        /// </remarks>
+        protected abstract string GetUpsertTailSql(params string[] fields);
+
         #region Transaction        
         /// <summary>
         /// Begins the transaction.
@@ -77,6 +97,32 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Namespace Lookup
+        private SqlSelectBuilder GetBuilderFor(NamespaceFilter filter)
+        {
+            SqlSelectBuilder builder = GetSelectBuilder();
+            builder.EnsureSlots(null, "c");
+
+            builder.AddWhat("id, uri")
+                   .AddWhat("COUNT(id)", slotId: "c")
+                   .AddFrom("FROM namespace_lookup", slotId: "*")
+                   .AddOrder("id")
+                   .AddLimit(GetPagingSql(filter));
+
+            if (!string.IsNullOrEmpty(filter.Prefix))
+            {
+                builder.AddWhere("id LIKE '%@id%'")
+                       .AddParameter("@id", DbType.String, filter.Prefix);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Uri))
+            {
+                builder.AddWhere("uri LIKE '%@uri%'")
+                       .AddParameter("@uri", DbType.String, filter.Uri);
+            }
+
+            return builder;
+        }
+
         /// <summary>
         /// Gets the specified page of namespaces with their prefixes.
         /// </summary>
@@ -87,7 +133,78 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            throw new NotImplementedException();
+            EnsureConnected();
+
+            try
+            {
+                SqlSelectBuilder builder = GetBuilderFor(filter);
+
+                // get count and ret if no result
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build("c");
+                builder.AddParametersTo(cmd, "c");
+
+                long? count = cmd.ExecuteScalar() as long?;
+                if (count == null || count == 0)
+                {
+                    return new DataPage<NamespaceEntry>(
+                        filter.PageNumber, filter.PageSize, 0,
+                        Array.Empty<NamespaceEntry>());
+                }
+
+                // get page
+                cmd.CommandText = builder.Build();
+                List<NamespaceEntry> nss =
+                    new List<NamespaceEntry>();
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        nss.Add(new NamespaceEntry
+                        {
+                            Prefix = reader.GetString(0),
+                            Uri = reader.GetString(1)
+                        });
+                    }
+                }
+                return new DataPage<NamespaceEntry>(filter.PageNumber,
+                    filter.PageSize, (int)count, nss);
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Adds or updates the specified namespace prefix.
+        /// </summary>
+        /// <param name="prefix">The namespace prefix.</param>
+        /// <param name="uri">The namespace URI corresponding to
+        /// <paramref name="prefix" />.</param>
+        /// <exception cref="ArgumentNullException">prefix or uri</exception>
+        public void AddNamespace(string prefix, string uri)
+        {
+            if (prefix == null) throw new ArgumentNullException(nameof(prefix));
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO namespace_lookup(id, uri) " +
+                    "VALUES(@id, @uri)\n" + GetUpsertTailSql("uri");
+                AddParameter(cmd, "@id", DbType.String, prefix);
+                AddParameter(cmd, "@uri", DbType.String, uri);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
 
         /// <summary>
@@ -229,7 +346,7 @@ namespace Cadmus.Index.Sql.Graph
 
         #region URI Lookup
         /// <summary>
-        /// Adds the specified URI to the mapped URIs set.
+        /// Adds the specified URI in the mapped URIs set.
         /// </summary>
         /// <param name="uri">The URI.</param>
         /// <returns>ID assigned to the URI.</returns>
@@ -242,14 +359,23 @@ namespace Cadmus.Index.Sql.Graph
 
             try
             {
+                // if the URI already exists, just return its ID
                 DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO uri_lookup(id,uri) VALUES(@id,@uri);";
+                cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri=@uri;";
                 AddParameter(cmd, "@uri", DbType.String, uri);
-                AddParameter(cmd, "@id", DbType.Int32, ParameterDirection.Output);
+                int? result = cmd.ExecuteScalar() as int?;
+                if (result != null) return result.Value;
 
-                cmd.ExecuteNonQuery();
-                return (int)cmd.Parameters["@id"].Value;
+                // else insert it
+                DbCommand cmdIns = GetCommand();
+                cmdIns.Transaction = Transaction;
+                cmdIns.CommandText = "INSERT INTO uri_lookup(id, uri) " +
+                    "VALUES(@id, @uri);";
+                AddParameter(cmdIns, "@uri", DbType.String, uri);
+                AddParameter(cmdIns, "@id", DbType.Int32, ParameterDirection.Output);
+
+                cmdIns.ExecuteNonQuery();
+                return (int)cmdIns.Parameters["@id"].Value;
             }
             finally
             {
@@ -501,7 +627,7 @@ namespace Cadmus.Index.Sql.Graph
         }
 
         /// <summary>
-        /// Adds the specified node.
+        /// Adds or updates the specified node.
         /// </summary>
         /// <param name="node">The node.</param>
         /// <exception cref="ArgumentNullException">node</exception>
@@ -515,8 +641,10 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO node(is_class,label,source_type,sid) " +
-                    "VALUES(@is_class,@label,@source_type,@sid);";
+                cmd.CommandText = "INSERT INTO node" +
+                    "(is_class, label, source_type, sid) " +
+                    "VALUES(@is_class, @label, @source_type, @sid)\n"
+                    + GetUpsertTailSql("is_class", "label", "source_type", "sid");
                 AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
                 AddParameter(cmd, "@label", DbType.String, node.Label);
                 AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
@@ -713,7 +841,7 @@ namespace Cadmus.Index.Sql.Graph
         }
 
         /// <summary>
-        /// Adds the specified property.
+        /// Adds or updates the specified property.
         /// </summary>
         /// <param name="property">The property.</param>
         /// <exception cref="ArgumentNullException">property</exception>
@@ -730,7 +858,8 @@ namespace Cadmus.Index.Sql.Graph
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT INTO property(" +
                     "data_type, lit_editor, description) " +
-                    "VALUES(@data_type, @lit_editor, @description);";
+                    "VALUES(@data_type, @lit_editor, @description)\n" +
+                    GetUpsertTailSql("data_type", "lit_editor", "description");
                 AddParameter(cmd, "@data_type", DbType.String, property.DataType);
                 AddParameter(cmd, "@lit_editor", DbType.String, property.LiteralEditor);
                 AddParameter(cmd, "@description", DbType.String, property.Description);
@@ -906,7 +1035,7 @@ namespace Cadmus.Index.Sql.Graph
         }
 
         /// <summary>
-        /// Adds the specified property restriction.
+        /// Adds or updates the specified property restriction.
         /// </summary>
         /// <param name="restriction">The restriction.</param>
         /// <exception cref="ArgumentNullException">restriction</exception>
@@ -923,7 +1052,8 @@ namespace Cadmus.Index.Sql.Graph
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT INTO property_restriction(" +
                     "property_id, restriction, o_id) " +
-                    "VALUES(@property_id, @restriction, @o_id);";
+                    "VALUES(@property_id, @restriction, @o_id)\n" +
+                    GetUpsertTailSql("property_id, restriction, o_id");
                 AddParameter(cmd, "@property_id", DbType.Int32,
                     restriction.PropertyId);
                 AddParameter(cmd, "@restriction", DbType.String,
@@ -1174,7 +1304,12 @@ namespace Cadmus.Index.Sql.Graph
                     "@flags_filter, @title_filter, @part_type, @part_role, " +
                     "@pin_name, @source_type, @prefix, @label_template, " +
                     "@triple_s, @triple_p, @triple_o, @triple_o_prefix, " +
-                    "@reversed, @description);";
+                    "@reversed, @description)\n" +
+                    GetUpsertTailSql("parent_id", "ordinal", "facet_filter",
+                        "group_filter", "flags_filter", "title_filter",
+                        "part_type", "part_role", "pin_name", "source_type",
+                        "prefix", "label_template", "triple_s", "triple_p",
+                        "triple_o", "triple_o_prefix", "reversed", "description");
 
                 AddParameter(cmd, "@parent_id", DbType.Int32, mapping.ParentId);
                 AddParameter(cmd, "@ordinal", DbType.Int32, mapping.Ordinal);
@@ -1232,5 +1367,73 @@ namespace Cadmus.Index.Sql.Graph
             }
         }
         #endregion
+
+        /// <summary>
+        /// Updates the classes for all the nodes belonging to any class.
+        /// </summary>
+        /// <param name="cancel">The cancel.</param>
+        /// <param name="progress">The progress.</param>
+        public Task UpdateNodeClassesAsync(CancellationToken cancel,
+            IProgress<ProgressReport> progress = null)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand countCmd = GetCommand();
+                countCmd.CommandText = "SELECT COUNT(id) FROM node " +
+                    "INNER JOIN node_class WHERE node.id=node_class.node_id;";
+                long? result = countCmd.ExecuteScalar() as long?;
+                if (result == null) return Task.CompletedTask;
+
+                int total = (int)result.Value;
+
+                DbCommand cmdSel = GetCommand();
+                cmdSel.CommandText = "SELECT id FROM node " +
+                    "INNER JOIN node_class WHERE node.id=node_class.node_id;";
+
+                using (DbDataReader reader = cmdSel.ExecuteReader())
+                {
+                    ProgressReport report =
+                        progress != null ? new ProgressReport() : null;
+                    int oldPercent = 0;
+
+                    DbCommand updCmd = GetCommand();
+                    updCmd.CommandType = CommandType.StoredProcedure;
+                    updCmd.CommandText = "populate_node_class";
+                    AddParameter(updCmd, "instance_id", DbType.Int32);
+
+                    while (reader.Read())
+                    {
+                        updCmd.Parameters[0].Value = reader.GetInt32(0);
+                        updCmd.ExecuteNonQuery();
+
+                        if (report != null && ++report.Count % 10 == 0)
+                        {
+                            report.Percent = report.Count * 100 / total;
+                            if (report.Percent != oldPercent)
+                            {
+                                progress.Report(report);
+                                oldPercent = report.Percent;
+                            }
+                        }
+                        if (cancel.IsCancellationRequested)
+                            return Task.CompletedTask;
+                    }
+
+                    if (report != null)
+                    {
+                        report.Percent = 100;
+                        report.Count = total;
+                        progress.Report(report);
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
     }
 }

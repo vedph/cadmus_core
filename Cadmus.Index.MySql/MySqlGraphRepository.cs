@@ -4,7 +4,6 @@ using Cadmus.Index.Sql.Graph;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
 using System;
-using System.Data;
 using System.Data.Common;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -103,35 +102,27 @@ namespace Cadmus.Index.MySql
         }
 
         /// <summary>
-        /// Adds or updates the specified namespace prefix.
+        /// Gets the upsert tail SQL. This is the SQL code appended to a
+        /// standard INSERT statement to make it work as an UPSERT. The code
+        /// differs according to the RDBMS implementation, but for most RDBMS
+        /// it follows the INSERT statement, so this is a quick working solution.
         /// </summary>
-        /// <param name="prefix">The namespace prefix.</param>
-        /// <param name="uri">The namespace URI corresponding to
-        /// <paramref name="prefix" />.</param>
-        /// <exception cref="ArgumentNullException">prefix or uri</exception>
-        public void AddNamespace(string prefix, string uri)
+        /// <param name="fields">The names of all the inserted fields,
+        /// assuming that the corresponding parameter names are equal but
+        /// prefixed by <c>@</c>.</param>
+        /// <returns>SQL.</returns>
+        protected override string GetUpsertTailSql(params string[] fields)
         {
-            if (prefix == null) throw new ArgumentNullException(nameof(prefix));
-            if (uri == null) throw new ArgumentNullException(nameof(uri));
-
-            EnsureConnected();
-
-            try
+            // https://www.techbeamers.com/mysql-upsert/
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("ON DUPLICATE KEY UPDATE");
+            int n = 0;
+            foreach (string field in fields)
             {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO namespace_lookup(id, uri) " +
-                    "VALUES(@id, @uri)\n" +
-                    "ON DUPLICATE KEY UPDATE uri=@uri;";
-                AddParameter(cmd, "@id", DbType.String, prefix);
-                AddParameter(cmd, "@uri", DbType.String, uri);
-
-                cmd.ExecuteNonQuery();
+                if (++n > 1) sb.Append(", ");
+                sb.Append(field).Append("=@").Append(field);
             }
-            finally
-            {
-                Disconnect();
-            }
+            return sb.ToString();
         }
     }
 }

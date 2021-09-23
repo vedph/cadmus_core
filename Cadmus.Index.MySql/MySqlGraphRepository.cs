@@ -99,20 +99,19 @@ namespace Cadmus.Index.MySql
         /// <summary>
         /// Gets the SQL code for a regular expression clause.
         /// </summary>
-        /// <param name="fieldName">Name of the field.</param>
-        /// <param name="pattern">The regular expression pattern.</param>
-        /// <returns>SQL.</returns>
-        /// <exception cref="ArgumentNullException">fieldName or pattern</exception>
-        protected override string GetRegexClauseSql(string fieldName,
+        /// <param name="text">The text to be compared against the regular
+        /// expression pattern. This can be a field name or a literal between
+        /// quotes.</param>
+        /// <param name="pattern">The regular expression pattern. This can be
+        /// a field name or a literal between quotes.</param>
+        /// <exception cref="ArgumentNullException">text or pattern</exception>
+        protected override string GetRegexClauseSql(string text,
             string pattern)
         {
-            if (fieldName == null)
-                throw new ArgumentNullException(nameof(fieldName));
-            if (pattern == null)
-                throw new ArgumentNullException(nameof(pattern));
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (pattern == null) throw new ArgumentNullException(nameof(pattern));
 
-            return $"{fieldName} " +
-                $"REGEXP('{SqlHelper.SqlEncode(pattern, false, true, true)}')";
+            return $"{text} REGEXP({pattern})";
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
-﻿using Fusi.Tools;
+﻿using Cadmus.Core;
+using Fusi.Tools;
 using Fusi.Tools.Data;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -208,6 +210,27 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="id">The mapping identifier.</param>
         void DeleteMapping(int id);
+
+        /// <summary>
+        /// Finds all the mappings applicable to the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="parentId">The parent mapping identifier, or 0 to
+        /// get root mappings.</param>
+        /// <returns>Mappings.</returns>
+        IList<NodeMapping> FindMappingsFor(IItem item, int parentId);
+
+        /// <summary>
+        /// Finds all the mappings applicable to the specified part's pin.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="part">The part.</param>
+        /// <param name="pin">The pin name.</param>
+        /// <param name="parentId">The parent mapping identifier, or 0 to
+        /// get root mappings.</param>
+        /// <returns>Mappings.</returns>
+        IList<NodeMapping> FindMappingsFor(IItem item, IPart part, string pin,
+            int parentId);
 
         /// <summary>
         /// Updates the classes for all the nodes belonging to any class.

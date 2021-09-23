@@ -58,5 +58,14 @@ namespace Cadmus.Index.Graph
         /// Gets or sets the name of the pin to match.
         /// </summary>
         public string PinName { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeMappingFilter"/>
+        /// class.
+        /// </summary>
+        public NodeMappingFilter()
+        {
+            SourceTypes = new List<NodeSourceType>();
+        }
     }
 }

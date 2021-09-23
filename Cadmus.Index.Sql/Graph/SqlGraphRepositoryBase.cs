@@ -1,4 +1,5 @@
-﻿using Cadmus.Index.Graph;
+﻿using Cadmus.Core;
+using Cadmus.Index.Graph;
 using Fusi.Tools;
 using Fusi.Tools.Data;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,10 +46,12 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Gets the SQL code for a regular expression clause.
         /// </summary>
-        /// <param name="fieldName">Name of the field.</param>
-        /// <param name="pattern">The regular expression pattern.</param>
-        protected abstract string GetRegexClauseSql(string fieldName,
-            string pattern);
+        /// <param name="text">The text to be compared against the regular
+        /// expression pattern. This can be a field name or a literal between
+        /// quotes.</param>
+        /// <param name="pattern">The regular expression pattern. This can be
+        /// a field name or a literal between quotes.</param>
+        protected abstract string GetRegexClauseSql(string text, string pattern);
 
         /// <summary>
         /// Gets the upsert tail SQL. This is the SQL code appended to a
@@ -1174,9 +1178,10 @@ namespace Cadmus.Index.Sql.Graph
             return builder;
         }
 
-        private static NodeMapping ReadNodeMapping(DbDataReader reader)
+        private static NodeMapping ReadNodeMapping(DbDataReader reader,
+            bool noDescription = false)
         {
-            return new NodeMapping
+            NodeMapping mapping = new NodeMapping
             {
                 Id = reader.GetInt32(0),
                 ParentId = reader.GetValue<int>(1),
@@ -1196,9 +1201,12 @@ namespace Cadmus.Index.Sql.Graph
                 TripleP = reader.GetValue<string>(15),
                 TripleO = reader.GetValue<string>(16),
                 TripleOPrefix = reader.GetValue<string>(17),
-                IsReversed = reader.GetBoolean(18),
-                Description = reader.GetValue<string>(19)
+                IsReversed = reader.GetBoolean(18)
             };
+            if (!noDescription)
+                mapping.Description = reader.GetValue<string>(19);
+
+            return mapping;
         }
 
         /// <summary>
@@ -1367,6 +1375,133 @@ namespace Cadmus.Index.Sql.Graph
             {
                 Disconnect();
             }
+        }
+
+        private SqlSelectBuilder GetBuilderForMappings(IItem item, IPart part,
+            string pin, int parentId)
+        {
+            SqlSelectBuilder builder = new SqlSelectBuilder(
+                () => GetCommand(Connection));
+
+            builder.AddWhat("id, parent_id, source_type, name, " +
+                "ordinal, facet_filter, group_filter, flags_filter, " +
+                "title_filter, part_type, part_role, pin_name, prefix, " +
+                "label_template, triple_s, triple_p, triple_o, " +
+                "triple_o_prefix, reversed")
+                .AddFrom("node_mapping")
+                .AddWhere("parent_id=@parent_id")
+                .AddOrder("source_type, ordinal, part_type, part_role, pin_name, name");
+
+            // source_type IN(1,2,3) for items or =4 for parts
+            if (part == null)
+            {
+                builder.AddWhere("AND source_type IN(" +
+                    string.Join(", ", new[]
+                    {
+                            (int)NodeSourceType.Item,
+                            (int)NodeSourceType.ItemFacet,
+                            (int)NodeSourceType.ItemGroup
+                    }) + ")");
+            }
+            else
+            {
+                builder.AddWhere("AND source_type=" + (int)NodeSourceType.Pin);
+            }
+
+            // facet
+            builder.AddWhere("AND (facet_filter IS NULL OR facet_filter=@facet")
+                   .AddParameter("@facet", DbType.String, item.FacetId);
+
+            // flags
+            builder.AddWhere("AND (flags_filter=0 OR (flags_filter & @flags)=@flags")
+                   .AddParameter("@flags", DbType.Int32, item.Flags);
+
+            // group
+            builder.AddWhere("AND (group_filter IS NULL OR " +
+                GetRegexClauseSql("@group", "group_filter"))
+                .AddParameter("@group", DbType.String, item.GroupId ?? "");
+
+            // title
+            builder.AddWhere("AND (title_filter IS NULL OR " +
+                GetRegexClauseSql("@title", "title_filter"))
+                .AddParameter("@title", DbType.String, item.Title);
+
+            if (part != null)
+            {
+                // part_type
+                builder.AddWhere("AND (part_type IS NULL OR part_type=@part_type")
+                       .AddParameter("@part_type", DbType.String, part.TypeId);
+
+                // part_role
+                builder.AddWhere("AND (part_role IS NULL OR part_role=@part_role")
+                       .AddParameter("@part_role", DbType.String, part.RoleId ?? "");
+
+                // pin_name
+                builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name")
+                       .AddParameter("@pin_name", DbType.String, pin ?? "");
+            }
+
+            return builder;
+        }
+
+        private IList<NodeMapping> FindMappings(IItem item, IPart part, string pin,
+            int parentId)
+        {
+            try
+            {
+                EnsureConnected();
+                SqlSelectBuilder builder = GetBuilderForMappings(item, part,
+                    pin, parentId);
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build();
+
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    List<NodeMapping> mappings = new List<NodeMapping>();
+                    while (reader.Read())
+                        mappings.Add(ReadNodeMapping(reader, true));
+                    return mappings;
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Finds all the mappings applicable to the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="parentId">The parent mapping identifier, or 0 to
+        /// get root mappings.</param>
+        /// <returns>Mappings.</returns>
+        /// <exception cref="ArgumentNullException">item</exception>
+        public IList<NodeMapping> FindMappingsFor(IItem item, int parentId = 0)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            return FindMappings(item, null, null, parentId);
+        }
+
+        /// <summary>
+        /// Finds all the mappings applicable to the specified part's pin.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="part">The part.</param>
+        /// <param name="pin">The pin name.</param>
+        /// <param name="parentId">The parent mapping identifier, or 0 to
+        /// get root mappings.</param>
+        /// <returns>Mappings.</returns>
+        /// <exception cref="ArgumentNullException">item or part or pin</exception>
+        public IList<NodeMapping> FindMappingsFor(IItem item, IPart part, string pin,
+            int parentId = 0)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (part == null) throw new ArgumentNullException(nameof(part));
+            if (pin == null) throw new ArgumentNullException(nameof(pin));
+
+            return FindMappings(item, part, pin, parentId);
         }
         #endregion
 

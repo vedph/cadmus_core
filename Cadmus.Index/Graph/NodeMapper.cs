@@ -23,41 +23,5 @@ namespace Cadmus.Index.Graph
             _repository = repository
                 ?? throw new ArgumentNullException(nameof(repository));
         }
-
-        /// <summary>
-        /// Gets all the root mappings which match the specified item or
-        /// item's part's pin.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <param name="part">The part. Null when mapping an item.</param>
-        /// <param name="pinName">Name of the pin. Null when mapping an item.</param>
-        /// <returns>Matching root mappings.</returns>
-        public IList<NodeMapping> GetRootMappings(IItem item, IPart part = null,
-            string pinName = null)
-        {
-            if (item == null) throw new ArgumentNullException(nameof(item));
-
-            NodeMappingFilter filter = new NodeMappingFilter();
-
-            if (part == null)
-            {
-                // item
-
-            }
-            else
-            {
-                // TODO pin
-            }
-
-            DataPage<NodeMapping> page = _repository.GetNodeMappings(filter);
-
-            return page.Items.OrderBy(i => i.SourceType)
-                .ThenBy(i => i.Ordinal)
-                .ThenBy(i => i.PartType)
-                .ThenBy(i => i.PartRole)
-                .ThenBy(i => i.PinName)
-                .ThenBy(i => i.Name)
-                .ToList();
-        }
     }
 }

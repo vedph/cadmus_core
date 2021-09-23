@@ -1,5 +1,4 @@
-﻿using Cadmus.Core;
-using Cadmus.Index.Sql;
+﻿using Cadmus.Index.Sql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using Fusi.Tools.Config;

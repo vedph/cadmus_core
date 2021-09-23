@@ -33,6 +33,7 @@ namespace Cadmus.Index.Sql.Graph
         {
         }
 
+        #region Helpers
         /// <summary>
         /// Gets the paging SQL for the specified options.
         /// </summary>
@@ -64,6 +65,7 @@ namespace Cadmus.Index.Sql.Graph
         /// does-sql-server-offer-anything-like-mysqls-on-duplicate-key-update
         /// </remarks>
         protected abstract string GetUpsertTailSql(params string[] fields);
+        #endregion
 
         #region Transaction        
         /// <summary>
@@ -1368,6 +1370,7 @@ namespace Cadmus.Index.Sql.Graph
         }
         #endregion
 
+        #region Node Classes
         /// <summary>
         /// Updates the classes for all the nodes belonging to any class.
         /// </summary>
@@ -1435,5 +1438,6 @@ namespace Cadmus.Index.Sql.Graph
                 Disconnect();
             }
         }
+        #endregion
     }
 }

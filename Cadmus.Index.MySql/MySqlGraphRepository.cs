@@ -15,6 +15,7 @@ namespace Cadmus.Index.MySql
     /// MySql graph repository.
     /// </summary>
     /// <seealso cref="SqlGraphRepositoryBase" />
+    [Tag("graph-repository.mysql")]
     public sealed class MySqlGraphRepository : SqlGraphRepositoryBase,
         IGraphRepository, IConfigurable<SqlOptions>
     {

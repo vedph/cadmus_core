@@ -49,11 +49,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Sql", "Cadmus.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Sql.Test", "Cadmus.Index.Sql.Test\Cadmus.Index.Sql.Test.csproj", "{E7EE396F-F3A5-46B5-8387-C2E9D2D265E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.MySql", "Cadmus.Index.MySql\Cadmus.Index.MySql.csproj", "{27929C4F-F83F-48FC-B5C0-F0E5CE7AA7B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.MySql", "Cadmus.Index.MySql\Cadmus.Index.MySql.csproj", "{27929C4F-F83F-48FC-B5C0-F0E5CE7AA7B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.MsSql", "Cadmus.Index.MsSql\Cadmus.Index.MsSql.csproj", "{9BEA41B9-D04F-4ADF-8809-3B95EE1D7AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.MsSql", "Cadmus.Index.MsSql\Cadmus.Index.MsSql.csproj", "{9BEA41B9-D04F-4ADF-8809-3B95EE1D7AB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.MySql.Test", "Cadmus.Index.MySql.Test\Cadmus.Index.MySql.Test.csproj", "{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.MySql.Test", "Cadmus.Index.MySql.Test\Cadmus.Index.MySql.Test.csproj", "{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.Test", "Cadmus.Index.Test\Cadmus.Index.Test.csproj", "{A64ECA67-E338-406D-ABA3-D513F8298EAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +151,10 @@ Global
 		{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

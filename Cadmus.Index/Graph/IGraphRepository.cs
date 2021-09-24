@@ -218,7 +218,7 @@ namespace Cadmus.Index.Graph
         /// <param name="parentId">The parent mapping identifier, or 0 to
         /// get root mappings.</param>
         /// <returns>Mappings.</returns>
-        IList<NodeMapping> FindMappingsFor(IItem item, int parentId);
+        IList<NodeMapping> FindMappingsFor(IItem item, int parentId = 0);
 
         /// <summary>
         /// Finds all the mappings applicable to the specified part's pin.
@@ -230,7 +230,7 @@ namespace Cadmus.Index.Graph
         /// get root mappings.</param>
         /// <returns>Mappings.</returns>
         IList<NodeMapping> FindMappingsFor(IItem item, IPart part, string pin,
-            int parentId);
+            int parentId = 0);
 
         /// <summary>
         /// Updates the classes for all the nodes belonging to any class.

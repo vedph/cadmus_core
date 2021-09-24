@@ -1392,15 +1392,22 @@ namespace Cadmus.Index.Sql.Graph
                 .AddWhere("parent_id=@parent_id")
                 .AddOrder("source_type, ordinal, part_type, part_role, pin_name, name");
 
+            // parent_id
+            if (parentId > 0)
+            {
+                builder.AddWhere("parent_id=@parent_id")
+                       .AddParameter("@parent_id", DbType.Int32, parentId);
+            }
+
             // source_type IN(1,2,3) for items or =4 for parts
             if (part == null)
             {
                 builder.AddWhere("AND source_type IN(" +
                     string.Join(", ", new[]
                     {
-                            (int)NodeSourceType.Item,
-                            (int)NodeSourceType.ItemFacet,
-                            (int)NodeSourceType.ItemGroup
+                        (int)NodeSourceType.Item,
+                        (int)NodeSourceType.ItemFacet,
+                        (int)NodeSourceType.ItemGroup
                     }) + ")");
             }
             else

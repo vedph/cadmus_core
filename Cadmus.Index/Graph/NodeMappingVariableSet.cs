@@ -97,9 +97,12 @@ namespace Cadmus.Index.Graph
     /// </remarks>
     public sealed class NodeMappingVariableSet
     {
+        private static readonly Regex _plhRegex
+            = new Regex(@"\{(?<id>(?<n>[^:\}]+)(?::(?<a>[0-9]+))?)\}");
+        private static readonly Regex _mcrRegex
+            = new Regex(@"\$(?<id>(?<n>[^:]+)(?::(?<a>[0-9]+))?)");
+
         private readonly Dictionary<string, NodeMappingVariable> _vars;
-        private readonly Regex _plhRegex;
-        private readonly Regex _mcrRegex;
 
         /// <summary>
         /// Gets the variables count.
@@ -113,8 +116,6 @@ namespace Cadmus.Index.Graph
         public NodeMappingVariableSet()
         {
             _vars = new Dictionary<string, NodeMappingVariable>();
-            _plhRegex = new Regex(@"\{(?<id>(?<n>[^:\}]+)(?::(?<a>[0-9]+))?)\}");
-            _mcrRegex = new Regex(@"\$(?<id>(?<n>[^:]+)(?::(?<a>[0-9]+))?)");
         }
 
         private void LoadVariableFromMatch(Match m)
@@ -218,11 +219,11 @@ namespace Cadmus.Index.Graph
         /// Sets the values of all the variables in this set from the specified
         /// data source.
         /// </summary>
-        /// <param name="source">The data source.</param>
+        /// <param name="state">The mapper state to use as a data source.</param>
         /// <exception cref="ArgumentNullException">source</exception>
-        public void SetValues(NodeMappingVariableSource source)
+        public void SetValues(NodeMapperState state)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (state == null) throw new ArgumentNullException(nameof(state));
 
             // extract title and eventually prefix/uid from title
             Tuple<string, string, string> tpi;
@@ -233,50 +234,50 @@ namespace Cadmus.Index.Graph
                 switch (v.Name)
                 {
                     case "title":
-                        tpi = NodeMapper.ParseItemTitle(source.Item.Title);
+                        tpi = NodeMapper.ParseItemTitle(state.Item.Title);
                         v.Value = tpi.Item1;
                         break;
                     case "title-prefix":
-                        tpi = NodeMapper.ParseItemTitle(source.Item.Title);
+                        tpi = NodeMapper.ParseItemTitle(state.Item.Title);
                         v.Value = tpi.Item2;
                         break;
                     case "title-uid":
-                        tpi = NodeMapper.ParseItemTitle(source.Item.Title);
+                        tpi = NodeMapper.ParseItemTitle(state.Item.Title);
                         v.Value = tpi.Item3;
                         break;
                     case "facet-id":
-                        v.Value = source.Item.FacetId;
+                        v.Value = state.Item.FacetId;
                         break;
                     case "group-id":
                         // :N = component ordinal (1-N from left to right)
                         if (v.Argument > 0
-                            && source.Item.GroupId?.IndexOf('/') > -1)
+                            && state.Item.GroupId?.IndexOf('/') > -1)
                         {
-                            string[] cc = source.Item.GroupId.Split(new[] { "/" },
+                            string[] cc = state.Item.GroupId.Split(new[] { "/" },
                                 StringSplitOptions.RemoveEmptyEntries);
                             // no value if N is out of range
                             if (v.Argument <= cc.Length)
                                 v.Value = cc[v.Argument - 1];
                         }
-                        else v.Value = source.Item.GroupId;
+                        else v.Value = state.Item.GroupId;
                         break;
                     case "dsc":
-                        v.Value = source.Item.Description;
+                        v.Value = state.Item.Description;
                         break;
                     case "pin-name":
                         // pin's name without EID suffixes
-                        if (string.IsNullOrEmpty(source.PinName)) break;
-                        pinComps = NodeMapper.ParsePinName(source.PinName);
+                        if (string.IsNullOrEmpty(state.PinName)) break;
+                        pinComps = NodeMapper.ParsePinName(state.PinName);
                         v.Value = pinComps[0];
                         break;
                     case "pin-value":
                     case "pin-uid":
-                        v.Value = source.PinValue;
+                        v.Value = state.PinValue;
                         break;
                     case "pin-eid":
                         // :N = component's ordinal (1-N from left to right)
-                        if (string.IsNullOrEmpty(source.PinName)) break;
-                        pinComps = NodeMapper.ParsePinName(source.PinName);
+                        if (string.IsNullOrEmpty(state.PinName)) break;
+                        pinComps = NodeMapper.ParsePinName(state.PinName);
                         if (pinComps.Length == 1 || v.Argument + 1 >= pinComps.Length)
                             break;
                         v.Value = pinComps[v.Argument];
@@ -286,31 +287,73 @@ namespace Cadmus.Index.Graph
                     case "ancestor":
                         // :N = ancestor number (1=parent, 2=parent-of-parent...)
                         int upCount = v.Argument == 0 ? 1 : v.Argument,
-                            i = source.MappingPath.Count - 1 - upCount;
+                            i = state.MappingPath.Count - 1 - upCount;
                         if (i > -1)
                         {
-                            int mappingId = source.MappingPath[i];
-                            if (source.MappedUris.ContainsKey(mappingId))
-                                v.Value = source.MappedUris[mappingId];
+                            int mappingId = state.MappingPath[i];
+                            if (state.MappedUris.ContainsKey(mappingId))
+                                v.Value = state.MappedUris[mappingId];
                         }
                         break;
                     case "item":
-                        if (source.MappedUris.ContainsKey(source.ItemMappingId))
-                            v.Value = source.MappedUris[source.ItemMappingId];
+                        if (state.MappedUris.ContainsKey(state.ItemMappingId))
+                            v.Value = state.MappedUris[state.ItemMappingId];
                         break;
                     case "group":
                         // :N = group ID (1-N from left to right), 0=non composite
                         // group ID
                         int j = v.Argument > 0 ? v.Argument - 1 : 0;
-                        if (j < source.GroupUids.Count)
-                            v.Value = source.GroupUids[j];
+                        if (j < state.GroupUids.Count)
+                            v.Value = state.GroupUids[j];
                         break;
                     case "facet":
-                        if (source.MappedUris.ContainsKey(source.FacetMappingId))
-                            v.Value = source.MappedUris[source.FacetMappingId];
+                        if (state.MappedUris.ContainsKey(state.FacetMappingId))
+                            v.Value = state.MappedUris[state.FacetMappingId];
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Resolves the placeholders in the specified template. All the
+        /// placeholders which cannot be resolved are removed from the template.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        /// <returns>Template with resolved placeholders.</returns>
+        /// <exception cref="ArgumentNullException">template</exception>
+        public string ResolvePlaceholders(string template)
+        {
+            if (template == null)
+                throw new ArgumentNullException(nameof(template));
+
+            return _plhRegex.Replace(template, (Match m) =>
+            {
+                return _vars.ContainsKey(m.Groups["id"].Value) ?
+                    _vars[m.Groups["id"].Value].Value : "";
+            });
+        }
+
+        /// <summary>
+        /// Resolves the macro for the specified value.
+        /// </summary>
+        /// <param name="value">The value (a macro starting with <c>$</c>,
+        /// or a literal).</param>
+        /// <returns>Value or resolved macro or null if macro cannot be resolved.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">template</exception>
+        public string ResolveMacro(string value)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            if (!value.StartsWith("$", StringComparison.Ordinal)
+                || value.Length < 2)
+            {
+                return value;
+            }
+
+            string id = value.Substring(1);
+            return _vars.ContainsKey(id) ? _vars[id].Value : null;
         }
     }
 }

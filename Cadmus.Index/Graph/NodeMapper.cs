@@ -11,16 +11,6 @@ namespace Cadmus.Index.Graph
     /// </summary>
     public sealed class NodeMapper
     {
-        private class NodeMappingInput
-        {
-            public IList<Node> Nodes { get; set; }
-            public IItem Item { get; set; }
-            public int GroupOrdinal { get; set; }
-            public IPart Part { get; set; }
-            public string PinName { get; set; }
-            public string PinValue { get; set; }
-        }
-
         private readonly IGraphRepository _repository;
 
         /// <summary>
@@ -80,56 +70,113 @@ namespace Cadmus.Index.Graph
             return results;
         }
 
-        private void ApplyMapping(NodeMapping mapping, NodeMappingInput input)
+        /// <summary>
+        /// Applies the specified mapping and all its descendants.
+        /// </summary>
+        /// <param name="mapping">The mapping.</param>
+        /// <param name="state">The state.</param>
+        private void ApplyMapping(NodeMapping mapping, NodeMapperState state)
         {
-            // build the SID
-            string sid = SidBuilder.Build(mapping.SourceType,
-                input.Part?.Id ?? input.Item.Id,
-                input.GroupOrdinal,
-                input.Part?.RoleId,
-                input.PinName, input.PinValue);
+            Logger?.LogInformation($"Mapping #{mapping.Id}: {mapping.Name}");
 
+            // build the SID for this mapping
+            state.Sid = SidBuilder.Build(mapping.SourceType,
+                state.Part?.Id ?? state.Item.Id,
+                state.GroupOrdinal,
+                state.Part?.RoleId,
+                state.PinName, state.PinValue);
+            Logger?.LogInformation("SID " + state.Sid);
+
+            // calculate variables
+            NodeMappingVariableSet vset = NodeMappingVariableSet.LoadFrom(mapping);
+            vset.SetValues(state);
+
+            // generate node
+            Node node = new Node();
+
+            // build the node's label following label_template
             // TODO
+
+            // build the UID prefixes from prefix and triple_o_prefix
+            // TODO
+
+            // generate node's UID using prefix, label, and an eventual suffix
+            // TODO
+
+            // add node to set
+            state.Nodes.Add(node);
+
+            // if there is a triple, collect SPO from triple_s, triple_p,
+            // triple_o (triple_o_prefix) and reversed, then generate it
+            // together with its O's node unless it's a literal or already exists
+
+            // children mappings
+            IList<NodeMapping> children = state.Part == null
+                ? _repository.FindMappingsFor(state.Item, mapping.Id)
+                : _repository.FindMappingsFor(state.Item, state.Part,
+                    state.PinName, mapping.Id);
+            // update state
+            state.MappingPath.Add(mapping.Id);
+
+            foreach (var child in children) ApplyMapping(child, state);
+
+            state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
         }
 
-        private void Map(IItem item, IPart part = null, string pinName = null,
-            string pinValue = null)
+        /// <summary>
+        /// The entry point for applying all the matching mappings to a source.
+        /// </summary>
+        /// <param name="state">The initial state.</param>
+        private void Map(NodeMapperState state)
         {
             // get all the matching root mappings
-            IList<NodeMapping> mappings = _repository.FindMappingsFor(item);
+            IList<NodeMapping> mappings = state.Part == null
+                ? _repository.FindMappingsFor(state.Item)
+                : _repository.FindMappingsFor(state.Item, state.Part, state.PinName);
             Logger?.LogInformation("Rules matched: " + mappings.Count);
 
             // apply each of them
-            List<Node> nodes = new List<Node>();
-
             foreach (NodeMapping mapping in mappings)
             {
                 // if we're targeting an item, and the item has a composite
                 // group ID, apply mapping to each group's component,
                 // from top to bottom (=left to right)
                 if (mapping.SourceType == NodeSourceType.ItemGroup
-                    && part == null
-                    && item.GroupId?.IndexOf('/') > -1)
+                    && state.Part == null
+                    && state.Item.GroupId?.IndexOf('/') > -1)
                 {
-                    Logger?.LogInformation("Composite group ID " + item.GroupId);
-                    string[] gcc = item.GroupId.Split(new[] { '/' },
+                    Logger?.LogInformation("Composite group ID " +
+                        state.Item.GroupId);
+                    string[] gcc = state.Item.GroupId.Split(new[] { '/' },
                         StringSplitOptions.RemoveEmptyEntries);
 
-                    int n = 0;
+                    state.GroupOrdinal = 0;
                     foreach (string gc in gcc)
                     {
                         Logger?.LogInformation(
                             "Mapping item for group component " + gc);
-                        item.GroupId = gc;
-                        ApplyMapping(mapping, nodes, item, ++n, part,
-                            pinName, pinValue);
+                        state.Item.GroupId = gc;
+                        state.GroupOrdinal++;
+                        ApplyMapping(mapping, state);
                     }
                 }
                 // else just apply the mapping once
-                else ApplyMapping(mapping, nodes, item, 0, part,
-                    pinName, pinValue);
+                else ApplyMapping(mapping, state);
 
-                // TODO children
+                // children mappings
+                IList<NodeMapping> children = state.Part == null
+                    ? _repository.FindMappingsFor(state.Item, mapping.Id)
+                    : _repository.FindMappingsFor(state.Item, state.Part,
+                        state.PinName, mapping.Id);
+                // update state
+                state.GroupOrdinal = 0;
+                state.MappingPath.Add(mapping.Id);
+
+                foreach (var child in children)
+                {
+                    ApplyMapping(child, state);
+                }
+                state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
             }
         }
 
@@ -143,7 +190,36 @@ namespace Cadmus.Index.Graph
             if (item == null) throw new ArgumentNullException(nameof(item));
 
             Logger?.LogInformation("Mapping " + item);
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = item
+            };
+            Map(state);
+        }
 
+        /// <summary>
+        /// Maps the specified part's pin.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="part">The part.</param>
+        /// <param name="pinName">Name of the pin.</param>
+        /// <param name="pinValue">The pin value.</param>
+        /// <exception cref="ArgumentNullException">nameof(item)</exception>
+        public void MapPin(IItem item, IPart part, string pinName, string pinValue)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            Logger?.LogInformation($"Mapping {part.Id}/{pinName}=" +
+                (pinValue.Length > 80? pinValue.Substring(0, 80) + "..." : pinValue));
+
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = item,
+                Part = part,
+                PinName = pinName,
+                PinValue = pinValue
+            };
+            Map(state);
         }
     }
 }

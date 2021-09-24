@@ -1,19 +1,30 @@
 ﻿using Cadmus.Core;
-using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// The source data for setting the value of <see cref="NodeMappingVariable"/>'s.
+    /// The state of a <see cref="NodeMapper"/>. This also serves as a data
+    /// source for setting the value of <see cref="NodeMappingVariable"/>'s.
     /// </summary>
-    public class NodeMappingVariableSource
+    public class NodeMapperState
     {
+        /// <summary>
+        /// Gets or sets the current source ID.
+        /// </summary>
+        public string Sid { get; set; }
+
         /// <summary>
         /// Gets or sets the item. For a part, this is the container item.
         /// </summary>
         public IItem Item { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ordinal number of the item's group ID being mapped,
+        /// used when mapping an item's group with a composite ID.
+        /// </summary>
+        public int GroupOrdinal { get; set; }
 
         /// <summary>
         /// Gets or sets the part.
@@ -48,17 +59,17 @@ namespace Cadmus.Index.Graph
         public Dictionary<int, string> MappedUris { get; }
 
         /// <summary>
-        /// Gets or sets the mapping identifier for the node mapping
-        /// corresponding to the current item (=the item being mapped, or the
-        /// item including the parts being mapped).
+        /// Gets the mapping identifier for the node mapping corresponding to
+        /// the current item (=the item being mapped, or the item including
+        /// the parts being mapped).
         /// </summary>
-        public int ItemMappingId { get; set; }
+        public int ItemMappingId { get; }
 
         /// <summary>
-        /// Gets or sets the mapping identifier for the node mapping corresponding
+        /// Gets the mapping identifier for the node mapping corresponding
         /// to the current item's facet.
         /// </summary>
-        public int FacetMappingId { get; set; }
+        public int FacetMappingId { get; }
 
         /// <summary>
         /// Gets the UIDs corresponding to the node corresponding to each group
@@ -68,21 +79,20 @@ namespace Cadmus.Index.Graph
         public IList<string> GroupUids { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NodeMappingVariableSource" />
+        /// Gets the nodes generated in the current mapping session.
+        /// </summary>
+        public IList<Node> Nodes { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeMapperState" />
         /// class.
         /// </summary>
-        /// <param name="mappedUris">The mapped URIs.</param>
-        /// <param name="mappingPath">The mapping path.</param>
-        /// <exception cref="ArgumentNullException">mappedUris or mappingPath
-        /// </exception>
-        public NodeMappingVariableSource(Dictionary<int, string> mappedUris,
-            IList<int> mappingPath)
+        public NodeMapperState()
         {
-            MappedUris = mappedUris
-                ?? throw new ArgumentNullException(nameof(mappedUris));
-            MappingPath = mappingPath
-                ?? throw new ArgumentNullException(nameof(mappingPath));
+            MappedUris = new Dictionary<int, string>();
+            MappingPath = new List<int>();
             GroupUids = new List<string>();
+            Nodes = new List<Node>();
         }
 
         /// <summary>
@@ -93,11 +103,16 @@ namespace Cadmus.Index.Graph
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(Sid);
+
+            sb.Append(": ");
             if (Item != null) sb.Append('I');
             if (Part != null) sb.Append('P');
             if (!string.IsNullOrEmpty(PinName)) sb.Append('N');
             if (PinValue != null) sb.Append('V');
+
+            sb.Append(" - ").Append(Nodes.Count);
+
             return sb.ToString();
         }
     }

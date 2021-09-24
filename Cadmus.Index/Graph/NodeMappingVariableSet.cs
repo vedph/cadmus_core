@@ -1,5 +1,4 @@
-﻿using Cadmus.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -227,6 +226,7 @@ namespace Cadmus.Index.Graph
 
             // extract title and eventually prefix/uid from title
             Tuple<string, string, string> tpi;
+            string[] pinComps;
 
             foreach (NodeMappingVariable v in _vars.Values)
             {
@@ -264,25 +264,50 @@ namespace Cadmus.Index.Graph
                         v.Value = source.Item.Description;
                         break;
                     case "pin-name":
-                        v.Value = source.PinName;
+                        // pin's name without EID suffixes
+                        if (string.IsNullOrEmpty(source.PinName)) break;
+                        pinComps = NodeMapper.ParsePinName(source.PinName);
+                        v.Value = pinComps[0];
                         break;
                     case "pin-value":
+                    case "pin-uid":
                         v.Value = source.PinValue;
                         break;
                     case "pin-eid":
+                        // :N = component's ordinal (1-N from left to right)
+                        if (string.IsNullOrEmpty(source.PinName)) break;
+                        pinComps = NodeMapper.ParsePinName(source.PinName);
+                        if (pinComps.Length == 1 || v.Argument + 1 >= pinComps.Length)
+                            break;
+                        v.Value = pinComps[v.Argument];
                         break;
                     // macros
                     case "parent":
-                        break;
                     case "ancestor":
+                        // :N = ancestor number (1=parent, 2=parent-of-parent...)
+                        int upCount = v.Argument == 0 ? 1 : v.Argument,
+                            i = source.MappingPath.Count - 1 - upCount;
+                        if (i > -1)
+                        {
+                            int mappingId = source.MappingPath[i];
+                            if (source.MappedUris.ContainsKey(mappingId))
+                                v.Value = source.MappedUris[mappingId];
+                        }
                         break;
                     case "item":
+                        if (source.MappedUris.ContainsKey(source.ItemMappingId))
+                            v.Value = source.MappedUris[source.ItemMappingId];
                         break;
                     case "group":
+                        // :N = group ID (1-N from left to right), 0=non composite
+                        // group ID
+                        int j = v.Argument > 0 ? v.Argument - 1 : 0;
+                        if (j < source.GroupUids.Count)
+                            v.Value = source.GroupUids[j];
                         break;
                     case "facet":
-                        break;
-                    case "pin-uid":
+                        if (source.MappedUris.ContainsKey(source.FacetMappingId))
+                            v.Value = source.MappedUris[source.FacetMappingId];
                         break;
                 }
             }

@@ -1,9 +1,7 @@
 ﻿using Cadmus.Core;
-using Fusi.Tools.Data;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Cadmus.Index.Graph
@@ -11,8 +9,18 @@ namespace Cadmus.Index.Graph
     /// <summary>
     /// Nodes mapper. This maps items or part's pins to graph nodes.
     /// </summary>
-    public class NodeMapper
+    public sealed class NodeMapper
     {
+        private class NodeMappingInput
+        {
+            public IList<Node> Nodes { get; set; }
+            public IItem Item { get; set; }
+            public int GroupOrdinal { get; set; }
+            public IPart Part { get; set; }
+            public string PinName { get; set; }
+            public string PinValue { get; set; }
+        }
+
         private readonly IGraphRepository _repository;
 
         /// <summary>
@@ -50,14 +58,36 @@ namespace Cadmus.Index.Graph
                 : Tuple.Create(m.Groups["t"].Value, (string)null, m.Groups["v"].Value);
         }
 
-        private void ApplyMapping(NodeMapping mapping, IList<Node> nodes,
-            IItem item, IPart part = null, string pinName = null,
-            string pinValue = null)
+        /// <summary>
+        /// Parses the name of the pin for EID suffixes.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>An array of strings where 1=name without EID suffix, 2-N=the
+        /// EID suffix(es) without their initial <c>@</c> prefix.</returns>
+        /// <exception cref="ArgumentNullException">name</exception>
+        public static string[] ParsePinName(string name)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (name.IndexOf('@') == -1) return new[] { name };
+
+            Match m = Regex.Match(name, "^(?<n>[^@]+)(?:@(?<e>[^@]+))*$");
+            if (!m.Success) return new[] { name };
+
+            string[] results = new string[1 + m.Groups["e"].Captures.Count];
+            results[0] = m.Groups["n"].Value;
+            for (int i = 0; i < m.Groups["e"].Captures.Count; i++)
+                results[1 + i] = m.Groups["e"].Captures[i].Value;
+            return results;
+        }
+
+        private void ApplyMapping(NodeMapping mapping, NodeMappingInput input)
         {
             // build the SID
             string sid = SidBuilder.Build(mapping.SourceType,
-                part != null? part.Id : item.Id, part?.RoleId,
-                pinName, pinValue);
+                input.Part?.Id ?? input.Item.Id,
+                input.GroupOrdinal,
+                input.Part?.RoleId,
+                input.PinName, input.PinValue);
 
             // TODO
         }
@@ -85,16 +115,19 @@ namespace Cadmus.Index.Graph
                     string[] gcc = item.GroupId.Split(new[] { '/' },
                         StringSplitOptions.RemoveEmptyEntries);
 
+                    int n = 0;
                     foreach (string gc in gcc)
                     {
                         Logger?.LogInformation(
                             "Mapping item for group component " + gc);
                         item.GroupId = gc;
-                        ApplyMapping(mapping, nodes, item, part, pinName, pinValue);
+                        ApplyMapping(mapping, nodes, item, ++n, part,
+                            pinName, pinValue);
                     }
                 }
                 // else just apply the mapping once
-                else ApplyMapping(mapping, nodes, item, part, pinName, pinValue);
+                else ApplyMapping(mapping, nodes, item, 0, part,
+                    pinName, pinValue);
 
                 // TODO children
             }

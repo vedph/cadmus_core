@@ -31,22 +31,58 @@ namespace Cadmus.Index.Graph
         public string PinValue { get; set; }
 
         /// <summary>
-        /// Gets the mapped uris.
+        /// Gets or sets the "mappings path", i.e. the list of all the mappings
+        /// IDs starting from the root mapping and walking down along its
+        /// descendants, up to the current mapping. This is maintained by the
+        /// caller when applying mappings, and used to walk up the path in
+        /// setting variable values.
+        /// </summary>
+        public IList<int> MappingPath { get; }
+
+        /// <summary>
+        /// Gets the mapping between node mapping IDs (keys) and the generated
+        /// node URIs (UIDs, values). This is maintained by the caller when
+        /// applying mappings, and used to get the target node URI of each
+        /// mapping rule applied so far.
         /// </summary>
         public Dictionary<int, string> MappedUris { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NodeMappingVariableSource"/>
+        /// Gets or sets the mapping identifier for the node mapping
+        /// corresponding to the current item (=the item being mapped, or the
+        /// item including the parts being mapped).
+        /// </summary>
+        public int ItemMappingId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mapping identifier for the node mapping corresponding
+        /// to the current item's facet.
+        /// </summary>
+        public int FacetMappingId { get; set; }
+
+        /// <summary>
+        /// Gets the UIDs corresponding to the node corresponding to each group
+        /// ID component (or just to the unique group ID when this is not
+        /// composite) of the current item.
+        /// </summary>
+        public IList<string> GroupUids { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeMappingVariableSource" />
         /// class.
         /// </summary>
-        /// <param name="mappedUris">The mapping between node mapping IDs (keys)
-        /// and the generated node URIs (UIDs, values). This is maintained
-        /// by the caller when applying mappings.</param>
-        /// <exception cref="ArgumentNullException">mappedUris</exception>
-        public NodeMappingVariableSource(Dictionary<int, string> mappedUris)
+        /// <param name="mappedUris">The mapped URIs.</param>
+        /// <param name="mappingPath">The mapping path.</param>
+        /// <exception cref="ArgumentNullException">mappedUris or mappingPath
+        /// </exception>
+        public NodeMappingVariableSource(Dictionary<int, string> mappedUris,
+            IList<int> mappingPath)
         {
             MappedUris = mappedUris
                 ?? throw new ArgumentNullException(nameof(mappedUris));
+            MappingPath = mappingPath
+                ?? throw new ArgumentNullException(nameof(mappingPath));
+            GroupUids = new List<string>();
         }
 
         /// <summary>

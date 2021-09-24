@@ -14,13 +14,16 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="sourceType">Type of the source.</param>
         /// <param name="id">The GUID item/part identifier.</param>
+        /// <param name="groupOrdinal">The ordinal number of the group component
+        /// when the item's group ID is composite (like <c>alpha/beta</c>),
+        /// or 0 if not composite.</param>
         /// <param name="partRoleId">The optional part role identifier.</param>
         /// <param name="pinName">Optional name of the source pin.</param>
         /// <param name="pinValue">Optional value of the EID source pin.</param>
         /// <returns>ID or null.</returns>
         /// <exception cref="ArgumentNullException">id</exception>
         public static string Build(NodeSourceType sourceType,
-            string id, string partRoleId = null,
+            string id, int groupOrdinal = 0, string partRoleId = null,
             string pinName = null, string pinValue = null)
         {
             if (sourceType == NodeSourceType.User) return null;
@@ -35,6 +38,7 @@ namespace Cadmus.Index.Graph
                     break;
                 case NodeSourceType.ItemGroup:
                     sb.Append("/group");
+                    if (groupOrdinal > 0) sb.Append('/').Append(groupOrdinal);
                     break;
                 case NodeSourceType.Pin:
                     // [:roleId]

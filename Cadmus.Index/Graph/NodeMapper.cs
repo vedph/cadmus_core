@@ -95,12 +95,20 @@ namespace Cadmus.Index.Graph
             Node node = new Node();
 
             // build the node's label following label_template
-            // TODO
+            if (!string.IsNullOrEmpty(mapping.LabelTemplate))
+                node.Label = vset.ResolvePlaceholders(mapping.LabelTemplate);
 
             // build the UID prefixes from prefix and triple_o_prefix
-            // TODO
+            string prefix = null;
+            if (!string.IsNullOrEmpty(mapping.Prefix))
+                prefix = vset.ResolvePlaceholders(mapping.Prefix);
 
-            // generate node's UID using prefix, label, and an eventual suffix
+            string oPrefix = null;
+            if (!string.IsNullOrEmpty(mapping.TripleOPrefix))
+                oPrefix = vset.ResolvePlaceholders(mapping.TripleOPrefix);
+
+            // generate node's UID using prefix, filtered label,
+            // and an eventual suffix
             // TODO
 
             // add node to set

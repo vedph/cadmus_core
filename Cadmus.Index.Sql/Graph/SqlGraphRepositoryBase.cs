@@ -1512,6 +1512,49 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Triples
+        private SqlSelectBuilder GetBuilderFor(TripleFilter filter)
+        {
+            SqlSelectBuilder builder = GetSelectBuilder();
+            builder.EnsureSlots(null, "c")
+                    .AddWhat("t.id, t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, " +
+                             "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri")
+                    .AddWhat("COUNT(t.id)", slotId: "c")
+                    .AddFrom("FROM triple t", slotId: "*")
+                    .AddFrom("INNER JOIN uri_lookup uls ON t.s_id=uls.id")
+                    .AddFrom("INNER JOIN uri_lookup ulp ON t.p_id=ulp.id")
+                    .AddFrom("LEFT JOIN uri_lookup ulo ON t.o_id=ulo.id")
+                    .AddOrder("s_uri, p_uri, t.id");
+
+            if (filter.SubjectId > 0)
+            {
+                builder.AddWhere("s_id=@s_id", slotId: "*")
+                       .AddParameter("@s_id", DbType.Int32, filter.SubjectId,
+                            slotId: "*");
+            }
+
+            if (filter.PredicateId > 0)
+            {
+                builder.AddWhere("p_id=@p_id", slotId: "*")
+                       .AddParameter("@p_id", DbType.Int32, filter.PredicateId,
+                            slotId: "*");
+            }
+
+            if (filter.ObjectId > 0)
+            {
+                builder.AddWhere("o_id=@o_id", slotId: "*")
+                       .AddParameter("@o_id", DbType.Int32, filter.ObjectId,
+                            slotId: "*");
+            }
+
+            if (!string.IsNullOrEmpty(filter.ObjectLiteral))
+            {
+                builder.AddWhere(GetRegexClauseSql("o_lit", "@o_lit"), slotId: "*")
+                       .AddParameter("@o_lit", DbType.String, filter.ObjectLiteral);
+            }
+
+            return builder;
+        }
+
         /// <summary>
         /// Gets the specified page of triples.
         /// </summary>
@@ -1522,8 +1565,53 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            // TODO
-            throw new NotImplementedException();
+            EnsureConnected();
+
+            try
+            {
+                SqlSelectBuilder builder = GetBuilderFor(filter);
+
+                // get count and ret if no result
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = builder.Build("c");
+                builder.AddParametersTo(cmd, "c");
+
+                long? count = cmd.ExecuteScalar() as long?;
+                if (count == null || count == 0)
+                {
+                    return new DataPage<TripleResult>(
+                        filter.PageNumber, filter.PageSize, 0,
+                        Array.Empty<TripleResult>());
+                }
+
+                // get page
+                cmd.CommandText = builder.Build();
+                List<TripleResult> triples = new List<TripleResult>();
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        triples.Add(new TripleResult
+                        {
+                            Id = reader.GetInt32(0),
+                            SubjectId = reader.GetInt32(1),
+                            PredicateId = reader.GetInt32(2),
+                            ObjectId = reader.GetValue<int>(3),
+                            ObjectLiteral = reader.GetValue<string>(4),
+                            Sid = reader.GetValue<string>(5),
+                            SubjectUri = reader.GetString(6),
+                            PredicateUri = reader.GetString(7),
+                            ObjectUri = reader.GetValue<string>(8)
+                        });
+                    }
+                }
+                return new DataPage<TripleResult>(filter.PageNumber,
+                    filter.PageSize, (int)count, triples);
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
 
         /// <summary>
@@ -1538,6 +1626,7 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.CommandText = "SELECT t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, " +
                     "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri\n" +
+                    "FROM triple t\n" +
                     "INNER JOIN uri_lookup uls ON t.s_id=uls.id\n" +
                     "INNER JOIN uri_lookup ulp ON t.p_id=ulp.id\n" +
                     "LEFT JOIN uri_lookup ulo ON t.o_id=ulo.id\n" +

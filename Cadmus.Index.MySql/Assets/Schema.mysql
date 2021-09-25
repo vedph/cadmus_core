@@ -154,10 +154,12 @@ CREATE TABLE `triple` (
   `p_id` int NOT NULL,
   `o_id` int DEFAULT NULL,
   `o_lit` varchar(15000) DEFAULT NULL,
+  `sid` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `triple_FK` (`s_id`),
   KEY `triple_FK_2` (`o_id`),
   KEY `triple_FK_1` (`p_id`),
+  KEY `triple_sid_IDX` (`sid`) USING BTREE,
   CONSTRAINT `triple_FK` FOREIGN KEY (`s_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `triple_FK_1` FOREIGN KEY (`p_id`) REFERENCES `property` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `triple_FK_2` FOREIGN KEY (`o_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

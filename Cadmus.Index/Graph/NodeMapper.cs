@@ -122,7 +122,7 @@ namespace Cadmus.Index.Graph
             return Tuple.Create(node, uid);
         }
 
-        private Tuple<Triple, Node> BuildTriple(string subjUid,
+        private Tuple<Triple, Node> BuildTriple(string sid, string subjUid,
             NodeMapping mapping, NodeMappingVariableSet vset)
         {
             // 1: S
@@ -196,7 +196,8 @@ namespace Cadmus.Index.Graph
                 SubjectId = _repository.AddUri(subjUid),
                 PredicateId = _repository.AddUri(predUid),
                 ObjectId = objAsUid? _repository.AddUri(obj) : 0,
-                ObjectLiteral = objAsUid? null : obj
+                ObjectLiteral = objAsUid? null : obj,
+                Sid = sid
             };
 
             // build O node if required; when building a triple whose O is
@@ -250,7 +251,7 @@ namespace Cadmus.Index.Graph
             // together with its O's node unless it's a literal or already exists
             if (!string.IsNullOrEmpty(mapping.TripleP))
             {
-                var to = BuildTriple(nodeAndUid.Item2, mapping, vset);
+                var to = BuildTriple(state.Sid, nodeAndUid.Item2, mapping, vset);
                 if (to.Item2 != null) state.Nodes.Add(to.Item2);
                 state.Triples.Add(to.Item1);
             }

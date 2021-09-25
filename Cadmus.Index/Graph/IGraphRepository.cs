@@ -233,6 +233,31 @@ namespace Cadmus.Index.Graph
             int parentId = 0);
 
         /// <summary>
+        /// Gets the specified page of triples.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Page.</returns>
+        DataPage<TripleResult> GetTriples(TripleFilter filter);
+
+        /// <summary>
+        /// Gets the triple with the specified ID.
+        /// </summary>
+        /// <param name="id">The triple's ID.</param>
+        TripleResult GetTriple(int id);
+
+        /// <summary>
+        /// Adds or updates the specified triple.
+        /// </summary>
+        /// <param name="triple">The triple.</param>
+        void AddTriple(Triple triple);
+
+        /// <summary>
+        /// Deletes the triple with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        void DeleteTriple(int id);
+
+        /// <summary>
         /// Updates the classes for all the nodes belonging to any class.
         /// </summary>
         /// <param name="cancel">The cancel.</param>

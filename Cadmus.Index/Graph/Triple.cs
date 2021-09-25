@@ -32,6 +32,12 @@
         public string ObjectLiteral { get; set; }
 
         /// <summary>
+        /// Gets or sets the optional SID for this triple. This is null for
+        /// manually created triples.
+        /// </summary>
+        public string Sid { get; set; }
+
+        /// <summary>
         /// Converts to string.
         /// </summary>
         /// <returns>

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,7 +70,7 @@ namespace Cadmus.Index.Sql.Graph
         protected abstract string GetUpsertTailSql(params string[] fields);
         #endregion
 
-        #region Transaction        
+        #region Transaction
         /// <summary>
         /// Begins the transaction.
         /// </summary>
@@ -1509,6 +1508,118 @@ namespace Cadmus.Index.Sql.Graph
             if (pin == null) throw new ArgumentNullException(nameof(pin));
 
             return FindMappings(item, part, pin, parentId);
+        }
+        #endregion
+
+        #region Triples
+        /// <summary>
+        /// Gets the specified page of triples.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Page.</returns>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public DataPage<TripleResult> GetTriples(TripleFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            // TODO
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets the triple with the specified ID.
+        /// </summary>
+        /// <param name="id">The triple's ID.</param>
+        public TripleResult GetTriple(int id)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, " +
+                    "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri\n" +
+                    "INNER JOIN uri_lookup uls ON t.s_id=uls.id\n" +
+                    "INNER JOIN uri_lookup ulp ON t.p_id=ulp.id\n" +
+                    "LEFT JOIN uri_lookup ulo ON t.o_id=ulo.id\n" +
+                    "WHERE t.id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return null;
+                    return new TripleResult
+                    {
+                        Id = id,
+                        SubjectId = reader.GetInt32(0),
+                        PredicateId = reader.GetInt32(1),
+                        ObjectId = reader.GetValue<int>(2),
+                        ObjectLiteral = reader.GetValue<string>(3),
+                        Sid = reader.GetValue<string>(4),
+                        SubjectUri = reader.GetString(5),
+                        PredicateUri = reader.GetString(6),
+                        ObjectUri = reader.GetValue<string>(7)
+                    };
+                }
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Adds or updates the specified triple.
+        /// </summary>
+        /// <param name="triple">The triple.</param>
+        /// <exception cref="ArgumentNullException">triple</exception>
+        public void AddTriple(Triple triple)
+        {
+            if (triple == null) throw new ArgumentNullException(nameof(triple));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT INTO triple" +
+                    "(s_id, p_id, o_id, o_lit, sid) " +
+                    "VALUES(@s_id, @p_id, @o_id, @o_lit, @sid)\n"
+                    + GetUpsertTailSql("s_id", "p_id", "o_id", "o_lit", "sid");
+                AddParameter(cmd, "@s_id", DbType.Int32, triple.SubjectId);
+                AddParameter(cmd, "@p_id", DbType.Int32, triple.PredicateId);
+                AddParameter(cmd, "@o_id", DbType.Int32, triple.ObjectId);
+                AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
+                AddParameter(cmd, "@sid", DbType.String, triple.Sid);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the triple with the specified ID.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        public void DeleteTriple(int id)
+        {
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "DELETE FROM triple WHERE id=@id;";
+                AddParameter(cmd, "@id", DbType.Int32, id);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
         #endregion
 

@@ -334,6 +334,22 @@ namespace Cadmus.Index.Graph
         }
 
         /// <summary>
+        /// Determines whether the specified macro ($...) returns a UID.
+        /// </summary>
+        /// <param name="macro">The macro, including its <c>$</c> prefix.</param>
+        /// <returns><c>true</c> if the macro returns a UID; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsUidMacro(string macro)
+        {
+            return macro == "$title-uid" || macro == "$parent"
+                || macro.StartsWith("$ancestor", StringComparison.Ordinal)
+                || macro == "$item"
+                || macro == "$facet"
+                || macro == "$pin-uid"
+                || macro.StartsWith("$group", StringComparison.Ordinal);
+        }
+
+        /// <summary>
         /// Resolves the macro for the specified value.
         /// </summary>
         /// <param name="value">The value (a macro starting with <c>$</c>,

@@ -18,20 +18,20 @@ namespace Cadmus.Index.Graph
         /// get connected to this transaction until it is either committed
         /// or rejected.
         /// </summary>
-        /// <param name="context">A generic context object.</param>
-        void BeginTransaction(object context);
+        /// <param name="context">An optional generic context object.</param>
+        void BeginTransaction(object context = null);
 
         /// <summary>
         /// Commits a write transaction.
         /// </summary>
-        /// <param name="context">A generic context object.</param>
-        void CommitTransaction(object context);
+        /// <param name="context">An optional generic context object.</param>
+        void CommitTransaction(object context = null);
 
         /// <summary>
         /// Rollbacks the write transaction.
         /// </summary>
-        /// <param name="context">A generic context object.</param>
-        void RollbackTransaction(object context);
+        /// <param name="context">An optional generic context object.</param>
+        void RollbackTransaction(object context = null);
 
         /// <summary>
         /// Gets the specified page of namespaces with their prefixes.

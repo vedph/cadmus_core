@@ -1,16 +1,20 @@
 ﻿using Cadmus.Core;
+using Fusi.Text.Unicode;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// Nodes mapper. This maps items or part's pins to graph nodes.
+    /// Nodes mapper. This maps items or part's pins to graph nodes and triples.
     /// </summary>
     public sealed class NodeMapper
     {
+        private static readonly UniData _ud = new UniData();
+
         private readonly IGraphRepository _repository;
 
         /// <summary>
@@ -70,6 +74,150 @@ namespace Cadmus.Index.Graph
             return results;
         }
 
+        private Tuple<Node,string> BuildNode(NodeMapping mapping,
+            NodeMappingVariableSet vset)
+        {
+            Node node = new Node();
+
+            // build the node's label following label_template
+            if (!string.IsNullOrEmpty(mapping.LabelTemplate))
+                node.Label = vset.ResolvePlaceholders(mapping.LabelTemplate).Trim();
+
+            // build the UID prefix
+            string prefix = null;
+            if (!string.IsNullOrEmpty(mapping.Prefix))
+                prefix = vset.ResolvePlaceholders(mapping.Prefix);
+
+            // generate node's UID:
+            StringBuilder sb = new StringBuilder();
+
+            // 1: prefix
+            if (!string.IsNullOrEmpty(prefix)) sb.Append(prefix);
+
+            // 2: filtered label
+            foreach (char c in node.Label)
+            {
+                if (char.IsLetter(c))
+                {
+                    sb.Append(char.ToLowerInvariant(_ud.GetSegment(c, true)));
+                    continue;
+                }
+                if (char.IsDigit(c))
+                {
+                    sb.Append(c);
+                    continue;
+                }
+                if (char.IsWhiteSpace(c)) sb.Append('_');
+            }
+            // ensure the resulting UID is not empty, even though this should
+            // never happen
+            if (sb.Length == 0) sb.Append('_');
+
+            // 3. append suffix if already present
+            string uid = _repository.AddUid(sb.ToString(), node.Sid);
+
+            // 4. get a numeric ID for the UID
+            node.Id = _repository.AddUri(uid);
+
+            return Tuple.Create(node, uid);
+        }
+
+        private Tuple<Triple, Node> BuildTriple(string subjUid,
+            NodeMapping mapping, NodeMappingVariableSet vset)
+        {
+            // 1: S
+            // override the default subject if mappings specifies another one
+            if (!string.IsNullOrEmpty(mapping.TripleS))
+            {
+                // all the macros here resolve to a UID
+                subjUid = vset.ResolveMacro(mapping.TripleS);
+
+                // fail if macro cannot be resolved
+                if (subjUid == null)
+                {
+                    Logger?.LogError("Unable to resolve macro "
+                        + mapping.TripleS
+                        + " of S mapping " + mapping);
+                    return null;
+                }
+            }
+
+            // 2: P
+            string predUid = vset.ResolveMacro(mapping.TripleP);
+            // fail if macro cannot be resolved
+            if (predUid == null)
+            {
+                Logger?.LogError("Unable to resolve macro "
+                    + mapping.TripleP
+                    + " of P mapping " + mapping);
+                return null;
+            }
+
+            // 3: O (there must be O as we have P)
+            if (string.IsNullOrEmpty(mapping.TripleO))
+            {
+                Logger?.LogError("Missing O specifier in triple mapping "
+                    + mapping);
+                return null;
+            }
+
+            string obj;
+            bool objAsUid;
+            if (mapping.TripleO[0] == '$')
+            {
+                // O is a macro to be resolved into a UID/literal
+                objAsUid = NodeMappingVariableSet.IsUidMacro(mapping.TripleO);
+                obj = vset.ResolveMacro(mapping.TripleO);
+                if (obj == null)
+                {
+                    Logger?.LogError("Unable to resolve macro "
+                        + mapping.TripleO
+                        + " of O mapping " + mapping);
+                    return null;
+                }
+            }
+            else
+            {
+                // O is a constant UID, as it is
+                objAsUid = true;
+                obj = mapping.TripleO;
+            }
+
+            // prepend O prefix if required
+            if (objAsUid && !string.IsNullOrEmpty(mapping.TripleOPrefix))
+            {
+                string oPrefix = vset.ResolvePlaceholders(mapping.TripleOPrefix);
+                obj = oPrefix + obj;
+            }
+
+            // build triple
+            Triple triple = new Triple
+            {
+                SubjectId = _repository.AddUri(subjUid),
+                PredicateId = _repository.AddUri(predUid),
+                ObjectId = objAsUid? _repository.AddUri(obj) : 0,
+                ObjectLiteral = objAsUid? null : obj
+            };
+
+            // build O node if required; when building a triple whose O is
+            // an object, this object is usually an existing resource, whatever
+            // its source. If it is external, it has no SID and is a manually
+            // input object; if it comes from other mappings, it will have its
+            // own source. So we just avoid adding it if already existing in
+            // order to preserve its source.
+            Node objNode = null;
+            if (objAsUid)
+            {
+                objNode = _repository.GetNode(triple.ObjectId) ?? new Node
+                {
+                    Label = obj,
+                    SourceType = NodeSourceType.User
+                };
+            }
+
+            return Tuple.Create(triple, objNode);
+        }
+
         /// <summary>
         /// Applies the specified mapping and all its descendants.
         /// </summary>
@@ -92,31 +240,20 @@ namespace Cadmus.Index.Graph
             vset.SetValues(state);
 
             // generate node
-            Node node = new Node();
-
-            // build the node's label following label_template
-            if (!string.IsNullOrEmpty(mapping.LabelTemplate))
-                node.Label = vset.ResolvePlaceholders(mapping.LabelTemplate);
-
-            // build the UID prefixes from prefix and triple_o_prefix
-            string prefix = null;
-            if (!string.IsNullOrEmpty(mapping.Prefix))
-                prefix = vset.ResolvePlaceholders(mapping.Prefix);
-
-            string oPrefix = null;
-            if (!string.IsNullOrEmpty(mapping.TripleOPrefix))
-                oPrefix = vset.ResolvePlaceholders(mapping.TripleOPrefix);
-
-            // generate node's UID using prefix, filtered label,
-            // and an eventual suffix
-            // TODO
+            var nodeAndUid = BuildNode(mapping, vset);
 
             // add node to set
-            state.Nodes.Add(node);
+            state.Nodes.Add(nodeAndUid.Item1);
 
             // if there is a triple, collect SPO from triple_s, triple_p,
             // triple_o (triple_o_prefix) and reversed, then generate it
             // together with its O's node unless it's a literal or already exists
+            if (!string.IsNullOrEmpty(mapping.TripleP))
+            {
+                var to = BuildTriple(nodeAndUid.Item2, mapping, vset);
+                if (to.Item2 != null) state.Nodes.Add(to.Item2);
+                state.Triples.Add(to.Item1);
+            }
 
             // children mappings
             IList<NodeMapping> children = state.Part == null
@@ -192,8 +329,9 @@ namespace Cadmus.Index.Graph
         /// Maps the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
+        /// <returns>The generated set of nodes and triples.</returns>
         /// <exception cref="ArgumentNullException">item</exception>
-        public void MapItem(IItem item)
+        public GraphSet MapItem(IItem item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
@@ -203,6 +341,7 @@ namespace Cadmus.Index.Graph
                 Item = item
             };
             Map(state);
+            return new GraphSet(state.Nodes, state.Triples);
         }
 
         /// <summary>
@@ -212,13 +351,18 @@ namespace Cadmus.Index.Graph
         /// <param name="part">The part.</param>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="pinValue">The pin value.</param>
-        /// <exception cref="ArgumentNullException">nameof(item)</exception>
-        public void MapPin(IItem item, IPart part, string pinName, string pinValue)
+        /// <returns>The generated set of nodes and triples.</returns>
+        /// <exception cref="ArgumentNullException">item, part, pinName,
+        /// pinValue</exception>
+        public GraphSet MapPin(IItem item, IPart part, string pinName, string pinValue)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
+            if (part == null) throw new ArgumentNullException(nameof(part));
+            if (pinName == null) throw new ArgumentNullException(nameof(pinName));
+            if (pinValue == null) throw new ArgumentNullException(nameof(pinValue));
 
             Logger?.LogInformation($"Mapping {part.Id}/{pinName}=" +
-                (pinValue.Length > 80? pinValue.Substring(0, 80) + "..." : pinValue));
+                (pinValue.Length > 80 ? pinValue.Substring(0, 80) + "..." : pinValue));
 
             NodeMapperState state = new NodeMapperState
             {
@@ -228,6 +372,7 @@ namespace Cadmus.Index.Graph
                 PinValue = pinValue
             };
             Map(state);
+            return new GraphSet(state.Nodes, state.Triples);
         }
     }
 }

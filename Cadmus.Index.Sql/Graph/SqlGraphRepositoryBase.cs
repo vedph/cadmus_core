@@ -75,8 +75,8 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Begins the transaction.
         /// </summary>
-        /// <param name="context">The context.</param>
-        public void BeginTransaction(object context)
+        /// <param name="context">An optional generic context object.</param>
+        public void BeginTransaction(object context = null)
         {
             Transaction = Connection.BeginTransaction();
         }
@@ -84,8 +84,8 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Commits a write transaction.
         /// </summary>
-        /// <param name="context">A generic context object.</param>
-        public void CommitTransaction(object context)
+        /// <param name="context">An optional generic context object.</param>
+        public void CommitTransaction(object context = null)
         {
             Transaction?.Commit();
             Transaction = null;
@@ -94,8 +94,8 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Rollbacks the write transaction.
         /// </summary>
-        /// <param name="context">A generic context object.</param>
-        public void RollbackTransaction(object context)
+        /// <param name="context">An optional generic context object.</param>
+        public void RollbackTransaction(object context = null)
         {
             Transaction?.Rollback();
             Transaction = null;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Cadmus.Index.Graph
 {
@@ -9,6 +10,8 @@ namespace Cadmus.Index.Graph
     /// </summary>
     public static class SidBuilder
     {
+        static private readonly Regex _eidRegex = new Regex(@"^eid\d*(?:@.+)?");
+
         /// <summary>
         /// Builds the source ID.
         /// </summary>
@@ -46,9 +49,11 @@ namespace Cadmus.Index.Graph
                         sb.Append(':').Append(partRoleId);
                     // /pin
                     sb.Append('/').Append(pinName);
-                    // [/value]
-                    if (!string.IsNullOrEmpty(pinValue))
+                    // [/value]: appended for eid, eidN, eid@..., eidN@...
+                    if (_eidRegex.IsMatch(pinName))
                         sb.Append('/').Append(pinValue);
+                    break;
+                case NodeSourceType.Item:
                     break;
                 default: return null;
             }

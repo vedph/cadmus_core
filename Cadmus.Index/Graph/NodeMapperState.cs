@@ -75,9 +75,10 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets the UIDs corresponding to the node corresponding to each group
         /// ID component (or just to the unique group ID when this is not
-        /// composite) of the current item.
+        /// composite) of the current item. This is a dictionary where key=group
+        /// ordinal and value=node UID. A non-composite group ID has key=0.
         /// </summary>
-        public IList<string> GroupUids { get; }
+        public IDictionary<int, string> GroupUids { get; }
 
         /// <summary>
         /// Gets the nodes generated in the current mapping session.
@@ -97,15 +98,16 @@ namespace Cadmus.Index.Graph
         {
             MappedUris = new Dictionary<int, string>();
             MappingPath = new List<int>();
-            GroupUids = new List<string>();
+            GroupUids = new Dictionary<int, string>();
             Nodes = new List<Node>();
             Triples = new List<Triple>();
         }
 
         /// <summary>
         /// Adds the node to this set, setting the mapping between its source
-        /// mapping ID and its UID, plus eventually <see cref="ItemMappingId"/>
-        /// and <see cref="FacetMappingId"/>.
+        /// mapping ID and its UID, plus eventually <see cref="ItemMappingId"/>,
+        /// <see cref="FacetMappingId"/>, and <see cref="GroupUids"/> (assuming
+        /// that the current <see cref="GroupOrdinal"/> is up to date).
         /// </summary>
         /// <param name="node">The node.</param>
         /// <param name="uid">The node's UID.</param>
@@ -119,10 +121,18 @@ namespace Cadmus.Index.Graph
             Nodes.Add(node);
             MappedUris[mappingId] = uid;
 
-            if (node.SourceType == NodeSourceType.Item && ItemMappingId == 0)
-                ItemMappingId = mappingId;
-            if (node.SourceType == NodeSourceType.ItemFacet && FacetMappingId == 0)
-                FacetMappingId = mappingId;
+            switch (node.SourceType)
+            {
+                case NodeSourceType.Item:
+                    if (ItemMappingId == 0) ItemMappingId = mappingId;
+                    break;
+                case NodeSourceType.ItemFacet:
+                    if (FacetMappingId == 0) FacetMappingId = mappingId;
+                    break;
+                case NodeSourceType.ItemGroup:
+                    GroupUids[GroupOrdinal] = uid;
+                    break;
+            }
         }
 
         /// <summary>

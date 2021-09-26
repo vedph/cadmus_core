@@ -250,10 +250,6 @@ namespace Cadmus.Index.Graph
             // add node to set
             state.AddNode(nodeAndUid.Item1, nodeAndUid.Item2, mapping.Id);
 
-            // if the node derived from an item's group, store its UID
-            if (mapping.SourceType == NodeSourceType.ItemGroup)
-                state.GroupUids.Add(nodeAndUid.Item2);
-
             // if there is a triple, collect SPO from triple_s, triple_p,
             // triple_o (triple_o_prefix) and reversed, then generate it
             // together with its O's node unless it's a literal or already exists

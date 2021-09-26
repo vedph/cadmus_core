@@ -310,9 +310,8 @@ namespace Cadmus.Index.Graph
                     case "group":
                         // :N = group ID (1-N from left to right), 0=non composite
                         // group ID
-                        int j = v.Argument > 0 ? v.Argument - 1 : 0;
-                        if (j < state.GroupUids.Count)
-                            v.Value = state.GroupUids[j];
+                        if (state.GroupUids.ContainsKey(v.Argument))
+                            v.Value = state.GroupUids[v.Argument];
                         break;
                     case "facet":
                         if (state.MappedUris.ContainsKey(state.FacetMappingId))

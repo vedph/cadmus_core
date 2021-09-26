@@ -1,6 +1,5 @@
 using Cadmus.Core;
 using Cadmus.Index.Graph;
-using System;
 using Xunit;
 
 namespace Cadmus.Index.Test
@@ -711,6 +710,110 @@ namespace Cadmus.Index.Test
             set.SetValues(state);
 
             Assert.Equal(state.MappedUris[1], set.GetVariable("facet")?.Value);
+        }
+
+        [Fact]
+        public void SetValues_SimpleGroup_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    Id = 1,
+                    LabelTemplate = "Sample",
+                    TripleS = "$group"
+                });
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = GetItem(),
+                GroupOrdinal = 0
+            };
+            state.AddNode(
+                new Node
+                {
+                    Id = 1,
+                    Label = "animals",
+                    SourceType = NodeSourceType.ItemGroup
+                }, "x:animals", 1);
+
+            set.SetValues(state);
+
+            Assert.Equal(state.GroupUids[0], set.GetVariable("group")?.Value);
+        }
+
+        [Fact]
+        public void SetValues_CompositeGroup1_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    Id = 1,
+                    LabelTemplate = "Sample",
+                    TripleS = "$group:1"
+                });
+            // 1st component
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = GetItem(),
+                GroupOrdinal = 1
+            };
+            state.AddNode(
+                new Node
+                {
+                    Id = 1,
+                    Label = "animals",
+                    SourceType = NodeSourceType.ItemGroup
+                }, "x:animals", 1);
+            // 2nd component
+            state.GroupOrdinal = 2;
+            state.AddNode(
+                new Node
+                {
+                    Id = 2,
+                    Label = "humans",
+                    SourceType = NodeSourceType.ItemGroup
+                }, "x:humans", 2);
+
+            set.SetValues(state);
+
+            Assert.Equal(state.GroupUids[1], set.GetVariable("group:1")?.Value);
+        }
+
+        [Fact]
+        public void SetValues_CompositeGroup2_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    Id = 1,
+                    LabelTemplate = "Sample",
+                    TripleS = "$group:2"
+                });
+            // 1st component
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = GetItem(),
+                GroupOrdinal = 1
+            };
+            state.AddNode(
+                new Node
+                {
+                    Id = 1,
+                    Label = "animals",
+                    SourceType = NodeSourceType.ItemGroup
+                }, "x:animals", 1);
+            // 2nd component
+            state.GroupOrdinal = 2;
+            state.AddNode(
+                new Node
+                {
+                    Id = 2,
+                    Label = "humans",
+                    SourceType = NodeSourceType.ItemGroup
+                }, "x:humans", 2);
+
+            set.SetValues(state);
+
+            Assert.Equal(state.GroupUids[2], set.GetVariable("group:2")?.Value);
         }
 
         [Fact]

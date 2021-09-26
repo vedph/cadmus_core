@@ -197,8 +197,8 @@ namespace Cadmus.Index.Graph
             vars.LoadPlaceholders(mapping.LabelTemplate);
 
             vars.LoadMacro(mapping.TripleS);
-            vars.LoadMacro(mapping.TripleO);
             vars.LoadMacro(mapping.TripleP);
+            vars.LoadMacro(mapping.TripleO);
 
             return vars;
         }
@@ -277,16 +277,24 @@ namespace Cadmus.Index.Graph
                     case "pin-eid":
                         // :N = component's ordinal (1-N from left to right)
                         if (string.IsNullOrEmpty(state.PinName)) break;
-                        pinComps = NodeMapper.ParsePinName(state.PinName);
-                        if (pinComps.Length == 1 || v.Argument + 1 >= pinComps.Length)
-                            break;
-                        v.Value = pinComps[v.Argument];
+                        if (v.Argument == 0)
+                        {
+                            int at = state.PinName.IndexOf('@');
+                            if (at > -1) v.Value = state.PinName.Substring(at + 1);
+                        }
+                        else
+                        {
+                            pinComps = NodeMapper.ParsePinName(state.PinName);
+                            if (pinComps.Length == 1 || v.Argument >= pinComps.Length)
+                                break;
+                            v.Value = pinComps[v.Argument];
+                        }
                         break;
                     // macros
                     case "parent":
                     case "ancestor":
                         // :N = ancestor number (1=parent, 2=parent-of-parent...)
-                        int upCount = v.Argument == 0 ? 1 : v.Argument,
+                        int upCount = (v.Argument == 0 ? 1 : v.Argument) - 1,
                             i = state.MappingPath.Count - 1 - upCount;
                         if (i > -1)
                         {

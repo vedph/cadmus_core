@@ -43,7 +43,7 @@ namespace Cadmus.Index.Graph
         {
             if (title == null) throw new ArgumentNullException(nameof(title));
 
-            Match m = Regex.Match(title, @"^(?<t>)\s*\[(?<k>[\#@])(?<v>[^]]+)\]$");
+            Match m = Regex.Match(title, @"^(?<t>.+)\s+\[(?<k>[\#@])(?<v>[^]]+)\]$");
 
             if (!m.Success) return Tuple.Create(title, (string)null, (string)null);
 
@@ -248,7 +248,7 @@ namespace Cadmus.Index.Graph
             var nodeAndUid = BuildNode(mapping, vset);
 
             // add node to set
-            state.Nodes.Add(nodeAndUid.Item1);
+            state.AddNode(nodeAndUid.Item1, nodeAndUid.Item2, mapping.Id);
 
             // if there is a triple, collect SPO from triple_s, triple_p,
             // triple_o (triple_o_prefix) and reversed, then generate it

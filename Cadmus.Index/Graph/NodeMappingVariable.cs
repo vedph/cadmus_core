@@ -1,7 +1,11 @@
 ﻿namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// A variable extracted from a <see cref="NodeMapping"/>.
+    /// A variable extracted from a <see cref="NodeMapping"/>. This can derive
+    /// from either a placeholder in a template, or from a macro instruction
+    /// as the full value of some parameter. In both cases, the variable has a
+    /// unique ID, a name extracted from the ID (=ID minus argument if any),
+    /// and an optional, single numeric argument extracted from the ID.
     /// </summary>
     public class NodeMappingVariable
     {
@@ -26,7 +30,7 @@
         public int Argument { get; set; }
 
         /// <summary>
-        /// Gets or sets the optional variable's value.
+        /// Gets or sets the variable's value, when set.
         /// </summary>
         public string Value { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -44,9 +45,9 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets or sets the "mappings path", i.e. the list of all the mappings
         /// IDs starting from the root mapping and walking down along its
-        /// descendants, up to the current mapping. This is maintained by the
-        /// caller when applying mappings, and used to walk up the path in
-        /// setting variable values.
+        /// descendants, up to the current mapping excluded. This is maintained
+        /// by the caller when applying mappings, and used to walk up the path
+        /// in setting variable values.
         /// </summary>
         public IList<int> MappingPath { get; }
 
@@ -99,6 +100,23 @@ namespace Cadmus.Index.Graph
             GroupUids = new List<string>();
             Nodes = new List<Node>();
             Triples = new List<Triple>();
+        }
+
+        /// <summary>
+        /// Adds the node to this set, setting the mapping between its source
+        /// mapping ID and its UID.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        /// <param name="uid">The node's UID.</param>
+        /// <param name="mappingId">The source mapping identifier.</param>
+        /// <exception cref="ArgumentNullException">node or uid</exception>
+        public void AddNode(Node node, string uid, int mappingId)
+        {
+            if (node == null) throw new ArgumentNullException(nameof(node));
+            if (uid == null) throw new ArgumentNullException(nameof(uid));
+
+            Nodes.Add(node);
+            MappedUris[mappingId] = uid;
         }
 
         /// <summary>

@@ -326,7 +326,8 @@ namespace Cadmus.Index.Sql.Graph
 
                 // check if any unsuffixed UID is already in use
                 DbCommand cmdSel = GetCommand();
-                cmdSel.CommandText = "SELECT 1 FROM uid_lookup WHERE unsuffixed=@uid;";
+                cmdSel.CommandText =
+                    "SELECT 1 FROM uid_lookup WHERE unsuffixed=@uid;";
                 AddParameter(cmdSel, "@uid", DbType.String, uid);
                 long? result = cmdSel.ExecuteScalar() as long?;
 
@@ -339,18 +340,23 @@ namespace Cadmus.Index.Sql.Graph
 
                 // yes: check if a record with the same unsuffixed & SID exists;
                 // if so, reuse it; otherwise, add a new suffixed UID
-                cmdSel.CommandText = "SELECT id FROM uid_lookup " +
+                cmdSel.CommandText = "SELECT id, has_suffix FROM uid_lookup " +
                     "WHERE unsuffixed=@uid AND sid=@sid;";
                 AddParameter(cmdSel, "@sid", DbType.String, sid);
-                result = cmdSel.ExecuteScalar() as int?;
-
-                // yes: reuse it, nothing gets inserted
-                if (result != null) return sid + "#" + result.Value;
-
-                // no: add a new suffix
-                cmdIns.Parameters["@has_suffix"].Value = true;
-                int id = Convert.ToInt32(cmdIns.ExecuteScalar());
-                return uid + "#" + id;
+                using (var reader = cmdSel.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        // found: reuse it, nothing gets inserted
+                        int oldId = reader.GetInt32(0);
+                        bool hasSuffix = reader.GetBoolean(1);
+                        return hasSuffix? uid + "#" + oldId : uid;
+                    }
+                    // no: add a new suffix
+                    cmdIns.Parameters["@has_suffix"].Value = true;
+                    int id = Convert.ToInt32(cmdIns.ExecuteScalar());
+                    return uid + "#" + id;
+                }
             }
             finally
             {

@@ -352,11 +352,11 @@ namespace Cadmus.Index.Sql.Graph
                         bool hasSuffix = reader.GetBoolean(1);
                         return hasSuffix? uid + "#" + oldId : uid;
                     }
-                    // no: add a new suffix
-                    cmdIns.Parameters["@has_suffix"].Value = true;
-                    int id = Convert.ToInt32(cmdIns.ExecuteScalar());
-                    return uid + "#" + id;
                 }
+                // not found: add a new suffix
+                cmdIns.Parameters["@has_suffix"].Value = true;
+                int id = Convert.ToInt32(cmdIns.ExecuteScalar());
+                return uid + "#" + id;
             }
             finally
             {

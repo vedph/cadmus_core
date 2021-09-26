@@ -4,6 +4,7 @@ using Fusi.DbManager.MySql;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using Xunit;
 
@@ -221,6 +222,56 @@ namespace Cadmus.Index.MySql.Test
             string uid2 = repository.AddUid("x:persons/john_doe", sid);
 
             Assert.Equal(uid1, uid2);
+        }
+        #endregion
+
+        #region Uri
+        [Fact]
+        public void AddUri_NotExisting_Added()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            string uri = "http://www.sample.com";
+
+            int id = repository.AddUri(uri);
+
+            string uri2 = repository.LookupUri(id);
+            Assert.Equal(uri, uri2);
+        }
+
+        [Fact]
+        public void AddUri_Existing_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            string uri = "http://www.sample.com";
+            int id = repository.AddUri(uri);
+
+            int id2 = repository.AddUri(uri);
+
+            Assert.Equal(id, id2);
+        }
+        #endregion
+
+        #region Node
+        private static IList<Node> GetNodes(int count)
+        {
+            Node[] nodes = new Node[count];
+            const string itemId = "e0cd9166-d005-404d-8f18-65be1f17b48f";
+            const string partId = "f321f320-26da-4164-890b-e3974e9272ba";
+
+            for (int i = 0; i < count; i++)
+            {
+                nodes[i] = new Node
+                {
+                    Id = i + 1,
+                    Label = "Node " + (i + 1),
+                    SourceType = i == 0
+                        ? NodeSourceType.Item : NodeSourceType.Pin,
+                    Sid = i == 0 ? itemId : partId + "/p" + i
+                };
+            }
+            return nodes;
         }
         #endregion
     }

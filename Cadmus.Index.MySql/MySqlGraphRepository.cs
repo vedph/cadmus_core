@@ -116,6 +116,14 @@ namespace Cadmus.Index.MySql
         }
 
         /// <summary>
+        /// Gets the SQL code to append to an insert command in order to get
+        /// the last inserted autonumber value.
+        /// </summary>
+        /// <returns>SQL code.</returns>
+        protected override string GetSelectIdentitySql() =>
+            "SELECT LAST_INSERT_ID();";
+
+        /// <summary>
         /// Gets the upsert tail SQL. This is the SQL code appended to a
         /// standard INSERT statement to make it work as an UPSERT. The code
         /// differs according to the RDBMS implementation, but for most RDBMS

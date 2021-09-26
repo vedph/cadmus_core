@@ -53,6 +53,13 @@ namespace Cadmus.Index.Sql.Graph
         protected abstract string GetRegexClauseSql(string text, string pattern);
 
         /// <summary>
+        /// Gets the SQL code to append to an insert command in order to get
+        /// the last inserted autonumber value.
+        /// </summary>
+        /// <returns>SQL code.</returns>
+        protected abstract string GetSelectIdentitySql();
+
+        /// <summary>
         /// Gets the upsert tail SQL. This is the SQL code appended to a
         /// standard INSERT statement to make it work as an UPSERT. The code
         /// differs according to the RDBMS implementation, but for most RDBMS
@@ -310,12 +317,12 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmdIns = GetCommand();
                 cmdIns.Transaction = Transaction;
                 cmdIns.CommandText =
-                    "INSERT INTO uid_lookup(id,sid,unsuffixed,has_suffix) " +
-                    "VALUES(@id,@sid,@unsuffixed,@has_suffix);";
+                    "INSERT INTO uid_lookup(sid,unsuffixed,has_suffix) " +
+                    "VALUES(@sid,@unsuffixed,@has_suffix);\n" +
+                    GetSelectIdentitySql();
                 AddParameter(cmdIns, "@sid", DbType.String, sid);
                 AddParameter(cmdIns, "@unsuffixed", DbType.String, uid);
                 AddParameter(cmdIns, "@has_suffix", DbType.Boolean, false);
-                AddParameter(cmdIns, "@id", DbType.Int32, ParameterDirection.Output);
 
                 // check if any unsuffixed UID is already in use
                 DbCommand cmdSel = GetCommand();
@@ -342,8 +349,7 @@ namespace Cadmus.Index.Sql.Graph
 
                 // no: add a new suffix
                 cmdIns.Parameters["@has_suffix"].Value = true;
-                cmdIns.ExecuteNonQuery();
-                int id = (int)cmdIns.Parameters["@id"].Value;
+                int id = Convert.ToInt32(cmdIns.ExecuteScalar());
                 return uid + "#" + id;
             }
             finally
@@ -378,13 +384,11 @@ namespace Cadmus.Index.Sql.Graph
                 // else insert it
                 DbCommand cmdIns = GetCommand();
                 cmdIns.Transaction = Transaction;
-                cmdIns.CommandText = "INSERT INTO uri_lookup(id, uri) " +
-                    "VALUES(@id, @uri);";
+                cmdIns.CommandText = "INSERT INTO uri_lookup(uri) " +
+                    "VALUES(@uri);\n" + GetSelectIdentitySql();
                 AddParameter(cmdIns, "@uri", DbType.String, uri);
-                AddParameter(cmdIns, "@id", DbType.Int32, ParameterDirection.Output);
 
-                cmdIns.ExecuteNonQuery();
-                return (int)cmdIns.Parameters["@id"].Value;
+                return Convert.ToInt32(cmdIns.ExecuteScalar());
             }
             finally
             {

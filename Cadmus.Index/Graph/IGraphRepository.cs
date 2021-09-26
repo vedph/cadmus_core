@@ -267,5 +267,14 @@ namespace Cadmus.Index.Graph
         /// <param name="progress">The progress.</param>
         Task UpdateNodeClassesAsync(CancellationToken cancel,
             IProgress<ProgressReport> progress = null);
+
+        /// <summary>
+        /// Gets the set of graph's nodes and triples whose SID starts with
+        /// the specified GUID. This identifiesd all the nodes and triples
+        /// generated from a single source item or part.
+        /// </summary>
+        /// <param name="sourceId">The source identifier.</param>
+        /// <returns>The set.</returns>
+        GraphSet GetGraphSet(string sourceId);
     }
 }

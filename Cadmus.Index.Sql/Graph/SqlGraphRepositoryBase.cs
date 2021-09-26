@@ -115,14 +115,14 @@ namespace Cadmus.Index.Sql.Graph
 
             if (!string.IsNullOrEmpty(filter.Prefix))
             {
-                builder.AddWhere("id LIKE '%@id%'")
-                       .AddParameter("@id", DbType.String, filter.Prefix);
+                builder.AddWhere("id LIKE @id")
+                       .AddParameter("@id", DbType.String, $"%{filter.Prefix}%");
             }
 
             if (!string.IsNullOrEmpty(filter.Uri))
             {
-                builder.AddWhere("uri LIKE '%@uri%'")
-                       .AddParameter("@uri", DbType.String, filter.Uri);
+                builder.AddWhere("uri LIKE @uri")
+                       .AddParameter("@uri", DbType.String, $"%{filter.Uri}%");
             }
 
             return builder;
@@ -427,16 +427,19 @@ namespace Cadmus.Index.Sql.Graph
             // uid
             if (!string.IsNullOrEmpty(filter.Uid))
             {
-                builder.AddFrom("INNER JOIN uri_lookup ul ON node.id=ul.id", slotId: "*")
-                       .AddWhere("uid LIKE '%@uid%'", slotId: "*")
-                       .AddParameter("@uid", DbType.String, filter.Uid, slotId: "*");
+                builder.AddFrom("INNER JOIN uri_lookup ul ON node.id=ul.id",
+                            slotId: "*")
+                       .AddWhere("uid LIKE @uid", slotId: "*")
+                       .AddParameter("@uid", DbType.String, $"%{filter.Uid}%",
+                            slotId: "*");
             }
 
             // label
             if (!string.IsNullOrEmpty(filter.Label))
             {
-                builder.AddWhere("label LIKE '%@label%'", slotId: "*")
-                       .AddParameter("@label", DbType.String, filter.Label, slotId: "*");
+                builder.AddWhere("label LIKE @label", slotId: "*")
+                       .AddParameter("@label", DbType.String, $"%{filter.Label}$",
+                            slotId: "*");
             }
 
             // source type
@@ -450,9 +453,18 @@ namespace Cadmus.Index.Sql.Graph
             // sid
             if (!string.IsNullOrEmpty(filter.Sid))
             {
-                builder.AddWhere(filter.IsSidPrefix ?
-                        "sid LIKE '@sid%'" : "sid=@sid", slotId: "*")
-                       .AddParameter("@sid", DbType.String, filter.Sid, slotId: "*");
+                if (filter.IsSidPrefix)
+                {
+                    builder.AddWhere("sid LIKE @sid", slotId: "*")
+                           .AddParameter("@sid", DbType.String, filter.Sid + "%",
+                                slotId: "*");
+                }
+                else
+                {
+                    builder.AddWhere("sid=@sid", slotId: "*")
+                           .AddParameter("@sid", DbType.String, filter.Sid,
+                                slotId: "*");
+                }
             }
 
             // linked node ID and role
@@ -1138,8 +1150,8 @@ namespace Cadmus.Index.Sql.Graph
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                builder.AddWhere("name LIKE '%@name%'", slotId: "*")
-                       .AddParameter("@name", DbType.String, filter.Name);
+                builder.AddWhere("name LIKE @name", slotId: "*")
+                       .AddParameter("@name", DbType.String, $"%{filter.Name}%");
             }
 
             if (!string.IsNullOrEmpty(filter.Facet))
@@ -1794,5 +1806,74 @@ namespace Cadmus.Index.Sql.Graph
             }
         }
         #endregion
+
+        /// <summary>
+        /// Gets the set of graph's nodes and triples whose SID starts with
+        /// the specified GUID. This identifiesd all the nodes and triples
+        /// generated from a single source item or part.
+        /// </summary>
+        /// <param name="sourceId">The source identifier.</param>
+        /// <returns>The set.</returns>
+        public GraphSet GetGraphSet(string sourceId)
+        {
+            if (sourceId is null)
+                throw new ArgumentNullException(nameof(sourceId));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand nodeCmd = GetCommand();
+                nodeCmd.CommandText =
+                    "SELECT id, is_class, label, source_type, sid " +
+                    "FROM node WHERE sid LIKE @sid;";
+                AddParameter(nodeCmd, "@sid", DbType.String, sourceId + "%");
+
+                List<Node> nodes = new List<Node>();
+                using (var nodeReader = nodeCmd.ExecuteReader())
+                {
+                    while (nodeReader.Read())
+                    {
+                        nodes.Add(
+                            new Node
+                            {
+                                Id = nodeReader.GetInt32(0),
+                                IsClass = nodeReader.GetBoolean(1),
+                                Label = nodeReader.GetValue<string>(2),
+                                SourceType = (NodeSourceType)nodeReader.GetInt32(3),
+                                Sid = nodeReader.GetValue<string>(4)
+                            });
+                    }
+                }
+
+                DbCommand tripleCmd = GetCommand();
+                tripleCmd.CommandText =
+                    "SELECT id, s_id, p_id, o_id, o_lit, sid " +
+                    "FROM triple WHERE sid LIKE @sid;";
+                AddParameter(tripleCmd, "@sid", DbType.String, sourceId + "%");
+                List<Triple> triples = new List<Triple>();
+                using (var tripleReader = tripleCmd.ExecuteReader())
+                {
+                    while (tripleReader.Read())
+                    {
+                        triples.Add(new Triple
+                        {
+                            Id = tripleReader.GetInt32(0),
+                            SubjectId = tripleReader.GetInt32(1),
+                            PredicateId = tripleReader.GetInt32(2),
+                            ObjectId = tripleReader.GetValue<int>(3),
+                            ObjectLiteral = tripleReader.GetValue<string>(4),
+                            Sid = tripleReader.GetString(5)
+                        });
+                    }
+                }
+
+                return new GraphSet(nodes, triples);
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
     }
 }

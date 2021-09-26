@@ -42,10 +42,11 @@ namespace Cadmus.Index.MySql.Test
             return repository;
         }
 
+        #region Namespace
         private static void AddNamespaces(int count, IGraphRepository repository)
         {
-            for (int i = 0; i < count; i++)
-                repository.AddNamespace("p" + i, $"http://www.ns{i}.org");
+            for (int n = 1; n <= count; n++)
+                repository.AddNamespace("p" + n, $"http://www.ns{n}.org");
         }
 
         [Fact]
@@ -63,6 +64,70 @@ namespace Cadmus.Index.MySql.Test
                 });
 
             Assert.Equal(3, page.Total);
+            Assert.Equal(3, page.Items.Count);
         }
+
+        [Fact]
+        public void GetNamespaces_Prefix_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(3, repository);
+
+            DataPage<NamespaceEntry> page = repository.GetNamespaces(
+                new NamespaceFilter
+                {
+                    PageNumber = 1,
+                    PageSize = 10,
+                    Prefix = "p1"
+                });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+        }
+
+        [Fact]
+        public void GetNamespaces_Uri_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(3, repository);
+
+            DataPage<NamespaceEntry> page = repository.GetNamespaces(
+                new NamespaceFilter
+                {
+                    PageNumber = 1,
+                    PageSize = 10,
+                    Uri = "ns2"
+                });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+        }
+
+        [Fact]
+        public void LookupNamespace_NotExisting_Null()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(2, repository);
+
+            string uri = repository.LookupNamespace("not-existing");
+
+            Assert.Null(uri);
+        }
+
+        [Fact]
+        public void LookupNamespace_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(2, repository);
+
+            string uri = repository.LookupNamespace("p1");
+
+            Assert.Equal("http://www.ns1.org", uri);
+        }
+        #endregion
     }
 }

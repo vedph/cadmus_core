@@ -115,14 +115,16 @@ namespace Cadmus.Index.Sql.Graph
 
             if (!string.IsNullOrEmpty(filter.Prefix))
             {
-                builder.AddWhere("id LIKE @id")
-                       .AddParameter("@id", DbType.String, $"%{filter.Prefix}%");
+                builder.AddWhere("id LIKE @id", slotId: "*")
+                       .AddParameter("@id", DbType.String, $"%{filter.Prefix}%",
+                            slotId: "*");
             }
 
             if (!string.IsNullOrEmpty(filter.Uri))
             {
-                builder.AddWhere("uri LIKE @uri")
-                       .AddParameter("@uri", DbType.String, $"%{filter.Uri}%");
+                builder.AddWhere("uri LIKE @uri", slotId: "*")
+                       .AddParameter("@uri", DbType.String, $"%{filter.Uri}%",
+                            slotId: "*");
             }
 
             return builder;
@@ -221,6 +223,8 @@ namespace Cadmus.Index.Sql.Graph
         public string LookupNamespace(string prefix)
         {
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
+
+            EnsureConnected();
 
             try
             {

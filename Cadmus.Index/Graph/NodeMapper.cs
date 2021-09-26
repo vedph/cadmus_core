@@ -204,14 +204,18 @@ namespace Cadmus.Index.Graph
             // an object, this object is usually an existing resource, whatever
             // its source. If it is external, it has no SID and is a manually
             // input object; if it comes from other mappings, it will have its
-            // own source. So we just avoid adding it if already existing in
-            // order to preserve its source.
+            // own source. So all what we want here is that the O node exists;
+            // when it already exists, we will not update it as any of its data
+            // is subject to manual editing or is managed by another source.
             Node objNode = null;
             if (objAsUid)
             {
                 objNode = _repository.GetNode(triple.ObjectId) ?? new Node
                 {
                     Label = obj,
+                    // all the nodes marked with user source (and thus also
+                    // having a null SID) will be added to the database only
+                    // when they are not already present
                     SourceType = NodeSourceType.User
                 };
             }

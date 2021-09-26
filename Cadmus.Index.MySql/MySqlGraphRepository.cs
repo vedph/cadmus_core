@@ -5,6 +5,7 @@ using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
 using System;
+using System.Data;
 using System.Data.Common;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -136,6 +137,34 @@ namespace Cadmus.Index.MySql
                 sb.Append(field).Append("=@").Append(field);
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Adds the node only if it does not exist; else do nothing.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        protected override void AddNodeIfNotExists(Node node)
+        {
+            EnsureConnected();
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+                cmd.CommandText = "INSERT IGNORE INTO node" +
+                    "(is_class, label, source_type, sid) " +
+                    "VALUES(@is_class, @label, @source_type, @sid)\n"
+                    + GetUpsertTailSql("is_class", "label", "source_type", "sid");
+                AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
+                AddParameter(cmd, "@label", DbType.String, node.Label);
+                AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
+                AddParameter(cmd, "@sid", DbType.String, node.Sid);
+
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
         }
     }
 }

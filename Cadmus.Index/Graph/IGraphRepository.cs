@@ -115,7 +115,10 @@ namespace Cadmus.Index.Graph
         /// Adds or updates the specified node.
         /// </summary>
         /// <param name="node">The node.</param>
-        void AddNode(Node node);
+        /// <param name="noUpdate">True to avoid updating an existing node.
+        /// When this is true, the node is added when not existing; when
+        /// existing, nothing is done.</param>
+        void AddNode(Node node, bool noUpdate = false);
 
         /// <summary>
         /// Deletes the node with the specified ID.

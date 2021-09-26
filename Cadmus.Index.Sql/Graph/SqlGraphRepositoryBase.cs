@@ -632,16 +632,29 @@ namespace Cadmus.Index.Sql.Graph
         }
 
         /// <summary>
+        /// Adds the node only if it does not exist; else do nothing.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        protected abstract void AddNodeIfNotExists(Node node);
+
+        /// <summary>
         /// Adds or updates the specified node.
         /// </summary>
         /// <param name="node">The node.</param>
+        /// <param name="noUpdate">True to avoid updating an existing node.
+        /// When this is true, the node is added when not existing; when
+        /// existing, nothing is done.</param>
         /// <exception cref="ArgumentNullException">node</exception>
-        public void AddNode(Node node)
+        public void AddNode(Node node, bool noUpdate = false)
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
+            if (noUpdate)
+            {
+                AddNodeIfNotExists(node);
+                return;
+            }
 
             EnsureConnected();
-
             try
             {
                 DbCommand cmd = GetCommand();

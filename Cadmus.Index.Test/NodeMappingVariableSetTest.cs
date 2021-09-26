@@ -302,7 +302,7 @@ namespace Cadmus.Index.Test
         }
 
         [Fact]
-        public void SetValues_Facet_Ok()
+        public void SetValues_FacetId_Ok()
         {
             NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
                 new NodeMapping
@@ -657,6 +657,83 @@ namespace Cadmus.Index.Test
 
             Assert.Equal(state.MappedUris[1],
                 set.GetVariable("ancestor:2")?.Value);
+        }
+
+        [Fact]
+        public void SetValues_Item_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    Id = 1,
+                    LabelTemplate = "Sample",
+                    TripleS = "$item"
+                });
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = GetItem()
+            };
+            state.AddNode(
+                new Node
+                {
+                    Id = 1,
+                    Label = "sample",
+                    SourceType = NodeSourceType.Item
+                }, "x:sample", 1);
+
+            set.SetValues(state);
+
+            Assert.Equal(state.MappedUris[1], set.GetVariable("item")?.Value);
+        }
+
+        [Fact]
+        public void SetValues_Facet_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    Id = 1,
+                    LabelTemplate = "Sample",
+                    TripleS = "$facet"
+                });
+            NodeMapperState state = new NodeMapperState
+            {
+                Item = GetItem()
+            };
+            state.AddNode(
+                new Node
+                {
+                    Id = 1,
+                    Label = "sample",
+                    SourceType = NodeSourceType.ItemFacet
+                }, "x:sample", 1);
+
+            set.SetValues(state);
+
+            Assert.Equal(state.MappedUris[1], set.GetVariable("facet")?.Value);
+        }
+
+        [Fact]
+        public void SetValues_PinUid_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    LabelTemplate = "Hello",
+                    TripleS = "$pin-uid"
+                });
+
+            set.SetValues(new NodeMapperState
+            {
+                Item = new Item
+                {
+                    Title = "A Sample Item",
+                },
+                PinName = "eid",
+                PinValue = "x:guys/john_doe"
+            });
+
+            Assert.Equal("x:guys/john_doe", set.GetVariable("pin-uid")?.Value);
         }
         #endregion
     }

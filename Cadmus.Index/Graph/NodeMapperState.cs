@@ -64,13 +64,13 @@ namespace Cadmus.Index.Graph
         /// the current item (=the item being mapped, or the item including
         /// the parts being mapped).
         /// </summary>
-        public int ItemMappingId { get; }
+        public int ItemMappingId { get; set; }
 
         /// <summary>
         /// Gets the mapping identifier for the node mapping corresponding
         /// to the current item's facet.
         /// </summary>
-        public int FacetMappingId { get; }
+        public int FacetMappingId { get; set; }
 
         /// <summary>
         /// Gets the UIDs corresponding to the node corresponding to each group
@@ -104,7 +104,8 @@ namespace Cadmus.Index.Graph
 
         /// <summary>
         /// Adds the node to this set, setting the mapping between its source
-        /// mapping ID and its UID.
+        /// mapping ID and its UID, plus eventually <see cref="ItemMappingId"/>
+        /// and <see cref="FacetMappingId"/>.
         /// </summary>
         /// <param name="node">The node.</param>
         /// <param name="uid">The node's UID.</param>
@@ -117,6 +118,11 @@ namespace Cadmus.Index.Graph
 
             Nodes.Add(node);
             MappedUris[mappingId] = uid;
+
+            if (node.SourceType == NodeSourceType.Item && ItemMappingId == 0)
+                ItemMappingId = mappingId;
+            if (node.SourceType == NodeSourceType.ItemFacet && FacetMappingId == 0)
+                FacetMappingId = mappingId;
         }
 
         /// <summary>

@@ -68,7 +68,7 @@ CREATE TABLE `uid_lookup` (
   `id` int NOT NULL AUTO_INCREMENT,
   `sid` varchar(500) NOT NULL,
   `unsuffixed` varchar(500) NOT NULL,
-  `has-suffix` bit(1) NOT NULL,
+  `has_suffix` bit(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `uid_lookup_unsuffixed_IDX` (`unsuffixed`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

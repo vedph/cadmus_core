@@ -321,7 +321,7 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmdSel = GetCommand();
                 cmdSel.CommandText = "SELECT 1 FROM uid_lookup WHERE unsuffixed=@uid;";
                 AddParameter(cmdSel, "@uid", DbType.String, uid);
-                int? result = cmdSel.ExecuteScalar() as int?;
+                long? result = cmdSel.ExecuteScalar() as long?;
 
                 // no: just insert the unsuffixed UID
                 if (result == null)
@@ -330,7 +330,7 @@ namespace Cadmus.Index.Sql.Graph
                     return uid;
                 }
 
-                // yes: check if a record with the same UID & SID exists;
+                // yes: check if a record with the same unsuffixed & SID exists;
                 // if so, reuse it; otherwise, add a new suffixed UID
                 cmdSel.CommandText = "SELECT id FROM uid_lookup " +
                     "WHERE unsuffixed=@uid AND sid=@sid;";

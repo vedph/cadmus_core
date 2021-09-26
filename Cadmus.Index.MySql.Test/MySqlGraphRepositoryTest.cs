@@ -3,6 +3,7 @@ using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
+using System;
 using System.Data;
 using Xunit;
 
@@ -179,6 +180,47 @@ namespace Cadmus.Index.MySql.Test
             Assert.Null(repository.LookupNamespace("p1"));
             Assert.Null(repository.LookupNamespace("p3"));
             Assert.NotNull(repository.LookupNamespace("p2"));
+        }
+        #endregion
+
+        #region Uid
+        [Fact]
+        public void AddUid_NoClash_AddedNoSuffix()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            string uid = repository.AddUid("x:persons/john_doe",
+                Guid.NewGuid().ToString());
+
+            Assert.Equal("x:persons/john_doe", uid);
+        }
+
+        [Fact]
+        public void AddUid_Clash_AddedWithSuffix()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            string sid = Guid.NewGuid().ToString();
+            string uid1 = repository.AddUid("x:persons/john_doe", sid);
+
+            string uid2 = repository.AddUid("x:persons/john_doe",
+                Guid.NewGuid().ToString());
+
+            Assert.NotEqual(uid1, uid2);
+        }
+
+        [Fact]
+        public void AddUid_ClashButSameSid_ReusedWithSuffix()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            string sid = Guid.NewGuid().ToString();
+            string uid1 = repository.AddUid("x:persons/john_doe", sid);
+
+            string uid2 = repository.AddUid("x:persons/john_doe", sid);
+
+            Assert.Equal(uid1, uid2);
         }
         #endregion
     }

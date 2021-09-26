@@ -1875,5 +1875,36 @@ namespace Cadmus.Index.Sql.Graph
                 Disconnect();
             }
         }
+
+        /// <summary>
+        /// Deletes the set of graph's nodes and triples whose SID starts with
+        /// the specified GUID. This identifies all the nodes and triples
+        /// generated from a single source item or part.
+        /// </summary>
+        /// <param name="sourceId">The source identifier.</param>
+        /// <exception cref="ArgumentNullException">sourceId</exception>
+        public void DeleteGraphSet(string sourceId)
+        {
+            if (sourceId == null) throw new ArgumentNullException(nameof(sourceId));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.Transaction = Transaction;
+
+                cmd.CommandText = "DELETE FROM triple WHERE sid LIKE @sid;";
+                AddParameter(cmd, "@sid", DbType.String, sourceId + "%");
+                cmd.ExecuteNonQuery();
+
+                cmd.CommandText = "DELETE FROM node WHERE sid LIKE @sid;";
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
     }
 }

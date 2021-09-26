@@ -1,7 +1,4 @@
-﻿using Fusi.Tools.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace Cadmus.Index.Graph
 {
@@ -35,15 +32,46 @@ namespace Cadmus.Index.Graph
         {
             if (set == null) throw new ArgumentNullException(nameof(set));
 
+            // get the old set
+            var guidAndItem = set.GetSourceGuidAndType();
+            GraphSet oldSet = guidAndItem == null ?
+                null : _repository.GetGraphSet(guidAndItem.Item1);
+
+            // compare sets
+            CrudGrouper<Node> nodeGrouper = new CrudGrouper<Node>();
+            nodeGrouper.Group(set.Nodes, oldSet.Nodes,
+                (Node a, Node b) => a.Id == b.Id);
+
+            CrudGrouper<Triple> tripleGrouper = new CrudGrouper<Triple>();
+            tripleGrouper.Group(set.Triples, oldSet.Triples,
+                (Triple a, Triple b) =>
+                {
+                    return a.SubjectId == b.SubjectId &&
+                        a.PredicateId == b.PredicateId &&
+                        a.ObjectId == b.ObjectId &&
+                        a.Sid == b.Sid;
+                });
+
             try
             {
+                // execute updates
                 _repository.BeginTransaction();
 
-                // get the old set
-                var guidAndItem = set.GetSourceGuidAndType();
-                GraphSet oldSet = guidAndItem == null ?
-                    null : _repository.GetGraphSet(guidAndItem.Item1);
-                // TODO
+                // nodes
+                foreach (Node node in nodeGrouper.Deleted)
+                    _repository.DeleteNode(node.Id);
+                foreach (Node node in nodeGrouper.Added)
+                    _repository.AddNode(node);
+                foreach (Node node in nodeGrouper.Updated)
+                    _repository.AddNode(node, node.Sid == null);
+
+                // triples
+                foreach (Triple triple in tripleGrouper.Deleted)
+                    _repository.DeleteTriple(triple.Id);
+                foreach (Triple triple in tripleGrouper.Added)
+                    _repository.AddTriple(triple);
+                foreach (Triple triple in tripleGrouper.Updated)
+                    _repository.AddTriple(triple);
 
                 _repository.CommitTransaction();
             }

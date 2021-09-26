@@ -270,11 +270,19 @@ namespace Cadmus.Index.Graph
 
         /// <summary>
         /// Gets the set of graph's nodes and triples whose SID starts with
-        /// the specified GUID. This identifiesd all the nodes and triples
+        /// the specified GUID. This identifies all the nodes and triples
         /// generated from a single source item or part.
         /// </summary>
         /// <param name="sourceId">The source identifier.</param>
         /// <returns>The set.</returns>
         GraphSet GetGraphSet(string sourceId);
+
+        /// <summary>
+        /// Deletes the set of graph's nodes and triples whose SID starts with
+        /// the specified GUID. This identifies all the nodes and triples
+        /// generated from a single source item or part.
+        /// </summary>
+        /// <param name="sourceId">The source identifier.</param>
+        void DeleteGraphSet(string sourceId);
     }
 }

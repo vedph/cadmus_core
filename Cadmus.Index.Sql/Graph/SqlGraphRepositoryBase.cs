@@ -254,7 +254,7 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM node_mapping WHERE id=@id;";
+                cmd.CommandText = "DELETE FROM namespace_lookup WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.String, prefix);
                 cmd.ExecuteNonQuery();
             }
@@ -278,7 +278,7 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM namespace WHERE uri=@uri;";
+                cmd.CommandText = "DELETE FROM namespace_lookup WHERE uri=@uri;";
                 AddParameter(cmd, "@uri", DbType.String, uri);
                 cmd.ExecuteNonQuery();
             }

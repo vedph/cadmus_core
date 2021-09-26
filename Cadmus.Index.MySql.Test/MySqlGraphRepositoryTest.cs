@@ -128,6 +128,58 @@ namespace Cadmus.Index.MySql.Test
 
             Assert.Equal("http://www.ns1.org", uri);
         }
+
+        [Fact]
+        public void DeleteNamespaceByPrefix_NotExisting_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(2, repository);
+
+            repository.DeleteNamespaceByPrefix("not-existing");
+
+            Assert.Equal(2, repository.GetNamespaces(new NamespaceFilter()).Total);
+        }
+
+        [Fact]
+        public void DeleteNamespaceByPrefix_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(2, repository);
+
+            repository.DeleteNamespaceByPrefix("p2");
+
+            Assert.NotNull(repository.LookupNamespace("p1"));
+            Assert.Null(repository.LookupNamespace("p2"));
+        }
+
+        [Fact]
+        public void DeleteNamespaceByUri_NotExisting_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(2, repository);
+
+            repository.DeleteNamespaceByUri("not-existing");
+
+            Assert.Equal(2, repository.GetNamespaces(new NamespaceFilter()).Total);
+        }
+
+        [Fact]
+        public void DeleteNamespaceByUri_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNamespaces(2, repository);
+            repository.AddNamespace("p3", "http://www.ns1.org");
+
+            repository.DeleteNamespaceByUri("http://www.ns1.org");
+
+            Assert.Null(repository.LookupNamespace("p1"));
+            Assert.Null(repository.LookupNamespace("p3"));
+            Assert.NotNull(repository.LookupNamespace("p2"));
+        }
         #endregion
     }
 }

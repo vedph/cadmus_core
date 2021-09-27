@@ -541,5 +541,38 @@ namespace Cadmus.Index.MySql.Test
             Assert.Null(repository.GetNode(argos.Id));
         }
         #endregion
+
+        #region Property
+        private void AddProperties(IGraphRepository repository)
+        {
+            repository.AddProperty(new Property
+            {
+                Id = repository.AddUri("rdfs:comment"),
+                DataType = "xsd:string",
+                Description = "A comment.",
+                LiteralEditor = "qed.md"
+            });
+            repository.AddProperty(new Property
+            {
+                Id = repository.AddUri("x:date"),
+                DataType = "xs:date",
+                Description = "A year-based date.",
+                LiteralEditor = "qed.date"
+            });
+        }
+
+        [Fact]
+        public void GetProperties_NoFilter_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            var page = repository.GetProperties(new PropertyFilter());
+
+            Assert.Equal(2, page.Total);
+            Assert.Equal(2, page.Items.Count);
+        }
+        #endregion
     }
 }

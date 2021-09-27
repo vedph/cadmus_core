@@ -734,11 +734,19 @@ namespace Cadmus.Index.Sql.Graph
             SqlSelectBuilder builder = GetSelectBuilder();
             builder.EnsureSlots(null, "c");
 
-            builder.AddWhat("id, data_type, lit_editor, description, ul.uri")
+            builder.AddWhat("p.id, p.data_type, p.lit_editor, p.description, ul.uri")
                    .AddWhat("COUNT(id)", slotId: "c")
-                   .AddFrom("property", slotId: "*")
-                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=node.id")
+                   .AddFrom("property p", slotId: "*")
+                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=p.id")
                    .AddOrder("ul.uri");
+
+            if (!string.IsNullOrEmpty(filter.Uid))
+            {
+                builder.AddFrom("INNER JOIN uri_lookup ul ON ul.id=p.id",
+                            slotId: "c")
+                       .AddWhere("ul.uri LIKE @uid")
+                       .AddParameter("@uid", DbType.String, $"%{filter.Uid}%");
+            }
 
             if (!string.IsNullOrEmpty(filter.DataType))
             {

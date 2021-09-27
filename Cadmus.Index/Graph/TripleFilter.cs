@@ -27,5 +27,10 @@ namespace Cadmus.Index.Graph
         /// Gets or sets the object literal regular expression to match.
         /// </summary>
         public string ObjectLiteral { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tag to match.
+        /// </summary>
+        public string Tag { get; set; }
     }
 }

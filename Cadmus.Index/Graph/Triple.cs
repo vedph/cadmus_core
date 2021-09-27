@@ -38,6 +38,14 @@
         public string Sid { get; set; }
 
         /// <summary>
+        /// Gets or sets a general purpose tag used to mark triples. For instance,
+        /// the tag value <c>restriction</c> can be used to tag those triples
+        /// representing property restrictions, so that they can be excluded
+        /// from the normal users view.
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
         /// Converts to string.
         /// </summary>
         /// <returns>

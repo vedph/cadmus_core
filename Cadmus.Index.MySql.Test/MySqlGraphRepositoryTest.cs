@@ -2,9 +2,7 @@
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using Fusi.Tools.Data;
-using MySql.Data.MySqlClient;
 using System;
-using System.Data;
 using Xunit;
 
 namespace Cadmus.Index.MySql.Test
@@ -16,7 +14,7 @@ namespace Cadmus.Index.MySql.Test
         private const string DB_NAME = "cadmus-index-test";
         static private readonly string CS = string.Format(CST, DB_NAME);
 
-        private static IDbConnection GetConnection() => new MySqlConnection(CS);
+        // private static IDbConnection GetConnection() => new MySqlConnection(CS);
 
         private static void Reset()
         {

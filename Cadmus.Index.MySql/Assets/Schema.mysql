@@ -134,19 +134,6 @@ CREATE TABLE `property` (
   CONSTRAINT `property_FK` FOREIGN KEY (`id`) REFERENCES `uri_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- property_restriction
-CREATE TABLE `property_restriction` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `property_id` int NOT NULL,
-  `restriction` varchar(500) NOT NULL,
-  `o_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `property_restriction_FK` (`property_id`),
-  KEY `property_restriction_FK_1` (`o_id`),
-  CONSTRAINT `property_restriction_FK` FOREIGN KEY (`property_id`) REFERENCES `property` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `property_restriction_FK_1` FOREIGN KEY (`o_id`) REFERENCES `node` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 -- triple
 CREATE TABLE `triple` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -155,6 +142,7 @@ CREATE TABLE `triple` (
   `o_id` int DEFAULT NULL,
   `o_lit` varchar(15000) DEFAULT NULL,
   `sid` varchar(500) DEFAULT NULL,
+  `tag` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `triple_FK` (`s_id`),
   KEY `triple_FK_2` (`o_id`),

@@ -160,34 +160,6 @@ namespace Cadmus.Index.Graph
         void DeleteProperty(int id);
 
         /// <summary>
-        /// Gets the specified page of restrictions.
-        /// </summary>
-        /// <param name="filter">The filter. Set page size=0 to get all
-        /// the mappings at once.</param>
-        /// <returns>Page.</returns>
-        DataPage<PropertyRestrictionResult> GetRestrictions(
-            PropertyRestrictionFilter filter);
-
-        /// <summary>
-        /// Gets the restriction with the specified ID.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns>The restriction or null if not found.</returns>
-        PropertyRestrictionResult GetRestriction(int id);
-
-        /// <summary>
-        /// Adds or updates the specified property restriction.
-        /// </summary>
-        /// <param name="restriction">The restriction.</param>
-        void AddRestriction(PropertyRestriction restriction);
-
-        /// <summary>
-        /// Deletes the restriction with the specified ID.
-        /// </summary>
-        /// <param name="id">The restriction identifier.</param>
-        void DeleteRestriction(int id);
-
-        /// <summary>
         /// Gets the specified page of node mappings.
         /// </summary>
         /// <param name="filter">The filter. Set page size=0 to get all

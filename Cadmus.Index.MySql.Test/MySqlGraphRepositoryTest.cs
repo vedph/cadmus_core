@@ -506,6 +506,40 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(0, page.Total);
             Assert.Empty(page.Items);
         }
+
+        [Fact]
+        public void DeleteNode_NotExisting_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            Node argos = new Node
+            {
+                Id = repository.AddUri("x:dogs/argos"),
+                Label = "Argos"
+            };
+            repository.AddNode(argos);
+
+            repository.DeleteNode(argos.Id + 10);
+
+            Assert.NotNull(repository.GetNode(argos.Id));
+        }
+
+        [Fact]
+        public void DeleteNode_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            Node argos = new Node
+            {
+                Id = repository.AddUri("x:dogs/argos"),
+                Label = "Argos"
+            };
+            repository.AddNode(argos);
+
+            repository.DeleteNode(argos.Id);
+
+            Assert.Null(repository.GetNode(argos.Id));
+        }
         #endregion
     }
 }

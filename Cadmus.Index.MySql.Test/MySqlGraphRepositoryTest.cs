@@ -698,24 +698,91 @@ namespace Cadmus.Index.MySql.Test
         #endregion
 
         #region Node Mapping
-        private void AddNodeMappings(IGraphRepository repository)
+        private static void AddNodeMappings(IGraphRepository repository)
         {
-            NodeMapping item = new NodeMapping
+            // rdfs:comment
+            Node commentNode = new Node
+            {
+                Id = repository.AddUri("rdfs:comment"),
+                Label = "comment"
+            };
+            repository.AddNode(commentNode);
+
+            // item mapping
+            NodeMapping itemMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Item,
                 FacetFilter = "person",
                 Prefix = "x:persons/{group-id}/",
                 LabelTemplate = "{title}",
-                Description = "Map a grouped person item into a node"
+                Description = "Map a person item into a node"
             };
-            repository.AddMapping(item);
+            repository.AddMapping(itemMapping);
 
-            // TODO
+            // dsc child of item mapping
             NodeMapping itemDsc = new NodeMapping
+            {
+                ParentId = itemMapping.Id,
+                SourceType = NodeSourceType.Item,
+                TripleP = "rdfs:comment",
+                TripleO = "$dsc"
+            };
+        }
+
+        [Fact]
+        public void AddMapping_NotExisting_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            // item mapping
+            NodeMapping mapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Item,
                 FacetFilter = "person",
+                Name = "Item",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Map a person item into a node"
             };
+            repository.AddMapping(mapping);
+
+            Assert.True(mapping.Id > 0);
+            NodeMapping mapping2 = repository.GetMapping(mapping.Id);
+            Assert.Equal(mapping.SourceType, mapping2.SourceType);
+            Assert.Equal(mapping.FacetFilter, mapping2.FacetFilter);
+            Assert.Equal(mapping.Prefix, mapping2.Prefix);
+            Assert.Equal(mapping.LabelTemplate, mapping2.LabelTemplate);
+            Assert.Equal(mapping.Description, mapping2.Description);
+        }
+
+        [Fact]
+        public void AddMapping_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            // item mapping
+            NodeMapping mapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                FacetFilter = "person",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Map a person item into a node"
+            };
+            repository.AddMapping(mapping);
+
+            // update
+            mapping.Description = "Updated!";
+            repository.AddMapping(mapping);
+
+            NodeMapping mapping2 = repository.GetMapping(mapping.Id);
+            Assert.Equal(mapping.SourceType, mapping2.SourceType);
+            Assert.Equal(mapping.FacetFilter, mapping2.FacetFilter);
+            Assert.Equal(mapping.Prefix, mapping2.Prefix);
+            Assert.Equal(mapping.LabelTemplate, mapping2.LabelTemplate);
+            Assert.Equal(mapping.Description, mapping2.Description);
         }
         #endregion
     }

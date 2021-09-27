@@ -1057,7 +1057,8 @@ namespace Cadmus.Index.Sql.Graph
                 TripleP = reader.GetValue<string>(15),
                 TripleO = reader.GetValue<string>(16),
                 TripleOPrefix = reader.GetValue<string>(17),
-                IsReversed = reader.GetBoolean(18)
+                IsReversed = reader.GetBoolean(18),
+                Description = reader.GetString(19)
             };
             if (!noDescription)
                 mapping.Description = reader.GetValue<string>(19);
@@ -1126,11 +1127,11 @@ namespace Cadmus.Index.Sql.Graph
             try
             {
                 DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT id, parent_id, ordinal, facet_filter, " +
-                    "group_filter, flags_filter, title_filter, part_type, " +
-                    "part_role, pin_name, source_type, prefix, label_template, " +
-                    "triple_s, triple_p, triple_o, triple_o_prefix, reversed, " +
-                    "description FROM node_mapping WHERE id=@id;";
+                cmd.CommandText = "SELECT id, parent_id, source_type, name, " +
+                    "ordinal, facet_filter, group_filter, flags_filter, " +
+                    "title_filter, part_type, part_role, pin_name, prefix, " +
+                    "label_template, triple_s, triple_p, triple_o, triple_o_prefix, " +
+                    "reversed, description FROM node_mapping WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.Int32, id);
 
                 using (var reader = cmd.ExecuteReader())
@@ -1172,7 +1173,7 @@ namespace Cadmus.Index.Sql.Graph
 
                 sb.Append("parent_id, ordinal, facet_filter, group_filter, " +
                     "flags_filter, title_filter, part_type, part_role, " +
-                    "pin_name, source_type, prefix, label_template, " +
+                    "pin_name, source_type, name, prefix, label_template, " +
                     "triple_s, triple_p, triple_o, triple_o_prefix, " +
                     "reversed, description)\n");
                 sb.Append("VALUES(");
@@ -1182,9 +1183,9 @@ namespace Cadmus.Index.Sql.Graph
 
                 sb.Append("@parent_id, @ordinal, @facet_filter, @group_filter, " +
                     "@flags_filter, @title_filter, @part_type, @part_role, " +
-                    "@pin_name, @source_type, @prefix, @label_template, " +
+                    "@pin_name, @source_type, @name, @prefix, @label_template, " +
                     "@triple_s, @triple_p, @triple_o, @triple_o_prefix, " +
-                    "@reversed, @description)\n");
+                    "@reversed, @description)");
 
                 // an existing mapping is an UPSERT, otherwise we have an INSERT
                 // and we must retrieve the ID of the newly inserted row
@@ -1192,15 +1193,16 @@ namespace Cadmus.Index.Sql.Graph
                 {
                     AddParameter(cmd, "@id", DbType.Int32, mapping.Id);
 
-                    sb.Append(GetUpsertTailSql("parent_id", "ordinal", "facet_filter",
+                    sb.Append('\n').Append(
+                        GetUpsertTailSql("parent_id", "ordinal", "facet_filter",
                         "group_filter", "flags_filter", "title_filter",
-                        "part_type", "part_role", "pin_name", "source_type",
+                        "part_type", "part_role", "pin_name", "source_type", "name",
                         "prefix", "label_template", "triple_s", "triple_p",
                         "triple_o", "triple_o_prefix", "reversed", "description"));
                 }
                 else
                 {
-                    sb.Append(GetSelectIdentitySql());
+                    sb.Append(";\n").Append(GetSelectIdentitySql());
                 }
                 cmd.CommandText = sb.ToString();
 
@@ -1218,6 +1220,7 @@ namespace Cadmus.Index.Sql.Graph
                 AddParameter(cmd, "@part_role", DbType.String, mapping.PartRole);
                 AddParameter(cmd, "@pin_name", DbType.String, mapping.PinName);
                 AddParameter(cmd, "@source_type", DbType.Int32, mapping.SourceType);
+                AddParameter(cmd, "@name", DbType.String, mapping.Name);
                 AddParameter(cmd, "@prefix", DbType.String, mapping.Prefix);
                 AddParameter(cmd, "@label_template", DbType.String,
                     mapping.LabelTemplate);
@@ -1581,19 +1584,19 @@ namespace Cadmus.Index.Sql.Graph
                 // an existing triple must add @id
                 if (triple.Id > 0) sb.Append("@id, ");
 
-                sb.Append("@s_id, @p_id, @o_id, @o_lit, @sid)\n");
+                sb.Append("@s_id, @p_id, @o_id, @o_lit, @sid)");
 
                 // an existing triple is an UPSERT, otherwise we have an INSERT
                 // and we must retrieve the ID of the newly inserted row
                 if (triple.Id > 0)
                 {
                     AddParameter(cmd, "@id", DbType.Int32, triple.Id);
-                    sb.Append(GetUpsertTailSql(
+                    sb.Append(";\n").Append(GetUpsertTailSql(
                         "s_id", "p_id", "o_id", "o_lit", "sid"));
                 }
                 else
                 {
-                    sb.Append(GetSelectIdentitySql());
+                    sb.Append('\n').Append(GetSelectIdentitySql());
                 }
                 cmd.CommandText = sb.ToString();
 

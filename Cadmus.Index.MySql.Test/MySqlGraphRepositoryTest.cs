@@ -231,7 +231,7 @@ namespace Cadmus.Index.MySql.Test
         {
             Reset();
             IGraphRepository repository = GetRepository();
-            string uri = "http://www.sample.com";
+            const string uri = "http://www.sample.com";
 
             int id = repository.AddUri(uri);
 
@@ -244,7 +244,7 @@ namespace Cadmus.Index.MySql.Test
         {
             Reset();
             IGraphRepository repository = GetRepository();
-            string uri = "http://www.sample.com";
+            const string uri = "http://www.sample.com";
             int id = repository.AddUri(uri);
 
             int id2 = repository.AddUri(uri);
@@ -254,24 +254,127 @@ namespace Cadmus.Index.MySql.Test
         #endregion
 
         #region Node
-        private static IList<Node> GetNodes(int count)
+        private static void AddNodes(int count, IGraphRepository repository)
         {
-            Node[] nodes = new Node[count];
             const string itemId = "e0cd9166-d005-404d-8f18-65be1f17b48f";
             const string partId = "f321f320-26da-4164-890b-e3974e9272ba";
 
             for (int i = 0; i < count; i++)
             {
-                nodes[i] = new Node
+                string uid = $"x:node{i + 1}";
+                int id = repository.AddUri(uid);
+
+                Node node = new Node
                 {
-                    Id = i + 1,
-                    Label = "Node " + (i + 1),
+                    Id = id,
+                    Label = $"Node {i+1:00}",
                     SourceType = i == 0
                         ? NodeSourceType.Item : NodeSourceType.Pin,
                     Sid = i == 0 ? itemId : partId + "/p" + i
                 };
+                repository.AddNode(node);
             }
-            return nodes;
+        }
+
+        [Fact]
+        public void GetNodes_NoFilter_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter());
+
+            Assert.Equal(10, page.Total);
+            Assert.Equal(10, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetNodes_NoFilterPage2_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                PageNumber = 2,
+                PageSize = 5
+            });
+
+            Assert.Equal(10, page.Total);
+            Assert.Equal(5, page.Items.Count);
+            Assert.Equal("Node 06", page.Items[0].Label);
+            Assert.Equal("Node 10", page.Items[4].Label);
+        }
+
+        [Fact]
+        public void GetNodes_ByLabel_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                Label = "05"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+            Assert.Equal("Node 05", page.Items[0].Label);
+        }
+
+        [Fact]
+        public void GetNodes_BySourceType_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                SourceType = NodeSourceType.Item
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+            Assert.Equal("Node 01", page.Items[0].Label);
+        }
+
+        [Fact]
+        public void GetNodes_BySidExact_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                Sid = "e0cd9166-d005-404d-8f18-65be1f17b48f"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+            Assert.Equal("Node 01", page.Items[0].Label);
+        }
+
+        [Fact]
+        public void GetNodes_BySidPrefix_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                Sid = "f321f320-26da-4164-890b-e3974e9272ba/",
+                IsSidPrefix = true
+            });
+
+            Assert.Equal(9, page.Total);
+            Assert.Equal(9, page.Items.Count);
+            Assert.Equal("Node 02", page.Items[0].Label);
         }
         #endregion
     }

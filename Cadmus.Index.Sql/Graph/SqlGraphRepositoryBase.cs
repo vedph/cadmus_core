@@ -452,7 +452,7 @@ namespace Cadmus.Index.Sql.Graph
             if (!string.IsNullOrEmpty(filter.Label))
             {
                 builder.AddWhere("label LIKE @label", slotId: "*")
-                       .AddParameter("@label", DbType.String, $"%{filter.Label}$",
+                       .AddParameter("@label", DbType.String, $"%{filter.Label}%",
                             slotId: "*");
             }
 
@@ -686,15 +686,18 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT INTO node" +
-                    "(is_class, label, source_type, sid) " +
-                    "VALUES(@is_class, @label, @source_type, @sid)\n"
+                    "(id, is_class, label, source_type, sid) " +
+                    "VALUES(@id, @is_class, @label, @source_type, @sid)\n"
                     + GetUpsertTailSql("is_class", "label", "source_type", "sid");
+                AddParameter(cmd, "@id", DbType.Int32, node.Id);
                 AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
                 AddParameter(cmd, "@label", DbType.String, node.Label);
                 AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
                 AddParameter(cmd, "@sid", DbType.String, node.Sid);
 
                 cmd.ExecuteNonQuery();
+
+                UpdateNodeClasses(node.Id);
             }
             finally
             {
@@ -1721,6 +1724,9 @@ namespace Cadmus.Index.Sql.Graph
                 AddParameter(cmd, "@sid", DbType.String, triple.Sid);
 
                 cmd.ExecuteNonQuery();
+
+                // update subject node classes when O is not a literal
+                if (triple.ObjectId == 0) UpdateNodeClasses(triple.SubjectId);
             }
             finally
             {
@@ -1738,11 +1744,29 @@ namespace Cadmus.Index.Sql.Graph
 
             try
             {
+                // get the triple to delete as its deletion might affect
+                // the classes assigned to its subject node
+                int subjectId, objectId;
+                DbCommand selCmd = GetCommand();
+                selCmd.CommandText = "SELECT s_id, o_id\n" +
+                    "FROM triple WHERE id=@id;";
+                AddParameter(selCmd, "@id", DbType.Int32, id);
+                using (DbDataReader reader = selCmd.ExecuteReader())
+                {
+                    if (!reader.Read()) return;
+                    subjectId = reader.GetInt32(0);
+                    objectId = reader.GetInt32(1);
+                }
+
+                // delete
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "DELETE FROM triple WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.Int32, id);
                 cmd.ExecuteNonQuery();
+
+                // update classes if required
+                if (objectId > 0) UpdateNodeClasses(subjectId);
             }
             finally
             {
@@ -1752,6 +1776,17 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Node Classes
+        private void UpdateNodeClasses(int nodeId)
+        {
+            DbCommand cmd = GetCommand();
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "populate_node_class";
+            AddParameter(cmd, "instance_id", DbType.Int32, nodeId);
+
+            long? result = cmd.ExecuteScalar() as long?;
+            cmd.ExecuteNonQuery();
+        }
+
         /// <summary>
         /// Updates the classes for all the nodes belonging to any class.
         /// </summary>

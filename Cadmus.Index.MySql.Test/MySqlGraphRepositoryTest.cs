@@ -626,6 +626,7 @@ namespace Cadmus.Index.MySql.Test
         {
             Reset();
             IGraphRepository repository = GetRepository();
+            AddProperties(repository);
 
             Assert.Null(repository.GetProperty(123));
         }
@@ -635,10 +636,53 @@ namespace Cadmus.Index.MySql.Test
         {
             Reset();
             IGraphRepository repository = GetRepository();
-
             AddProperties(repository);
 
             Assert.NotNull(repository.GetProperty(1));
+        }
+
+        [Fact]
+        public void GetPropertyByUri_NotExisting_Null()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            Assert.Null(repository.GetPropertyByUri("not-existing"));
+        }
+
+        [Fact]
+        public void GetPropertyByUri_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            Assert.NotNull(repository.GetPropertyByUri("rdfs:comment"));
+        }
+
+        [Fact]
+        public void DeleteProperty_NotExisting_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            repository.DeleteProperty(123);
+
+            Assert.Equal(2, repository.GetProperties(new PropertyFilter()).Total);
+        }
+
+        [Fact]
+        public void DeleteProperty_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            repository.DeleteProperty(1);
+
+            Assert.Equal(1, repository.GetProperties(new PropertyFilter()).Total);
         }
         #endregion
     }

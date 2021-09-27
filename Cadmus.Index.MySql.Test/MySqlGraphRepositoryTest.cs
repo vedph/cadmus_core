@@ -573,6 +573,54 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(2, page.Total);
             Assert.Equal(2, page.Items.Count);
         }
+
+        [Fact]
+        public void GetProperties_ByUid_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            var page = repository.GetProperties(new PropertyFilter
+            {
+                Uid = "rdfs"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetProperties_ByDataType_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            var page = repository.GetProperties(new PropertyFilter
+            {
+                DataType = "xsd:string"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetProperties_ByLiteralEditor_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddProperties(repository);
+
+            var page = repository.GetProperties(new PropertyFilter
+            {
+                LiteralEditor = "qed.date"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+        }
         #endregion
     }
 }

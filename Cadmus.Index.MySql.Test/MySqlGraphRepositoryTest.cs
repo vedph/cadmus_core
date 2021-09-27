@@ -4,7 +4,6 @@ using Fusi.DbManager.MySql;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using Xunit;
 
@@ -543,7 +542,7 @@ namespace Cadmus.Index.MySql.Test
         #endregion
 
         #region Property
-        private void AddProperties(IGraphRepository repository)
+        private static void AddProperties(IGraphRepository repository)
         {
             repository.AddProperty(new Property
             {
@@ -620,6 +619,26 @@ namespace Cadmus.Index.MySql.Test
 
             Assert.Equal(1, page.Total);
             Assert.Equal(1, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetProperty_NotExisting_Null()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            Assert.Null(repository.GetProperty(123));
+        }
+
+        [Fact]
+        public void GetProperty_Existing_Null()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            AddProperties(repository);
+
+            Assert.NotNull(repository.GetProperty(1));
         }
         #endregion
     }

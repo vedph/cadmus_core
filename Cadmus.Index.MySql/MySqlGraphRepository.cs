@@ -159,9 +159,9 @@ namespace Cadmus.Index.MySql
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT IGNORE INTO node" +
-                    "(is_class, label, source_type, sid) " +
-                    "VALUES(@is_class, @label, @source_type, @sid)\n"
-                    + GetUpsertTailSql("is_class", "label", "source_type", "sid");
+                    "(id, is_class, label, source_type, sid) " +
+                    "VALUES(@id, @is_class, @label, @source_type, @sid);";
+                AddParameter(cmd, "@id", DbType.Int32, node.Id);
                 AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
                 AddParameter(cmd, "@label", DbType.String, node.Label);
                 AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);

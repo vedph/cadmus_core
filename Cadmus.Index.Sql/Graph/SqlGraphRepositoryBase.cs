@@ -913,9 +913,10 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT INTO property(" +
-                    "data_type, lit_editor, description) " +
-                    "VALUES(@data_type, @lit_editor, @description)\n" +
+                    "id, data_type, lit_editor, description) " +
+                    "VALUES(@id, @data_type, @lit_editor, @description)\n" +
                     GetUpsertTailSql("data_type", "lit_editor", "description");
+                AddParameter(cmd, "@id", DbType.Int32, property.Id);
                 AddParameter(cmd, "@data_type", DbType.String, property.DataType);
                 AddParameter(cmd, "@lit_editor", DbType.String, property.LiteralEditor);
                 AddParameter(cmd, "@description", DbType.String, property.Description);

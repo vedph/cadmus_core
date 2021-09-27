@@ -542,16 +542,29 @@ namespace Cadmus.Index.MySql.Test
         #region Property
         private static void AddProperties(IGraphRepository repository)
         {
-            repository.AddProperty(new Property
+            Node comment = new Node
             {
                 Id = repository.AddUri("rdfs:comment"),
+                Label = "comment"
+            };
+            repository.AddNode(comment);
+            Node date = new Node
+            {
+                Id = repository.AddUri("x:date"),
+                Label = "Date"
+            };
+            repository.AddNode(comment);
+
+            repository.AddProperty(new Property
+            {
+                Id = comment.Id,
                 DataType = "xsd:string",
                 Description = "A comment.",
                 LiteralEditor = "qed.md"
             });
             repository.AddProperty(new Property
             {
-                Id = repository.AddUri("x:date"),
+                Id = date.Id,
                 DataType = "xs:date",
                 Description = "A year-based date.",
                 LiteralEditor = "qed.date"
@@ -681,6 +694,28 @@ namespace Cadmus.Index.MySql.Test
             repository.DeleteProperty(1);
 
             Assert.Equal(1, repository.GetProperties(new PropertyFilter()).Total);
+        }
+        #endregion
+
+        #region Node Mapping
+        private void AddNodeMappings(IGraphRepository repository)
+        {
+            NodeMapping item = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                FacetFilter = "person",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Map a grouped person item into a node"
+            };
+            repository.AddNodeMapping(item);
+
+            // TODO
+            NodeMapping itemDsc = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                FacetFilter = "person",
+            };
         }
         #endregion
     }

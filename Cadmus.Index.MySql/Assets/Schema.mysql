@@ -126,12 +126,12 @@ CREATE TABLE `node_class` (
 
 -- property
 CREATE TABLE `property` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL,
   `data_type` varchar(100) DEFAULT NULL,
-  `lit_editor` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `lit_editor` varchar(100) DEFAULT NULL,
   `description` varchar(5000) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `property_FK` FOREIGN KEY (`id`) REFERENCES `uri_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `property_FK` FOREIGN KEY (`id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- triple

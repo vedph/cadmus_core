@@ -767,6 +767,7 @@ namespace Cadmus.Index.MySql.Test
             {
                 SourceType = NodeSourceType.Item,
                 FacetFilter = "person",
+                Name = "Item",
                 Prefix = "x:persons/{group-id}/",
                 LabelTemplate = "{title}",
                 Description = "Map a person item into a node"
@@ -783,6 +784,50 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(mapping.Prefix, mapping2.Prefix);
             Assert.Equal(mapping.LabelTemplate, mapping2.LabelTemplate);
             Assert.Equal(mapping.Description, mapping2.Description);
+        }
+
+        [Fact]
+        public void DeleteMapping_NotExisting_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            // item mapping
+            NodeMapping mapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                FacetFilter = "person",
+                Name = "Item",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Map a person item into a node"
+            };
+            repository.AddMapping(mapping);
+
+            repository.DeleteMapping(123);
+
+            Assert.NotNull(repository.GetMapping(mapping.Id));
+        }
+
+        [Fact]
+        public void DeleteMapping_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            // item mapping
+            NodeMapping mapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                FacetFilter = "person",
+                Name = "Item",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Map a person item into a node"
+            };
+            repository.AddMapping(mapping);
+
+            repository.DeleteMapping(mapping.Id);
+
+            Assert.Null(repository.GetMapping(mapping.Id));
         }
         #endregion
     }

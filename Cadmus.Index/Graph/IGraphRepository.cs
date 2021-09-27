@@ -165,20 +165,20 @@ namespace Cadmus.Index.Graph
         /// <param name="filter">The filter. Set page size=0 to get all
         /// the mappings at once.</param>
         /// <returns>The page.</returns>
-        DataPage<NodeMapping> GetNodeMappings(NodeMappingFilter filter);
+        DataPage<NodeMapping> GetMappings(NodeMappingFilter filter);
 
         /// <summary>
         /// Gets the node mapping witht the specified ID.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The mapping or null if not found.</returns>
-        NodeMapping GetNodeMapping(int id);
+        NodeMapping GetMapping(int id);
 
         /// <summary>
         /// Adds or updates the specified node mapping.
         /// </summary>
         /// <param name="mapping">The mapping.</param>
-        void AddNodeMapping(NodeMapping mapping);
+        void AddMapping(NodeMapping mapping);
 
         /// <summary>
         /// Deletes the specified node mapping.

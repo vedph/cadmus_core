@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -1071,7 +1072,7 @@ namespace Cadmus.Index.Sql.Graph
         /// the mappings at once.</param>
         /// <returns>The page.</returns>
         /// <exception cref="ArgumentNullException">filter</exception>
-        public DataPage<NodeMapping> GetNodeMappings(NodeMappingFilter filter)
+        public DataPage<NodeMapping> GetMappings(NodeMappingFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -1119,7 +1120,7 @@ namespace Cadmus.Index.Sql.Graph
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The mapping or null if not found.</returns>
-        public NodeMapping GetNodeMapping(int id)
+        public NodeMapping GetMapping(int id)
         {
             EnsureConnected();
             try
@@ -1146,10 +1147,13 @@ namespace Cadmus.Index.Sql.Graph
 
         /// <summary>
         /// Adds the specified node mapping.
+        /// When <paramref name="mapping"/> has ID=0 (=new mapping), its
+        /// <see cref="NodeMapping.Id"/> property gets updated by this method
+        /// after insertion.
         /// </summary>
         /// <param name="mapping">The mapping.</param>
         /// <exception cref="ArgumentNullException">mapping</exception>
-        public void AddNodeMapping(NodeMapping mapping)
+        public void AddMapping(NodeMapping mapping)
         {
             if (mapping == null) throw new ArgumentNullException(nameof(mapping));
 
@@ -1159,22 +1163,46 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO node_mapping(" +
-                    "parent_id, ordinal, facet_filter, group_filter, " +
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("INSERT INTO node_mapping(");
+
+                // an existing mapping must add id
+                if (mapping.Id > 0) sb.Append("id, ");
+
+                sb.Append("parent_id, ordinal, facet_filter, group_filter, " +
                     "flags_filter, title_filter, part_type, part_role, " +
                     "pin_name, source_type, prefix, label_template, " +
                     "triple_s, triple_p, triple_o, triple_o_prefix, " +
-                    "reversed, description) " +
-                    "VALUES(@parent_id, @ordinal, @facet_filter, @group_filter, " +
+                    "reversed, description)\n");
+                sb.Append("VALUES(");
+
+                // an existing mapping must add @id
+                if (mapping.Id > 0) sb.Append("@id, ");
+
+                sb.Append("@parent_id, @ordinal, @facet_filter, @group_filter, " +
                     "@flags_filter, @title_filter, @part_type, @part_role, " +
                     "@pin_name, @source_type, @prefix, @label_template, " +
                     "@triple_s, @triple_p, @triple_o, @triple_o_prefix, " +
-                    "@reversed, @description)\n" +
-                    GetUpsertTailSql("parent_id", "ordinal", "facet_filter",
+                    "@reversed, @description)\n");
+
+                // an existing mapping is an UPSERT, otherwise we have an INSERT
+                // and we must retrieve the ID of the newly inserted row
+                if (mapping.Id > 0)
+                {
+                    AddParameter(cmd, "@id", DbType.Int32, mapping.Id);
+
+                    sb.Append(GetUpsertTailSql("parent_id", "ordinal", "facet_filter",
                         "group_filter", "flags_filter", "title_filter",
                         "part_type", "part_role", "pin_name", "source_type",
                         "prefix", "label_template", "triple_s", "triple_p",
-                        "triple_o", "triple_o_prefix", "reversed", "description");
+                        "triple_o", "triple_o_prefix", "reversed", "description"));
+                }
+                else
+                {
+                    sb.Append(GetSelectIdentitySql());
+                }
+                cmd.CommandText = sb.ToString();
 
                 AddParameter(cmd, "@parent_id", DbType.Int32, mapping.ParentId);
                 AddParameter(cmd, "@ordinal", DbType.Int32, mapping.Ordinal);
@@ -1202,7 +1230,12 @@ namespace Cadmus.Index.Sql.Graph
                 AddParameter(cmd, "@description", DbType.String,
                     mapping.Description);
 
-                cmd.ExecuteNonQuery();
+                if (mapping.Id == 0)
+                {
+                    object result = cmd.ExecuteScalar();
+                    mapping.Id = Convert.ToInt32(result);
+                }
+                else cmd.ExecuteNonQuery();
             }
             finally
             {
@@ -1520,6 +1553,9 @@ namespace Cadmus.Index.Sql.Graph
 
         /// <summary>
         /// Adds or updates the specified triple.
+        /// When <paramref name="triple"/> has ID=0 (=new triple), its
+        /// <see cref="Triple.Id"/> property gets updated by this method
+        /// after insertion.
         /// </summary>
         /// <param name="triple">The triple.</param>
         /// <exception cref="ArgumentNullException">triple</exception>
@@ -1533,17 +1569,46 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO triple" +
-                    "(s_id, p_id, o_id, o_lit, sid) " +
-                    "VALUES(@s_id, @p_id, @o_id, @o_lit, @sid)\n"
-                    + GetUpsertTailSql("s_id", "p_id", "o_id", "o_lit", "sid");
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("INSERT INTO triple(");
+
+                // an existing triple must add id
+                if (triple.Id > 0) sb.Append("id, ");
+
+                sb.Append("s_id, p_id, o_id, o_lit, sid) VALUES(");
+
+                // an existing triple must add @id
+                if (triple.Id > 0) sb.Append("@id, ");
+
+                sb.Append("@s_id, @p_id, @o_id, @o_lit, @sid)\n");
+
+                // an existing triple is an UPSERT, otherwise we have an INSERT
+                // and we must retrieve the ID of the newly inserted row
+                if (triple.Id > 0)
+                {
+                    AddParameter(cmd, "@id", DbType.Int32, triple.Id);
+                    sb.Append(GetUpsertTailSql(
+                        "s_id", "p_id", "o_id", "o_lit", "sid"));
+                }
+                else
+                {
+                    sb.Append(GetSelectIdentitySql());
+                }
+                cmd.CommandText = sb.ToString();
+
                 AddParameter(cmd, "@s_id", DbType.Int32, triple.SubjectId);
                 AddParameter(cmd, "@p_id", DbType.Int32, triple.PredicateId);
                 AddParameter(cmd, "@o_id", DbType.Int32, triple.ObjectId);
                 AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
                 AddParameter(cmd, "@sid", DbType.String, triple.Sid);
 
-                cmd.ExecuteNonQuery();
+                if (triple.Id == 0)
+                {
+                    object result = cmd.ExecuteScalar();
+                    triple.Id = Convert.ToInt32(result);
+                }
+                else cmd.ExecuteNonQuery();
 
                 // update subject node classes when O is not a literal
                 if (triple.ObjectId == 0) UpdateNodeClasses(triple.SubjectId);

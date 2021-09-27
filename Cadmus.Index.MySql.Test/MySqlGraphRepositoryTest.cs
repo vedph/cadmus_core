@@ -708,7 +708,7 @@ namespace Cadmus.Index.MySql.Test
                 LabelTemplate = "{title}",
                 Description = "Map a grouped person item into a node"
             };
-            repository.AddNodeMapping(item);
+            repository.AddMapping(item);
 
             // TODO
             NodeMapping itemDsc = new NodeMapping

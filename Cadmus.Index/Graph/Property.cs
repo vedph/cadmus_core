@@ -3,9 +3,8 @@
 namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// The definition of a property (=an entity which can be used as a predicate;
-    /// in the context of the graph editor, all the properties are used as
-    /// predicates only).
+    /// The definition of a property (=a node which can be used as a predicate).
+    /// This is 1:1 with its parent <see cref="Node"/>.
     /// </summary>
     public class Property
     {

@@ -376,6 +376,136 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(9, page.Items.Count);
             Assert.Equal("Node 02", page.Items[0].Label);
         }
+
+        [Fact]
+        public void GetNodes_ByLinkedNode_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            // nodes
+            Node argos = new Node
+            {
+                Id = repository.AddUri("x:dogs/argos"),
+                Label = "Argos"
+            };
+            repository.AddNode(argos);
+            Node a = new Node
+            {
+                Id = repository.AddUri("rdf:type"),
+                Label = "a"
+            };
+            repository.AddNode(a);
+            Node animal = new Node
+            {
+                Id = repository.AddUri("x:animal"),
+                Label = "animal",
+                IsClass = true
+            };
+            repository.AddNode(animal);
+            // triple
+            repository.AddTriple(new Triple
+            {
+                SubjectId = argos.Id,
+                PredicateId = a.Id,
+                ObjectId = animal.Id
+            });
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                LinkedNodeId = animal.Id
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+            Assert.Equal("Argos", page.Items[0].Label);
+        }
+
+        [Fact]
+        public void GetNodes_ByLinkedNodeWithMatchingRole_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            // nodes
+            Node argos = new Node
+            {
+                Id = repository.AddUri("x:dogs/argos"),
+                Label = "Argos"
+            };
+            repository.AddNode(argos);
+            Node a = new Node
+            {
+                Id = repository.AddUri("rdf:type"),
+                Label = "a"
+            };
+            repository.AddNode(a);
+            Node animal = new Node
+            {
+                Id = repository.AddUri("x:animal"),
+                Label = "animal",
+                IsClass = true
+            };
+            repository.AddNode(animal);
+            // triple
+            repository.AddTriple(new Triple
+            {
+                SubjectId = argos.Id,
+                PredicateId = a.Id,
+                ObjectId = animal.Id
+            });
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                LinkedNodeId = animal.Id,
+                LinkedNodeRole = 'O'
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+            Assert.Equal("Argos", page.Items[0].Label);
+        }
+
+        [Fact]
+        public void GetNodes_ByLinkedNodeWithNonMatchingRole_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            // nodes
+            Node argos = new Node
+            {
+                Id = repository.AddUri("x:dogs/argos"),
+                Label = "Argos"
+            };
+            repository.AddNode(argos);
+            Node a = new Node
+            {
+                Id = repository.AddUri("rdf:type"),
+                Label = "a"
+            };
+            repository.AddNode(a);
+            Node animal = new Node
+            {
+                Id = repository.AddUri("x:animal"),
+                Label = "animal",
+                IsClass = true
+            };
+            repository.AddNode(animal);
+            // triple
+            repository.AddTriple(new Triple
+            {
+                SubjectId = argos.Id,
+                PredicateId = a.Id,
+                ObjectId = animal.Id
+            });
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                LinkedNodeId = animal.Id,
+                LinkedNodeRole = 'S'
+            });
+
+            Assert.Equal(0, page.Total);
+            Assert.Empty(page.Items);
+        }
         #endregion
     }
 }

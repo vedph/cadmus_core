@@ -433,7 +433,7 @@ namespace Cadmus.Index.Sql.Graph
 
             builder.AddWhat("node.id, node.is_class, node.label, " +
                 "node.source_type, node.sid, ul.uri")
-                   .AddWhat("COUNT(id)", slotId: "c")
+                   .AddWhat("COUNT(node.id)", slotId: "c")
                    .AddFrom("node", slotId: "*")
                    .AddFrom("INNER JOIN uri_lookup ul ON ul.id=node.id")
                    .AddOrder("label, id");

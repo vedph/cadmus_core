@@ -230,7 +230,7 @@ WITH RECURSIVE cn AS (
 	-- get object class node
 	SELECT t.o_id AS id, 1 AS level FROM node n
 	-- of a triple having S=start node P=a O=class node
-	INNER JOIN triple t ON t.s_id=n.id AND t.p="a"
+	INNER JOIN triple t ON t.s_id=n.id AND t.p_id=7
 	LEFT JOIN node n2 ON t.o_id=n2.id AND n2.is_class=true
 	WHERE n.id=instance_id
 	UNION DISTINCT
@@ -239,8 +239,8 @@ WITH RECURSIVE cn AS (
     -- 8 is the ID of rdfs:subClassOf
 	INNER JOIN triple t ON t.s_id=cn.id AND t.p_id=8
 	LEFT JOIN node n2 ON t.o_id=n2.id AND n2.is_class=true
-) 
-SELECT instance_id, cn.id, cn.level;
+)
+SELECT instance_id, cn.id, cn.level FROM cn;
 END$$
 DELIMITER ;
 

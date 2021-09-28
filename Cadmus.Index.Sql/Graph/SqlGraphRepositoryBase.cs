@@ -1788,7 +1788,7 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand nodeCmd = GetCommand();
                 nodeCmd.CommandText =
-                    "SELECT id, is_class, label, source_type, sid " +
+                    "SELECT id, is_class, tag, label, source_type, sid " +
                     "FROM node WHERE sid LIKE @sid;";
                 AddParameter(nodeCmd, "@sid", DbType.String, sourceId + "%");
 
@@ -1802,16 +1802,17 @@ namespace Cadmus.Index.Sql.Graph
                             {
                                 Id = nodeReader.GetInt32(0),
                                 IsClass = nodeReader.GetBoolean(1),
-                                Label = nodeReader.GetValue<string>(2),
-                                SourceType = (NodeSourceType)nodeReader.GetInt32(3),
-                                Sid = nodeReader.GetValue<string>(4)
+                                Tag = nodeReader.GetValue<string>(2),
+                                Label = nodeReader.GetValue<string>(3),
+                                SourceType = (NodeSourceType)nodeReader.GetInt32(4),
+                                Sid = nodeReader.GetValue<string>(5)
                             });
                     }
                 }
 
                 DbCommand tripleCmd = GetCommand();
                 tripleCmd.CommandText =
-                    "SELECT id, s_id, p_id, o_id, o_lit, sid " +
+                    "SELECT id, s_id, p_id, o_id, o_lit, sid, tag " +
                     "FROM triple WHERE sid LIKE @sid;";
                 AddParameter(tripleCmd, "@sid", DbType.String, sourceId + "%");
                 List<Triple> triples = new List<Triple>();
@@ -1826,7 +1827,8 @@ namespace Cadmus.Index.Sql.Graph
                             PredicateId = tripleReader.GetInt32(2),
                             ObjectId = tripleReader.GetValue<int>(3),
                             ObjectLiteral = tripleReader.GetValue<string>(4),
-                            Sid = tripleReader.GetString(5)
+                            Sid = tripleReader.GetString(5),
+                            Tag = tripleReader.GetValue<string>(6)
                         });
                     }
                 }

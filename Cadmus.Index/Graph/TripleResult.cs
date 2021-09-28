@@ -29,7 +29,7 @@
         /// </returns>
         public override string ToString()
         {
-            return $"#{Id}: {SubjectUri} - #{PredicateUri} - " +
+            return $"{SubjectUri} - #{PredicateUri} - " +
                 (ObjectId == 0 ? ObjectLiteral : ObjectUri);
         }
     }

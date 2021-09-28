@@ -231,6 +231,14 @@ namespace Cadmus.Index.Test
         [Fact]
         public void MapItem_ItemFacetGroupClass_Ok()
         {
+            // Scipione Barbato (item):
+            // item => node
+            //   -> item rdfs:comment dsc
+            //   -> item kad:hasFacet facet
+            //   -> item kad:isInGroup writers
+            //   -> item a foaf:Person => triple + O-node for foaf:person
+            // facet => node
+            // group = node
             Reset();
             IGraphRepository repository = GetRepository();
             AddItemRules(repository);

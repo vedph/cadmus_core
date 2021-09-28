@@ -1095,6 +1095,59 @@ namespace Cadmus.Index.MySql.Test
             Assert.Single(page.Items);
             Assert.NotNull(page.Items[0].ObjectLiteral);
         }
+
+        [Fact]
+        public void GetTriple_NotExisting_Null()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            TripleResult triple = repository.GetTriple(123);
+
+            Assert.Null(triple);
+        }
+
+        [Fact]
+        public void GetTriple_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            TripleResult triple = repository.GetTriple(2);
+
+            Assert.NotNull(triple);
+            Assert.NotNull(triple.ObjectLiteral);
+            Assert.Equal("x:persons/michelangelo", triple.SubjectUri);
+            Assert.Equal("foaf:name", triple.PredicateUri);
+            Assert.Null(triple.ObjectUri);
+        }
+
+        [Fact]
+        public void DeleteTriple_NotExisting_Nope()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            repository.DeleteTriple(123);
+
+            Assert.Equal(2, repository.GetTriples(new TripleFilter()).Total);
+        }
+
+        [Fact]
+        public void DeleteTriple_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            repository.DeleteTriple(2);
+
+            Assert.NotNull(repository.GetTriple(1));
+            Assert.Null(repository.GetTriple(2));
+        }
         #endregion
     }
 

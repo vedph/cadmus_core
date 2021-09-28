@@ -254,7 +254,8 @@ namespace Cadmus.Index.MySql.Test
         #endregion
 
         #region Node
-        private static void AddNodes(int count, IGraphRepository repository)
+        private static void AddNodes(int count, IGraphRepository repository,
+            bool tag = false)
         {
             const string itemId = "e0cd9166-d005-404d-8f18-65be1f17b48f";
             const string partId = "f321f320-26da-4164-890b-e3974e9272ba";
@@ -270,7 +271,8 @@ namespace Cadmus.Index.MySql.Test
                     Label = $"Node {i+1:00}",
                     SourceType = i == 0
                         ? NodeSourceType.Item : NodeSourceType.Pin,
-                    Sid = i == 0 ? itemId : partId + "/p" + i
+                    Sid = i == 0 ? itemId : partId + "/p" + i,
+                    Tag = tag? ((i + 1) % 2 == 0? "even" : "odd") : null
                 };
                 repository.AddNode(node);
             }
@@ -375,6 +377,38 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(9, page.Total);
             Assert.Equal(9, page.Items.Count);
             Assert.Equal("Node 02", page.Items[0].Label);
+        }
+
+        [Fact]
+        public void GetNodes_ByNoTag_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(3, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                Tag = ""
+            });
+
+            Assert.Equal(3, page.Total);
+            Assert.Equal(3, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetNodes_ByTag_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(3, repository, true);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                Tag = "odd"
+            });
+
+            Assert.Equal(2, page.Total);
+            Assert.Equal(2, page.Items.Count);
         }
 
         [Fact]

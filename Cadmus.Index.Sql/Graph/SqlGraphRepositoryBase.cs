@@ -463,7 +463,10 @@ namespace Cadmus.Index.Sql.Graph
                 builder.AddWhere(filter.Tag.Length == 0
                             ? "tag IS NULL" : "tag=@tag", slotId: "*");
                 if (filter.Tag.Length > 0)
-                    builder.AddParameter("@tag", DbType.String, filter.Tag);
+                {
+                    builder.AddParameter("@tag", DbType.String, filter.Tag,
+                            slotId: "*");
+                }
             }
 
             // label

@@ -1464,6 +1464,23 @@ namespace Cadmus.Index.Sql.Graph
                             slotId: "*");
             }
 
+            // sid
+            if (!string.IsNullOrEmpty(filter.Sid))
+            {
+                if (filter.IsSidPrefix)
+                {
+                    builder.AddWhere("sid LIKE @sid", slotId: "*")
+                           .AddParameter("@sid", DbType.String, filter.Sid + "%",
+                                slotId: "*");
+                }
+                else
+                {
+                    builder.AddWhere("sid=@sid", slotId: "*")
+                           .AddParameter("@sid", DbType.String, filter.Sid,
+                                slotId: "*");
+                }
+            }
+
             if (filter.Tag != null)
             {
                 builder.AddWhere(filter.Tag.Length == 0
@@ -1814,30 +1831,14 @@ namespace Cadmus.Index.Sql.Graph
                     }
                 }
 
-                DbCommand tripleCmd = GetCommand();
-                tripleCmd.CommandText =
-                    "SELECT id, s_id, p_id, o_id, o_lit, sid, tag " +
-                    "FROM triple WHERE sid LIKE @sid;";
-                AddParameter(tripleCmd, "@sid", DbType.String, sourceId + "%");
-                List<Triple> triples = new List<Triple>();
-                using (var tripleReader = tripleCmd.ExecuteReader())
+                DataPage<TripleResult> page = GetTriples(new TripleFilter
                 {
-                    while (tripleReader.Read())
-                    {
-                        triples.Add(new Triple
-                        {
-                            Id = tripleReader.GetInt32(0),
-                            SubjectId = tripleReader.GetInt32(1),
-                            PredicateId = tripleReader.GetInt32(2),
-                            ObjectId = tripleReader.GetValue<int>(3),
-                            ObjectLiteral = tripleReader.GetValue<string>(4),
-                            Sid = tripleReader.GetString(5),
-                            Tag = tripleReader.GetValue<string>(6)
-                        });
-                    }
-                }
-
-                return new GraphSet(nodes, triples);
+                    PageNumber = 1,
+                    PageSize = 0,
+                    Sid = sourceId,
+                    IsSidPrefix = true
+                });
+                return new GraphSet(nodes, page.Items);
             }
             finally
             {

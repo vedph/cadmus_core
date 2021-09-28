@@ -42,9 +42,9 @@ namespace Cadmus.Index.Graph
             nodeGrouper.Group(set.Nodes, oldSet.Nodes,
                 (NodeResult a, NodeResult b) => a.Id == b.Id);
 
-            CrudGrouper<Triple> tripleGrouper = new CrudGrouper<Triple>();
+            CrudGrouper<TripleResult> tripleGrouper = new CrudGrouper<TripleResult>();
             tripleGrouper.Group(set.Triples, oldSet.Triples,
-                (Triple a, Triple b) =>
+                (TripleResult a, TripleResult b) =>
                 {
                     return a.SubjectId == b.SubjectId &&
                         a.PredicateId == b.PredicateId &&
@@ -66,11 +66,11 @@ namespace Cadmus.Index.Graph
                     _repository.AddNode(node, node.Sid == null);
 
                 // triples
-                foreach (Triple triple in tripleGrouper.Deleted)
+                foreach (TripleResult triple in tripleGrouper.Deleted)
                     _repository.DeleteTriple(triple.Id);
-                foreach (Triple triple in tripleGrouper.Added)
+                foreach (TripleResult triple in tripleGrouper.Added)
                     _repository.AddTriple(triple);
-                foreach (Triple triple in tripleGrouper.Updated)
+                foreach (TripleResult triple in tripleGrouper.Updated)
                     _repository.AddTriple(triple);
 
                 _repository.CommitTransaction();

@@ -979,7 +979,8 @@ namespace Cadmus.Index.MySql.Test
                 SubjectId = michelangelo.Id,
                 PredicateId = name.Id,
                 ObjectLiteral = "Michelangelo Buonarroti",
-                Tag = "fake"
+                Tag = "fake",
+                Sid = "d33d98de-7e61-4c67-8ddb-0cd1b4f03dae"
             });
         }
 
@@ -1060,6 +1061,39 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(1, page.Total);
             Assert.Single(page.Items);
             Assert.NotNull(page.Items[0].ObjectLiteral);
+        }
+
+        [Fact]
+        public void GetTriples_BySidExact_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            DataPage<TripleResult> page = repository.GetTriples(new TripleFilter
+            {
+                Sid = "d33d98de-7e61-4c67-8ddb-0cd1b4f03dae"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Equal(1, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetTriples_BySidPrefix_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            DataPage<TripleResult> page = repository.GetTriples(new TripleFilter
+            {
+                Sid = "d33d98de-7e61-4c67-8ddb-",
+                IsSidPrefix = true
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
         }
 
         [Fact]
@@ -1166,4 +1200,6 @@ namespace Cadmus.Index.MySql.Test
         }
     }
     #endregion
+
+    // TODO graph and classes tests
 }

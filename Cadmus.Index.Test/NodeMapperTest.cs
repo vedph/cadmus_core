@@ -185,7 +185,7 @@ namespace Cadmus.Index.Test
                 SourceType = NodeSourceType.ItemFacet,
                 Name = "Item facet",
                 Prefix = "x:facets/",
-                LabelTemplate = "{facet-id} facet",
+                LabelTemplate = "{facet-id}",
                 Description = "Item's facet -> node"
             };
             repository.AddMapping(facetMapping);
@@ -209,7 +209,7 @@ namespace Cadmus.Index.Test
                 SourceType = NodeSourceType.ItemGroup,
                 Name = "Item group",
                 Prefix = "x:groups/",
-                LabelTemplate = "{group-id} group",
+                LabelTemplate = "{group-id}",
                 Description = "Item's group -> node"
             };
             repository.AddMapping(groupMapping);
@@ -264,7 +264,7 @@ namespace Cadmus.Index.Test
             Assert.NotNull(node);
             Assert.Equal(NodeSourceType.ItemFacet, node.SourceType);
             Assert.Equal(item.Id + "/facet", node.Sid);
-            Assert.Equal("person facet", node.Label);
+            Assert.Equal("person", node.Label);
             Assert.True(node.IsClass);
             Assert.Null(node.Tag);
 
@@ -273,15 +273,15 @@ namespace Cadmus.Index.Test
             Assert.NotNull(node);
             Assert.Equal(NodeSourceType.ItemGroup, node.SourceType);
             Assert.Equal(item.Id + "/group", node.Sid);
-            Assert.Equal("writers group", node.Label);
+            Assert.Equal("writers", node.Label);
             Assert.False(node.IsClass);
             Assert.Null(node.Tag);
 
-            // class node
+            // class node (pre-existing, manual)
             node = set.Nodes.FirstOrDefault(n => n.Uri == "foaf:person");
             Assert.NotNull(node);
-            Assert.Equal(NodeSourceType.Item, node.SourceType);
-            Assert.Equal(item.Id, node.Sid);
+            Assert.Equal(NodeSourceType.User, node.SourceType);
+            Assert.Null(node.Sid);
             Assert.Equal("Person", node.Label);
             Assert.True(node.IsClass);
             Assert.Null(node.Tag);

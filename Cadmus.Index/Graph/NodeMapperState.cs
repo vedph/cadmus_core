@@ -89,7 +89,7 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets the triples generated in the current mapping session.
         /// </summary>
-        public IList<Triple> Triples { get; }
+        public IList<TripleResult> Triples { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NodeMapperState" />
@@ -101,7 +101,7 @@ namespace Cadmus.Index.Graph
             MappingPath = new List<int>();
             GroupUids = new Dictionary<int, string>();
             Nodes = new List<NodeResult>();
-            Triples = new List<Triple>();
+            Triples = new List<TripleResult>();
         }
 
         /// <summary>

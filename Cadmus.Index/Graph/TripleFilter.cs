@@ -29,6 +29,18 @@ namespace Cadmus.Index.Graph
         public string ObjectLiteral { get; set; }
 
         /// <summary>
+        /// Gets or sets the sid.
+        /// </summary>
+        public string Sid { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="Sid"/> represents
+        /// the initial portion of the SID being searched, rather than the
+        /// full SID.
+        /// </summary>
+        public bool IsSidPrefix { get; set; }
+
+        /// <summary>
         /// Gets or sets the tag filter to match. If null, no tag filtering
         /// is applied; if empty, only triples with a null tag are matched;
         /// otherwise, the triples with the same tag must be matched.

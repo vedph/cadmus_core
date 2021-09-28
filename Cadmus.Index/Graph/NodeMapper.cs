@@ -129,7 +129,7 @@ namespace Cadmus.Index.Graph
             return node;
         }
 
-        private Tuple<Triple, NodeResult> BuildTriple(string sid, string subjUid,
+        private Tuple<TripleResult, NodeResult> BuildTriple(string sid, string subjUid,
             NodeMapping mapping, NodeMappingVariableSet vset)
         {
             // 1: S
@@ -198,11 +198,14 @@ namespace Cadmus.Index.Graph
             }
 
             // build triple
-            Triple triple = new Triple
+            TripleResult triple = new TripleResult
             {
                 SubjectId = _repository.AddUri(subjUid),
+                SubjectUri = subjUid,
                 PredicateId = _repository.AddUri(predUid),
+                PredicateUri = predUid,
                 ObjectId = objAsUid? _repository.AddUri(obj) : 0,
+                ObjectUri = objAsUid? obj : null,
                 ObjectLiteral = objAsUid? null : obj,
                 Sid = sid
             };

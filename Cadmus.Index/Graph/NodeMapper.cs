@@ -82,7 +82,9 @@ namespace Cadmus.Index.Graph
             NodeResult node = new NodeResult
             {
                 SourceType = mapping.SourceType,
-                Sid = sid
+                Sid = sid,
+                // a node coming from a facet is a class
+                IsClass = mapping.SourceType == NodeSourceType.ItemFacet
             };
 
             // build the node's label following label_template

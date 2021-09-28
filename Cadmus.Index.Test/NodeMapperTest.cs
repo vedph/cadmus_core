@@ -135,6 +135,12 @@ namespace Cadmus.Index.Test
                 Tag = "property",
                 Label = "Is in Cadmus group"
             });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("foaf:person"),
+                IsClass = true,
+                Label = "Person"
+            });
 
             // item
             NodeMapping itemMapping = new NodeMapping
@@ -148,6 +154,7 @@ namespace Cadmus.Index.Test
             };
             repository.AddMapping(itemMapping);
 
+            // item comment dsc
             NodeMapping itemDscMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Item,
@@ -159,6 +166,7 @@ namespace Cadmus.Index.Test
             };
             repository.AddMapping(itemDscMapping);
 
+            // item subclass-of person
             NodeMapping itemPersonMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Item,
@@ -171,17 +179,18 @@ namespace Cadmus.Index.Test
             };
             repository.AddMapping(itemPersonMapping);
 
-            // facet
+            // item facet
             NodeMapping facetMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.ItemFacet,
                 Name = "Item facet",
                 Prefix = "x:facets/",
-                LabelTemplate = "{facet-id}",
+                LabelTemplate = "{facet-id} facet",
                 Description = "Item's facet -> node"
             };
             repository.AddMapping(facetMapping);
 
+            // item has-facet facet
             NodeMapping facetLinkMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.ItemFacet,
@@ -194,17 +203,18 @@ namespace Cadmus.Index.Test
             };
             repository.AddMapping(facetLinkMapping);
 
-            // group
+            // item group
             NodeMapping groupMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.ItemGroup,
                 Name = "Item group",
                 Prefix = "x:groups/",
-                LabelTemplate = "{group-id}",
+                LabelTemplate = "{group-id} group",
                 Description = "Item's group -> node"
             };
             repository.AddMapping(groupMapping);
 
+            // item is-in-group group
             NodeMapping groupLinkMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.ItemGroup,
@@ -226,19 +236,57 @@ namespace Cadmus.Index.Test
             AddItemRules(repository);
             NodeMapper mapper = new NodeMapper(repository);
 
-            GraphSet set = mapper.MapItem(new Item
+            IItem item = new Item
             {
                 Title = "Scipione Barbato",
                 Description = "A man of letters.",
                 FacetId = "person",
                 GroupId = "writers",
                 SortKey = "scipionebarbato"
-            });
+            };
+            GraphSet set = mapper.MapItem(item);
 
             Assert.Equal(4, set.Nodes.Count);
             Assert.Equal(4, set.Triples.Count);
 
             // item node
+            NodeResult node = set.Nodes.FirstOrDefault(
+                n => n.Uri == "x:persons/writers/scipione_barbato");
+            Assert.NotNull(node);
+            Assert.Equal(NodeSourceType.Item, node.SourceType);
+            Assert.Equal(item.Id, node.Sid);
+            Assert.Equal("Scipione Barbato", node.Label);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+
+            // facet node
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:facets/person");
+            Assert.NotNull(node);
+            Assert.Equal(NodeSourceType.ItemFacet, node.SourceType);
+            Assert.Equal(item.Id + "/facet", node.Sid);
+            Assert.Equal("person facet", node.Label);
+            Assert.True(node.IsClass);
+            Assert.Null(node.Tag);
+
+            // group node
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:groups/writers");
+            Assert.NotNull(node);
+            Assert.Equal(NodeSourceType.ItemGroup, node.SourceType);
+            Assert.Equal(item.Id + "/group", node.Sid);
+            Assert.Equal("writers group", node.Label);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+
+            // class node
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "foaf:person");
+            Assert.NotNull(node);
+            Assert.Equal(NodeSourceType.Item, node.SourceType);
+            Assert.Equal(item.Id, node.Sid);
+            Assert.Equal("Person", node.Label);
+            Assert.True(node.IsClass);
+            Assert.Null(node.Tag);
+
+            // triples
             // TODO
         }
         #endregion

@@ -75,11 +75,11 @@ namespace Cadmus.Index.Graph
             return results;
         }
 
-        private Tuple<Node,string> BuildNode(string sid,
+        private NodeResult BuildNode(string sid,
             NodeMapping mapping,
             NodeMappingVariableSet vset)
         {
-            Node node = new Node
+            NodeResult node = new NodeResult
             {
                 SourceType = mapping.SourceType,
                 Sid = sid
@@ -119,15 +119,15 @@ namespace Cadmus.Index.Graph
             if (sb.Length == 0) sb.Append('_');
 
             // 3. append suffix if already present
-            string uid = _repository.AddUid(sb.ToString(), node.Sid);
+            node.Uri = _repository.AddUid(sb.ToString(), node.Sid);
 
             // 4. get a numeric ID for the UID
-            node.Id = _repository.AddUri(uid);
+            node.Id = _repository.AddUri(node.Uri);
 
-            return Tuple.Create(node, uid);
+            return node;
         }
 
-        private Tuple<Triple, Node> BuildTriple(string sid, string subjUid,
+        private Tuple<Triple, NodeResult> BuildTriple(string sid, string subjUid,
             NodeMapping mapping, NodeMappingVariableSet vset)
         {
             // 1: S
@@ -212,12 +212,13 @@ namespace Cadmus.Index.Graph
             // own source. So all what we want here is that the O node exists;
             // when it already exists, we will not update it as any of its data
             // is subject to manual editing or is managed by another source.
-            Node objNode = null;
+            NodeResult objNode = null;
             if (objAsUid)
             {
-                objNode = _repository.GetNode(triple.ObjectId) ?? new Node
+                objNode = _repository.GetNode(triple.ObjectId) ?? new NodeResult
                 {
                     Id = _repository.AddUri(obj),
+                    Uri = obj,
                     Label = obj,
                     // all the nodes marked with user source (and thus also
                     // having a null SID) will be added to the database only
@@ -265,13 +266,13 @@ namespace Cadmus.Index.Graph
             vset.SetValues(state);
 
             // generate node if any
-            Tuple<Node, string> nodeAndUid = null;
+            NodeResult node = null;
             if (!string.IsNullOrEmpty(mapping.LabelTemplate))
             {
-                nodeAndUid = BuildNode(state.Sid, mapping, vset);
+                node = BuildNode(state.Sid, mapping, vset);
 
                 // add node to set
-                state.AddNode(nodeAndUid.Item1, nodeAndUid.Item2, mapping.Id);
+                state.AddNode(node, mapping.Id);
             }
 
             // if there is a triple, collect SPO from triple_s, triple_p,
@@ -280,7 +281,7 @@ namespace Cadmus.Index.Graph
             if (!string.IsNullOrEmpty(mapping.TripleP))
             {
                 var to = BuildTriple(state.Sid,
-                    nodeAndUid?.Item2 ?? GetNodeUidFromAncestors(mapping, state),
+                    node?.Uri ?? GetNodeUidFromAncestors(mapping, state),
                     mapping, vset);
                 if (to.Item2 != null && state.Nodes.All(n => n.Id != to.Item2.Id))
                     state.Nodes.Add(to.Item2);

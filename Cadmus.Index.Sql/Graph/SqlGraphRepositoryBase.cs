@@ -1789,24 +1789,27 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand nodeCmd = GetCommand();
                 nodeCmd.CommandText =
-                    "SELECT id, is_class, tag, label, source_type, sid " +
-                    "FROM node WHERE sid LIKE @sid;";
+                    "SELECT n.id, n.is_class, n.tag, n.label, n.source_type, " +
+                    "n.sid, ul.uri " +
+                    "FROM node n INNER JOIN uri_lookup ul ON n.id=ul.id" +
+                    "WHERE sid LIKE @sid;";
                 AddParameter(nodeCmd, "@sid", DbType.String, sourceId + "%");
 
-                List<Node> nodes = new List<Node>();
+                List<NodeResult> nodes = new List<NodeResult>();
                 using (var nodeReader = nodeCmd.ExecuteReader())
                 {
                     while (nodeReader.Read())
                     {
                         nodes.Add(
-                            new Node
+                            new NodeResult
                             {
                                 Id = nodeReader.GetInt32(0),
                                 IsClass = nodeReader.GetBoolean(1),
                                 Tag = nodeReader.GetValue<string>(2),
                                 Label = nodeReader.GetValue<string>(3),
                                 SourceType = (NodeSourceType)nodeReader.GetInt32(4),
-                                Sid = nodeReader.GetValue<string>(5)
+                                Sid = nodeReader.GetValue<string>(5),
+                                Uri = nodeReader.GetString(6)
                             });
                     }
                 }

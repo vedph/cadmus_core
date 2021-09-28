@@ -12,7 +12,7 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets the nodes generated in the current mapping session.
         /// </summary>
-        public IList<Node> Nodes { get; }
+        public IList<NodeResult> Nodes { get; }
 
         /// <summary>
         /// Gets the triples generated in the current mapping session.
@@ -24,7 +24,7 @@ namespace Cadmus.Index.Graph
         /// </summary>
         public GraphSet()
         {
-            Nodes = new List<Node>();
+            Nodes = new List<NodeResult>();
             Triples = new List<Triple>();
         }
 
@@ -34,7 +34,7 @@ namespace Cadmus.Index.Graph
         /// <param name="nodes">The nodes.</param>
         /// <param name="triples">The triples.</param>
         /// <exception cref="ArgumentNullException">nodes or triples</exception>
-        public GraphSet(IList<Node> nodes, IList<Triple> triples)
+        public GraphSet(IList<NodeResult> nodes, IList<Triple> triples)
         {
             Nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
             Triples = triples ?? throw new ArgumentNullException(nameof(triples));

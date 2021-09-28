@@ -84,7 +84,7 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets the nodes generated in the current mapping session.
         /// </summary>
-        public IList<Node> Nodes { get; }
+        public IList<NodeResult> Nodes { get; }
 
         /// <summary>
         /// Gets the triples generated in the current mapping session.
@@ -100,7 +100,7 @@ namespace Cadmus.Index.Graph
             MappedUris = new Dictionary<int, string>();
             MappingPath = new List<int>();
             GroupUids = new Dictionary<int, string>();
-            Nodes = new List<Node>();
+            Nodes = new List<NodeResult>();
             Triples = new List<Triple>();
         }
 
@@ -111,19 +111,17 @@ namespace Cadmus.Index.Graph
         /// that the current <see cref="GroupOrdinal"/> is up to date).
         /// </summary>
         /// <param name="node">The node.</param>
-        /// <param name="uid">The node's UID.</param>
         /// <param name="mappingId">The source mapping identifier.</param>
         /// <exception cref="ArgumentNullException">node or uid</exception>
-        public void AddNode(Node node, string uid, int mappingId)
+        public void AddNode(NodeResult node, int mappingId)
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
-            if (uid == null) throw new ArgumentNullException(nameof(uid));
 
             // nope if already added
             if (Nodes.Any(n => n.Id == node.Id)) return;
 
             Nodes.Add(node);
-            MappedUris[mappingId] = uid;
+            MappedUris[mappingId] = node.Uri;
 
             switch (node.SourceType)
             {
@@ -134,7 +132,7 @@ namespace Cadmus.Index.Graph
                     if (FacetMappingId == 0) FacetMappingId = mappingId;
                     break;
                 case NodeSourceType.ItemGroup:
-                    GroupUids[GroupOrdinal] = uid;
+                    GroupUids[GroupOrdinal] = node.Uri;
                     break;
             }
         }

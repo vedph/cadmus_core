@@ -38,9 +38,9 @@ namespace Cadmus.Index.Graph
                 null : _repository.GetGraphSet(guidAndItem.Item1);
 
             // compare sets
-            CrudGrouper<Node> nodeGrouper = new CrudGrouper<Node>();
+            CrudGrouper<NodeResult> nodeGrouper = new CrudGrouper<NodeResult>();
             nodeGrouper.Group(set.Nodes, oldSet.Nodes,
-                (Node a, Node b) => a.Id == b.Id);
+                (NodeResult a, NodeResult b) => a.Id == b.Id);
 
             CrudGrouper<Triple> tripleGrouper = new CrudGrouper<Triple>();
             tripleGrouper.Group(set.Triples, oldSet.Triples,
@@ -58,11 +58,11 @@ namespace Cadmus.Index.Graph
                 _repository.BeginTransaction();
 
                 // nodes
-                foreach (Node node in nodeGrouper.Deleted)
+                foreach (NodeResult node in nodeGrouper.Deleted)
                     _repository.DeleteNode(node.Id);
-                foreach (Node node in nodeGrouper.Added)
+                foreach (NodeResult node in nodeGrouper.Added)
                     _repository.AddNode(node);
-                foreach (Node node in nodeGrouper.Updated)
+                foreach (NodeResult node in nodeGrouper.Updated)
                     _repository.AddNode(node, node.Sid == null);
 
                 // triples

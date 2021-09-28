@@ -673,12 +673,13 @@ namespace Cadmus.Index.Test
                 Item = GetItem()
             };
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 1,
+                    Uri = "x:sample",
                     Label = "sample",
                     SourceType = NodeSourceType.Item
-                }, "x:sample", 1);
+                }, 1);
 
             set.SetValues(state);
 
@@ -700,12 +701,13 @@ namespace Cadmus.Index.Test
                 Item = GetItem()
             };
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 1,
+                    Uri = "x:sample",
                     Label = "sample",
                     SourceType = NodeSourceType.ItemFacet
-                }, "x:sample", 1);
+                }, 1);
 
             set.SetValues(state);
 
@@ -728,12 +730,13 @@ namespace Cadmus.Index.Test
                 GroupOrdinal = 0
             };
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 1,
+                    Uri = "x:animals",
                     Label = "animals",
                     SourceType = NodeSourceType.ItemGroup
-                }, "x:animals", 1);
+                }, 1);
 
             set.SetValues(state);
 
@@ -757,21 +760,23 @@ namespace Cadmus.Index.Test
                 GroupOrdinal = 1
             };
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 1,
+                    Uri = "x:animals",
                     Label = "animals",
                     SourceType = NodeSourceType.ItemGroup
-                }, "x:animals", 1);
+                }, 1);
             // 2nd component
             state.GroupOrdinal = 2;
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 2,
+                    Uri = "x:humans",
                     Label = "humans",
                     SourceType = NodeSourceType.ItemGroup
-                }, "x:humans", 2);
+                }, 2);
 
             set.SetValues(state);
 
@@ -795,21 +800,23 @@ namespace Cadmus.Index.Test
                 GroupOrdinal = 1
             };
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 1,
+                    Uri = "x:animals",
                     Label = "animals",
                     SourceType = NodeSourceType.ItemGroup
-                }, "x:animals", 1);
+                }, 1);
             // 2nd component
             state.GroupOrdinal = 2;
             state.AddNode(
-                new Node
+                new NodeResult
                 {
                     Id = 2,
+                    Uri = "x:humans",
                     Label = "humans",
                     SourceType = NodeSourceType.ItemGroup
-                }, "x:humans", 2);
+                }, 2);
 
             set.SetValues(state);
 

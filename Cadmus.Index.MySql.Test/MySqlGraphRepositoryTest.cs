@@ -2,6 +2,7 @@
 using Cadmus.Index.Graph;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
+using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using System;
 using System.Collections.Generic;
@@ -703,12 +704,17 @@ namespace Cadmus.Index.MySql.Test
         private static void AddMappings(IGraphRepository repository)
         {
             // rdfs:comment
-            Node commentNode = new Node
+            repository.AddNode(new Node
             {
                 Id = repository.AddUri("rdfs:comment"),
                 Label = "comment"
-            };
-            repository.AddNode(commentNode);
+            });
+            // foaf:name
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("foaf:name"),
+                Label = "Person name"
+            });
 
             // item mapping
             NodeMapping itemMapping = new NodeMapping
@@ -732,6 +738,18 @@ namespace Cadmus.Index.MySql.Test
                 TripleO = "$dsc"
             };
             repository.AddMapping(itemDsc);
+
+            // part's pin mapping
+            NodeMapping nameMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                FacetFilter = "person",
+                Name = "Name",
+                PartType = "it.vedph.bricks.names",
+                TripleP = "foaf:name",
+                TripleO = "$pin-value"
+            };
+            repository.AddMapping(nameMapping);
         }
 
         [Fact]
@@ -862,6 +880,35 @@ namespace Cadmus.Index.MySql.Test
             Assert.Single(mappings);
             Assert.Equal("Item", mappings[0].Name);
         }
+
+        [Fact]
+        public void FindMappings_Pin_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddMappings(repository);
+            IItem item = GetItem(1, "person");
+
+            IList<NodeMapping> mappings = repository.FindMappingsFor(
+                item, new NamesPart(), "name");
+
+            Assert.Single(mappings);
+            Assert.Equal("Name", mappings[0].Name);
+        }
         #endregion
+    }
+
+    [Tag("it.vedph.bricks.names")]
+    internal sealed class NamesPart : PartBase
+    {
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

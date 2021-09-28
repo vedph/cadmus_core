@@ -119,9 +119,9 @@ namespace Cadmus.Index.Test
             });
             repository.AddNode(new Node
             {
-                Id = repository.AddUri("rdfs:subClassOf"),
+                Id = repository.AddUri("a"),    // a=rdfs:type
                 Tag = "property",
-                Label = "SubClassOf"
+                Label = "Is-a"
             });
             repository.AddNode(new Node
             {
@@ -166,16 +166,16 @@ namespace Cadmus.Index.Test
             };
             repository.AddMapping(itemDscMapping);
 
-            // item subclass-of person
+            // item a person
             NodeMapping itemPersonMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Item person link",
                 FacetFilter = "person",
                 ParentId = itemMapping.Id,
-                TripleP = "rdfs:subClassOf",
+                TripleP = "a",
                 TripleO = "foaf:Person",
-                Description = "Person item subClassOf foaf:Person"
+                Description = "Person item a foaf:Person"
             };
             repository.AddMapping(itemPersonMapping);
 
@@ -286,8 +286,44 @@ namespace Cadmus.Index.Test
             Assert.True(node.IsClass);
             Assert.Null(node.Tag);
 
-            // triples
-            // TODO
+            // triple barbato has-comment dsc
+            TripleResult triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "rdfs:comment");
+            Assert.NotNull(triple);
+            Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
+            Assert.Equal("A man of letters.", triple.ObjectLiteral);
+            Assert.Null(triple.ObjectUri);
+            Assert.Equal(item.Id, triple.Sid);
+            Assert.Null(triple.Tag);
+
+            // triple barbato has-facet person
+            triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "kad:hasFacet");
+            Assert.NotNull(triple);
+            Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
+            Assert.Equal("x:facets/person", triple.ObjectUri);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Equal(item.Id + "/facet", triple.Sid);
+            Assert.Null(triple.Tag);
+
+            // triple barbato is-in-group writers
+            triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "kad:isInGroup");
+            Assert.NotNull(triple);
+            Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
+            Assert.Equal("x:groups/writers", triple.ObjectUri);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Equal(item.Id + "/group", triple.Sid);
+            Assert.Null(triple.Tag);
+
+            // triple barbato is foaf:person
+            triple = set.Triples.FirstOrDefault(t => t.PredicateUri == "a");
+            Assert.NotNull(triple);
+            Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
+            Assert.Equal("foaf:Person", triple.ObjectUri);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Equal(item.Id, triple.Sid);
+            Assert.Null(triple.Tag);
         }
         #endregion
     }

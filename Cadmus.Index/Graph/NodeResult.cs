@@ -10,5 +10,16 @@
         /// Gets or sets the node URI.
         /// </summary>
         public string Uri { get; set; }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"{Uri} {Label} [{NodeMapping.SOURCE_TYPES[(int)SourceType]}] {Sid}";
+        }
     }
 }

@@ -198,17 +198,42 @@ namespace Cadmus.Index.Graph
             }
 
             // build triple
-            TripleResult triple = new TripleResult
+            TripleResult triple;
+            if (mapping.IsReversed)
             {
-                SubjectId = _repository.AddUri(subjUid),
-                SubjectUri = subjUid,
-                PredicateId = _repository.AddUri(predUid),
-                PredicateUri = predUid,
-                ObjectId = objAsUid? _repository.AddUri(obj) : 0,
-                ObjectUri = objAsUid? obj : null,
-                ObjectLiteral = objAsUid? null : obj,
-                Sid = sid
-            };
+                // reverse implies a non-literal object
+                if (!objAsUid)
+                {
+                    Logger?.LogError("Reversed mapping not applicable " +
+                        "to triple with literal: " + mapping + ", SID=" + sid);
+                    return null;
+                }
+
+                triple = new TripleResult
+                {
+                    ObjectId = _repository.AddUri(subjUid),
+                    ObjectUri = subjUid,
+                    PredicateId = _repository.AddUri(predUid),
+                    PredicateUri = predUid,
+                    SubjectId = _repository.AddUri(obj),
+                    SubjectUri = obj,
+                    Sid = sid
+                };
+            }
+            else
+            {
+                triple = new TripleResult
+                {
+                    SubjectId = _repository.AddUri(subjUid),
+                    SubjectUri = subjUid,
+                    PredicateId = _repository.AddUri(predUid),
+                    PredicateUri = predUid,
+                    ObjectId = objAsUid ? _repository.AddUri(obj) : 0,
+                    ObjectUri = objAsUid ? obj : null,
+                    ObjectLiteral = objAsUid ? null : obj,
+                    Sid = sid
+                };
+            }
 
             // build O node if required; when building a triple whose O is
             // an object, this object is usually an existing resource, whatever

@@ -20,5 +20,17 @@
         /// Gets or sets the object node URI.
         /// </summary>
         public string ObjectUri { get; set; }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"#{Id}: {SubjectUri} - #{PredicateUri} - " +
+                (ObjectId == 0 ? ObjectLiteral : ObjectUri);
+        }
     }
 }

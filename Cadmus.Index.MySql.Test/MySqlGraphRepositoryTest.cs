@@ -1,8 +1,10 @@
-﻿using Cadmus.Index.Graph;
+﻿using Cadmus.Core;
+using Cadmus.Index.Graph;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using Fusi.Tools.Data;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Cadmus.Index.MySql.Test
@@ -698,7 +700,7 @@ namespace Cadmus.Index.MySql.Test
         #endregion
 
         #region Node Mapping
-        private static void AddNodeMappings(IGraphRepository repository)
+        private static void AddMappings(IGraphRepository repository)
         {
             // rdfs:comment
             Node commentNode = new Node
@@ -715,6 +717,7 @@ namespace Cadmus.Index.MySql.Test
                 FacetFilter = "person",
                 Prefix = "x:persons/{group-id}/",
                 LabelTemplate = "{title}",
+                Name = "Item",
                 Description = "Map a person item into a node"
             };
             repository.AddMapping(itemMapping);
@@ -724,9 +727,11 @@ namespace Cadmus.Index.MySql.Test
             {
                 ParentId = itemMapping.Id,
                 SourceType = NodeSourceType.Item,
+                Name = "Item description",
                 TripleP = "rdfs:comment",
                 TripleO = "$dsc"
             };
+            repository.AddMapping(itemDsc);
         }
 
         [Fact]
@@ -828,6 +833,34 @@ namespace Cadmus.Index.MySql.Test
             repository.DeleteMapping(mapping.Id);
 
             Assert.Null(repository.GetMapping(mapping.Id));
+        }
+
+        private static IItem GetItem(int n, string facetId)
+        {
+            return new Item
+            {
+                Title = "Item #" + n,
+                Description = "Dsc for item " + n,
+                FacetId = facetId,
+                SortKey = $"{n:000}",
+                Flags = ((n & 1) == 1) ? 1 : 0,
+                CreatorId = "creator",
+                UserId = "user"
+            };
+        }
+
+        [Fact]
+        public void FindMappings_Item_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddMappings(repository);
+            IItem item = GetItem(1, "person");
+
+            IList<NodeMapping> mappings = repository.FindMappingsFor(item);
+
+            Assert.Single(mappings);
+            Assert.Equal("Item", mappings[0].Name);
         }
         #endregion
     }

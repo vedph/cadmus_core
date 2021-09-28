@@ -1057,8 +1057,7 @@ namespace Cadmus.Index.Sql.Graph
                 TripleP = reader.GetValue<string>(15),
                 TripleO = reader.GetValue<string>(16),
                 TripleOPrefix = reader.GetValue<string>(17),
-                IsReversed = reader.GetBoolean(18),
-                Description = reader.GetString(19)
+                IsReversed = reader.GetBoolean(18)
             };
             if (!noDescription)
                 mapping.Description = reader.GetValue<string>(19);
@@ -1281,14 +1280,8 @@ namespace Cadmus.Index.Sql.Graph
                 "triple_o_prefix, reversed")
                 .AddFrom("node_mapping")
                 .AddWhere("parent_id=@parent_id")
+                .AddParameter("@parent_id", DbType.Int32, parentId)
                 .AddOrder("source_type, ordinal, part_type, part_role, pin_name, name");
-
-            // parent_id
-            if (parentId > 0)
-            {
-                builder.AddWhere("parent_id=@parent_id")
-                       .AddParameter("@parent_id", DbType.Int32, parentId);
-            }
 
             // source_type IN(1,2,3) for items or =4 for parts
             if (part == null)
@@ -1307,35 +1300,35 @@ namespace Cadmus.Index.Sql.Graph
             }
 
             // facet
-            builder.AddWhere("AND (facet_filter IS NULL OR facet_filter=@facet")
+            builder.AddWhere("AND (facet_filter IS NULL OR facet_filter=@facet)")
                    .AddParameter("@facet", DbType.String, item.FacetId);
 
             // flags
-            builder.AddWhere("AND (flags_filter=0 OR (flags_filter & @flags)=@flags")
+            builder.AddWhere("AND (flags_filter=0 OR (flags_filter & @flags)=@flags)")
                    .AddParameter("@flags", DbType.Int32, item.Flags);
 
             // group
             builder.AddWhere("AND (group_filter IS NULL OR " +
-                GetRegexClauseSql("@group", "group_filter"))
+                GetRegexClauseSql("@group", "group_filter") + ")")
                 .AddParameter("@group", DbType.String, item.GroupId ?? "");
 
             // title
             builder.AddWhere("AND (title_filter IS NULL OR " +
-                GetRegexClauseSql("@title", "title_filter"))
+                GetRegexClauseSql("@title", "title_filter") + ")")
                 .AddParameter("@title", DbType.String, item.Title);
 
             if (part != null)
             {
                 // part_type
-                builder.AddWhere("AND (part_type IS NULL OR part_type=@part_type")
+                builder.AddWhere("AND (part_type IS NULL OR part_type=@part_type)")
                        .AddParameter("@part_type", DbType.String, part.TypeId);
 
                 // part_role
-                builder.AddWhere("AND (part_role IS NULL OR part_role=@part_role")
+                builder.AddWhere("AND (part_role IS NULL OR part_role=@part_role)")
                        .AddParameter("@part_role", DbType.String, part.RoleId ?? "");
 
                 // pin_name
-                builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name")
+                builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name)")
                        .AddParameter("@pin_name", DbType.String, pin ?? "");
             }
 
@@ -1352,6 +1345,7 @@ namespace Cadmus.Index.Sql.Graph
                     pin, parentId);
                 DbCommand cmd = GetCommand();
                 cmd.CommandText = builder.Build();
+                builder.AddParametersTo(cmd);
 
                 using (DbDataReader reader = cmd.ExecuteReader())
                 {

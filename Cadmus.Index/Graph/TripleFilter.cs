@@ -29,7 +29,9 @@ namespace Cadmus.Index.Graph
         public string ObjectLiteral { get; set; }
 
         /// <summary>
-        /// Gets or sets the tag to match.
+        /// Gets or sets the tag filter to match. If null, no tag filtering
+        /// is applied; if empty, only triples with a null tag are matched;
+        /// otherwise, the triples with the same tag must be matched.
         /// </summary>
         public string Tag { get; set; }
     }

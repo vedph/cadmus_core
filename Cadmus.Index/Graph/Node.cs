@@ -20,6 +20,13 @@
         public bool IsClass { get; set; }
 
         /// <summary>
+        /// Gets or sets the tag, used as a generic classification for nodes.
+        /// For instance, this can be used to mark all the nodes potentially
+        /// used as properties, so that a frontend can filter them accordingly.
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
         /// Gets or sets the optional node's label. Most nodes have a label
         /// to ease their editing.
         /// </summary>

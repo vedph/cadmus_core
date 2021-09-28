@@ -14,6 +14,18 @@ namespace Cadmus.Index.Graph
         public string Uid { get; set; }
 
         /// <summary>
+        /// Gets or sets the class filter to match.
+        /// </summary>
+        public bool? IsClass { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tag filter to match. If null, no tag filtering
+        /// is applied; if empty, only nodes with a null tag are matched;
+        /// otherwise, the nodes with the same tag must be matched.
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
         /// Gets or sets any portion of the label to match.
         /// </summary>
         public string Label { get; set; }

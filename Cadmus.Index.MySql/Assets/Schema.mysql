@@ -104,6 +104,7 @@ CREATE TABLE `node_mapping` (
 CREATE TABLE `node` (
   `id` int NOT NULL,
   `is_class` bit(1) NOT NULL,
+  `tag` varchar(50) DEFAULT NULL,
   `label` varchar(500) DEFAULT NULL,
   `source_type` int NOT NULL,
   `sid` varchar(500) DEFAULT NULL,

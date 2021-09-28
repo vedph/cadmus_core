@@ -896,6 +896,55 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal("Name", mappings[0].Name);
         }
         #endregion
+
+        #region Triple
+        private static void AddTriples(IGraphRepository repository)
+        {
+            Node michelangelo = new Node
+            {
+                Id = repository.AddUri("x:persons/michelangelo"),
+                Label = "Michelangelo"
+            };
+            repository.AddNode(michelangelo);
+
+            Node a = new Node
+            {
+                Id = repository.AddUri("rdf:type"),
+                Label = "a",
+                Tag = "property"
+            };
+            repository.AddNode(a);
+
+            Node name = new Node
+            {
+                Id = repository.AddUri("foaf:name"),
+                Label = "Person name",
+                Tag = "property"
+            };
+            repository.AddNode(name);
+
+            Node artist = new Node
+            {
+                Id = repository.AddUri("x:artist"),
+                IsClass = true,
+                Label = "Artist class"
+            };
+            repository.AddNode(artist);
+
+            repository.AddTriple(new Triple
+            {
+                SubjectId = michelangelo.Id,
+                PredicateId = a.Id,
+                ObjectId = artist.Id
+            });
+            repository.AddTriple(new Triple
+            {
+                SubjectId = michelangelo.Id,
+                PredicateId = name.Id,
+                ObjectLiteral = "Michelangelo Buonarroti"
+            });
+        }
+        #endregion
     }
 
     [Tag("it.vedph.bricks.names")]

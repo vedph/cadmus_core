@@ -432,7 +432,7 @@ namespace Cadmus.Index.Sql.Graph
             SqlSelectBuilder builder = GetSelectBuilder();
             builder.EnsureSlots(null, "c");
 
-            builder.AddWhat("node.id, node.is_class, node.label, " +
+            builder.AddWhat("node.id, node.is_class, node.tag, node.label, " +
                 "node.source_type, node.sid, ul.uri")
                    .AddWhat("COUNT(node.id)", slotId: "c")
                    .AddFrom("node", slotId: "*")
@@ -447,6 +447,23 @@ namespace Cadmus.Index.Sql.Graph
                        .AddWhere("uid LIKE @uid", slotId: "*")
                        .AddParameter("@uid", DbType.String, $"%{filter.Uid}%",
                             slotId: "*");
+            }
+
+            // class
+            if (filter.IsClass.HasValue)
+            {
+                builder.AddWhere("is_class=@is_class", slotId: "*")
+                       .AddParameter("@is_class", DbType.Boolean, filter.IsClass.Value,
+                            slotId: "*");
+            }
+
+            // tag
+            if (filter.Tag != null)
+            {
+                builder.AddWhere(filter.Tag.Length == 0
+                            ? "tag IS NULL" : "tag=@tag", slotId: "*");
+                if (filter.Tag.Length > 0)
+                    builder.AddParameter("@tag", DbType.String, filter.Tag);
             }
 
             // label
@@ -567,10 +584,11 @@ namespace Cadmus.Index.Sql.Graph
                         {
                             Id = reader.GetInt32(0),
                             IsClass = reader.GetBoolean(1),
-                            Label = reader.GetValue<string>(2),
-                            SourceType = (NodeSourceType)reader.GetInt32(3),
-                            Sid = reader.GetValue<string>(4),
-                            Uri = reader.GetString(5)
+                            Tag = reader.GetValue<string>(2),
+                            Label = reader.GetValue<string>(3),
+                            SourceType = (NodeSourceType)reader.GetInt32(4),
+                            Sid = reader.GetValue<string>(5),
+                            Uri = reader.GetString(6)
                         });
                     }
                 }
@@ -594,7 +612,7 @@ namespace Cadmus.Index.Sql.Graph
             try
             {
                 DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT n.is_class, n.label, " +
+                cmd.CommandText = "SELECT n.is_class, n.tag, n.label, " +
                     "n.source_type, n.sid, ul.uri FROM node n\n" +
                     "INNER JOIN uri_lookup ul ON n.id=ul.id WHERE n.id=@id";
                 AddParameter(cmd, "@id", DbType.Int32, id);
@@ -606,10 +624,11 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = id,
                         IsClass = reader.GetBoolean(0),
-                        Label = reader.GetValue<string>(1),
-                        SourceType = (NodeSourceType)reader.GetInt32(2),
-                        Sid = reader.GetValue<string>(3),
-                        Uri = reader.GetString(4)
+                        Tag = reader.GetValue<string>(1),
+                        Label = reader.GetValue<string>(2),
+                        SourceType = (NodeSourceType)reader.GetInt32(3),
+                        Sid = reader.GetValue<string>(4),
+                        Uri = reader.GetString(5)
                     };
                 }
             }
@@ -633,7 +652,7 @@ namespace Cadmus.Index.Sql.Graph
             try
             {
                 DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT n.id, n.is_class, n.label, " +
+                cmd.CommandText = "SELECT n.id, n.is_class, n.tag, n.label, " +
                     "n.source_type, n.sid FROM node n\n" +
                     "INNER JOIN uri_lookup ul ON n.id=ul.id WHERE ul.uri=@uri";
                 AddParameter(cmd, "@uri", DbType.String, uri);
@@ -645,9 +664,10 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = reader.GetInt32(0),
                         IsClass = reader.GetBoolean(1),
-                        Label = reader.GetValue<string>(2),
-                        SourceType = (NodeSourceType)reader.GetInt32(3),
-                        Sid = reader.GetValue<string>(4),
+                        Tag = reader.GetValue<string>(2),
+                        Label = reader.GetValue<string>(3),
+                        SourceType = (NodeSourceType)reader.GetInt32(4),
+                        Sid = reader.GetValue<string>(5),
                         Uri = uri
                     };
                 }
@@ -687,11 +707,12 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT INTO node" +
-                    "(id, is_class, label, source_type, sid) " +
-                    "VALUES(@id, @is_class, @label, @source_type, @sid)\n"
-                    + GetUpsertTailSql("is_class", "label", "source_type", "sid");
+                    "(id, is_class, tag, label, source_type, sid) " +
+                    "VALUES(@id, @is_class, @tag, @label, @source_type, @sid)\n"
+                    + GetUpsertTailSql("is_class", "tag", "label", "source_type", "sid");
                 AddParameter(cmd, "@id", DbType.Int32, node.Id);
                 AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
+                AddParameter(cmd, "@tag", DbType.String, node.Tag);
                 AddParameter(cmd, "@label", DbType.String, node.Label);
                 AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
                 AddParameter(cmd, "@sid", DbType.String, node.Sid);
@@ -1440,8 +1461,10 @@ namespace Cadmus.Index.Sql.Graph
 
             if (!string.IsNullOrEmpty(filter.Tag))
             {
-                builder.AddWhere("tag=@tag", slotId: "*")
-                       .AddParameter("@tag", DbType.String, filter.Tag, slotId: "*");
+                builder.AddWhere(filter.Tag.Length == 0
+                    ? "tag IS NULL" : "tag=@tag", slotId: "*");
+                if (filter.Tag.Length > 0)
+                    builder.AddParameter("@tag", DbType.String, filter.Tag);
             }
 
             return builder;
@@ -1585,12 +1608,12 @@ namespace Cadmus.Index.Sql.Graph
                 if (triple.Id > 0)
                 {
                     AddParameter(cmd, "@id", DbType.Int32, triple.Id);
-                    sb.Append(";\n").Append(GetUpsertTailSql(
+                    sb.Append('\n').Append(GetUpsertTailSql(
                         "s_id", "p_id", "o_id", "o_lit", "sid"));
                 }
                 else
                 {
-                    sb.Append('\n').Append(GetSelectIdentitySql());
+                    sb.Append(";\n").Append(GetSelectIdentitySql());
                 }
                 cmd.CommandText = sb.ToString();
 

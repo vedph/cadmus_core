@@ -900,6 +900,7 @@ namespace Cadmus.Index.MySql.Test
         #region Triple
         private static void AddTriples(IGraphRepository repository)
         {
+            // nodes
             Node michelangelo = new Node
             {
                 Id = repository.AddUri("x:persons/michelangelo"),
@@ -931,22 +932,139 @@ namespace Cadmus.Index.MySql.Test
             };
             repository.AddNode(artist);
 
+            // michelangelo a artist
             repository.AddTriple(new Triple
             {
                 SubjectId = michelangelo.Id,
                 PredicateId = a.Id,
                 ObjectId = artist.Id
             });
+            // michelangelo hasName "Michelangelo Buonarroti"
             repository.AddTriple(new Triple
             {
                 SubjectId = michelangelo.Id,
                 PredicateId = name.Id,
-                ObjectLiteral = "Michelangelo Buonarroti"
+                ObjectLiteral = "Michelangelo Buonarroti",
+                Tag = "fake"
             });
+        }
+
+        [Fact]
+        public void GetTriples_NoFilter_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter());
+
+            Assert.Equal(2, page.Total);
+            Assert.Equal(2, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetTriples_BySubjectId_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter
+            {
+                SubjectId = 1
+            });
+
+            Assert.Equal(2, page.Total);
+            Assert.Equal(2, page.Items.Count);
+        }
+
+        [Fact]
+        public void GetTriples_ByPredicateId_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter
+            {
+                PredicateId = 3
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+            Assert.NotNull(page.Items[0].ObjectLiteral);
+        }
+
+        [Fact]
+        public void GetTriples_ByObjectId_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter
+            {
+                ObjectId = 4
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+        }
+
+        [Fact]
+        public void GetTriples_ByLiteral_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter
+            {
+                ObjectLiteral = "^Michelangelo"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+            Assert.NotNull(page.Items[0].ObjectLiteral);
+        }
+
+        [Fact]
+        public void GetTriples_ByNoTag_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter
+            {
+                Tag = ""
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+            Assert.Null(page.Items[0].ObjectLiteral);
+        }
+
+        [Fact]
+        public void GetTriples_ByTag_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddTriples(repository);
+
+            var page = repository.GetTriples(new TripleFilter
+            {
+                Tag = "fake"
+            });
+
+            Assert.Equal(1, page.Total);
+            Assert.Single(page.Items);
+            Assert.NotNull(page.Items[0].ObjectLiteral);
         }
         #endregion
     }
 
+    #region NamesPart
     [Tag("it.vedph.bricks.names")]
     internal sealed class NamesPart : PartBase
     {
@@ -960,4 +1078,5 @@ namespace Cadmus.Index.MySql.Test
             throw new NotImplementedException();
         }
     }
+    #endregion
 }

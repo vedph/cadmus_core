@@ -1423,10 +1423,10 @@ namespace Cadmus.Index.Sql.Graph
         {
             SqlSelectBuilder builder = GetSelectBuilder();
             builder.EnsureSlots(null, "c")
-                    .AddWhat("t.id, t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, " +
+                    .AddWhat("t.id, t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, t.tag, " +
                              "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri")
                     .AddWhat("COUNT(t.id)", slotId: "c")
-                    .AddFrom("FROM triple t", slotId: "*")
+                    .AddFrom("triple t", slotId: "*")
                     .AddFrom("INNER JOIN uri_lookup uls ON t.s_id=uls.id")
                     .AddFrom("INNER JOIN uri_lookup ulp ON t.p_id=ulp.id")
                     .AddFrom("LEFT JOIN uri_lookup ulo ON t.o_id=ulo.id")
@@ -1456,15 +1456,19 @@ namespace Cadmus.Index.Sql.Graph
             if (!string.IsNullOrEmpty(filter.ObjectLiteral))
             {
                 builder.AddWhere(GetRegexClauseSql("o_lit", "@o_lit"), slotId: "*")
-                       .AddParameter("@o_lit", DbType.String, filter.ObjectLiteral);
+                       .AddParameter("@o_lit", DbType.String, filter.ObjectLiteral,
+                            slotId: "*");
             }
 
-            if (!string.IsNullOrEmpty(filter.Tag))
+            if (filter.Tag != null)
             {
                 builder.AddWhere(filter.Tag.Length == 0
                     ? "tag IS NULL" : "tag=@tag", slotId: "*");
                 if (filter.Tag.Length > 0)
-                    builder.AddParameter("@tag", DbType.String, filter.Tag);
+                {
+                    builder.AddParameter("@tag", DbType.String, filter.Tag,
+                        slotId: "*");
+                }
             }
 
             return builder;
@@ -1514,9 +1518,10 @@ namespace Cadmus.Index.Sql.Graph
                             ObjectId = reader.GetValue<int>(3),
                             ObjectLiteral = reader.GetValue<string>(4),
                             Sid = reader.GetValue<string>(5),
-                            SubjectUri = reader.GetString(6),
-                            PredicateUri = reader.GetString(7),
-                            ObjectUri = reader.GetValue<string>(8)
+                            Tag = reader.GetValue<string>(6),
+                            SubjectUri = reader.GetString(7),
+                            PredicateUri = reader.GetString(8),
+                            ObjectUri = reader.GetValue<string>(9)
                         });
                     }
                 }
@@ -1539,7 +1544,8 @@ namespace Cadmus.Index.Sql.Graph
             try
             {
                 DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, " +
+                cmd.CommandText = "SELECT t.s_id, t.p_id, t.o_id, t.o_lit, " +
+                    "t.sid, t.tag, " +
                     "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri\n" +
                     "FROM triple t\n" +
                     "INNER JOIN uri_lookup uls ON t.s_id=uls.id\n" +
@@ -1559,9 +1565,10 @@ namespace Cadmus.Index.Sql.Graph
                         ObjectId = reader.GetValue<int>(2),
                         ObjectLiteral = reader.GetValue<string>(3),
                         Sid = reader.GetValue<string>(4),
-                        SubjectUri = reader.GetString(5),
-                        PredicateUri = reader.GetString(6),
-                        ObjectUri = reader.GetValue<string>(7)
+                        Tag = reader.GetValue<string>(5),
+                        SubjectUri = reader.GetString(6),
+                        PredicateUri = reader.GetString(7),
+                        ObjectUri = reader.GetValue<string>(8)
                     };
                 }
             }
@@ -1596,12 +1603,12 @@ namespace Cadmus.Index.Sql.Graph
                 // an existing triple must add id
                 if (triple.Id > 0) sb.Append("id, ");
 
-                sb.Append("s_id, p_id, o_id, o_lit, sid) VALUES(");
+                sb.Append("s_id, p_id, o_id, o_lit, sid, tag) VALUES(");
 
                 // an existing triple must add @id
                 if (triple.Id > 0) sb.Append("@id, ");
 
-                sb.Append("@s_id, @p_id, @o_id, @o_lit, @sid)");
+                sb.Append("@s_id, @p_id, @o_id, @o_lit, @sid, @tag)");
 
                 // an existing triple is an UPSERT, otherwise we have an INSERT
                 // and we must retrieve the ID of the newly inserted row
@@ -1622,6 +1629,7 @@ namespace Cadmus.Index.Sql.Graph
                 AddParameter(cmd, "@o_id", DbType.Int32, triple.ObjectId);
                 AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
                 AddParameter(cmd, "@sid", DbType.String, triple.Sid);
+                AddParameter(cmd, "@tag", DbType.String, triple.Tag);
 
                 if (triple.Id == 0)
                 {

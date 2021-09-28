@@ -3,6 +3,9 @@ using Cadmus.Index.Graph;
 using Cadmus.Index.MySql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
+using Fusi.Tools.Config;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -137,7 +140,7 @@ namespace Cadmus.Index.Test
             });
             repository.AddNode(new Node
             {
-                Id = repository.AddUri("foaf:person"),
+                Id = repository.AddUri("foaf:Person"),
                 IsClass = true,
                 Label = "Person"
             });
@@ -250,7 +253,9 @@ namespace Cadmus.Index.Test
                 Description = "A man of letters.",
                 FacetId = "person",
                 GroupId = "writers",
-                SortKey = "scipionebarbato"
+                SortKey = "scipionebarbato",
+                CreatorId = "creator",
+                UserId = "user"
             };
             GraphSet set = mapper.MapItem(item);
 
@@ -333,6 +338,85 @@ namespace Cadmus.Index.Test
             Assert.Equal(item.Id, triple.Sid);
             Assert.Null(triple.Tag);
         }
+
+        private static void AddSingleEntityPartRules(IGraphRepository repository)
+        {
+            // properties
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("foaf:name"),
+                IsClass = true,
+                Label = "Person's name"
+            });
+
+            // item
+            NodeMapping itemMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                Name = "Person item",
+                FacetFilter = "person",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Person item -> node"
+            };
+            repository.AddMapping(itemMapping);
+
+            // pin full-name
+            NodeMapping pinMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                PartType = "it.vedph.bricks.name",
+                PinName = "full-name",
+                TripleP = "foaf:name",
+                TripleO = "$pin-value"
+            };
+            repository.AddMapping(pinMapping);
+        }
+
+        [Fact]
+        public void MapPin_SingleEntityItemPin_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddSingleEntityPartRules(repository);
+            NodeMapper mapper = new NodeMapper(repository);
+
+            IItem item = new Item
+            {
+                Title = "Scipione Barbato",
+                Description = "A man of letters.",
+                FacetId = "person",
+                GroupId = "writers",
+                SortKey = "scipionebarbato",
+                CreatorId = "creator",
+                UserId = "user"
+            };
+            IPart part = new NamePart
+            {
+                ItemId = item.Id,
+                CreatorId = "creator",
+                UserId = "user"
+            };
+
+            GraphSet set = mapper.MapPin(item, part, "full-name",
+                "Scipione Barbato");
+
+            // TODO
+        }
         #endregion
+
+        [Tag("it.vedph.bricks.name")]
+        internal class NamePart : PartBase
+        {
+            public override IList<DataPinDefinition> GetDataPinDefinitions()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

@@ -85,8 +85,7 @@ namespace Cadmus.Index.Graph
             };
 
             // build the node's label following label_template
-            if (!string.IsNullOrEmpty(mapping.LabelTemplate))
-                node.Label = vset.ResolvePlaceholders(mapping.LabelTemplate).Trim();
+            node.Label = vset.ResolvePlaceholders(mapping.LabelTemplate).Trim();
 
             // build the UID prefix
             string prefix = null;
@@ -228,6 +227,20 @@ namespace Cadmus.Index.Graph
             return Tuple.Create(triple, objNode);
         }
 
+        private string GetNodeUidFromAncestors(NodeMapping mapping,
+            NodeMapperState state)
+        {
+            if (mapping.ParentId == 0) return null;
+
+            for (int i = state.MappingPath.Count - 1; i > -1; i--)
+            {
+                int mappingId = state.MappingPath[i];
+                if (state.MappedUris.ContainsKey(mappingId))
+                    return state.MappedUris[mappingId];
+            }
+            return null;
+        }
+
         /// <summary>
         /// Applies the specified mapping and all its descendants.
         /// </summary>
@@ -249,18 +262,24 @@ namespace Cadmus.Index.Graph
             NodeMappingVariableSet vset = NodeMappingVariableSet.LoadFrom(mapping);
             vset.SetValues(state);
 
-            // generate node
-            var nodeAndUid = BuildNode(state.Sid, mapping, vset);
+            // generate node if any
+            Tuple<Node, string> nodeAndUid = null;
+            if (!string.IsNullOrEmpty(mapping.LabelTemplate))
+            {
+                nodeAndUid = BuildNode(state.Sid, mapping, vset);
 
-            // add node to set
-            state.AddNode(nodeAndUid.Item1, nodeAndUid.Item2, mapping.Id);
+                // add node to set
+                state.AddNode(nodeAndUid.Item1, nodeAndUid.Item2, mapping.Id);
+            }
 
             // if there is a triple, collect SPO from triple_s, triple_p,
             // triple_o (triple_o_prefix) and reversed, then generate it
             // together with its O's node unless it's a literal or already exists
             if (!string.IsNullOrEmpty(mapping.TripleP))
             {
-                var to = BuildTriple(state.Sid, nodeAndUid.Item2, mapping, vset);
+                var to = BuildTriple(state.Sid,
+                    nodeAndUid?.Item2 ?? GetNodeUidFromAncestors(mapping, state),
+                    mapping, vset);
                 if (to.Item2 != null) state.Nodes.Add(to.Item2);
                 state.Triples.Add(to.Item1);
             }
@@ -272,11 +291,12 @@ namespace Cadmus.Index.Graph
                     state.PinName, mapping.Id);
 
             // process children
-            state.MappingPath.Add(mapping.Id);
-
-            foreach (var child in children) ApplyMapping(child, state);
-
-            state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
+            if (children.Count > 0)
+            {
+                state.MappingPath.Add(mapping.Id);
+                foreach (var child in children) ApplyMapping(child, state);
+                state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
+            }
         }
 
         /// <summary>

@@ -109,6 +109,32 @@ namespace Cadmus.Index.Test
         #region MapItem
         private static void AddItemRules(IGraphRepository repository)
         {
+            // properties
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("rdfs:comment"),
+                Tag = "property",
+                Label = "Comment"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("rdfs:subClassOf"),
+                Tag = "property",
+                Label = "SubClassOf"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("kad:hasFacet"),
+                Tag = "property",
+                Label = "Has Cadmus facet"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("kad:isInGroup"),
+                Tag = "property",
+                Label = "Is in Cadmus group"
+            });
+
             // item
             NodeMapping itemMapping = new NodeMapping
             {

@@ -1,4 +1,5 @@
-﻿using Cadmus.Index.Graph;
+﻿using Cadmus.Core;
+using Cadmus.Index.Graph;
 using Cadmus.Index.MySql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
@@ -108,7 +109,86 @@ namespace Cadmus.Index.Test
         #region MapItem
         private static void AddItemRules(IGraphRepository repository)
         {
-            // TODO
+            // item
+            NodeMapping itemMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                Name = "Person item",
+                FacetFilter = "person",
+                Prefix = "x:persons/{group-id}/",
+                LabelTemplate = "{title}",
+                Description = "Person item -> node"
+            };
+            repository.AddMapping(itemMapping);
+
+            NodeMapping itemDscMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                Name = "Item description",
+                ParentId = itemMapping.Id,
+                TripleP = "rdfs:comment",
+                TripleO = "$dsc",
+                Description = "Item's description -> rdfs:comment",
+            };
+            repository.AddMapping(itemDscMapping);
+
+            NodeMapping itemPersonMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                Name = "Item person link",
+                FacetFilter = "person",
+                ParentId = itemMapping.Id,
+                TripleP = "rdfs:subClassOf",
+                TripleO = "foaf:Person",
+                Description = "Person item subClassOf foaf:Person"
+            };
+            repository.AddMapping(itemPersonMapping);
+
+            // facet
+            NodeMapping facetMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.ItemFacet,
+                Name = "Item facet",
+                Prefix = "x:facets/",
+                LabelTemplate = "{facet-id}",
+                Description = "Item's facet -> node"
+            };
+            repository.AddMapping(facetMapping);
+
+            NodeMapping facetLinkMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.ItemFacet,
+                ParentId = facetMapping.Id,
+                Name = "Item facet link",
+                TripleP = "kad:hasFacet",
+                TripleO = "$item",
+                IsReversed = true,
+                Description = "Item hasFacet facet"
+            };
+            repository.AddMapping(facetLinkMapping);
+
+            // group
+            NodeMapping groupMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.ItemGroup,
+                Name = "Item group",
+                Prefix = "x:groups/",
+                LabelTemplate = "{group-id}",
+                Description = "Item's group -> node"
+            };
+            repository.AddMapping(groupMapping);
+
+            NodeMapping groupLinkMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.ItemGroup,
+                ParentId = groupMapping.Id,
+                Name = "Item group link",
+                TripleP = "kad:isInGroup",
+                TripleO = "$item",
+                IsReversed = true,
+                Description = "Item isInGroup group"
+            };
+            repository.AddMapping(groupLinkMapping);
         }
 
         [Fact]
@@ -117,7 +197,19 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddItemRules(repository);
+            NodeMapper mapper = new NodeMapper(repository);
 
+            GraphSet set = mapper.MapItem(new Item
+            {
+                Title = "Scipione Barbato",
+                Description = "A man of letters.",
+                FacetId = "person",
+                GroupId = "writers",
+                SortKey = "scipionebarbato"
+            });
+
+            Assert.Equal(4, set.Nodes.Count);
+            Assert.Equal(4, set.Triples.Count);
             // TODO
         }
         #endregion

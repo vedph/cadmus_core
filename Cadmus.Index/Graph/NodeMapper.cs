@@ -74,10 +74,15 @@ namespace Cadmus.Index.Graph
             return results;
         }
 
-        private Tuple<Node,string> BuildNode(NodeMapping mapping,
+        private Tuple<Node,string> BuildNode(string sid,
+            NodeMapping mapping,
             NodeMappingVariableSet vset)
         {
-            Node node = new Node();
+            Node node = new Node
+            {
+                SourceType = mapping.SourceType,
+                Sid = sid
+            };
 
             // build the node's label following label_template
             if (!string.IsNullOrEmpty(mapping.LabelTemplate))
@@ -245,7 +250,7 @@ namespace Cadmus.Index.Graph
             vset.SetValues(state);
 
             // generate node
-            var nodeAndUid = BuildNode(mapping, vset);
+            var nodeAndUid = BuildNode(state.Sid, mapping, vset);
 
             // add node to set
             state.AddNode(nodeAndUid.Item1, nodeAndUid.Item2, mapping.Id);

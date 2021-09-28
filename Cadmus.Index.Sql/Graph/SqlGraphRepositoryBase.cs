@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core;
 using Cadmus.Index.Graph;
+using Fusi.DbManager;
 using Fusi.Tools;
 using Fusi.Tools.Data;
 using System;

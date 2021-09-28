@@ -1,6 +1,7 @@
 ﻿using Cadmus.Index.Graph;
 using Cadmus.Index.Sql;
 using Cadmus.Index.Sql.Graph;
+using Fusi.DbManager;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;

@@ -1,4 +1,5 @@
 ﻿using Cadmus.Index.Sql;
+using Fusi.DbManager.MsSql;
 using Fusi.Tools.Data;
 using System.Globalization;
 using System.Text;

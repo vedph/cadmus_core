@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fusi.DbManager.MySql" Version="1.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -20,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cadmus.Index.MySql\Cadmus.Index.MySql.csproj" />
     <ProjectReference Include="..\Cadmus.Index\Cadmus.Index.csproj" />
   </ItemGroup>
 

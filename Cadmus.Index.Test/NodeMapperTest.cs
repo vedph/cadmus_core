@@ -1,10 +1,50 @@
 ﻿using Cadmus.Index.Graph;
+using Cadmus.Index.MySql;
+using Fusi.DbManager;
+using Fusi.DbManager.MySql;
 using Xunit;
 
 namespace Cadmus.Index.Test
 {
+    // https://github.com/xunit/xunit/issues/1999
+    [CollectionDefinition(nameof(NonParallelResourceCollection),
+        DisableParallelization = true)]
+    public class NonParallelResourceCollection { }
+    [Collection(nameof(NonParallelResourceCollection))]
     public sealed class NodeMapperTest
     {
+        private const string CST = "Server=localhost;Database={0};Uid=root;Pwd=mysql;";
+        private const string DB_NAME = "cadmus-index-test";
+        static private readonly string CS = string.Format(CST, DB_NAME);
+
+        // private static IDbConnection GetConnection() => new MySqlConnection(CS);
+
+        private static void Reset()
+        {
+            IDbManager manager = new MySqlDbManager(CST);
+            if (manager.Exists(DB_NAME))
+            {
+                manager.ClearDatabase(DB_NAME);
+            }
+            else
+            {
+                manager.CreateDatabase(DB_NAME,
+                    MySqlItemIndexWriter.GetMySqlSchema(), null);
+            }
+        }
+
+        private static IGraphRepository GetRepository()
+        {
+            MySqlGraphRepository repository =
+                new MySqlGraphRepository(new MySqlTokenHelper());
+            repository.Configure(new Sql.SqlOptions
+            {
+                ConnectionString = CS
+            });
+            return repository;
+        }
+
+        #region ParseItemTitle
         [Fact]
         public void ParseItemTitle_Simple_Ok()
         {
@@ -31,7 +71,9 @@ namespace Cadmus.Index.Test
             Assert.Equal("x:artists/", tpu.Item2);
             Assert.Null(tpu.Item3);
         }
+        #endregion
 
+        #region ParsePinName
         [Fact]
         public void ParsePinName_Simple_Ok()
         {
@@ -61,5 +103,23 @@ namespace Cadmus.Index.Test
             Assert.Equal("alpha", comps[1]);
             Assert.Equal("beta", comps[2]);
         }
+        #endregion
+
+        #region MapItem
+        private static void AddItemRules(IGraphRepository repository)
+        {
+            // TODO
+        }
+
+        [Fact]
+        public void MapItem_ItemFacetGroupClass_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddItemRules(repository);
+
+            // TODO
+        }
+        #endregion
     }
 }

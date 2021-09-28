@@ -1,6 +1,7 @@
 ﻿using Cadmus.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Cadmus.Index.Graph
@@ -117,6 +118,9 @@ namespace Cadmus.Index.Graph
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
             if (uid == null) throw new ArgumentNullException(nameof(uid));
+
+            // nope if already added
+            if (Nodes.Any(n => n.Id == node.Id)) return;
 
             Nodes.Add(node);
             MappedUris[mappingId] = uid;

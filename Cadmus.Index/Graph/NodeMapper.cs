@@ -3,6 +3,7 @@ using Fusi.Text.Unicode;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -216,6 +217,7 @@ namespace Cadmus.Index.Graph
             {
                 objNode = _repository.GetNode(triple.ObjectId) ?? new Node
                 {
+                    Id = _repository.AddUri(obj),
                     Label = obj,
                     // all the nodes marked with user source (and thus also
                     // having a null SID) will be added to the database only
@@ -280,7 +282,8 @@ namespace Cadmus.Index.Graph
                 var to = BuildTriple(state.Sid,
                     nodeAndUid?.Item2 ?? GetNodeUidFromAncestors(mapping, state),
                     mapping, vset);
-                if (to.Item2 != null) state.Nodes.Add(to.Item2);
+                if (to.Item2 != null && state.Nodes.All(n => n.Id != to.Item2.Id))
+                    state.Nodes.Add(to.Item2);
                 state.Triples.Add(to.Item1);
             }
 
@@ -340,20 +343,20 @@ namespace Cadmus.Index.Graph
                 // else just apply the mapping once
                 else ApplyMapping(mapping, state);
 
-                // children mappings
-                IList<NodeMapping> children = state.Part == null
-                    ? _repository.FindMappingsFor(state.Item, mapping.Id)
-                    : _repository.FindMappingsFor(state.Item, state.Part,
-                        state.PinName, mapping.Id);
-                // update state
-                state.GroupOrdinal = 0;
-                state.MappingPath.Add(mapping.Id);
+                //// children mappings
+                //IList<NodeMapping> children = state.Part == null
+                //    ? _repository.FindMappingsFor(state.Item, mapping.Id)
+                //    : _repository.FindMappingsFor(state.Item, state.Part,
+                //        state.PinName, mapping.Id);
+                //// update state
+                //state.GroupOrdinal = 0;
+                //state.MappingPath.Add(mapping.Id);
 
-                foreach (var child in children)
-                {
-                    ApplyMapping(child, state);
-                }
-                state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
+                //foreach (var child in children)
+                //{
+                //    ApplyMapping(child, state);
+                //}
+                //state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
             }
         }
 

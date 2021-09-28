@@ -3,6 +3,7 @@ using Cadmus.Index.Graph;
 using Cadmus.Index.MySql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
+using System.Linq;
 using Xunit;
 
 namespace Cadmus.Index.Test
@@ -236,6 +237,8 @@ namespace Cadmus.Index.Test
 
             Assert.Equal(4, set.Nodes.Count);
             Assert.Equal(4, set.Triples.Count);
+
+            // item node
             // TODO
         }
         #endregion

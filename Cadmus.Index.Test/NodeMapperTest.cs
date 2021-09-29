@@ -532,7 +532,80 @@ namespace Cadmus.Index.Test
 
             Assert.Equal(3, set.Nodes.Count);
             Assert.Equal(5, set.Triples.Count);
-            // TODO
+
+            // the item node has been mapped only because involved in triples,
+            // so it's just used as a reference
+            NodeResult node = set.Nodes.FirstOrDefault(
+                n => n.Uri == "x:manuscripts/vat_lat_12");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal(NodeSourceType.User, node.SourceType);
+            Assert.Null(node.Sid);
+
+            node = set.Nodes.FirstOrDefault(
+                n => n.Uri == "x:ms-decorations/angel-1v");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal(NodeSourceType.Pin, node.SourceType);
+            Assert.Equal(part.Id + "/eid/angel-1v", node.Sid);
+
+            node = set.Nodes.FirstOrDefault(
+                n => n.Uri == "x:ms-decorations/demon-2r");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal(NodeSourceType.Pin, node.SourceType);
+            Assert.Equal(part.Id + "/eid/demon-2r", node.Sid);
+
+            TripleResult triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "kad:isInGroup" &&
+                t.SubjectUri == "x:ms-decorations/angel-1v");
+            Assert.NotNull(triple);
+            Assert.Equal("x:manuscripts/vat_lat_12", triple.ObjectUri);
+            Assert.Equal(part.Id + "/eid/angel-1v", triple.Sid);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+
+            triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "kad:isInGroup" &&
+                t.SubjectUri == "x:ms-decorations/demon-2r");
+            Assert.NotNull(triple);
+            Assert.Equal("x:manuscripts/vat_lat_12", triple.ObjectUri);
+            Assert.Equal(part.Id + "/eid/demon-2r", triple.Sid);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+
+            triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "x:hasColor" &&
+                t.SubjectUri == "x:ms-decorations/angel-1v");
+            Assert.NotNull(triple);
+            Assert.Equal(part.Id + "/eid/angel-1v", triple.Sid);
+            Assert.Null(triple.ObjectUri);
+            Assert.Equal("gold", triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+
+            triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "x:hasColor" &&
+                t.SubjectUri == "x:ms-decorations/demon-2r" &&
+                t.ObjectLiteral == "red");
+            Assert.NotNull(triple);
+            Assert.Equal(part.Id + "/eid/demon-2r", triple.Sid);
+            Assert.Null(triple.ObjectUri);
+            Assert.Null(triple.Tag);
+
+            triple = set.Triples.FirstOrDefault(
+                t => t.PredicateUri == "x:hasColor" &&
+                t.SubjectUri == "x:ms-decorations/demon-2r" &&
+                t.ObjectLiteral == "black");
+            Assert.NotNull(triple);
+            Assert.Equal(part.Id + "/eid/demon-2r", triple.Sid);
+            Assert.Null(triple.ObjectUri);
+            Assert.Null(triple.Tag);
         }
         #endregion
 

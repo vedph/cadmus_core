@@ -475,6 +475,7 @@ namespace Cadmus.Index.Test
                 SourceType = NodeSourceType.Pin,
                 ParentId = eidMapping.Id,
                 Name = "Pin eid in group",
+                PinName = "eid",
                 TripleP = "kad:isInGroup",
                 TripleO = "$item"
             };
@@ -521,9 +522,9 @@ namespace Cadmus.Index.Test
             {
                 Tuple.Create("eid", "angel-1v"),
                 Tuple.Create("eid", "demon-2r"),
-                Tuple.Create("eid@angel-1v", "gold"),
-                Tuple.Create("eid@demon-2r", "red"),
-                Tuple.Create("eid@demon-2r", "black")
+                Tuple.Create("color@angel-1v", "gold"),
+                Tuple.Create("color@demon-2r", "red"),
+                Tuple.Create("color@demon-2r", "black")
             });
 
             Assert.Equal(2, set.Nodes.Count);

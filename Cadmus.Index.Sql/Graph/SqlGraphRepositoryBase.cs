@@ -1353,12 +1353,23 @@ namespace Cadmus.Index.Sql.Graph
                        .AddParameter("@part_role", DbType.String, part.RoleId ?? "");
 
                 // pin_name
-                builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name " +
-                    "OR (INSTR(pin_name, '@*') > 0 " +
-                    "AND " +
-                    GetRegexClauseSql("@pin_name",
-                        "CONCAT(SUBSTRING(0, INSTR(pin_name, '@*')), '.+')") +
-                        "))")
+                //builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name " +
+                //    "OR (INSTR(pin_name, '@*') > 0 " +
+                //    "AND " +
+                //    GetRegexClauseSql("@pin_name",
+                //        "CONCAT(" +
+                //        "SUBSTRING(pin_name, 1, INSTR(pin_name, '@*') - 1), '.+')") +
+                //        "))")
+                //    .AddParameter("@pin_name", DbType.String, pin ?? "");
+                // pin name matching with @*: the number of @* must match, too
+                builder.AddWhere("AND (" +
+                    "pin_name IS NULL OR pin_name=@pin_name " +
+                    "OR (" +
+                    "INSTR(pin_name, '@*') > 0 " +
+                    "AND @pin_name LIKE REPLACE(pin_name, '*', '%') " +
+                    "AND LENGTH(@pin_name) - LENGTH(REPLACE(@pin_name, '@', '')) = " +
+                    "LENGTH(pin_name) - LENGTH(REPLACE(pin_name, '@', ''))" +
+                    "))")
                     .AddParameter("@pin_name", DbType.String, pin ?? "");
             }
 

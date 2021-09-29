@@ -387,21 +387,6 @@ namespace Cadmus.Index.Graph
                 }
                 // else just apply the mapping once
                 else ApplyMapping(mapping, state);
-
-                //// children mappings
-                //IList<NodeMapping> children = state.Part == null
-                //    ? _repository.FindMappingsFor(state.Item, mapping.Id)
-                //    : _repository.FindMappingsFor(state.Item, state.Part,
-                //        state.PinName, mapping.Id);
-                //// update state
-                //state.GroupOrdinal = 0;
-                //state.MappingPath.Add(mapping.Id);
-
-                //foreach (var child in children)
-                //{
-                //    ApplyMapping(child, state);
-                //}
-                //state.MappingPath.RemoveAt(state.MappingPath.Count - 1);
             }
         }
 

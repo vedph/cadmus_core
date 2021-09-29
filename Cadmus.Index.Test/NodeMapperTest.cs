@@ -475,6 +475,7 @@ namespace Cadmus.Index.Test
                 SourceType = NodeSourceType.Pin,
                 ParentId = eidMapping.Id,
                 Name = "Pin eid in group",
+                PartType = "it.vedph.ms-decorations",
                 PinName = "eid",
                 TripleP = "kad:isInGroup",
                 TripleO = "$item"
@@ -487,6 +488,7 @@ namespace Cadmus.Index.Test
                 SourceType = NodeSourceType.Pin,
                 ParentId = eidMapping.Id,
                 Name = "Pin eid color",
+                PartType = "it.vedph.ms-decorations",
                 PinName = "color@*",
                 TripleP = "x:hasColor",
                 TripleO = "$pin-value"

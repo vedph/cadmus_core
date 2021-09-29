@@ -291,7 +291,7 @@ namespace Cadmus.Index.Test
             Assert.Null(node.Tag);
 
             // class node (pre-existing, manual)
-            node = set.Nodes.FirstOrDefault(n => n.Uri == "foaf:person");
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "foaf:Person");
             Assert.NotNull(node);
             Assert.Equal(NodeSourceType.User, node.SourceType);
             Assert.Null(node.Sid);
@@ -365,8 +365,10 @@ namespace Cadmus.Index.Test
             NodeMapping pinMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Pin,
+                Name = "Pin full-name",
                 PartType = "it.vedph.bricks.name",
                 PinName = "full-name",
+                TripleS = "$item",
                 TripleP = "foaf:name",
                 TripleO = "$pin-value"
             };
@@ -398,10 +400,30 @@ namespace Cadmus.Index.Test
                 UserId = "user"
             };
 
-            GraphSet set = mapper.MapPin(item, part, "full-name",
-                "Scipione Barbato");
+            // map 2 full-name pins
+            GraphSet set = mapper.MapPins(item, part, new[]
+            {
+                Tuple.Create("full-name", "Scipione Barbato"),
+                Tuple.Create("full-name", "Marco Barbato")
+            });
 
-            // TODO
+            Assert.Equal(2 , set.Triples.Count);
+
+            TripleResult triple = set.Triples.FirstOrDefault(
+                t => t.ObjectLiteral == "Scipione Barbato");
+            Assert.NotNull(triple);
+            Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
+            Assert.Null(triple.ObjectUri);
+            Assert.Equal(part.Id + "/full-name", triple.Sid);
+            Assert.Null(triple.Tag);
+
+            triple = set.Triples.FirstOrDefault(
+                t => t.ObjectLiteral == "Marco Barbato");
+            Assert.NotNull(triple);
+            Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
+            Assert.Null(triple.ObjectUri);
+            Assert.Equal(part.Id + "/full-name", triple.Sid);
+            Assert.Null(triple.Tag);
         }
         #endregion
 

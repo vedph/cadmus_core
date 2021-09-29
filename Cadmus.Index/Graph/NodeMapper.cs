@@ -129,11 +129,14 @@ namespace Cadmus.Index.Graph
             return node;
         }
 
-        private Tuple<TripleResult, NodeResult> BuildTriple(string sid, string subjUid,
-            NodeMapping mapping, NodeMappingVariableSet vset)
+        private Tuple<TripleResult, NodeResult> BuildTriple(string sid,
+            string nodeUid, NodeMapping mapping, NodeMappingVariableSet vset,
+            NodeMapperState state)
         {
             // 1: S
-            // override the default subject if mappings specifies another one
+            string subjUid;
+
+            // override the default subject if mappings specifies one
             if (!string.IsNullOrEmpty(mapping.TripleS))
             {
                 // all the macros here resolve to a UID
@@ -146,6 +149,16 @@ namespace Cadmus.Index.Graph
                         + mapping.TripleS
                         + " of S mapping " + mapping);
                     return null;
+                }
+            }
+            else
+            {
+                // else use the node UID as the subject or get it from ancestors if any
+                subjUid = nodeUid ?? GetNodeUidFromAncestors(mapping, state);
+                if (subjUid == null)
+                {
+                    Logger?.LogError("Unable to get a subject for triple in mapping "
+                        + mapping);
                 }
             }
 
@@ -310,9 +323,7 @@ namespace Cadmus.Index.Graph
             // together with its O's node unless it's a literal or already exists
             if (!string.IsNullOrEmpty(mapping.TripleP))
             {
-                var to = BuildTriple(state.Sid,
-                    node?.Uri ?? GetNodeUidFromAncestors(mapping, state),
-                    mapping, vset);
+                var to = BuildTriple(state.Sid, node?.Uri, mapping, vset, state);
                 if (to != null)
                 {
                     if (to.Item2 != null && state.Nodes.All(n => n.Id != to.Item2.Id))
@@ -420,36 +431,51 @@ namespace Cadmus.Index.Graph
         }
 
         /// <summary>
-        /// Maps the specified part's pin.
+        /// Maps the specified part's pin(s).
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="part">The part.</param>
-        /// <param name="pinName">Name of the pin.</param>
-        /// <param name="pinValue">The pin value.</param>
+        /// <param name="pins">Name/value pairs for pins.</param>
         /// <param name="set">The set to use, unless you are starting a new set.
         /// </param>
         /// <returns>The generated set of nodes and triples.</returns>
-        /// <exception cref="ArgumentNullException">item, part, pinName,
-        /// pinValue</exception>
-        public GraphSet MapPin(IItem item, IPart part, string pinName,
-            string pinValue, GraphSet set = null)
+        /// <exception cref="ArgumentNullException">item, part, pins</exception>
+        public GraphSet MapPins(IItem item, IPart part, IList<Tuple<string,string>> pins,
+            GraphSet set = null)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (part == null) throw new ArgumentNullException(nameof(part));
-            if (pinName == null) throw new ArgumentNullException(nameof(pinName));
-            if (pinValue == null) throw new ArgumentNullException(nameof(pinValue));
+            if (pins == null) throw new ArgumentNullException(nameof(pins));
 
-            Logger?.LogInformation($"Mapping {part.Id}/{pinName}=" +
-                (pinValue.Length > 80 ? pinValue.Substring(0, 80) + "..." : pinValue));
-
+            // we need to map the item first, as this provides context
+            // (e.g. to resolve $item and the like)
             NodeMapperState state = new NodeMapperState
             {
-                Item = item,
-                Part = part,
-                PinName = pinName,
-                PinValue = pinValue
+                Item = item
             };
             Map(state);
+
+            // reset data from state except for data we want to preserve
+            state.Sid = null;
+            state.GroupOrdinal = 0;
+            state.MappingPath.Clear();
+            // nodes and triples from items are already present in the store
+            // (whenever user saves, an item gets mapped)
+            state.Nodes.Clear();
+            state.Triples.Clear();
+
+            // map pins reusing state
+            foreach (var pin in pins)
+            {
+                Logger?.LogInformation($"Mapping {part.Id}/{pin.Item1}=" +
+                    (pin.Item2.Length > 80
+                     ? pin.Item2.Substring(0, 80) + "..." : pin.Item2));
+
+                state.Part = part;
+                state.PinName = pin.Item1;
+                state.PinValue = pin.Item2;
+                Map(state);
+            }
 
             if (set == null) return new GraphSet(state.Nodes, state.Triples);
             set.AddNodes(state.Nodes);

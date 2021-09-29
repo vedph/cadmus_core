@@ -1790,11 +1790,12 @@ namespace Cadmus.Index.Sql.Graph
 
         /// <summary>
         /// Gets the set of graph's nodes and triples whose SID starts with
-        /// the specified GUID. This identifiesd all the nodes and triples
+        /// the specified GUID. This identifies all the nodes and triples
         /// generated from a single source item or part.
         /// </summary>
         /// <param name="sourceId">The source identifier.</param>
         /// <returns>The set.</returns>
+        /// <exception cref="ArgumentNullException">sourceId</exception>
         public GraphSet GetGraphSet(string sourceId)
         {
             if (sourceId is null)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cadmus.Index.Graph
 {
@@ -23,6 +25,54 @@ namespace Cadmus.Index.Graph
                 ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        private void Update(string sourceId, IList<NodeResult> nodes,
+            IList<TripleResult> triples)
+        {
+            // corner case: sourceId = null/empty:
+            // this happens only for nodes generated as the objects of a
+            // generated triple, and in this case we must only ensure that
+            // such nodes exist, without updating them.
+            if (string.IsNullOrEmpty(sourceId))
+            {
+                foreach (NodeResult node in nodes)
+                    _repository.AddNode(node, true);
+                return;
+            }
+
+            GraphSet oldSet = _repository.GetGraphSet(sourceId);
+
+            // compare sets
+            CrudGrouper<NodeResult> nodeGrouper = new CrudGrouper<NodeResult>();
+            nodeGrouper.Group(nodes, oldSet.Nodes,
+                (NodeResult a, NodeResult b) => a.Id == b.Id);
+
+            CrudGrouper<TripleResult> tripleGrouper = new CrudGrouper<TripleResult>();
+            tripleGrouper.Group(triples, oldSet.Triples,
+                (TripleResult a, TripleResult b) =>
+                {
+                    return a.SubjectId == b.SubjectId &&
+                        a.PredicateId == b.PredicateId &&
+                        a.ObjectId == b.ObjectId &&
+                        a.Sid == b.Sid;
+                });
+
+            // nodes
+            foreach (NodeResult node in nodeGrouper.Deleted)
+                _repository.DeleteNode(node.Id);
+            foreach (NodeResult node in nodeGrouper.Added)
+                _repository.AddNode(node);
+            foreach (NodeResult node in nodeGrouper.Updated)
+                _repository.AddNode(node, node.Sid == null);
+
+            // triples
+            foreach (TripleResult triple in tripleGrouper.Deleted)
+                _repository.DeleteTriple(triple.Id);
+            foreach (TripleResult triple in tripleGrouper.Added)
+                _repository.AddTriple(triple);
+            foreach (TripleResult triple in tripleGrouper.Updated)
+                _repository.AddTriple(triple);
+        }
+
         /// <summary>
         /// Updates the graph with the specified nodes and triples.
         /// </summary>
@@ -32,46 +82,22 @@ namespace Cadmus.Index.Graph
         {
             if (set == null) throw new ArgumentNullException(nameof(set));
 
-            // get the old set
-            var guidAndItem = set.GetSourceGuidAndType();
-            GraphSet oldSet = guidAndItem == null ?
-                null : _repository.GetGraphSet(guidAndItem.Item1);
-
-            // compare sets
-            CrudGrouper<NodeResult> nodeGrouper = new CrudGrouper<NodeResult>();
-            nodeGrouper.Group(set.Nodes, oldSet.Nodes,
-                (NodeResult a, NodeResult b) => a.Id == b.Id);
-
-            CrudGrouper<TripleResult> tripleGrouper = new CrudGrouper<TripleResult>();
-            tripleGrouper.Group(set.Triples, oldSet.Triples,
-                (TripleResult a, TripleResult b) =>
-                {
-                    return a.SubjectId == b.SubjectId &&
-                        a.PredicateId == b.PredicateId &&
-                        a.ObjectId == b.ObjectId &&
-                        a.Sid == b.Sid;
-                });
+            // get nodes and triples grouped by their SID's GUID
+            var nodeGroups = set.GetNodesByGuid();
+            var tripleGroups = set.GetTriplesByGuid();
 
             try
             {
-                // execute updates
                 _repository.BeginTransaction();
 
-                // nodes
-                foreach (NodeResult node in nodeGrouper.Deleted)
-                    _repository.DeleteNode(node.Id);
-                foreach (NodeResult node in nodeGrouper.Added)
-                    _repository.AddNode(node);
-                foreach (NodeResult node in nodeGrouper.Updated)
-                    _repository.AddNode(node, node.Sid == null);
-
-                // triples
-                foreach (TripleResult triple in tripleGrouper.Deleted)
-                    _repository.DeleteTriple(triple.Id);
-                foreach (TripleResult triple in tripleGrouper.Added)
-                    _repository.AddTriple(triple);
-                foreach (TripleResult triple in tripleGrouper.Updated)
-                    _repository.AddTriple(triple);
+                // order by key so that empty (=null SID) keys come before
+                foreach (string key in nodeGroups.Keys.OrderBy(s => s))
+                {
+                    Update(key,
+                        nodeGroups[key],
+                        tripleGroups.ContainsKey(key)
+                            ? tripleGroups[key] : Array.Empty<TripleResult>());
+                }
 
                 _repository.CommitTransaction();
             }

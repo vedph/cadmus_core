@@ -313,9 +313,12 @@ namespace Cadmus.Index.Graph
                 var to = BuildTriple(state.Sid,
                     node?.Uri ?? GetNodeUidFromAncestors(mapping, state),
                     mapping, vset);
-                if (to.Item2 != null && state.Nodes.All(n => n.Id != to.Item2.Id))
-                    state.Nodes.Add(to.Item2);
-                state.Triples.Add(to.Item1);
+                if (to != null)
+                {
+                    if (to.Item2 != null && state.Nodes.All(n => n.Id != to.Item2.Id))
+                        state.Nodes.Add(to.Item2);
+                    state.Triples.Add(to.Item1);
+                }
             }
 
             // children mappings
@@ -395,9 +398,11 @@ namespace Cadmus.Index.Graph
         /// Maps the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
+        /// <param name="set">The set to use, unless you are starting a new set.
+        /// </param>
         /// <returns>The generated set of nodes and triples.</returns>
         /// <exception cref="ArgumentNullException">item</exception>
-        public GraphSet MapItem(IItem item)
+        public GraphSet MapItem(IItem item, GraphSet set = null)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
@@ -407,7 +412,11 @@ namespace Cadmus.Index.Graph
                 Item = item
             };
             Map(state);
-            return new GraphSet(state.Nodes, state.Triples);
+
+            if (set == null) return new GraphSet(state.Nodes, state.Triples);
+            set.AddNodes(state.Nodes);
+            set.AddTriples(state.Triples);
+            return set;
         }
 
         /// <summary>
@@ -417,10 +426,13 @@ namespace Cadmus.Index.Graph
         /// <param name="part">The part.</param>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="pinValue">The pin value.</param>
+        /// <param name="set">The set to use, unless you are starting a new set.
+        /// </param>
         /// <returns>The generated set of nodes and triples.</returns>
         /// <exception cref="ArgumentNullException">item, part, pinName,
         /// pinValue</exception>
-        public GraphSet MapPin(IItem item, IPart part, string pinName, string pinValue)
+        public GraphSet MapPin(IItem item, IPart part, string pinName,
+            string pinValue, GraphSet set = null)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (part == null) throw new ArgumentNullException(nameof(part));
@@ -438,7 +450,11 @@ namespace Cadmus.Index.Graph
                 PinValue = pinValue
             };
             Map(state);
-            return new GraphSet(state.Nodes, state.Triples);
+
+            if (set == null) return new GraphSet(state.Nodes, state.Triples);
+            set.AddNodes(state.Nodes);
+            set.AddTriples(state.Triples);
+            return set;
         }
     }
 }

@@ -929,6 +929,27 @@ namespace Cadmus.Index.MySql.Test
             Assert.Single(mappings);
             Assert.Equal("Name", mappings[0].Name);
         }
+
+        [Fact]
+        public void FindMappings_PinWithSuffix_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            repository.AddMapping(new NodeMapping
+            {
+                Name = "Pin with suffix",
+                SourceType = NodeSourceType.Pin,
+                PartType = "it.vedph.bricks.names",
+                PinName = "color@*"
+            });
+            IItem item = GetItem(1, "person");
+
+            IList<NodeMapping> mappings = repository.FindMappingsFor(
+                item, new NamesPart(), "color@angel-1v");
+
+            Assert.Single(mappings);
+            Assert.Equal("Pin with suffix", mappings[0].Name);
+        }
         #endregion
 
         #region Triple

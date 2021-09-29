@@ -1353,8 +1353,13 @@ namespace Cadmus.Index.Sql.Graph
                        .AddParameter("@part_role", DbType.String, part.RoleId ?? "");
 
                 // pin_name
-                builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name)")
-                       .AddParameter("@pin_name", DbType.String, pin ?? "");
+                builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name " +
+                    "OR (INSTR(pin_name, '@*') > 0 " +
+                    "AND " +
+                    GetRegexClauseSql("@pin_name",
+                        "CONCAT(SUBSTRING(0, INSTR(pin_name, '@*')), '.+')") +
+                        "))")
+                    .AddParameter("@pin_name", DbType.String, pin ?? "");
             }
 
             return builder;

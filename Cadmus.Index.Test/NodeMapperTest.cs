@@ -338,7 +338,9 @@ namespace Cadmus.Index.Test
             Assert.Equal(item.Id, triple.Sid);
             Assert.Null(triple.Tag);
         }
+        #endregion
 
+        #region MapPins
         private static void AddSingleEntityPartRules(IGraphRepository repository)
         {
             // properties
@@ -425,8 +427,112 @@ namespace Cadmus.Index.Test
             Assert.Equal(part.Id + "/full-name", triple.Sid);
             Assert.Null(triple.Tag);
         }
+
+        private static void AddMultiEntityPartRules(IGraphRepository repository)
+        {
+            // properties/classes
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("x:hasColor"),
+                Tag = "property",
+                Label = "Has color"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("kad:isInGroup"),
+                Tag = "property",
+                Label = "Is in Cadmus group"
+            });
+
+            // manuscript item
+            NodeMapping itemMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                Name = "Manuscript item",
+                FacetFilter = "manuscript",
+                Prefix = "x:manuscripts/",
+                LabelTemplate = "{title}",
+                Description = "Manuscript -> node"
+            };
+            repository.AddMapping(itemMapping);
+
+            // eid pin
+            NodeMapping eidMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                Name = "Pin eid",
+                FacetFilter = "manuscript",
+                PartType = "it.vedph.ms-decorations",
+                PinName = "eid",
+                Prefix = "x:ms-decorations/",
+                LabelTemplate = "{pin-value}"
+            };
+            repository.AddMapping(eidMapping);
+
+            // eid in-group item
+            NodeMapping eidGroupMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                ParentId = eidMapping.Id,
+                Name = "Pin eid in group",
+                TripleP = "kad:isInGroup",
+                TripleO = "$item"
+            };
+            repository.AddMapping(eidGroupMapping);
+
+            // eid has-color literal
+            NodeMapping eidColorMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                ParentId = eidMapping.Id,
+                Name = "Pin eid color",
+                PinName = "color@*",
+                TripleP = "x:hasColor",
+                TripleO = "$pin-value"
+            };
+            repository.AddMapping(eidColorMapping);
+        }
+
+        [Fact]
+        public void MapPin_MultiEntityItemPin_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddMultiEntityPartRules(repository);
+            NodeMapper mapper = new NodeMapper(repository);
+
+            IItem item = new Item
+            {
+                Title = "Vat. Lat. 12",
+                Description = "Vaticanus Latinus 12.",
+                FacetId = "manuscript",
+                SortKey = "vatlat12",
+                CreatorId = "creator",
+                UserId = "user"
+            };
+            IPart part = new MsDecorationsPart
+            {
+                ItemId = item.Id,
+                CreatorId = "creator",
+                UserId = "user"
+            };
+
+            GraphSet set = mapper.MapPins(item, part, new[]
+            {
+                Tuple.Create("eid", "angel-1v"),
+                Tuple.Create("eid", "demon-2r"),
+                Tuple.Create("eid@angel-1v", "gold"),
+                Tuple.Create("eid@demon-2r", "red"),
+                Tuple.Create("eid@demon-2r", "black")
+            });
+
+            Assert.Equal(2, set.Nodes.Count);
+            Assert.Equal(5, set.Triples.Count);
+            // TODO
+        }
         #endregion
 
+        #region Mock Parts
         [Tag("it.vedph.bricks.name")]
         internal class NamePart : PartBase
         {
@@ -440,5 +546,20 @@ namespace Cadmus.Index.Test
                 throw new NotImplementedException();
             }
         }
+
+        [Tag("it.vedph.ms-decorations")]
+        internal class MsDecorationsPart : PartBase
+        {
+            public override IList<DataPinDefinition> GetDataPinDefinitions()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        #endregion
     }
 }

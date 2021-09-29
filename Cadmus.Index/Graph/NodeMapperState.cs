@@ -61,6 +61,13 @@ namespace Cadmus.Index.Graph
         public Dictionary<int, string> MappedUris { get; }
 
         /// <summary>
+        /// Gets or sets the URIs stored in arbitrarily defined slots.
+        /// Mappings define these slots via their <see cref="NodeMapping.Slot"/>
+        /// property, which resolves a macro.
+        /// </summary>
+        public Dictionary<string, string> SlotUris { get; }
+
+        /// <summary>
         /// Gets the mapping identifier for the node mapping corresponding to
         /// the current item (=the item being mapped, or the item including
         /// the parts being mapped).
@@ -98,6 +105,7 @@ namespace Cadmus.Index.Graph
         public NodeMapperState()
         {
             MappedUris = new Dictionary<int, string>();
+            SlotUris = new Dictionary<string, string>();
             MappingPath = new List<int>();
             GroupUids = new Dictionary<int, string>();
             Nodes = new List<NodeResult>();

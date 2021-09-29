@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Cadmus.Index.Graph
@@ -93,14 +94,19 @@ namespace Cadmus.Index.Graph
     /// <c>pin-value</c>, but the directive is different, as this refers to an
     /// object node rather than to a literal value.</description>
     /// </item>
+    /// <item>
+    /// <term>$slot=$...</term>
+    /// <description>The UID value of the slot specified with the macro after the
+    /// = sign.</description>
+    /// </item>
     /// </list>
     /// </remarks>
     public sealed class NodeMappingVariableSet
     {
         private static readonly Regex _plhRegex
-            = new Regex(@"\{(?<id>(?<n>[^:\}]+)(?::(?<a>[0-9]+))?)\}");
+            = new Regex(@"\{(?<id>(?<n>[^:\}]+)(?::(?<a>[^:]+))*)\}");
         private static readonly Regex _mcrRegex
-            = new Regex(@"\$(?<id>(?<n>[^:]+)(?::(?<a>[0-9]+))?)");
+            = new Regex(@"\$(?<id>(?<n>[^:]+)(?::(?<a>[^:]+))*)");
 
         private readonly Dictionary<string, NodeMappingVariable> _vars;
 
@@ -127,10 +133,12 @@ namespace Cadmus.Index.Graph
             {
                 Id = id,
                 Name = m.Groups["n"].Value,
-                Argument = m.Groups["a"].Length > 0
-                    ? int.Parse(m.Groups["a"].Value, CultureInfo.InvariantCulture)
-                    : 0
             };
+            if (m.Groups["a"].Captures.Count > 0)
+            {
+                for (int i = 0; i < m.Groups["a"].Captures.Count; i++)
+                    _vars[id].AddArgument(m.Groups["a"].Captures[i].Value);
+            }
         }
 
         private void LoadPlaceholders(string value)
@@ -146,6 +154,10 @@ namespace Cadmus.Index.Graph
             if (string.IsNullOrEmpty(value)
                 || value.Length < 2
                 || !value.StartsWith("$", StringComparison.Ordinal)) return;
+
+            // $slot:$... is a special case
+            if (value.StartsWith("$slot:"))
+                LoadMacro(value.Substring(6));
 
             Match m = _mcrRegex.Match(value);
             if (m.Success) LoadVariableFromMatch(m);
@@ -199,6 +211,7 @@ namespace Cadmus.Index.Graph
             vars.LoadMacro(mapping.TripleS);
             vars.LoadMacro(mapping.TripleP);
             vars.LoadMacro(mapping.TripleO);
+            vars.LoadMacro(mapping.Slot);
 
             return vars;
         }
@@ -220,8 +233,12 @@ namespace Cadmus.Index.Graph
         /// data source.
         /// </summary>
         /// <param name="state">The mapper state to use as a data source.</param>
+        /// <param name="slotOnly">True to resolve only variables dependent
+        /// on the <c>$slot</c> macro. These are typically resolved in a second
+        /// step, once the slot-node has been generated, and before a dependent
+        /// triple is generated.</param>
         /// <exception cref="ArgumentNullException">source</exception>
-        public void SetValues(NodeMapperState state)
+        public void SetValues(NodeMapperState state, bool slotOnly = false)
         {
             if (state == null) throw new ArgumentNullException(nameof(state));
 
@@ -229,7 +246,8 @@ namespace Cadmus.Index.Graph
             Tuple<string, string, string> tpi;
             string[] pinComps;
 
-            foreach (NodeMappingVariable v in _vars.Values)
+            foreach (NodeMappingVariable v in _vars.Values
+                .Where(v => !slotOnly || v.Name == "slot"))
             {
                 switch (v.Name)
                 {
@@ -250,14 +268,14 @@ namespace Cadmus.Index.Graph
                         break;
                     case "group-id":
                         // :N = component ordinal (1-N from left to right)
-                        if (v.Argument > 0
+                        if (v.HasArguments
                             && state.Item.GroupId?.IndexOf('/') > -1)
                         {
                             string[] cc = state.Item.GroupId.Split(new[] { "/" },
                                 StringSplitOptions.RemoveEmptyEntries);
                             // no value if N is out of range
-                            if (v.Argument <= cc.Length)
-                                v.Value = cc[v.Argument - 1];
+                            int n = v.GetArgument(0, 0);
+                            if (n <= cc.Length) v.Value = cc[n - 1];
                         }
                         else v.Value = state.Item.GroupId;
                         break;
@@ -276,8 +294,10 @@ namespace Cadmus.Index.Graph
                         break;
                     case "pin-eid":
                         // :N = component's ordinal (1-N from left to right)
+                        // if not specified, take the full EID suffix minus
+                        // the first @
                         if (string.IsNullOrEmpty(state.PinName)) break;
-                        if (v.Argument == 0)
+                        if (!v.HasArguments)
                         {
                             int at = state.PinName.IndexOf('@');
                             if (at > -1) v.Value = state.PinName.Substring(at + 1);
@@ -285,16 +305,18 @@ namespace Cadmus.Index.Graph
                         else
                         {
                             pinComps = NodeMapper.ParsePinName(state.PinName);
-                            if (pinComps.Length == 1 || v.Argument >= pinComps.Length)
+                            int n = v.GetArgument(0, 0);
+                            if (pinComps.Length == 1 || n >= pinComps.Length)
                                 break;
-                            v.Value = pinComps[v.Argument];
+                            v.Value = pinComps[n];
                         }
                         break;
                     // macros
                     case "parent":
                     case "ancestor":
                         // :N = ancestor number (1=parent, 2=parent-of-parent...)
-                        int upCount = (v.Argument == 0 ? 1 : v.Argument) - 1,
+                        int ancNr = v.GetArgument(0, 0);
+                        int upCount = (ancNr == 0 ? 1 : ancNr) - 1,
                             i = state.MappingPath.Count - 1 - upCount;
                         if (i > -1)
                         {
@@ -310,12 +332,21 @@ namespace Cadmus.Index.Graph
                     case "group":
                         // :N = group ID (1-N from left to right), 0=non composite
                         // group ID
-                        if (state.GroupUids.ContainsKey(v.Argument))
-                            v.Value = state.GroupUids[v.Argument];
+                        int groupNr = v.GetArgument(0, 0);
+                        if (state.GroupUids.ContainsKey(groupNr))
+                            v.Value = state.GroupUids[groupNr];
                         break;
                     case "facet":
                         if (state.MappedUris.ContainsKey(state.FacetMappingId))
                             v.Value = state.MappedUris[state.FacetMappingId];
+                        break;
+                    case "slot":
+                        // the argument of the slot macro is another macro
+                        // (e.g. $slot:$eid)
+                        if (!v.HasArguments) break;
+                        string key = ResolveMacro(v.GetArgument(0));
+                        if (key != null && state.SlotUris.ContainsKey(key))
+                            v.Value = state.SlotUris[key];
                         break;
                 }
             }
@@ -353,7 +384,8 @@ namespace Cadmus.Index.Graph
                 || macro == "$item"
                 || macro == "$facet"
                 || macro == "$pin-uid"
-                || macro.StartsWith("$group", StringComparison.Ordinal);
+                || macro.StartsWith("$group", StringComparison.Ordinal)
+                || macro.StartsWith("$slot:", StringComparison.Ordinal);
         }
 
         /// <summary>

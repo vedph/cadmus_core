@@ -465,7 +465,8 @@ namespace Cadmus.Index.Test
                 PartType = "it.vedph.ms-decorations",
                 PinName = "eid",
                 Prefix = "x:ms-decorations/",
-                LabelTemplate = "{pin-value}"
+                LabelTemplate = "{pin-value}",
+                Slot = "$pin-value"
             };
             repository.AddMapping(eidMapping);
 
@@ -486,10 +487,10 @@ namespace Cadmus.Index.Test
             NodeMapping eidColorMapping = new NodeMapping
             {
                 SourceType = NodeSourceType.Pin,
-                ParentId = eidMapping.Id,
                 Name = "Pin eid color",
                 PartType = "it.vedph.ms-decorations",
                 PinName = "color@*",
+                TripleS = "$slot:$pin-eid",
                 TripleP = "x:hasColor",
                 TripleO = "$pin-value"
             };
@@ -529,7 +530,7 @@ namespace Cadmus.Index.Test
                 Tuple.Create("color@demon-2r", "black")
             });
 
-            Assert.Equal(2, set.Nodes.Count);
+            Assert.Equal(3, set.Nodes.Count);
             Assert.Equal(5, set.Triples.Count);
             // TODO
         }

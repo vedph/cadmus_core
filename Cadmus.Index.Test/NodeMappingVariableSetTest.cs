@@ -33,7 +33,7 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("facet-id");
             Assert.NotNull(v);
             Assert.Equal("facet-id", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
 
@@ -51,7 +51,7 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("facet-id");
             Assert.NotNull(v);
             Assert.Equal("facet-id", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
 
@@ -70,13 +70,13 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("facet-id");
             Assert.NotNull(v);
             Assert.Equal("facet-id", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
 
             v = set.GetVariable("title-uid");
             Assert.NotNull(v);
             Assert.Equal("title-uid", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
 
@@ -94,7 +94,7 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("item");
             Assert.NotNull(v);
             Assert.Equal("item", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
 
@@ -112,7 +112,7 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("item");
             Assert.NotNull(v);
             Assert.Equal("item", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
 
@@ -130,7 +130,7 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("item");
             Assert.NotNull(v);
             Assert.Equal("item", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
 
@@ -147,7 +147,7 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("pin-eid:2");
             Assert.NotNull(v);
             Assert.Equal("pin-eid", v.Name);
-            Assert.Equal(2, v.Argument);
+            Assert.Equal(2, v.GetArgument(0, 0));
             Assert.Null(v.Value);
         }
 
@@ -166,13 +166,13 @@ namespace Cadmus.Index.Test
             NodeMappingVariable v = set.GetVariable("facet-id");
             Assert.NotNull(v);
             Assert.Equal("facet-id", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
 
             v = set.GetVariable("group-id");
             Assert.NotNull(v);
             Assert.Equal("group-id", v.Name);
-            Assert.Equal(0, v.Argument);
+            Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
         #endregion

@@ -988,7 +988,7 @@ namespace Cadmus.Index.Sql.Graph
                 "facet_filter, group_filter, flags_filter, title_filter, " +
                 "part_type, part_role, pin_name, prefix, label_template, " +
                 "triple_s, triple_p, triple_o, triple_o_prefix, reversed, " +
-                "description")
+                "slot, description")
                    .AddWhat("COUNT(id)", slotId: "c")
                    .AddFrom("node_mapping", slotId: "*")
                    .AddOrder("ul.uri, id");
@@ -1082,10 +1082,11 @@ namespace Cadmus.Index.Sql.Graph
                 TripleP = reader.GetValue<string>(15),
                 TripleO = reader.GetValue<string>(16),
                 TripleOPrefix = reader.GetValue<string>(17),
-                IsReversed = reader.GetBoolean(18)
+                IsReversed = reader.GetBoolean(18),
+                Slot = reader.GetValue<string>(19)
             };
             if (!noDescription)
-                mapping.Description = reader.GetValue<string>(19);
+                mapping.Description = reader.GetValue<string>(20);
 
             return mapping;
         }
@@ -1155,7 +1156,7 @@ namespace Cadmus.Index.Sql.Graph
                     "ordinal, facet_filter, group_filter, flags_filter, " +
                     "title_filter, part_type, part_role, pin_name, prefix, " +
                     "label_template, triple_s, triple_p, triple_o, triple_o_prefix, " +
-                    "reversed, description FROM node_mapping WHERE id=@id;";
+                    "reversed, slot, description FROM node_mapping WHERE id=@id;";
                 AddParameter(cmd, "@id", DbType.Int32, id);
 
                 using (var reader = cmd.ExecuteReader())
@@ -1199,7 +1200,7 @@ namespace Cadmus.Index.Sql.Graph
                     "flags_filter, title_filter, part_type, part_role, " +
                     "pin_name, source_type, name, prefix, label_template, " +
                     "triple_s, triple_p, triple_o, triple_o_prefix, " +
-                    "reversed, description)\n");
+                    "reversed, slot, description)\n");
                 sb.Append("VALUES(");
 
                 // an existing mapping must add @id
@@ -1209,7 +1210,7 @@ namespace Cadmus.Index.Sql.Graph
                     "@flags_filter, @title_filter, @part_type, @part_role, " +
                     "@pin_name, @source_type, @name, @prefix, @label_template, " +
                     "@triple_s, @triple_p, @triple_o, @triple_o_prefix, " +
-                    "@reversed, @description)");
+                    "@reversed, @slot, @description)");
 
                 // an existing mapping is an UPSERT, otherwise we have an INSERT
                 // and we must retrieve the ID of the newly inserted row
@@ -1222,7 +1223,8 @@ namespace Cadmus.Index.Sql.Graph
                         "group_filter", "flags_filter", "title_filter",
                         "part_type", "part_role", "pin_name", "source_type", "name",
                         "prefix", "label_template", "triple_s", "triple_p",
-                        "triple_o", "triple_o_prefix", "reversed", "description"));
+                        "triple_o", "triple_o_prefix", "reversed", "slot",
+                        "description"));
                 }
                 else
                 {
@@ -1254,6 +1256,7 @@ namespace Cadmus.Index.Sql.Graph
                 AddParameter(cmd, "@triple_o_prefix", DbType.String,
                     mapping.TripleOPrefix);
                 AddParameter(cmd, "@reversed", DbType.Boolean, mapping.IsReversed);
+                AddParameter(cmd, "@slot", DbType.String, mapping.Slot);
                 AddParameter(cmd, "@description", DbType.String,
                     mapping.Description);
 
@@ -1302,7 +1305,7 @@ namespace Cadmus.Index.Sql.Graph
                 "ordinal, facet_filter, group_filter, flags_filter, " +
                 "title_filter, part_type, part_role, pin_name, prefix, " +
                 "label_template, triple_s, triple_p, triple_o, " +
-                "triple_o_prefix, reversed")
+                "triple_o_prefix, reversed, slot")
                 .AddFrom("node_mapping")
                 .AddWhere("parent_id=@parent_id")
                 .AddParameter("@parent_id", DbType.Int32, parentId)
@@ -1352,16 +1355,6 @@ namespace Cadmus.Index.Sql.Graph
                 builder.AddWhere("AND (part_role IS NULL OR part_role=@part_role)")
                        .AddParameter("@part_role", DbType.String, part.RoleId ?? "");
 
-                // pin_name
-                //builder.AddWhere("AND (pin_name IS NULL OR pin_name=@pin_name " +
-                //    "OR (INSTR(pin_name, '@*') > 0 " +
-                //    "AND " +
-                //    GetRegexClauseSql("@pin_name",
-                //        "CONCAT(" +
-                //        "SUBSTRING(pin_name, 1, INSTR(pin_name, '@*') - 1), '.+')") +
-                //        "))")
-                //    .AddParameter("@pin_name", DbType.String, pin ?? "");
-                // pin name matching with @*: the number of @* must match, too
                 builder.AddWhere("AND (" +
                     "pin_name IS NULL OR pin_name=@pin_name " +
                     "OR (" +

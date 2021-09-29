@@ -94,6 +94,7 @@ CREATE TABLE `node_mapping` (
   `triple_o` varchar(500) DEFAULT NULL,
   `triple_o_prefix` varchar(200) DEFAULT NULL,
   `reversed` bit(1) NOT NULL,
+  `slot` varchar(100) DEFAULT NULL,
   `description` varchar(5000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `node_mapping_FK` (`parent_id`),

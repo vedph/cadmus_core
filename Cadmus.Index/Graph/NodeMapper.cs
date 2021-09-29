@@ -316,6 +316,26 @@ namespace Cadmus.Index.Graph
 
                 // add node to set
                 state.AddNode(node, mapping.Id);
+
+                // eventually set the slot value if the mapping requires it.
+                // It will be used below when building triples. Until here,
+                // the $slot macro can't be resolved, but this is not an issue
+                // because it is meaningful only for triples.
+                if (!string.IsNullOrEmpty(mapping.Slot))
+                {
+                    string key = vset.ResolveMacro(mapping.Slot);
+                    if (key == null)
+                    {
+                        Logger?.LogError("Unable to resolve slot macro " +
+                            mapping.Slot + " in mapping " + mapping);
+                    }
+                    else
+                    {
+                        state.SlotUris[key] = node.Uri;
+                        // update slot-dependent variables
+                        vset.SetValues(state, true);
+                    }
+                }
             }
 
             // if there is a triple, collect SPO from triple_s, triple_p,

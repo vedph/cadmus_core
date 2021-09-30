@@ -549,7 +549,7 @@ namespace Cadmus.Index.Test
             Assert.NotNull(node);
             Assert.False(node.IsClass);
             Assert.Null(node.Tag);
-            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal("angel-1v", node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
             Assert.Equal(part.Id + "/eid/angel-1v", node.Sid);
 
@@ -558,7 +558,7 @@ namespace Cadmus.Index.Test
             Assert.NotNull(node);
             Assert.False(node.IsClass);
             Assert.Null(node.Tag);
-            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal("demon-2r", node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
             Assert.Equal(part.Id + "/eid/demon-2r", node.Sid);
 
@@ -584,7 +584,7 @@ namespace Cadmus.Index.Test
                 t => t.PredicateUri == "x:hasColor" &&
                 t.SubjectUri == "x:ms-decorations/angel-1v");
             Assert.NotNull(triple);
-            Assert.Equal(part.Id + "/eid/angel-1v", triple.Sid);
+            Assert.Equal(part.Id + "/color@angel-1v", triple.Sid);
             Assert.Null(triple.ObjectUri);
             Assert.Equal("gold", triple.ObjectLiteral);
             Assert.Null(triple.Tag);
@@ -594,7 +594,7 @@ namespace Cadmus.Index.Test
                 t.SubjectUri == "x:ms-decorations/demon-2r" &&
                 t.ObjectLiteral == "red");
             Assert.NotNull(triple);
-            Assert.Equal(part.Id + "/eid/demon-2r", triple.Sid);
+            Assert.Equal(part.Id + "/color@demon-2r", triple.Sid);
             Assert.Null(triple.ObjectUri);
             Assert.Null(triple.Tag);
 
@@ -603,7 +603,7 @@ namespace Cadmus.Index.Test
                 t.SubjectUri == "x:ms-decorations/demon-2r" &&
                 t.ObjectLiteral == "black");
             Assert.NotNull(triple);
-            Assert.Equal(part.Id + "/eid/demon-2r", triple.Sid);
+            Assert.Equal(part.Id + "/color@demon-2r", triple.Sid);
             Assert.Null(triple.ObjectUri);
             Assert.Null(triple.Tag);
         }

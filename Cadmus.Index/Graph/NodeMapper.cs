@@ -115,6 +115,7 @@ namespace Cadmus.Index.Graph
                     continue;
                 }
                 if (char.IsWhiteSpace(c)) sb.Append('_');
+                if (c == '-' || c == '_') sb.Append(c);
             }
             // ensure the resulting UID is not empty, even though this should
             // never happen

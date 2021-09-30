@@ -801,6 +801,58 @@ namespace Cadmus.Index.Test
 
             Assert.Equal(6, set.Nodes.Count);
             Assert.Equal(7, set.Triples.Count);
+
+            NodeResult node = set.Nodes.FirstOrDefault(
+                n => n.Uri == "x:persons/scipione_barbato");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            // this was added as a reference only
+            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal(NodeSourceType.User, node.SourceType);
+            Assert.Null(node.Sid);
+
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:events/birth");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal("birth", node.Label);
+            Assert.Equal(NodeSourceType.Pin, node.SourceType);
+            Assert.Equal(part.Id + "/eid/birth", node.Sid);
+
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:events/wedding");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal("wedding", node.Label);
+            Assert.Equal(NodeSourceType.Pin, node.SourceType);
+            Assert.Equal(part.Id + "/eid/wedding", node.Sid);
+
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:classes/birth");
+            Assert.NotNull(node);
+            Assert.True(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal("Birth class", node.Label);
+            // this was matched among the existing nodes
+            Assert.Equal(NodeSourceType.User, node.SourceType);
+            Assert.Null(node.Sid);
+
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:classes/wedding");
+            Assert.NotNull(node);
+            Assert.True(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal("Wedding class", node.Label);
+            // this was matched among the existing nodes
+            Assert.Equal(NodeSourceType.User, node.SourceType);
+            Assert.Null(node.Sid);
+
+            node = set.Nodes.FirstOrDefault(n => n.Uri == "x:persons/laura");
+            Assert.NotNull(node);
+            Assert.False(node.IsClass);
+            Assert.Null(node.Tag);
+            Assert.Equal(node.Uri, node.Label);
+            Assert.Equal(NodeSourceType.Pin, node.SourceType);
+            Assert.Equal(part.Id + "/eid2@wedding/x:persons/laura", node.Sid);
             // TODO
         }
         #endregion

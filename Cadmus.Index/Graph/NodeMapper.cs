@@ -94,6 +94,7 @@ namespace Cadmus.Index.Graph
             var tpu = ParseItemTitle(node.Label);
             if (tpu.Item2 != null) prefix = tpu.Item2;
             if (tpu.Item3 != null) uid = tpu.Item3;
+            if (tpu.Item1 != node.Label) node.Label = tpu.Item1;
 
             // build the UID prefix
             if (!string.IsNullOrEmpty(mapping.Prefix))

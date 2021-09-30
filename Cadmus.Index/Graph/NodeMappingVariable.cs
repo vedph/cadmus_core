@@ -99,7 +99,6 @@ namespace Cadmus.Index.Graph
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(Id);
-            if (Arguments?.Count > 0) sb.Append(':').Append(string.Join(":", Arguments));
             if (Value != null) sb.Append('=').Append(Value);
             return sb.ToString();
         }

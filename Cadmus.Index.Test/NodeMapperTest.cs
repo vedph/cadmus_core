@@ -612,6 +612,171 @@ namespace Cadmus.Index.Test
             Assert.Null(triple.ObjectUri);
             Assert.Null(triple.Tag);
         }
+
+        private void AddDeepEntityPartRules(IGraphRepository repository)
+        {
+            // properties/classes
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("x:hasDate"),
+                Tag = "property",
+                Label = "Has date"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("x:hasSpouse"),
+                Tag = "property",
+                Label = "Has spouse"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("kad:isInGroup"),
+                Tag = "property",
+                Label = "Is in Cadmus group"
+            });
+
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("x:classes/birth"),
+                IsClass = true,
+                Label = "Birth class"
+            });
+            repository.AddNode(new Node
+            {
+                Id = repository.AddUri("x:classes/wedding"),
+                IsClass = true,
+                Label = "Wedding class"
+            });
+
+            // mappings
+            // person item
+            NodeMapping itemMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Item,
+                Name = "Person item",
+                FacetFilter = "person",
+                Prefix = "x:persons/",
+                LabelTemplate = "{title}",
+                Description = "Person -> node"
+            };
+            repository.AddMapping(itemMapping);
+
+            // eid pin
+            NodeMapping eidMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                Name = "Event eid",
+                PartType = "it.vedph.events",
+                PinName = "eid",
+                Prefix = "x:events/",
+                LabelTemplate = "{pin-value}",
+                Slot = "{pin-value}",
+                Description = "Event pin eid -> node"
+            };
+
+            // eid in-group item
+            NodeMapping eidGroupMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                ParentId = eidMapping.Id,
+                Name = "Pin eid in group",
+                PartType = "it.vedph.events",
+                PinName = "eid",
+                TripleP = "kad:isInGroup",
+                TripleO = "$item",
+                Description = "Event in-group item"
+            };
+            repository.AddMapping(eidGroupMapping);
+
+            // date pin
+            NodeMapping dateMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                Name = "Date pin",
+                PartType = "it.vedph.events",
+                PinName = "x:hasDate@*",
+                TripleS = "$slot:$pin-eid",
+                TripleP = "$pin-name",
+                TripleO = "$pin-value",
+                Description = "Event has-date pin-value"
+            };
+            repository.AddMapping(dateMapping);
+
+            // type pin
+            NodeMapping typeMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                Name = "Type pin",
+                PartType = "it.vedph.events",
+                PinName = "type@*",
+                TripleS = "$slot:$pin-eid",
+                TripleP = "a",
+                TripleO = "$pin-uid",
+                Description = "Event a pin-value"
+            };
+            repository.AddMapping(typeMapping);
+        }
+
+        [Fact]
+        public void MapPin_DeepEntityItemPin_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddDeepEntityPartRules(repository);
+            NodeMapper mapper = new NodeMapper(repository);
+
+            IItem item = new Item
+            {
+                Title = "Scipione Barbato",
+                Description = "Scipione Barbato notaro.",
+                FacetId = "person",
+                SortKey = "scipionebarbato",
+                CreatorId = "creator",
+                UserId = "user"
+            };
+            IPart part = new EventsPart
+            {
+                ItemId = item.Id,
+                CreatorId = "creator",
+                UserId = "user"
+            };
+
+            // The mock events part has a collection of events.
+            // Each event has an EID, a type, a date, a place, and any number
+            // of participants. Each participant has an EID and a type of
+            // relation with that event. So, these events:
+            // - Barbato was born in 1300.
+            // - Barbato married Laura in 1340.
+            // in Barbato's biographic events part are like:
+            // - event with EID "birth":
+            //   - type=x:classes/birth
+            //   - date=1300
+            // - event with EID "wedding":
+            //   - type=x:classes/wedding
+            //   - date=1340
+            //   - participants:
+            //     - EID="x:persons/laura"
+            //     - relation=x:spouse
+            // The pins generated by this part are listed below.
+            GraphSet set = mapper.MapPins(item, part, new[]
+            {
+                // events
+                Tuple.Create("eid", "birth"),
+                Tuple.Create("eid", "wedding"),
+                // birth event (x@eid)
+                Tuple.Create("type@birth", "x:classes/birth"),
+                Tuple.Create("x:hasDate@birth", "1300"),
+                // wedding event (x@eid, x@eid@eid2)
+                Tuple.Create("eid2@wedding", "x:persons/laura"),
+                Tuple.Create("type@wedding", "x:classes/wedding"),
+                Tuple.Create("x:hasDate@wedding", "1340"),
+                Tuple.Create("rel@wedding@x:persons/laura", "x:spouse")
+            });
+
+            Assert.Equal(6, set.Nodes.Count);
+            Assert.Equal(6, set.Triples.Count);
+            // TODO
+        }
         #endregion
 
         #region Mock Parts
@@ -631,6 +796,20 @@ namespace Cadmus.Index.Test
 
         [Tag("it.vedph.ms-decorations")]
         internal class MsDecorationsPart : PartBase
+        {
+            public override IList<DataPinDefinition> GetDataPinDefinitions()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [Tag("it.vedph.events")]
+        internal class EventsPart: PartBase
         {
             public override IList<DataPinDefinition> GetDataPinDefinitions()
             {

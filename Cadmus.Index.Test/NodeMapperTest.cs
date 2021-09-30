@@ -613,7 +613,7 @@ namespace Cadmus.Index.Test
             Assert.Null(triple.Tag);
         }
 
-        private void AddDeepEntityPartRules(IGraphRepository repository)
+        private static void AddDeepEntityPartRules(IGraphRepository repository)
         {
             // properties/classes
             repository.AddNode(new Node
@@ -696,7 +696,7 @@ namespace Cadmus.Index.Test
                 Name = "Date pin",
                 PartType = "it.vedph.events",
                 PinName = "x:hasDate@*",
-                TripleS = "$slot:$pin-eid",
+                TripleS = "$slot:{pin-eid}",
                 TripleP = "$pin-name",
                 TripleO = "$pin-value",
                 Description = "Event has-date pin-value"
@@ -710,12 +710,24 @@ namespace Cadmus.Index.Test
                 Name = "Type pin",
                 PartType = "it.vedph.events",
                 PinName = "type@*",
-                TripleS = "$slot:$pin-eid",
+                TripleS = "$slot:{pin-eid}",
                 TripleP = "a",
                 TripleO = "$pin-uid",
                 Description = "Event a pin-value"
             };
             repository.AddMapping(typeMapping);
+
+            // eid2@* pin
+            NodeMapping eid2Mapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                Name = "Pin eid2@*",
+                PartType = "it.vedph.events",
+                PinName = "eid2@*",
+                LabelTemplate = "{pin-value}",
+                Slot = "eid2/{pin-value}"
+            };
+            repository.AddMapping(eid2Mapping);
         }
 
         [Fact]

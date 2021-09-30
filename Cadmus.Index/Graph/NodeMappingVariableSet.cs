@@ -155,9 +155,9 @@ namespace Cadmus.Index.Graph
                 || value.Length < 2
                 || !value.StartsWith("$", StringComparison.Ordinal)) return;
 
-            // $slot:$... is a special case
+            // $slot:... is a special case, as its argument is a template
             if (value.StartsWith("$slot:"))
-                LoadMacro(value.Substring(6));
+                LoadPlaceholders(value.Substring(6));
 
             Match m = _mcrRegex.Match(value);
             if (m.Success) LoadVariableFromMatch(m);
@@ -344,7 +344,7 @@ namespace Cadmus.Index.Graph
                         // the argument of the slot macro is another macro
                         // (e.g. $slot:$eid)
                         if (!v.HasArguments) break;
-                        string key = ResolveMacro(v.GetArgument(0));
+                        string key = ResolvePlaceholders(v.GetArgument(0));
                         if (key != null && state.SlotUris.ContainsKey(key))
                             v.Value = state.SlotUris[key];
                         break;

@@ -324,7 +324,7 @@ namespace Cadmus.Index.Graph
                 // because it is meaningful only for triples.
                 if (!string.IsNullOrEmpty(mapping.Slot))
                 {
-                    string key = vset.ResolveMacro(mapping.Slot);
+                    string key = vset.ResolvePlaceholders(mapping.Slot);
                     if (key == null)
                     {
                         Logger?.LogError("Unable to resolve slot macro " +

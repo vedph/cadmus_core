@@ -466,7 +466,10 @@ namespace Cadmus.Index.Test
                 PinName = "eid",
                 Prefix = "x:ms-decorations/",
                 LabelTemplate = "{pin-value}",
-                Slot = "$pin-value"
+                // slot key will be the EID (e.g. angel-1v); its content
+                // will be the UID of the node output by this mapping
+                // (e.g. x:ms/decorations/angel-1v)
+                Slot = "{pin-value}"
             };
             repository.AddMapping(eidMapping);
 
@@ -490,7 +493,9 @@ namespace Cadmus.Index.Test
                 Name = "Pin eid color",
                 PartType = "it.vedph.ms-decorations",
                 PinName = "color@*",
-                TripleS = "$slot:$pin-eid",
+                // the subject UID is got from a slot whose key is equal
+                // to the pin's EID suffix (e.g. angel-1v from color@angel-1v)
+                TripleS = "$slot:{pin-eid}",
                 TripleP = "x:hasColor",
                 TripleO = "$pin-value"
             };

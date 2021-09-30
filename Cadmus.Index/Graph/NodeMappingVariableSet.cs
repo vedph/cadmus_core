@@ -207,11 +207,11 @@ namespace Cadmus.Index.Graph
             vars.LoadPlaceholders(mapping.Prefix);
             vars.LoadPlaceholders(mapping.TripleOPrefix);
             vars.LoadPlaceholders(mapping.LabelTemplate);
+            vars.LoadPlaceholders(mapping.Slot);
 
             vars.LoadMacro(mapping.TripleS);
             vars.LoadMacro(mapping.TripleP);
             vars.LoadMacro(mapping.TripleO);
-            vars.LoadMacro(mapping.Slot);
 
             return vars;
         }

@@ -724,10 +724,23 @@ namespace Cadmus.Index.Test
                 Name = "Pin eid2@*",
                 PartType = "it.vedph.events",
                 PinName = "eid2@*",
-                LabelTemplate = "{pin-value}",
+                LabelTemplate = "{pin-value} [#{pin-uid}]",
                 Slot = "eid2/{pin-uid}"
             };
             repository.AddMapping(eid2Mapping);
+
+            // rel@*@* pin
+            NodeMapping relMapping = new NodeMapping
+            {
+                SourceType = NodeSourceType.Pin,
+                Name = "Pin rel@*@*",
+                PartType = "it.vedph.events",
+                PinName = "rel@*@*",
+                TripleS = "$slot:{pin-eid:1}",
+                TripleP = "$pin-uid",
+                TripleO = "$slot:eid2/{pin-eid:2}"
+            };
+            repository.AddMapping(relMapping);
         }
 
         [Fact]

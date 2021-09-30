@@ -87,13 +87,20 @@ namespace Cadmus.Index.Graph
                 IsClass = mapping.SourceType == NodeSourceType.ItemFacet
             };
 
-            // build the node's label following label_template
+            // build the node's label according to label_template
+            string prefix = null, uid = null;
             node.Label = vset.ResolvePlaceholders(mapping.LabelTemplate).Trim();
 
+            var tpu = ParseItemTitle(node.Label);
+            if (tpu.Item2 != null) prefix = tpu.Item2;
+            if (tpu.Item3 != null) uid = tpu.Item3;
+
             // build the UID prefix
-            string prefix = null;
             if (!string.IsNullOrEmpty(mapping.Prefix))
-                prefix = vset.ResolvePlaceholders(mapping.Prefix);
+            {
+                if (prefix == null) prefix = vset.ResolvePlaceholders(mapping.Prefix);
+                else prefix = vset.ResolvePlaceholders(mapping.Prefix) + prefix;
+            }
 
             // generate node's UID:
             StringBuilder sb = new StringBuilder();
@@ -101,28 +108,32 @@ namespace Cadmus.Index.Graph
             // 1: prefix
             if (!string.IsNullOrEmpty(prefix)) sb.Append(prefix);
 
-            // 2: filtered label
-            foreach (char c in node.Label)
+            // 2: filtered label unless bypassed by convention
+            if (uid == null)
             {
-                if (char.IsLetter(c))
+                foreach (char c in node.Label)
                 {
-                    sb.Append(char.ToLowerInvariant(_ud.GetSegment(c, true)));
-                    continue;
+                    if (char.IsLetter(c))
+                    {
+                        sb.Append(char.ToLowerInvariant(_ud.GetSegment(c, true)));
+                        continue;
+                    }
+                    if (char.IsDigit(c))
+                    {
+                        sb.Append(c);
+                        continue;
+                    }
+                    if (char.IsWhiteSpace(c)) sb.Append('_');
+                    if (c == '-' || c == '_') sb.Append(c);
                 }
-                if (char.IsDigit(c))
-                {
-                    sb.Append(c);
-                    continue;
-                }
-                if (char.IsWhiteSpace(c)) sb.Append('_');
-                if (c == '-' || c == '_') sb.Append(c);
+                // ensure the resulting UID is not empty, even though this should
+                // never happen
+                if (sb.Length == 0) sb.Append('_');
+                uid = sb.ToString();
             }
-            // ensure the resulting UID is not empty, even though this should
-            // never happen
-            if (sb.Length == 0) sb.Append('_');
 
             // 3. append suffix if already present
-            node.Uri = _repository.AddUid(sb.ToString(), node.Sid);
+            node.Uri = _repository.AddUid(uid, node.Sid);
 
             // 4. get a numeric ID for the UID
             node.Id = _repository.AddUri(node.Uri);

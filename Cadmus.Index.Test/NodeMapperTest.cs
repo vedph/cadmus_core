@@ -725,7 +725,7 @@ namespace Cadmus.Index.Test
                 PartType = "it.vedph.events",
                 PinName = "eid2@*",
                 LabelTemplate = "{pin-value}",
-                Slot = "eid2/{pin-value}"
+                Slot = "eid2/{pin-uid}"
             };
             repository.AddMapping(eid2Mapping);
         }

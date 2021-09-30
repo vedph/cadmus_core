@@ -673,6 +673,7 @@ namespace Cadmus.Index.Test
                 Slot = "{pin-value}",
                 Description = "Event pin eid -> node"
             };
+            repository.AddMapping(eidMapping);
 
             // eid in-group item
             NodeMapping eidGroupMapping = new NodeMapping

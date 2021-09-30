@@ -425,6 +425,32 @@ namespace Cadmus.Index.Sql.Graph
                 Disconnect();
             }
         }
+
+        /// <summary>
+        /// Lookups the numeric ID from its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The ID, or 0 if not found.</returns>
+        /// <exception cref="ArgumentNullException">uri</exception>
+        public int LookupId(string uri)
+        {
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            EnsureConnected();
+
+            try
+            {
+                DbCommand cmd = GetCommand();
+                cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri=@uri;";
+                AddParameter(cmd, "@uri", DbType.String, uri);
+                long? id = cmd.ExecuteScalar() as long?;
+                return id == null ? 0 : (int)id.Value;
+            }
+            finally
+            {
+                Disconnect();
+            }
+        }
         #endregion
 
         #region Node

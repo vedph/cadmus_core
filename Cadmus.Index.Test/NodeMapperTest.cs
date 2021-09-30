@@ -409,7 +409,7 @@ namespace Cadmus.Index.Test
                 Tuple.Create("full-name", "Marco Barbato")
             });
 
-            Assert.Equal(2 , set.Triples.Count);
+            Assert.Equal(2, set.Triples.Count);
 
             TripleResult triple = set.Triples.FirstOrDefault(
                 t => t.ObjectLiteral == "Scipione Barbato");
@@ -613,7 +613,7 @@ namespace Cadmus.Index.Test
             Assert.Null(triple.Tag);
         }
 
-        private static void AddDeepEntityPartRules(IGraphRepository repository)
+        internal static void AddDeepEntityPartRules(IGraphRepository repository)
         {
             // properties/classes
             repository.AddNode(new Node
@@ -927,48 +927,49 @@ namespace Cadmus.Index.Test
         }
         #endregion
 
-        #region Mock Parts
-        [Tag("it.vedph.bricks.name")]
-        internal class NamePart : PartBase
-        {
-            public override IList<DataPinDefinition> GetDataPinDefinitions()
-            {
-                throw new NotImplementedException();
-            }
-
-            public override IEnumerable<DataPin> GetDataPins(IItem item = null)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        [Tag("it.vedph.ms-decorations")]
-        internal class MsDecorationsPart : PartBase
-        {
-            public override IList<DataPinDefinition> GetDataPinDefinitions()
-            {
-                throw new NotImplementedException();
-            }
-
-            public override IEnumerable<DataPin> GetDataPins(IItem item = null)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        [Tag("it.vedph.events")]
-        internal class EventsPart: PartBase
-        {
-            public override IList<DataPinDefinition> GetDataPinDefinitions()
-            {
-                throw new NotImplementedException();
-            }
-
-            public override IEnumerable<DataPin> GetDataPins(IItem item = null)
-            {
-                throw new NotImplementedException();
-            }
-        }
-        #endregion
     }
+
+    #region Mock Parts
+    [Tag("it.vedph.bricks.name")]
+    internal class NamePart : PartBase
+    {
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [Tag("it.vedph.ms-decorations")]
+    internal class MsDecorationsPart : PartBase
+    {
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [Tag("it.vedph.events")]
+    internal class EventsPart: PartBase
+    {
+        public override IList<DataPinDefinition> GetDataPinDefinitions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    #endregion
 }

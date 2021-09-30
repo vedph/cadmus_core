@@ -91,6 +91,13 @@ namespace Cadmus.Index.Graph
         string LookupUri(int id);
 
         /// <summary>
+        /// Lookups the numeric ID from its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The ID, or 0 if not found.</returns>
+        int LookupId(string uri);
+
+        /// <summary>
         /// Gets the requested page of nodes.
         /// </summary>
         /// <param name="filter">The nodes filter.</param>

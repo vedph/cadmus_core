@@ -175,6 +175,34 @@ namespace Cadmus.Index.Test
             Assert.False(v.HasArguments);
             Assert.Null(v.Value);
         }
+
+        [Fact]
+        public void LoadFrom_PlaceholdersInSlotMacro_Ok()
+        {
+            NodeMappingVariableSet set = NodeMappingVariableSet.LoadFrom(
+                new NodeMapping
+                {
+                    Slot = "$slot:{pin-eid:1}"
+                });
+
+            Assert.Equal(2, set.Count);
+
+            NodeMappingVariable v = set.GetVariable("pin-eid:1");
+            Assert.NotNull(v);
+            Assert.Equal("pin-eid", v.Name);
+            Assert.True(v.HasArguments);
+            Assert.Single(v.Arguments);
+            Assert.Equal("1", v.Arguments[0]);
+            Assert.Null(v.Value);
+
+            v = set.GetVariable("slot:{pin-eid:1}");
+            Assert.NotNull(v);
+            Assert.Equal("slot", v.Name);
+            Assert.True(v.HasArguments);
+            Assert.Single(v.Arguments);
+            Assert.Equal("{pin-eid:1}", v.Arguments[0]);
+            Assert.Null(v.Value);
+        }
         #endregion
 
         #region SetValues

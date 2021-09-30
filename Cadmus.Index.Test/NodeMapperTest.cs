@@ -800,7 +800,7 @@ namespace Cadmus.Index.Test
             });
 
             Assert.Equal(6, set.Nodes.Count);
-            Assert.Equal(6, set.Triples.Count);
+            Assert.Equal(7, set.Triples.Count);
             // TODO
         }
         #endregion

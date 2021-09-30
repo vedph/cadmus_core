@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Cadmus.Index.Graph
 {
@@ -97,9 +98,10 @@ namespace Cadmus.Index.Graph
         /// </returns>
         public override string ToString()
         {
-            string s = $"{Id}={Value}";
-            if (Arguments?.Count > 0) s += ":" + string.Join(":", Arguments);
-            return s;
+            StringBuilder sb = new StringBuilder(Id);
+            if (Arguments?.Count > 0) sb.Append(':').Append(string.Join(":", Arguments));
+            if (Value != null) sb.Append('=').Append(Value);
+            return sb.ToString();
         }
     }
 }

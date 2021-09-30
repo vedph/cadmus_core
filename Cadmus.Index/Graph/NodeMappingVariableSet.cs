@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -96,7 +95,7 @@ namespace Cadmus.Index.Graph
     /// </item>
     /// <item>
     /// <term>$slot=$...</term>
-    /// <description>The UID value of the slot specified with the macro after the
+    /// <description>The UID value of the slot specified with a template after the
     /// = sign.</description>
     /// </item>
     /// </list>
@@ -157,10 +156,22 @@ namespace Cadmus.Index.Graph
 
             // $slot:... is a special case, as its argument is a template
             if (value.StartsWith("$slot:"))
-                LoadPlaceholders(value.Substring(6));
-
-            Match m = _mcrRegex.Match(value);
-            if (m.Success) LoadVariableFromMatch(m);
+            {
+                string arg = value.Substring(6);
+                LoadPlaceholders(arg);
+                string id = value.Substring(1);
+                _vars[id] = new NodeMappingVariable
+                {
+                    Id = value,
+                    Name = "slot"
+                };
+                _vars[id].AddArgument(arg);
+            }
+            else
+            {
+                Match m = _mcrRegex.Match(value);
+                if (m.Success) LoadVariableFromMatch(m);
+            }
         }
 
         /// <summary>
@@ -207,11 +218,12 @@ namespace Cadmus.Index.Graph
             vars.LoadPlaceholders(mapping.Prefix);
             vars.LoadPlaceholders(mapping.TripleOPrefix);
             vars.LoadPlaceholders(mapping.LabelTemplate);
-            vars.LoadPlaceholders(mapping.Slot);
+            // vars.LoadPlaceholders(mapping.Slot);
 
             vars.LoadMacro(mapping.TripleS);
             vars.LoadMacro(mapping.TripleP);
             vars.LoadMacro(mapping.TripleO);
+            vars.LoadMacro(mapping.Slot);
 
             return vars;
         }
@@ -409,6 +421,17 @@ namespace Cadmus.Index.Graph
 
             string id = value.Substring(1);
             return _vars.ContainsKey(id) ? _vars[id].Value : null;
+        }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return _vars.Count + ": " + string.Join(", ", _vars.Keys);
         }
     }
 }

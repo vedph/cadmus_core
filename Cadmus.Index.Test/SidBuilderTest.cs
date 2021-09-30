@@ -28,7 +28,7 @@ namespace Cadmus.Index.Test
         {
             string sid = SidBuilder.Build(NodeSourceType.ItemFacet, GUID);
 
-            Assert.Equal(GUID + "/facet", sid);
+            Assert.Equal(GUID + "|facet", sid);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Cadmus.Index.Test
         {
             string sid = SidBuilder.Build(NodeSourceType.ItemGroup, GUID);
 
-            Assert.Equal(GUID + "/group", sid);
+            Assert.Equal(GUID + "|group", sid);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace Cadmus.Index.Test
         {
             string sid = SidBuilder.Build(NodeSourceType.ItemGroup, GUID, 2);
 
-            Assert.Equal(GUID + "/group/2", sid);
+            Assert.Equal(GUID + "|group|2", sid);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Cadmus.Index.Test
             string sid = SidBuilder.Build(NodeSourceType.Pin, GUID, 0, null,
                 "name", "Dan");
 
-            Assert.Equal(GUID + "/name", sid);
+            Assert.Equal(GUID + "|name", sid);
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace Cadmus.Index.Test
             string sid = SidBuilder.Build(NodeSourceType.Pin, GUID, 0, "role",
                 "name", "Dan");
 
-            Assert.Equal(GUID + ":role/name", sid);
+            Assert.Equal(GUID + ":role|name", sid);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Cadmus.Index.Test
             string sid = SidBuilder.Build(NodeSourceType.Pin, GUID, 0, null,
                 "eid", "angel-1v");
 
-            Assert.Equal(GUID + "/eid/angel-1v", sid);
+            Assert.Equal(GUID + "|eid|angel-1v", sid);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Cadmus.Index.Test
             string sid = SidBuilder.Build(NodeSourceType.Pin, GUID, 0, null,
                 "eid2", "angel-1v");
 
-            Assert.Equal(GUID + "/eid2/angel-1v", sid);
+            Assert.Equal(GUID + "|eid2|angel-1v", sid);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Cadmus.Index.Test
             string sid = SidBuilder.Build(NodeSourceType.Pin, GUID, 0, null,
                 "eid@some", "angel-1v");
 
-            Assert.Equal(GUID + "/eid@some/angel-1v", sid);
+            Assert.Equal(GUID + "|eid@some|angel-1v", sid);
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace Cadmus.Index.Test
             string sid = SidBuilder.Build(NodeSourceType.Pin, GUID, 0, null,
                 "eid2@some", "angel-1v");
 
-            Assert.Equal(GUID + "/eid2@some/angel-1v", sid);
+            Assert.Equal(GUID + "|eid2@some|angel-1v", sid);
         }
     }
 }

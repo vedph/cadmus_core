@@ -37,21 +37,21 @@ namespace Cadmus.Index.Graph
             switch (sourceType)
             {
                 case NodeSourceType.ItemFacet:
-                    sb.Append("/facet");
+                    sb.Append("|facet");
                     break;
                 case NodeSourceType.ItemGroup:
-                    sb.Append("/group");
-                    if (groupOrdinal > 0) sb.Append('/').Append(groupOrdinal);
+                    sb.Append("|group");
+                    if (groupOrdinal > 0) sb.Append('|').Append(groupOrdinal);
                     break;
                 case NodeSourceType.Pin:
                     // [:roleId]
                     if (!string.IsNullOrEmpty(partRoleId))
                         sb.Append(':').Append(partRoleId);
                     // /pin
-                    sb.Append('/').Append(pinName);
-                    // [/value]: appended for eid, eidN, eid@..., eidN@...
+                    sb.Append('|').Append(pinName);
+                    // [|value]: appended for eid, eidN, eid@..., eidN@...
                     if (_eidRegex.IsMatch(pinName))
-                        sb.Append('/').Append(pinValue);
+                        sb.Append('|').Append(pinValue);
                     break;
                 case NodeSourceType.Item:
                     break;

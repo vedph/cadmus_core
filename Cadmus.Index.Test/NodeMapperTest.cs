@@ -276,7 +276,7 @@ namespace Cadmus.Index.Test
             node = set.Nodes.FirstOrDefault(n => n.Uri == "x:facets/person");
             Assert.NotNull(node);
             Assert.Equal(NodeSourceType.ItemFacet, node.SourceType);
-            Assert.Equal(item.Id + "/facet", node.Sid);
+            Assert.Equal(item.Id + "|facet", node.Sid);
             Assert.Equal("person", node.Label);
             Assert.True(node.IsClass);
             Assert.Null(node.Tag);
@@ -285,7 +285,7 @@ namespace Cadmus.Index.Test
             node = set.Nodes.FirstOrDefault(n => n.Uri == "x:groups/writers");
             Assert.NotNull(node);
             Assert.Equal(NodeSourceType.ItemGroup, node.SourceType);
-            Assert.Equal(item.Id + "/group", node.Sid);
+            Assert.Equal(item.Id + "|group", node.Sid);
             Assert.Equal("writers", node.Label);
             Assert.False(node.IsClass);
             Assert.Null(node.Tag);
@@ -316,7 +316,7 @@ namespace Cadmus.Index.Test
             Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
             Assert.Equal("x:facets/person", triple.ObjectUri);
             Assert.Null(triple.ObjectLiteral);
-            Assert.Equal(item.Id + "/facet", triple.Sid);
+            Assert.Equal(item.Id + "|facet", triple.Sid);
             Assert.Null(triple.Tag);
 
             // triple barbato is-in-group writers
@@ -326,7 +326,7 @@ namespace Cadmus.Index.Test
             Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
             Assert.Equal("x:groups/writers", triple.ObjectUri);
             Assert.Null(triple.ObjectLiteral);
-            Assert.Equal(item.Id + "/group", triple.Sid);
+            Assert.Equal(item.Id + "|group", triple.Sid);
             Assert.Null(triple.Tag);
 
             // triple barbato is foaf:person
@@ -416,7 +416,7 @@ namespace Cadmus.Index.Test
             Assert.NotNull(triple);
             Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
             Assert.Null(triple.ObjectUri);
-            Assert.Equal(part.Id + "/full-name", triple.Sid);
+            Assert.Equal(part.Id + "|full-name", triple.Sid);
             Assert.Null(triple.Tag);
 
             triple = set.Triples.FirstOrDefault(
@@ -424,7 +424,7 @@ namespace Cadmus.Index.Test
             Assert.NotNull(triple);
             Assert.Equal("x:persons/writers/scipione_barbato", triple.SubjectUri);
             Assert.Null(triple.ObjectUri);
-            Assert.Equal(part.Id + "/full-name", triple.Sid);
+            Assert.Equal(part.Id + "|full-name", triple.Sid);
             Assert.Null(triple.Tag);
         }
 
@@ -556,7 +556,7 @@ namespace Cadmus.Index.Test
             Assert.Null(node.Tag);
             Assert.Equal("angel-1v", node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
-            Assert.Equal(part.Id + "/eid/angel-1v", node.Sid);
+            Assert.Equal(part.Id + "|eid|angel-1v", node.Sid);
 
             node = set.Nodes.FirstOrDefault(
                 n => n.Uri == "x:ms-decorations/demon-2r");
@@ -565,14 +565,14 @@ namespace Cadmus.Index.Test
             Assert.Null(node.Tag);
             Assert.Equal("demon-2r", node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
-            Assert.Equal(part.Id + "/eid/demon-2r", node.Sid);
+            Assert.Equal(part.Id + "|eid|demon-2r", node.Sid);
 
             TripleResult triple = set.Triples.FirstOrDefault(
                 t => t.PredicateUri == "kad:isInGroup" &&
                 t.SubjectUri == "x:ms-decorations/angel-1v");
             Assert.NotNull(triple);
             Assert.Equal("x:manuscripts/vat_lat_12", triple.ObjectUri);
-            Assert.Equal(part.Id + "/eid/angel-1v", triple.Sid);
+            Assert.Equal(part.Id + "|eid|angel-1v", triple.Sid);
             Assert.Null(triple.ObjectLiteral);
             Assert.Null(triple.Tag);
 
@@ -581,7 +581,7 @@ namespace Cadmus.Index.Test
                 t.SubjectUri == "x:ms-decorations/demon-2r");
             Assert.NotNull(triple);
             Assert.Equal("x:manuscripts/vat_lat_12", triple.ObjectUri);
-            Assert.Equal(part.Id + "/eid/demon-2r", triple.Sid);
+            Assert.Equal(part.Id + "|eid|demon-2r", triple.Sid);
             Assert.Null(triple.ObjectLiteral);
             Assert.Null(triple.Tag);
 
@@ -589,7 +589,7 @@ namespace Cadmus.Index.Test
                 t => t.PredicateUri == "x:hasColor" &&
                 t.SubjectUri == "x:ms-decorations/angel-1v");
             Assert.NotNull(triple);
-            Assert.Equal(part.Id + "/color@angel-1v", triple.Sid);
+            Assert.Equal(part.Id + "|color@angel-1v", triple.Sid);
             Assert.Null(triple.ObjectUri);
             Assert.Equal("gold", triple.ObjectLiteral);
             Assert.Null(triple.Tag);
@@ -599,7 +599,7 @@ namespace Cadmus.Index.Test
                 t.SubjectUri == "x:ms-decorations/demon-2r" &&
                 t.ObjectLiteral == "red");
             Assert.NotNull(triple);
-            Assert.Equal(part.Id + "/color@demon-2r", triple.Sid);
+            Assert.Equal(part.Id + "|color@demon-2r", triple.Sid);
             Assert.Null(triple.ObjectUri);
             Assert.Null(triple.Tag);
 
@@ -608,7 +608,7 @@ namespace Cadmus.Index.Test
                 t.SubjectUri == "x:ms-decorations/demon-2r" &&
                 t.ObjectLiteral == "black");
             Assert.NotNull(triple);
-            Assert.Equal(part.Id + "/color@demon-2r", triple.Sid);
+            Assert.Equal(part.Id + "|color@demon-2r", triple.Sid);
             Assert.Null(triple.ObjectUri);
             Assert.Null(triple.Tag);
         }
@@ -818,7 +818,7 @@ namespace Cadmus.Index.Test
             Assert.Null(node.Tag);
             Assert.Equal("birth", node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
-            Assert.Equal(part.Id + "/eid/birth", node.Sid);
+            Assert.Equal(part.Id + "|eid|birth", node.Sid);
 
             node = set.Nodes.FirstOrDefault(n => n.Uri == "x:events/wedding");
             Assert.NotNull(node);
@@ -826,7 +826,7 @@ namespace Cadmus.Index.Test
             Assert.Null(node.Tag);
             Assert.Equal("wedding", node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
-            Assert.Equal(part.Id + "/eid/wedding", node.Sid);
+            Assert.Equal(part.Id + "|eid|wedding", node.Sid);
 
             node = set.Nodes.FirstOrDefault(n => n.Uri == "x:classes/birth");
             Assert.NotNull(node);
@@ -852,7 +852,7 @@ namespace Cadmus.Index.Test
             Assert.Null(node.Tag);
             Assert.Equal(node.Uri, node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
-            Assert.Equal(part.Id + "/eid2@wedding/x:persons/laura", node.Sid);
+            Assert.Equal(part.Id + "|eid2@wedding|x:persons/laura", node.Sid);
             // TODO
         }
         #endregion

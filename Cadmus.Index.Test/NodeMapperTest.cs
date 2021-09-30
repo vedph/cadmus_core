@@ -853,7 +853,77 @@ namespace Cadmus.Index.Test
             Assert.Equal(node.Uri, node.Label);
             Assert.Equal(NodeSourceType.Pin, node.SourceType);
             Assert.Equal(part.Id + "|eid2@wedding|x:persons/laura", node.Sid);
-            // TODO
+
+            // triples
+            // birth is-in-group item
+            TripleResult triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/birth" &&
+                t.PredicateUri == "kad:isInGroup" &&
+                t.ObjectUri == "x:persons/scipione_barbato");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|eid|birth", triple.Sid);
+
+            // wedding is-in-group item
+            triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/wedding" &&
+                t.PredicateUri == "kad:isInGroup" &&
+                t.ObjectUri == "x:persons/scipione_barbato");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|eid|wedding", triple.Sid);
+
+            // birth a birth-class
+            triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/birth" &&
+                t.PredicateUri == "a" &&
+                t.ObjectUri == "x:classes/birth");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|type@birth", triple.Sid);
+
+            // wedding a wedding-class
+            triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/wedding" &&
+                t.PredicateUri == "a" &&
+                t.ObjectUri == "x:classes/wedding");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|type@wedding", triple.Sid);
+
+            // birth has-date 1300
+            triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/birth" &&
+                t.PredicateUri == "x:hasDate");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectUri);
+            Assert.Equal("1300", triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|x:hasDate@birth", triple.Sid);
+
+            // wedding has-date 1340
+            triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/wedding" &&
+                t.PredicateUri == "x:hasDate");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectUri);
+            Assert.Equal("1340", triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|x:hasDate@wedding", triple.Sid);
+
+            // wedding spouse laura
+            triple = set.Triples.FirstOrDefault(t =>
+                t.SubjectUri == "x:events/wedding" &&
+                t.PredicateUri == "x:spouse" &&
+                t.ObjectUri == "x:persons/laura");
+            Assert.NotNull(triple);
+            Assert.Null(triple.ObjectLiteral);
+            Assert.Null(triple.Tag);
+            Assert.Equal(part.Id + "|rel@wedding@x:persons/laura", triple.Sid);
         }
         #endregion
 

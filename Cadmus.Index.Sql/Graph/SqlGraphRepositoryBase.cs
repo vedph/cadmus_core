@@ -441,8 +441,8 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand cmd = GetCommand();
                 cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri=@uri;";
                 AddParameter(cmd, "@uri", DbType.String, uri);
-                long? id = cmd.ExecuteScalar() as long?;
-                return id == null ? 0 : (int)id.Value;
+                object id = cmd.ExecuteScalar();
+                return id == null ? 0 : (int)id;
             }
             finally
             {

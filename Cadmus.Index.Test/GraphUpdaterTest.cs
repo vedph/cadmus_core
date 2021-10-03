@@ -47,6 +47,13 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             NodeMapperTest.AddDeepEntityPartRules(repository);
+            Node deathClass = new Node
+            {
+                Id = repository.AddUri("x:classes/death"),
+                SourceType = NodeSourceType.User,
+                IsClass = true,
+                Label = "Death class"
+            };
 
             NodeMapper mapper = new NodeMapper(repository);
 
@@ -147,11 +154,11 @@ namespace Cadmus.Index.Test
             });
 
             // 3) update; the new set has nodes:
-            // - x:persons/scipione_barbato x:persons/scipione_barbato [U]
-            // - x:events/birth birth [P] ...|eid|birth
-            // - x:classes/birth Birth class [U]
-            // - x:events/death death [P] ...|eid|death
-            // - x:classes/death x:classes/death [U]
+            // - x:persons/scipione_barbato [U]
+            // - x:events/birth [P] ...|eid|birth
+            // - x:classes/birth [U]
+            // - x:events/death [P] ...|eid|death
+            // - x:classes/death [U]
             // and triples:
             // - x:events/birth - #kad:isInGroup - x:persons/scipione_barbato
             // - x:events/death - #kad:isInGroup - x:persons/scipione_barbato

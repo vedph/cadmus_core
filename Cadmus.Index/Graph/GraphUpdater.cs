@@ -56,6 +56,9 @@ namespace Cadmus.Index.Graph
                         a.Sid == b.Sid;
                 });
 
+            // filter deleted nodes to ensure that no property/class gets deleted
+            nodeGrouper.FilterDeleted(n => !n.IsClass && n.Tag != Node.TAG_PROPERTY);
+
             // nodes
             foreach (NodeResult node in nodeGrouper.Deleted)
                 _repository.DeleteNode(node.Id);

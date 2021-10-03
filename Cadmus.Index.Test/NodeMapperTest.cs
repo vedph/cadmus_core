@@ -117,25 +117,25 @@ namespace Cadmus.Index.Test
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("rdfs:comment"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Comment"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("a"),    // a=rdfs:type
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Is-a"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("kad:hasFacet"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Has Cadmus facet"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("kad:isInGroup"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Is in Cadmus group"
             });
             repository.AddNode(new Node
@@ -434,13 +434,13 @@ namespace Cadmus.Index.Test
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("x:hasColor"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Has color"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("kad:isInGroup"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Is in Cadmus group"
             });
 
@@ -619,25 +619,25 @@ namespace Cadmus.Index.Test
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("a"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Is-a"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("x:hasDate"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Has date"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("x:hasSpouse"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Has spouse"
             });
             repository.AddNode(new Node
             {
                 Id = repository.AddUri("kad:isInGroup"),
-                Tag = "property",
+                Tag = Node.TAG_PROPERTY,
                 Label = "Is in Cadmus group"
             });
 

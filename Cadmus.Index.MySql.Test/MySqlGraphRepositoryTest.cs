@@ -967,7 +967,7 @@ namespace Cadmus.Index.MySql.Test
             {
                 Id = repository.AddUri("rdf:type"),
                 Label = "a",
-                Tag = "property"
+                Tag = Node.TAG_PROPERTY
             };
             repository.AddNode(a);
 
@@ -975,7 +975,7 @@ namespace Cadmus.Index.MySql.Test
             {
                 Id = repository.AddUri("foaf:name"),
                 Label = "Person name",
-                Tag = "property"
+                Tag = Node.TAG_PROPERTY
             };
             repository.AddNode(name);
 

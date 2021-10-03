@@ -48,6 +48,19 @@ namespace Cadmus.Index.Graph
         }
 
         /// <summary>
+        /// Filter the <see cref="Deleted"/> list by keeping in it only those
+        /// items which match the specified predicate.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">filter</exception>
+        public void FilterDeleted(Func<T, bool> filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            for (int i = Deleted.Count; i > -1; i--)
+                if (!filter(Deleted[i])) Deleted.RemoveAt(i);
+        }
+
+        /// <summary>
         /// Groups the specified items into operation sets.
         /// </summary>
         /// <param name="newItems">The new items.</param>

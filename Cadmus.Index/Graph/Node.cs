@@ -6,6 +6,12 @@
     public class Node
     {
         /// <summary>
+        /// The value for <see cref="Tag"/> when the node represents a property,
+        /// i.e. a resource which can be used as a predicate.
+        /// </summary>
+        public const string TAG_PROPERTY = "property";
+
+        /// <summary>
         /// Gets or sets the node's identifier.
         /// </summary>
         public int Id { get; set; }

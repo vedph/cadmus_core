@@ -188,5 +188,29 @@
         }
       ]
     }
-  ]
+  ],
+  "graphPinFilter": {
+    "isBlack": true,
+    "clauses": [
+      {
+        "partTypeId": "it.vedph.some-part",
+        "partRoleId": "role",
+        "prefix": "prefix",
+        "suffix": "suffix",
+        "pattern": "pattern"
+      }
+    ]
+  },
+  "nonGraphPinFilter": {
+    "isBlack": false,
+    "clauses": [
+      {
+        "partTypeId": "it.vedph.some-other-part",
+        "partRoleId": "role",
+        "prefix": "prefix",
+        "suffix": "suffix",
+        "pattern": "pattern"
+      }
+    ]
+  }
 }

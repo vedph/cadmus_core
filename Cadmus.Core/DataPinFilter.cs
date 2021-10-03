@@ -4,9 +4,10 @@ using System.Linq;
 namespace Cadmus.Core
 {
     /// <summary>
-    /// A set of <see cref="DataPinFilterClause"/>'s.
+    /// A filter for <see cref="DataPin"/>'s, consisting of a set of
+    /// <see cref="DataPinFilterClause"/>'s.
     /// </summary>
-    public class DataPinFilterClauseSet
+    public class DataPinFilter
     {
         /// <summary>
         /// Gets or sets a value indicating whether this set represents a
@@ -21,10 +22,10 @@ namespace Cadmus.Core
         public IList<DataPinFilterClause> Clauses { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataPinFilterClauseSet"/>
+        /// Initializes a new instance of the <see cref="DataPinFilter"/>
         /// class.
         /// </summary>
-        public DataPinFilterClauseSet()
+        public DataPinFilter()
         {
             Clauses = new List<DataPinFilterClause>();
         }

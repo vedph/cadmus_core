@@ -11,14 +11,12 @@ namespace Cadmus.Core.Test.Config
     {
         private static string LoadProfile(string resourceName)
         {
-            using (StreamReader reader = new StreamReader(
+            using StreamReader reader = new StreamReader(
                 Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream(
                     $"Cadmus.Core.Test.Assets.{resourceName}"),
-                Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+                Encoding.UTF8);
+            return reader.ReadToEnd();
         }
 
         [Fact]
@@ -61,6 +59,11 @@ namespace Cadmus.Core.Test.Config
             Assert.NotNull(thesaurus);
             Assert.Equal(8, thesaurus.GetEntries().Count);
             // TODO: check each entry
+
+            Assert.NotNull(profile.GraphPinFilter);
+            Assert.Single(profile.GraphPinFilter.Clauses);
+            Assert.NotNull(profile.NonGraphPinFilter);
+            Assert.Single(profile.NonGraphPinFilter.Clauses);
         }
     }
 }

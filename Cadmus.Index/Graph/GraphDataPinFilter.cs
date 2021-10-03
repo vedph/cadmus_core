@@ -1,6 +1,9 @@
 ﻿using Cadmus.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Cadmus.Index.Graph
 {
@@ -25,26 +28,28 @@ namespace Cadmus.Index.Graph
     /// to be consumed later by the mapping process.</para>
     public sealed class GraphDataPinFilter : IDataPinFilter
     {
+        static private readonly Regex _eidRegex = new Regex(@"^eid(?<n>\d+)?\b");
+
         /// <summary>
         /// Gets the pins collected for the graph.
         /// </summary>
         public IList<DataPin> GraphPins { get; }
 
         /// <summary>
-        /// Gets or sets the set of filters to apply when passing data pins
-        /// to the node mappers. This can be used to exclude some pins from
-        /// the mapping process, when these pins are not used in it, thus
+        /// Gets or sets the filter to apply when passing data pins
+        /// to the graph node mappers. This can be used to exclude some pins
+        /// from the mapping process, when these pins are not used in it, thus
         /// optimizing its performance.
         /// </summary>
-        public DataPinFilterClauseSet GraphFilterSet { get; set; }
+        public DataPinFilter GraphPinFilter { get; set; }
 
         /// <summary>
-        /// Gets or sets the set of filters to apply when filtering data pins
+        /// Gets or sets the filter to apply when filtering data pins
         /// for the index. This can be used to exclude some pins from the index,
         /// when they only target the graph, so that they don't clutter the
         /// index.
         /// </summary>
-        public DataPinFilterClauseSet NonGraphFilterSet { get; set; }
+        public DataPinFilter NonGraphPinFilter { get; set; }
 
         /// <summary>
         /// Resets this filter inner state if any. This is called before
@@ -65,12 +70,48 @@ namespace Cadmus.Index.Graph
             if (pin == null) throw new ArgumentNullException(nameof(pin));
 
             // collect pin for graph if required
-            if (GraphFilterSet?.IsMatch(pin.Name, pin.PartId, pin.RoleId) != false)
+            if (GraphPinFilter?.IsMatch(pin.Name, pin.PartId, pin.RoleId) != false)
                 GraphPins.Add(pin);
 
             // return true unless the filter is targeting the graph only
-            return NonGraphFilterSet?.IsMatch(
+            return NonGraphPinFilter?.IsMatch(
                 pin.Name, pin.PartId, pin.RoleId) != false;
+        }
+
+        /// <summary>
+        /// Gets the graph pins sorted first by eid, then by eidN in N order,
+        /// followed by all the other pins. This assumes that EID-designated
+        /// pins are named <c>eid</c> for the first hierarchical level, and then
+        /// <c>eid2</c>, <c>eid3</c> and so forth. The original order of pins
+        /// is conserved except for all the EID pins come first, in their N
+        /// order, followed by the others.
+        /// </summary>
+        /// <returns>Pins.</returns>
+        public IList<DataPin> GetSortedGraphPins()
+        {
+            // first eid (=eid1),
+            // then eidN in their N order,
+            // then all the others.
+            List<Tuple<int, DataPin>> eidPins = new List<Tuple<int, DataPin>>();
+            List<DataPin> otherPins = new List<DataPin>();
+            Match m;
+
+            foreach (DataPin pin in GraphPins)
+            {
+                if (pin.Name.StartsWith("eid", StringComparison.Ordinal) &&
+                    (m = _eidRegex.Match(pin.Name)) != null)
+                {
+                    int n = m.Groups["n"].Length > 0
+                        ? int.Parse(m.Groups["n"].Value, CultureInfo.InvariantCulture)
+                        : 1;
+                    eidPins.Add(Tuple.Create(n, pin));
+                }
+                else otherPins.Add(pin);
+            }
+
+            return eidPins.OrderBy(t => t.Item1).Select(t => t.Item2)
+                          .Concat(otherPins)
+                          .ToList();
         }
     }
 }

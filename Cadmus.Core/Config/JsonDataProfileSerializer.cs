@@ -6,7 +6,7 @@ namespace Cadmus.Core.Config
     /// <summary>
     /// JSON-based data profile serializer.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.Config.IDataProfileSerializer" />
+    /// <seealso cref="IDataProfileSerializer" />
     public sealed class JsonDataProfileSerializer : IDataProfileSerializer
     {
         /// <summary>
@@ -54,6 +54,10 @@ namespace Cadmus.Core.Config
                     profile.Thesauri[i++] = thesaurus;
                 }
             }
+
+            // data pin filters
+            profile.GraphPinFilter = options.GraphPinFilter;
+            profile.NonGraphPinFilter = options.NonGraphPinFilter;
 
             return profile;
         }

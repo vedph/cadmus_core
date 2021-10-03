@@ -30,7 +30,7 @@ namespace Cadmus.Core.Config
         /// the mapping process, when these pins are not used in it, thus
         /// optimizing its performance.
         /// </summary>
-        public DataPinFilterClauseSet GraphFilterSet { get; set; }
+        public DataPinFilter GraphPinFilter { get; set; }
 
         /// <summary>
         /// Gets or sets the set of filters to apply when filtering data pins
@@ -38,7 +38,7 @@ namespace Cadmus.Core.Config
         /// when they only target the graph, so that they don't clutter the
         /// index.
         /// </summary>
-        public DataPinFilterClauseSet NonGraphFilterSet { get; set; }
+        public DataPinFilter NonGraphPinFilter { get; set; }
 
         /// <summary>
         /// Validate this profile.

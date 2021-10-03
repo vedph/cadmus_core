@@ -1,9 +1,8 @@
-﻿using Cadmus.Index.Graph;
-using Xunit;
+﻿using Xunit;
 
-namespace Cadmus.Index.Test
+namespace Cadmus.Core.Test
 {
-    public sealed class GraphPinFilterTest
+    public sealed class DataPinFilterClauseTest
     {
         [Theory]
         [InlineData("name", null, null)]
@@ -13,8 +12,8 @@ namespace Cadmus.Index.Test
         public void IsMatch_NoFilter_True(string pinName, string partTypeId,
             string partRoleId)
         {
-            GraphPinFilter filter = new GraphPinFilter();
-            Assert.True(filter.IsMatch(pinName, partTypeId, partRoleId));
+            DataPinFilterClause clause = new DataPinFilterClause();
+            Assert.True(clause.IsMatch(pinName, partTypeId, partRoleId));
         }
 
         [Theory]
@@ -24,21 +23,21 @@ namespace Cadmus.Index.Test
         [InlineData("xyz")]
         public void IsMatch_NonMatchingPrefix_False(string pinName)
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "pre"
             };
-            Assert.False(filter.IsMatch(pinName));
+            Assert.False(clause.IsMatch(pinName));
         }
 
         [Fact]
         public void IsMatch_MatchingPrefix_True()
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "pre"
             };
-            Assert.True(filter.IsMatch("pre"));
+            Assert.True(clause.IsMatch("pre"));
         }
 
         [Theory]
@@ -48,21 +47,21 @@ namespace Cadmus.Index.Test
         [InlineData("xyz")]
         public void IsMatch_NonMatchingSuffix_False(string pinName)
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Suffix = "post"
             };
-            Assert.False(filter.IsMatch(pinName));
+            Assert.False(clause.IsMatch(pinName));
         }
 
         [Fact]
         public void IsMatch_MatchingSuffix_True()
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "post"
             };
-            Assert.True(filter.IsMatch("post"));
+            Assert.True(clause.IsMatch("post"));
         }
 
         [Theory]
@@ -70,11 +69,11 @@ namespace Cadmus.Index.Test
         [InlineData("ad")]
         public void IsMatch_NonMatchingPattern_False(string pinName)
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Pattern = "ab*c"
             };
-            Assert.False(filter.IsMatch(pinName));
+            Assert.False(clause.IsMatch(pinName));
         }
 
         [Theory]
@@ -89,59 +88,59 @@ namespace Cadmus.Index.Test
         [InlineData("abbcx")]
         public void IsMatch_MatchingPattern_True(string pinName)
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Pattern = "ab*c"
             };
-            Assert.True(filter.IsMatch(pinName));
+            Assert.True(clause.IsMatch(pinName));
         }
 
         [Fact]
         public void IsMatch_MatchingAffixesAndPattern_True()
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "he",
                 Suffix = "!",
                 Pattern = "l+"
             };
-            Assert.True(filter.IsMatch("helloworld!"));
+            Assert.True(clause.IsMatch("helloworld!"));
         }
 
         [Fact]
         public void IsMatch_NonMatchingPrefixWithSuffixPattern_False()
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "he",
                 Suffix = "!",
                 Pattern = "l+"
             };
-            Assert.False(filter.IsMatch("elloworld!"));
+            Assert.False(clause.IsMatch("elloworld!"));
         }
 
         [Fact]
         public void IsMatch_NonMatchingSuffixWithPreffixPattern_False()
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "he",
                 Suffix = "!",
                 Pattern = "l+"
             };
-            Assert.False(filter.IsMatch("helloworld"));
+            Assert.False(clause.IsMatch("helloworld"));
         }
 
         [Fact]
         public void IsMatch_NonMatchingPatternWithAffixes_False()
         {
-            GraphPinFilter filter = new GraphPinFilter
+            DataPinFilterClause clause = new DataPinFilterClause
             {
                 Prefix = "he",
                 Suffix = "!",
                 Pattern = "b+"
             };
-            Assert.False(filter.IsMatch("helloworld!"));
+            Assert.False(clause.IsMatch("helloworld!"));
         }
     }
 }

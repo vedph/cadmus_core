@@ -7,7 +7,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void IsMatch_AnyMatchingInWhite_True()
         {
-            DataPinFilterClauseSet set = new DataPinFilterClauseSet();
+            DataPinFilter set = new DataPinFilter();
             set.Clauses.Add(new DataPinFilterClause
             {
                 Prefix = "pre"
@@ -23,7 +23,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void IsMatch_NoneMatchingInWhite_False()
         {
-            DataPinFilterClauseSet set = new DataPinFilterClauseSet();
+            DataPinFilter set = new DataPinFilter();
             set.Clauses.Add(new DataPinFilterClause
             {
                 Prefix = "pre"
@@ -39,7 +39,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void IsMatch_AnyMatchingInBlack_False()
         {
-            DataPinFilterClauseSet set = new DataPinFilterClauseSet
+            DataPinFilter set = new DataPinFilter
             {
                 IsBlack = true
             };
@@ -58,7 +58,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void IsMatch_NoneMatchingInBlack_True()
         {
-            DataPinFilterClauseSet set = new DataPinFilterClauseSet
+            DataPinFilter set = new DataPinFilter
             {
                 IsBlack = true
             };

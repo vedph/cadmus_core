@@ -4,6 +4,7 @@ using Cadmus.Index.MySql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Cadmus.Index.Test
@@ -96,7 +97,7 @@ namespace Cadmus.Index.Test
                 Tuple.Create("x:hasDate@wedding", "1340"),
                 Tuple.Create("rel@wedding@x:persons/laura", "x:hasSpouse")
             });
-            // store
+            // 1) store initial set
             GraphUpdater updater = new GraphUpdater(repository);
             updater.Update(oldSet);
 
@@ -106,11 +107,10 @@ namespace Cadmus.Index.Test
             var triplePage = repository.GetTriples(new TripleFilter());
             Assert.Equal(7, triplePage.Total);
 
-            // add user-edited stuff:
+            // 2) add user-edited stuff:
             // - barbato a person
             // - laura a person
             Node a = repository.GetNodeByUri("a");
-
             Node personClass = new Node
             {
                 Id = repository.AddUri("foaf:Person"),
@@ -131,7 +131,6 @@ namespace Cadmus.Index.Test
                 PredicateId = a.Id,
                 ObjectId = personClass.Id
             });
-
             // simulate an edit by recreating pins and remap
             GraphSet newSet = mapper.MapPins(item, part, new[]
             {
@@ -147,10 +146,22 @@ namespace Cadmus.Index.Test
                 Tuple.Create("x:hasDate@death", "1345"),
             });
 
-            // update
+            // 3) update; the new set has nodes:
+            // - x:persons/scipione_barbato x:persons/scipione_barbato [U]
+            // - x:events/birth birth [P] ...|eid|birth
+            // - x:classes/birth Birth class [U]
+            // - x:events/death death [P] ...|eid|death
+            // - x:classes/death x:classes/death [U]
+            // and triples:
+            // - x:events/birth - #kad:isInGroup - x:persons/scipione_barbato
+            // - x:events/death - #kad:isInGroup - x:persons/scipione_barbato
+            // - x:events/birth - #a - x:classes/birth
+            // - x:events/birth - #x:hasDate - 1299
+            // - x:events/death - #a - x:classes/death
+            // - x:events/death - #x:hasDate - 1345
             updater.Update(newSet);
 
-            // nodes:
+            // resulting nodes:
             // scipione
             NodeResult node = repository.GetNodeByUri("x:persons/scipione_barbato");
             Assert.NotNull(node);

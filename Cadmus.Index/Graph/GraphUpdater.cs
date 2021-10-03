@@ -120,5 +120,35 @@ namespace Cadmus.Index.Graph
                 throw;
             }
         }
+
+        /// <summary>
+        /// Deletes the graph set corresponding to the specified source
+        /// identifier.
+        /// </summary>
+        /// <param name="sourceId">The source identifier.</param>
+        /// <exception cref="ArgumentNullException">sourceId</exception>
+        /// <exception cref="ArgumentException">empty sourceId</exception>
+        public void Delete(string sourceId)
+        {
+            if (sourceId == null) throw new ArgumentNullException(nameof(sourceId));
+            if (sourceId.Length == 0) throw new ArgumentException(nameof(sourceId));
+
+            try
+            {
+                if (!IsTransactionDisabled)
+                    _repository.BeginTransaction();
+
+                _repository.DeleteGraphSet(sourceId);
+
+                if (!IsTransactionDisabled)
+                    _repository.CommitTransaction();
+            }
+            catch (Exception)
+            {
+                if (!IsTransactionDisabled)
+                    _repository.RollbackTransaction();
+                throw;
+            }
+        }
     }
 }

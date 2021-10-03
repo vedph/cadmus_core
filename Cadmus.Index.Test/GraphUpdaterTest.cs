@@ -167,8 +167,9 @@ namespace Cadmus.Index.Test
             // - x:events/birth - #x:hasDate - 1299
             // - x:events/death - #a - x:classes/death
             // - x:events/death - #x:hasDate - 1345
+
             // you can disable transactions when debugging
-            updater.IsTransactionDisabled = true;
+            // updater.IsTransactionDisabled = true;
             updater.Update(newSet);
 
             // resulting nodes:
@@ -239,6 +240,82 @@ namespace Cadmus.Index.Test
             Assert.Contains(triples, t => t.SubjectUri == death.Uri
                 && t.PredicateUri == "x:hasDate"
                 && t.ObjectLiteral == "1345");
+        }
+
+        [Fact]
+        public void Delete_NotExisting_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            GraphUpdater updater = new GraphUpdater(repository);
+
+            updater.Delete("not-existing");
+        }
+
+        [Fact]
+        public void Delete_Existing_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            NodeMapperTest.AddDeepEntityPartRules(repository);
+
+            NodeMapper mapper = new NodeMapper(repository);
+
+            IItem item = new Item
+            {
+                Title = "Scipione Barbato",
+                Description = "Scipione Barbato notaro.",
+                FacetId = "person",
+                SortKey = "scipionebarbato",
+                CreatorId = "creator",
+                UserId = "user"
+            };
+            IPart part = new EventsPart
+            {
+                ItemId = item.Id,
+                CreatorId = "creator",
+                UserId = "user"
+            };
+
+            GraphSet oldSet = mapper.MapPins(item, part, new[]
+            {
+                // events
+                Tuple.Create("eid", "birth"),
+                Tuple.Create("eid", "wedding"),
+                // birth event (x@eid)
+                Tuple.Create("type@birth", "x:classes/birth"),
+                Tuple.Create("x:hasDate@birth", "1300"),
+                // wedding event (x@eid, x@eid@eid2)
+                Tuple.Create("eid2@wedding", "x:persons/laura"),
+                Tuple.Create("type@wedding", "x:classes/wedding"),
+                Tuple.Create("x:hasDate@wedding", "1340"),
+                Tuple.Create("rel@wedding@x:persons/laura", "x:hasSpouse")
+            });
+            // store set
+            GraphUpdater updater = new GraphUpdater(repository);
+            updater.Update(oldSet);
+            NodeFilter nf = new NodeFilter();
+            TripleFilter tf = new TripleFilter();
+
+            var nodePage = repository.GetNodes(nf);
+            Assert.Equal(10, nodePage.Total);
+
+            var triplePage = repository.GetTriples(tf);
+            Assert.Equal(7, triplePage.Total);
+
+            // delete set
+            updater.Delete(part.Id);
+
+            nodePage = repository.GetNodes(nf);
+            Assert.Equal(7, nodePage.Total);
+            Assert.Equal(4, nodePage.Items.Count(n => n.Tag == Node.TAG_PROPERTY));
+            Assert.Equal(2, nodePage.Items.Count(n => n.IsClass));
+            Assert.NotNull(nodePage.Items.FirstOrDefault(
+                n => n.Uri == "x:persons/scipione_barbato"));
+
+            triplePage = repository.GetTriples(tf);
+            Assert.Equal(0, triplePage.Total);
         }
     }
 }

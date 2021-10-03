@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Cadmus.Index.Graph
+namespace Cadmus.Core
 {
     /// <summary>
-    /// A set of <see cref="GraphPinFilter"/>'s.
+    /// A set of <see cref="DataPinFilterClause"/>'s.
     /// </summary>
-    public class GraphPinFilterSet
+    public class DataPinFilterClauseSet
     {
         /// <summary>
         /// Gets or sets a value indicating whether this set represents a
@@ -16,17 +16,17 @@ namespace Cadmus.Index.Graph
         public bool IsBlack { get; set; }
 
         /// <summary>
-        /// Gets the filters.
+        /// Gets the clauses.
         /// </summary>
-        public IList<GraphPinFilter> Filters { get; set; }
+        public IList<DataPinFilterClause> Clauses { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphPinFilterSet"/>
+        /// Initializes a new instance of the <see cref="DataPinFilterClauseSet"/>
         /// class.
         /// </summary>
-        public GraphPinFilterSet()
+        public DataPinFilterClauseSet()
         {
-            Filters = new List<GraphPinFilter>();
+            Clauses = new List<DataPinFilterClause>();
         }
 
         /// <summary>
@@ -42,10 +42,10 @@ namespace Cadmus.Index.Graph
         public bool IsMatch(string pinName,
             string partTypeId = null, string partRoleId = null)
         {
-            if (Filters == null || Filters.Count == 0) return !IsBlack;
+            if (Clauses == null || Clauses.Count == 0) return !IsBlack;
 
             // if whitelist, any matching filter is ok (OR)
-            bool match = Filters.Any(f => f.IsMatch(pinName, partTypeId, partRoleId));
+            bool match = Clauses.Any(f => f.IsMatch(pinName, partTypeId, partRoleId));
             return IsBlack ? !match : match;
         }
     }

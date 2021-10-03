@@ -25,6 +25,22 @@ namespace Cadmus.Core.Config
         public Thesaurus[] Thesauri { get; set; }
 
         /// <summary>
+        /// Gets or sets the set of filters to apply when passing data pins
+        /// to the node mappers. This can be used to exclude some pins from
+        /// the mapping process, when these pins are not used in it, thus
+        /// optimizing its performance.
+        /// </summary>
+        public DataPinFilterClauseSet GraphFilterSet { get; set; }
+
+        /// <summary>
+        /// Gets or sets the set of filters to apply when filtering data pins
+        /// for the index. This can be used to exclude some pins from the index,
+        /// when they only target the graph, so that they don't clutter the
+        /// index.
+        /// </summary>
+        public DataPinFilterClauseSet NonGraphFilterSet { get; set; }
+
+        /// <summary>
         /// Validate this profile.
         /// </summary>
         /// <remarks>

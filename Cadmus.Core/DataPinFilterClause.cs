@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Cadmus.Index.Graph
+namespace Cadmus.Core
 {
     /// <summary>
-    /// A filter used to select which pins must be included in or excluded
-    /// from the set of pins to be passed to node mappers. All the properties
-    /// in this filter are optional. All the properties set must be matched
-    /// for the filter to match.
+    /// A clause in a filter for data pins. All the properties in this clause
+    /// are optional.
+    /// All the properties set must be matched for the clause to match.
     /// </summary>
-    public class GraphPinFilter
+    public class DataPinFilterClause
     {
         private string _pattern;
         private Regex _regex;
@@ -51,7 +49,7 @@ namespace Cadmus.Index.Graph
         }
 
         /// <summary>
-        /// Determines whether the specified pin name matches this filter.
+        /// Determines whether the specified pin name matches this clause.
         /// </summary>
         /// <param name="pinName">The name of the pin.</param>
         /// <param name="partTypeId">The optional part type identifier.</param>

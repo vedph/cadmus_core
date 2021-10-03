@@ -1,19 +1,18 @@
-﻿using Cadmus.Index.Graph;
-using Xunit;
+﻿using Xunit;
 
-namespace Cadmus.Index.Test
+namespace Cadmus.Core.Test
 {
-    public sealed class GraphPinFilterSetTest
+    public sealed class DataPinFilterClauseSetTest
     {
         [Fact]
         public void IsMatch_AnyMatchingInWhite_True()
         {
-            GraphPinFilterSet set = new GraphPinFilterSet();
-            set.Filters.Add(new GraphPinFilter
+            DataPinFilterClauseSet set = new DataPinFilterClauseSet();
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Prefix = "pre"
             });
-            set.Filters.Add(new GraphPinFilter
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Suffix = "post"
             });
@@ -24,12 +23,12 @@ namespace Cadmus.Index.Test
         [Fact]
         public void IsMatch_NoneMatchingInWhite_False()
         {
-            GraphPinFilterSet set = new GraphPinFilterSet();
-            set.Filters.Add(new GraphPinFilter
+            DataPinFilterClauseSet set = new DataPinFilterClauseSet();
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Prefix = "pre"
             });
-            set.Filters.Add(new GraphPinFilter
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Suffix = "post"
             });
@@ -40,15 +39,15 @@ namespace Cadmus.Index.Test
         [Fact]
         public void IsMatch_AnyMatchingInBlack_False()
         {
-            GraphPinFilterSet set = new GraphPinFilterSet
+            DataPinFilterClauseSet set = new DataPinFilterClauseSet
             {
                 IsBlack = true
             };
-            set.Filters.Add(new GraphPinFilter
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Prefix = "pre"
             });
-            set.Filters.Add(new GraphPinFilter
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Suffix = "post"
             });
@@ -59,15 +58,15 @@ namespace Cadmus.Index.Test
         [Fact]
         public void IsMatch_NoneMatchingInBlack_True()
         {
-            GraphPinFilterSet set = new GraphPinFilterSet
+            DataPinFilterClauseSet set = new DataPinFilterClauseSet
             {
                 IsBlack = true
             };
-            set.Filters.Add(new GraphPinFilter
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Prefix = "pre"
             });
-            set.Filters.Add(new GraphPinFilter
+            set.Clauses.Add(new DataPinFilterClause
             {
                 Suffix = "post"
             });

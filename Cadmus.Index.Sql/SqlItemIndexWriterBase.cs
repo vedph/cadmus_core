@@ -15,6 +15,11 @@ namespace Cadmus.Index.Sql
     /// </summary>
     public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     {
+        /// <summary>
+        /// Gets or sets the optional data pin filter.
+        /// </summary>
+        public IDataPinFilter DataPinFilter { get; set; }
+
         private bool _exists;
 
         /// <summary>
@@ -257,8 +262,12 @@ namespace Cadmus.Index.Sql
                     foreach (IPart part in item.Parts)
                     {
                         // insert all the new part's pins
+                        DataPinFilter?.Reset();
                         foreach (DataPin pin in part.GetDataPins(item))
                         {
+                            if (DataPinFilter?.Apply(pin) == false)
+                                continue;
+
                             InsertPin(GetIndexPin(pin, part.TypeId, now),
                                 insPinCmd);
                         }
@@ -305,12 +314,17 @@ namespace Cadmus.Index.Sql
 
                         foreach (IPart part in item.Parts)
                         {
+                            DataPinFilter?.Reset();
+
                             // delete all the part's pins
                             DeletePartPins(part.Id, delPinsCommand);
 
                             // insert all the new part's pins
                             foreach (DataPin pin in part.GetDataPins(item))
                             {
+                                if (DataPinFilter?.Apply(pin) == false)
+                                    continue;
+
                                 InsertPin(GetIndexPin(pin, part.TypeId, now),
                                     insPinCmd);
                             }

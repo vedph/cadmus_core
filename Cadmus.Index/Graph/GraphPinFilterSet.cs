@@ -18,7 +18,7 @@ namespace Cadmus.Index.Graph
         /// <summary>
         /// Gets the filters.
         /// </summary>
-        public IList<GraphPinFilter> Filters { get; }
+        public IList<GraphPinFilter> Filters { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphPinFilterSet"/>
@@ -42,6 +42,8 @@ namespace Cadmus.Index.Graph
         public bool IsMatch(string pinName,
             string partTypeId = null, string partRoleId = null)
         {
+            if (Filters == null || Filters.Count == 0) return !IsBlack;
+
             // if whitelist, any matching filter is ok (OR)
             bool match = Filters.Any(f => f.IsMatch(pinName, partTypeId, partRoleId));
             return IsBlack ? !match : match;

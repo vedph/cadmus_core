@@ -3,6 +3,7 @@ using Cadmus.Index.Graph;
 using Cadmus.Index.MySql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
+using Fusi.Tools.Data;
 using System;
 using System.Linq;
 using Xunit;
@@ -47,13 +48,13 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             NodeMapperTest.AddDeepEntityPartRules(repository);
-            Node deathClass = new Node
+            repository.AddNode(new Node
             {
                 Id = repository.AddUri("x:classes/death"),
                 SourceType = NodeSourceType.User,
                 IsClass = true,
                 Label = "Death class"
-            };
+            });
 
             NodeMapper mapper = new NodeMapper(repository);
 
@@ -109,7 +110,7 @@ namespace Cadmus.Index.Test
             updater.Update(oldSet);
 
             var nodePage = repository.GetNodes(new NodeFilter());
-            Assert.Equal(10, nodePage.Total);
+            Assert.Equal(11, nodePage.Total);
 
             var triplePage = repository.GetTriples(new TripleFilter());
             Assert.Equal(7, triplePage.Total);
@@ -166,18 +167,78 @@ namespace Cadmus.Index.Test
             // - x:events/birth - #x:hasDate - 1299
             // - x:events/death - #a - x:classes/death
             // - x:events/death - #x:hasDate - 1345
+            // you can disable transactions when debugging
+            updater.IsTransactionDisabled = true;
             updater.Update(newSet);
 
             // resulting nodes:
-            // scipione
-            NodeResult node = repository.GetNodeByUri("x:persons/scipione_barbato");
-            Assert.NotNull(node);
+            DataPage<NodeResult> nPage = repository.GetNodes(new NodeFilter());
+            Assert.Equal(11, nPage.Total);
+            var nodes = nPage.Items;
+
+            // barbato
+            NodeResult barbato = nodes.FirstOrDefault(
+                n => n.Uri == "x:persons/scipione_barbato");
+            Assert.NotNull(barbato);
+
             // birth
+            NodeResult birth = nodes.FirstOrDefault(
+                n => n.Uri == "x:events/birth");
+            Assert.NotNull(birth);
+
             // death
+            NodeResult death = nodes.FirstOrDefault(
+                n => n.Uri == "x:events/death");
+            Assert.NotNull(death);
+
             // no more wedding nor laura
-            Assert.Null(repository.GetNodeByUri("x:events/wedding"));
-            Assert.Null(repository.GetNodeByUri("x:persons/laura"));
-            // TODO
+            Assert.Null(nodes.FirstOrDefault(n => n.Uri == "x:events/wedding"));
+            Assert.Null(nodes.FirstOrDefault(n => n.Uri == "x:persons/laura"));
+
+            // resulting triples:
+            DataPage<TripleResult> tPage = repository.GetTriples(new TripleFilter());
+            var triples = tPage.Items;
+            Assert.Equal(9, tPage.Total);
+
+            // barbato a person
+            Assert.Contains(triples, t => t.SubjectUri == barbato.Uri
+                && t.PredicateUri == "a"
+                && t.ObjectUri == "foaf:Person");
+
+            // birth in-group barbato
+            Assert.Contains(triples, t => t.SubjectUri == birth.Uri
+                && t.PredicateUri == "kad:isInGroup"
+                && t.ObjectUri == barbato.Uri);
+
+            // birth a birth-class
+            Assert.Contains(triples, t => t.SubjectUri == birth.Uri
+                && t.PredicateUri == "a"
+                && t.ObjectUri == "x:classes/birth");
+
+            // birth hasDate 1299
+            Assert.Contains(triples, t => t.SubjectUri == birth.Uri
+                && t.PredicateUri == "x:hasDate"
+                && t.ObjectLiteral == "1299");
+
+            // birth hasDate 1300 no more exists
+            Assert.DoesNotContain(triples, t => t.SubjectUri == birth.Uri
+                && t.PredicateUri == "x:hasDate"
+                && t.ObjectLiteral == "1300");
+
+            // death in-group barbato
+            Assert.Contains(triples, t => t.SubjectUri == death.Uri
+                && t.PredicateUri == "kad:isInGroup"
+                && t.ObjectUri == barbato.Uri);
+
+            // death a death-class
+            Assert.Contains(triples, t => t.SubjectUri == death.Uri
+                && t.PredicateUri == "a"
+                && t.ObjectUri == "x:classes/death");
+
+            // death hasDate 1345
+            Assert.Contains(triples, t => t.SubjectUri == death.Uri
+                && t.PredicateUri == "x:hasDate"
+                && t.ObjectLiteral == "1345");
         }
     }
 }

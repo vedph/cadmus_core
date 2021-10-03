@@ -56,7 +56,7 @@ namespace Cadmus.Index.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            for (int i = Deleted.Count; i > -1; i--)
+            for (int i = Deleted.Count - 1; i > -1; i--)
                 if (!filter(Deleted[i])) Deleted.RemoveAt(i);
         }
 

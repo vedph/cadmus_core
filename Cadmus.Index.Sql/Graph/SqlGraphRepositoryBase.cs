@@ -767,7 +767,9 @@ namespace Cadmus.Index.Sql.Graph
             {
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM node WHERE id=@id;";
+                // explicitly delete dependent triples
+                cmd.CommandText = "DELETE FROM node WHERE id=@id;\n" +
+                    "DELETE FROM triple WHERE s_id=@id OR p_id=@id OR o_id=@id";
                 AddParameter(cmd, "@id", DbType.Int32, id);
                 cmd.ExecuteNonQuery();
             }
@@ -1632,8 +1634,31 @@ namespace Cadmus.Index.Sql.Graph
             }
         }
 
+        private static void AddTripleParameters(Triple triple, DbCommand cmd)
+        {
+            AddParameter(cmd, "@s_id", DbType.Int32, triple.SubjectId);
+            AddParameter(cmd, "@p_id", DbType.Int32, triple.PredicateId);
+            AddParameter(cmd, "@o_id", DbType.Int32, triple.ObjectId);
+            AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
+            AddParameter(cmd, "@sid", DbType.String, triple.Sid);
+            AddParameter(cmd, "@tag", DbType.String, triple.Tag);
+        }
+
+        private int FindTripleByValue(Triple triple)
+        {
+            DbCommand cmd = GetCommand();
+            cmd.CommandText = "SELECT id FROM triple WHERE s_id=@s_id " +
+                "AND p_id=@p_id AND o_id=@o_id AND o_lit=@o_lit " +
+                "AND sid=@sid AND tag=@tag;";
+            AddTripleParameters(triple, cmd);
+            object result = cmd.ExecuteScalar();
+            return result != null ? (int)result : 0;
+        }
+
         /// <summary>
-        /// Adds or updates the specified triple.
+        /// Adds or updates the specified triple. If the triple is new (ID=0)
+        /// and a triple with all the same values already exists, nothing is
+        /// done.
         /// When <paramref name="triple"/> has ID=0 (=new triple), its
         /// <see cref="Triple.Id"/> property gets updated by this method
         /// after insertion.
@@ -1648,6 +1673,15 @@ namespace Cadmus.Index.Sql.Graph
 
             try
             {
+                // do not insert if exactly the same triple already exists;
+                // in this case, update the triple's ID to ensure it's valid
+                int existingId = FindTripleByValue(triple);
+                if (existingId > 0)
+                {
+                    triple.Id = existingId;
+                    return;
+                }
+
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
 
@@ -1678,12 +1712,7 @@ namespace Cadmus.Index.Sql.Graph
                 }
                 cmd.CommandText = sb.ToString();
 
-                AddParameter(cmd, "@s_id", DbType.Int32, triple.SubjectId);
-                AddParameter(cmd, "@p_id", DbType.Int32, triple.PredicateId);
-                AddParameter(cmd, "@o_id", DbType.Int32, triple.ObjectId);
-                AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
-                AddParameter(cmd, "@sid", DbType.String, triple.Sid);
-                AddParameter(cmd, "@tag", DbType.String, triple.Tag);
+                AddTripleParameters(triple, cmd);
 
                 if (triple.Id == 0)
                 {

@@ -15,6 +15,12 @@ namespace Cadmus.Index.Graph
         private readonly IGraphRepository _repository;
 
         /// <summary>
+        /// Gets or sets a value indicating whether this updater does not uses
+        /// transactions.
+        /// </summary>
+        public bool IsTransactionDisabled { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphUpdater"/> class.
         /// </summary>
         /// <param name="repository">The repository.</param>
@@ -53,6 +59,7 @@ namespace Cadmus.Index.Graph
                     return a.SubjectId == b.SubjectId &&
                         a.PredicateId == b.PredicateId &&
                         a.ObjectId == b.ObjectId &&
+                        a.ObjectLiteral == b.ObjectLiteral &&
                         a.Sid == b.Sid;
                 });
 
@@ -91,7 +98,8 @@ namespace Cadmus.Index.Graph
 
             try
             {
-                _repository.BeginTransaction();
+                if (!IsTransactionDisabled)
+                    _repository.BeginTransaction();
 
                 // order by key so that empty (=null SID) keys come before
                 foreach (string key in nodeGroups.Keys.OrderBy(s => s))
@@ -102,11 +110,13 @@ namespace Cadmus.Index.Graph
                             ? tripleGroups[key] : Array.Empty<TripleResult>());
                 }
 
-                _repository.CommitTransaction();
+                if (!IsTransactionDisabled)
+                    _repository.CommitTransaction();
             }
             catch (Exception)
             {
-                _repository.RollbackTransaction();
+                if (!IsTransactionDisabled)
+                    _repository.RollbackTransaction();
                 throw;
             }
         }

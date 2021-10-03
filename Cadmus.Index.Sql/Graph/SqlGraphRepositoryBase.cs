@@ -83,17 +83,16 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Begins the transaction.
         /// </summary>
-        /// <param name="context">An optional generic context object.</param>
-        public void BeginTransaction(object context = null)
+        public void BeginTransaction()
         {
+            EnsureConnected();
             Transaction = Connection.BeginTransaction();
         }
 
         /// <summary>
         /// Commits a write transaction.
         /// </summary>
-        /// <param name="context">An optional generic context object.</param>
-        public void CommitTransaction(object context = null)
+        public void CommitTransaction()
         {
             Transaction?.Commit();
             Transaction = null;
@@ -102,8 +101,7 @@ namespace Cadmus.Index.Sql.Graph
         /// <summary>
         /// Rollbacks the write transaction.
         /// </summary>
-        /// <param name="context">An optional generic context object.</param>
-        public void RollbackTransaction(object context = null)
+        public void RollbackTransaction()
         {
             Transaction?.Rollback();
             Transaction = null;
@@ -1843,8 +1841,8 @@ namespace Cadmus.Index.Sql.Graph
                 DbCommand nodeCmd = GetCommand();
                 nodeCmd.CommandText =
                     "SELECT n.id, n.is_class, n.tag, n.label, n.source_type, " +
-                    "n.sid, ul.uri " +
-                    "FROM node n INNER JOIN uri_lookup ul ON n.id=ul.id" +
+                    "n.sid, ul.uri\n" +
+                    "FROM node n INNER JOIN uri_lookup ul ON n.id=ul.id\n" +
                     "WHERE sid LIKE @sid;";
                 AddParameter(nodeCmd, "@sid", DbType.String, sourceId + "%");
 

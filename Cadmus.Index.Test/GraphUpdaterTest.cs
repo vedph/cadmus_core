@@ -105,7 +105,7 @@ namespace Cadmus.Index.Test
             updater.Update(oldSet);
 
             var nodePage = repository.GetNodes(new NodeFilter());
-            Assert.Equal(6, nodePage.Total);
+            Assert.Equal(9, nodePage.Total);
 
             var triplePage = repository.GetTriples(new TripleFilter());
             Assert.Equal(7, triplePage.Total);

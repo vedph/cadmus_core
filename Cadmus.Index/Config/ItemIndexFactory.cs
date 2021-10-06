@@ -1,4 +1,5 @@
-﻿using Fusi.Tools.Config;
+﻿using Cadmus.Core;
+using Fusi.Tools.Config;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using System;
@@ -23,6 +24,22 @@ namespace Cadmus.Index.Config
         /// in POCO option objects (<c>ConnectionString</c>).
         /// </summary>
         public const string CONNECTION_STRING_NAME = "ConnectionString";
+
+        /// <summary>
+        /// Gets or sets the filter to apply when passing data pins
+        /// to the graph node mappers. This can be used to exclude some pins
+        /// from the mapping process, when these pins are not used in it, thus
+        /// optimizing its performance.
+        /// </summary>
+        public DataPinFilter GraphPinFilter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the filter to apply when filtering data pins
+        /// for the index. This can be used to exclude some pins from the index,
+        /// when they only target the graph, so that they don't clutter the
+        /// index.
+        /// </summary>
+        public DataPinFilter NonGraphPinFilter { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemIndexFactory"/>
@@ -130,13 +147,32 @@ namespace Cadmus.Index.Config
         /// <summary>
         /// Gets the item index writer if any.
         /// </summary>
+        /// <param name="forGraph">True to get a writer configured for
+        /// using a <see cref="GraphDataPinFilter"/>. This is required when
+        /// graph is enabled, as this filter collects all the pins written
+        /// in a session, and routes pins into the indexer or the graph
+        /// according to <see cref="GraphPinFilter"/> and
+        /// <see cref="NonGraphPinFilter"/>. These properties of this factory
+        /// are set when the factory is created, and are read from the profile.
+        /// </param>
         /// <returns>Item index writer or null.</returns>
-        public IItemIndexWriter GetItemIndexWriter()
+        public IItemIndexWriter GetItemIndexWriter(bool forGraph = false)
         {
-            return GetComponent<IItemIndexWriter>(
+            IItemIndexWriter writer = GetComponent<IItemIndexWriter>(
                 Configuration["index:writer:id"],
                 "index:writer:options",
                 false);
+
+            if (forGraph)
+            {
+                writer.DataPinFilter = new GraphDataPinFilter
+                {
+                    GraphPinFilter = GraphPinFilter,
+                    NonGraphPinFilter = NonGraphPinFilter
+                };
+            }
+
+            return writer;
         }
 
         /// <summary>

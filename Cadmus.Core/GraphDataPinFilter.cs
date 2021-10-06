@@ -1,11 +1,10 @@
-﻿using Cadmus.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Cadmus.Index.Graph
+namespace Cadmus.Core
 {
     /// <summary>
     /// An implementation of <see cref="IDataPinFilter"/> for filtering pins

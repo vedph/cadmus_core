@@ -1,7 +1,7 @@
 ﻿using Cadmus.Index.Graph;
 using Cadmus.Index.Sql;
 using Cadmus.Index.Sql.Graph;
-using Fusi.DbManager;
+using Fusi.DbManager.MySql;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MySql.Data.MySqlClient;
@@ -15,9 +15,10 @@ namespace Cadmus.Index.MySql
 {
     /// <summary>
     /// MySql graph repository.
+    /// Tag: <c>graph-repository.sql-my</c>.
     /// </summary>
     /// <seealso cref="SqlGraphRepositoryBase" />
-    [Tag("graph-repository.mysql")]
+    [Tag("graph-repository.sql-my")]
     public sealed class MySqlGraphRepository : SqlGraphRepositoryBase,
         IGraphRepository, IConfigurable<SqlOptions>
     {
@@ -25,9 +26,7 @@ namespace Cadmus.Index.MySql
         /// Initializes a new instance of the <see cref="MySqlGraphRepository"/>
         /// class.
         /// </summary>
-        /// <param name="tokenHelper">The token helper.</param>
-        public MySqlGraphRepository(ISqlTokenHelper tokenHelper)
-            : base(tokenHelper)
+        public MySqlGraphRepository() : base(new MySqlTokenHelper())
         {
         }
 

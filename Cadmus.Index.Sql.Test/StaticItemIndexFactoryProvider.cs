@@ -28,7 +28,9 @@ namespace Cadmus.Index.Sql.Test
             Assembly[] indexAssemblies = new[]
             {
                 // Cadmus.Index.Sql
-                typeof(MySqlItemIndexWriter).Assembly
+                typeof(MySqlItemIndexWriter).Assembly,
+                // Cadmus.Index.MySql
+                typeof(MySqlGraphRepository).Assembly
             };
 
             Container container = new Container();

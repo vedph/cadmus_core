@@ -12,7 +12,7 @@ namespace Cadmus.Core
     /// </summary>
     /// <remarks>This is the link between the pins generated during the indexing
     /// process, and their mapping to the graph. When indexing, an
-    /// <see cref="IItemIndexWriter"/> is used to generate pins for each item,
+    /// IItemIndexWriter is used to generate pins for each item,
     /// either in bulk mode or just for a single item (which typically happens
     /// when an item has been saved). This writer requests all the item's parts
     /// to generate their <see cref="DataPin"/>'s, and then writes them into its
@@ -24,7 +24,7 @@ namespace Cadmus.Core
     /// that they can be used later, when mapping them into the graph.
     /// <para>So, the purpose of this filter is twofold: filtering pins for
     /// the index or the graph, and collecting the pins useful for the graph,
-    /// to be consumed later by the mapping process.</para>
+    /// to be consumed later by the mapping process.</para></remarks>
     public sealed class GraphDataPinFilter : IDataPinFilter
     {
         static private readonly Regex _eidRegex = new Regex(@"^eid(?<n>\d+)?\b");

@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core;
 using Cadmus.Index.Graph;
+using Cadmus.Index.Sql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using Fusi.Tools.Config;
@@ -35,9 +36,8 @@ namespace Cadmus.Index.MySql.Test
 
         private static IGraphRepository GetRepository()
         {
-            MySqlGraphRepository repository =
-                new MySqlGraphRepository(new MySqlTokenHelper());
-            repository.Configure(new Sql.SqlOptions
+            MySqlGraphRepository repository = new MySqlGraphRepository();
+            repository.Configure(new SqlOptions
             {
                 ConnectionString = CS
             });

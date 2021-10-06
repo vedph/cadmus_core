@@ -458,7 +458,8 @@ namespace Cadmus.Index.Graph
         /// </param>
         /// <returns>The generated set of nodes and triples.</returns>
         /// <exception cref="ArgumentNullException">item, part, pins</exception>
-        public GraphSet MapPins(IItem item, IPart part, IList<Tuple<string,string>> pins,
+        public GraphSet MapPins(IItem item, IPart part,
+            IList<Tuple<string,string>> pins,
             GraphSet set = null)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));

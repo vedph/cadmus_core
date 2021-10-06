@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using Cadmus.Index.Graph;
 using Fusi.Tools.Config;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
@@ -142,6 +143,7 @@ namespace Cadmus.Index.Config
 
             container.Collection.Register<IItemIndexWriter>(assemblies);
             container.Collection.Register<IItemIndexReader>(assemblies);
+            container.Collection.Register<IGraphRepository>(assemblies);
         }
 
         /// <summary>
@@ -184,6 +186,18 @@ namespace Cadmus.Index.Config
             return GetComponent<IItemIndexReader>(
                 Configuration["index:reader:id"],
                 "index:reader:options",
+                false);
+        }
+
+        /// <summary>
+        /// Gets the graph repository if any.
+        /// </summary>
+        /// <returns>Graph repository or null.</returns>
+        public IGraphRepository GetGraphRepository()
+        {
+            return GetComponent<IGraphRepository>(
+                Configuration["graph:repository:id"],
+                "graph:repository:options",
                 false);
         }
     }

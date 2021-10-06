@@ -9,7 +9,7 @@
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>1.1.19</Version>
+    <Version>1.2.0</Version>
     <Description>SQL implementation of Cadmus index.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;SQL index</PackageTags>

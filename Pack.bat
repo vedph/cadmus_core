@@ -2,7 +2,7 @@
 echo BUILD Cadmus packages
 del .\Cadmus.Core\bin\Debug\*.*nupkg
 del .\Cadmus.Index\bin\Debug\*.*nupkg
-del .\Cadmus.Index.Sql\bin\Debug\*.nupkg
+del .\Cadmus.Index.Sql\bin\Debug\*.*nupkg
 del .\Cadmus.Index.MsSql\bin\Debug\*.*nupkg
 del .\Cadmus.Index.MySql\bin\Debug\*.*nupkg
 del .\Cadmus.Lexicon.Parts\bin\Debug\*.*nupkg

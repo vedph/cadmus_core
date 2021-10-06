@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fusi.DbManager.MsSql" Version="1.0.9" />
+    <PackageReference Include="Fusi.DbManager.MsSql" Version="1.0.10" />
   </ItemGroup>
 
   <ItemGroup>

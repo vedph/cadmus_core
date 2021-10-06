@@ -51,6 +51,15 @@ namespace Cadmus.Core
         public DataPinFilter NonGraphPinFilter { get; set; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="GraphDataPinFilter"/>
+        /// class.
+        /// </summary>
+        public GraphDataPinFilter()
+        {
+            GraphPins = new List<DataPin>();
+        }
+
+        /// <summary>
         /// Resets this filter inner state if any. This is called before
         /// enumerating a set of pins.
         /// </summary>

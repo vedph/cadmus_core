@@ -1,6 +1,6 @@
-﻿using Cadmus.Bricks;
-using Cadmus.Core;
+﻿using Cadmus.Core;
 using Cadmus.Parts.General;
+using Cadmus.Refs.Bricks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +25,7 @@ namespace Cadmus.Parts.Test.General
                 part.References.Add(new DocReference
                 {
                     Tag = "tag",
-                    Author = n % 2 == 0? "Hes." : "Hom.",
-                    Work = n % 2 == 0? "th." : "Il.",
-                    Location = "1.23",
+                    Citation = n % 2 == 0? "Hes. th. 1.23" : "Hom. Il. 1.23",
                     Note = "A note"
                 });
             }
@@ -76,24 +74,19 @@ namespace Cadmus.Parts.Test.General
 
             List<DataPin> pins = part.GetDataPins(null).ToList();
 
-            Assert.Equal(6, pins.Count);
+            Assert.Equal(4, pins.Count);
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
             Assert.Equal("3", pin.Value);
 
-            pin = pins.Find(p => p.Name == "author" && p.Value == "Hom.");
+            pin = pins.Find(p => p.Name == "citation" &&
+                p.Value == "Hom. Il. 1.23");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
-            pin = pins.Find(p => p.Name == "author" && p.Value == "Hes.");
-            Assert.NotNull(pin);
-            TestHelper.AssertValidDataPinNames(part, pin);
-
-            pin = pins.Find(p => p.Name == "work" && p.Value == "Il.");
-            Assert.NotNull(pin);
-            TestHelper.AssertValidDataPinNames(part, pin);
-            pin = pins.Find(p => p.Name == "work" && p.Value == "th.");
+            pin = pins.Find(p => p.Name == "citation" &&
+                p.Value == "Hes. th. 1.23");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
 

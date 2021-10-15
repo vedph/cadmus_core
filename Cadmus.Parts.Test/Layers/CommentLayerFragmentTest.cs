@@ -2,6 +2,7 @@
 using Cadmus.Core;
 using Cadmus.Parts.General;
 using Cadmus.Parts.Layers;
+using Cadmus.Refs.Bricks;
 using Cadmus.Seed.Parts.General;
 using Cadmus.Seed.Parts.Layers;
 using Fusi.Tools.Config;
@@ -72,7 +73,7 @@ namespace Cadmus.Parts.Test.Layers
 
                 fr.References.Add(new DocReference
                 {
-                    Work = $"w{n}"
+                    Citation = $"w{n}"
                 });
                 fr.ExternalIds.Add($"i{n}");
                 fr.Categories.Add($"c{n}");

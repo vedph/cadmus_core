@@ -1,5 +1,5 @@
-﻿using Cadmus.Bricks;
-using Cadmus.Core;
+﻿using Cadmus.Core;
+using Cadmus.Refs.Bricks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,19 +121,9 @@ namespace Cadmus.Parts.General
             // fr.ref
             if (References?.Count > 0)
             {
-                StringBuilder sb = new StringBuilder();
                 builder.AddValues(prefix + "ref",
-                    References.Select(r =>
-                    {
-                        sb.Clear();
-                        if (!string.IsNullOrEmpty(r.Author)) sb.Append(r.Author);
-                        if (!string.IsNullOrEmpty(r.Work))
-                        {
-                            if (sb.Length > 0) sb.Append(", ");
-                            sb.Append(r.Work);
-                        }
-                        return sb.ToString();
-                    }), filter: true, filterOptions: true);
+                    References.Select(r => r.ToString()), filter: true,
+                    filterOptions: true);
             }
 
             // fr.id

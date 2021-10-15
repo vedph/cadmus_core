@@ -3,6 +3,7 @@ using Cadmus.Bricks;
 using Cadmus.Core;
 using Cadmus.Parts;
 using Cadmus.Parts.General;
+using Cadmus.Refs.Bricks;
 using Fusi.Antiquity.Chronology;
 using Fusi.Tools.Config;
 using System;
@@ -76,11 +77,10 @@ namespace Cadmus.Seed.Parts.General
             for (int n = 1; n <= Randomizer.Seed.Next(min, max + 1); n++)
             {
                 refs.Add(new Faker<DocReference>()
+                    .RuleFor(r => r.Type, "book")
                     .RuleFor(r => r.Tag, f => f.PickRandom(null, "tag"))
-                    .RuleFor(r => r.Author, f => f.Lorem.Word())
-                    .RuleFor(r => r.Work, f => f.Lorem.Word())
-                    .RuleFor(r => r.Location,
-                        f => $"{f.Random.Number(1, 24)}.{f.Random.Number(1, 1000)}")
+                    .RuleFor(r => r.Citation, f => f.Person.LastName + " " +
+                        f.Date.Past(10) + " " + f.Random.Number(1, 100))
                     .RuleFor(r => r.Note,
                         f => f.Random.Bool(0.25f)? f.Lorem.Sentence() : null)
                     .Generate());

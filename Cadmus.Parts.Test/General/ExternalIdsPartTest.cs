@@ -6,6 +6,7 @@ using Cadmus.Seed.Parts.General;
 using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Bricks;
+using Cadmus.Refs.Bricks;
 
 namespace Cadmus.Parts.Test.General
 {
@@ -74,9 +75,7 @@ namespace Cadmus.Parts.Test.General
                 part.Ids.Add(new ExternalId
                 {
                     Value = $"{n:000}",
-                    Type = "type",
-                    Tag = "tag",
-                    Note = "note"
+                    Tag = "tag"
                 });
             }
 

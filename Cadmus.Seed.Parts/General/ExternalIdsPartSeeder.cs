@@ -1,7 +1,7 @@
 ﻿using Bogus;
-using Cadmus.Bricks;
 using Cadmus.Core;
 using Cadmus.Parts.General;
+using Cadmus.Refs.Bricks;
 using Fusi.Tools.Config;
 using System;
 using System.Collections.Generic;
@@ -27,10 +27,8 @@ namespace Cadmus.Seed.Parts.General
                     .RuleFor(i => i.Value, f => uri
                         ? f.Internet.Url()
                         : Guid.NewGuid().ToString())
-                    .RuleFor(i => i.Type, uri? "uri" : "guid")
+                    .RuleFor(i => i.Scope, f => f.Internet.Url())
                     .RuleFor(i => i.Tag, f => f.Random.Bool(0.25F)? "test" : null)
-                    .RuleFor(i => i.Note, f => f.Random.Bool(0.25F)
-                        ? f.Lorem.Sentence() : null)
                     );
             }
             return ids;

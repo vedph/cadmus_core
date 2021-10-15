@@ -1,5 +1,5 @@
-﻿using Cadmus.Bricks;
-using Cadmus.Core;
+﻿using Cadmus.Core;
+using Cadmus.Refs.Bricks;
 using Fusi.Tools.Config;
 using System.Collections.Generic;
 using System.Text;
@@ -34,7 +34,7 @@ namespace Cadmus.Parts.General
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
         /// <returns>The pins: <c>tot-count</c> and a collections of pins with
-        /// keys <c>author</c>, <c>work</c>, <c>tag</c>.</returns>
+        /// keys <c>citation</c>, <c>tag</c>.</returns>
         public override IEnumerable<DataPin> GetDataPins(IItem item)
         {
             DataPinBuilder builder = new DataPinBuilder();
@@ -43,11 +43,10 @@ namespace Cadmus.Parts.General
 
             if (References?.Count > 0)
             {
-                foreach (DocReference citation in References)
+                foreach (DocReference reference in References)
                 {
-                    builder.AddValue("author", citation.Author);
-                    builder.AddValue("work", citation.Work);
-                    builder.AddValue("tag", citation.Tag);
+                    builder.AddValue("citation", reference.Citation);
+                    builder.AddValue("tag", reference.Tag);
                 }
             }
 
@@ -66,12 +65,8 @@ namespace Cadmus.Parts.General
                     "tot-count",
                     "The total count of references."),
                 new DataPinDefinition(DataPinValueType.String,
-                    "author",
-                    "The list of authors.",
-                    "M"),
-                new DataPinDefinition(DataPinValueType.String,
-                    "work",
-                    "The list of works.",
+                    "citation",
+                    "The list of citations.",
                     "M"),
                 new DataPinDefinition(DataPinValueType.String,
                     "tag",

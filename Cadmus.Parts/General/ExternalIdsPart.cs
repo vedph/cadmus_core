@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Cadmus.Bricks;
 using Cadmus.Core;
+using Cadmus.Refs.Bricks;
 using Fusi.Tools.Config;
 
 namespace Cadmus.Parts.General

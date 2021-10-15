@@ -6,6 +6,7 @@ using Cadmus.Seed.Parts.General;
 using System.Collections.Generic;
 using System.Linq;
 using Cadmus.Bricks;
+using Cadmus.Refs.Bricks;
 
 namespace Cadmus.Parts.Test.General
 {
@@ -75,7 +76,7 @@ namespace Cadmus.Parts.Test.General
 
                 part.References.Add(new DocReference
                 {
-                    Work = $"w{n}"
+                    Citation = $"w{n}"
                 });
                 part.ExternalIds.Add($"i{n}");
                 part.Categories.Add($"c{n}");

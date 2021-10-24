@@ -15,12 +15,19 @@ namespace Cadmus.Index.Sql
     /// </summary>
     public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     {
+        private bool _exists;
+
         /// <summary>
         /// Gets or sets the optional data pin filter.
         /// </summary>
         public IDataPinFilter DataPinFilter { get; set; }
 
-        private bool _exists;
+        /// <summary>
+        /// Gets or sets the initialize context. For SQL-based writers, this
+        /// is a string with SQL code to execute after the database gets
+        /// created.
+        /// </summary>
+        public object InitContext { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase" />
@@ -168,7 +175,7 @@ namespace Cadmus.Index.Sql
                 {
                     manager.CreateDatabase(name,
                         GetSchemaSql(),
-                        null);
+                        InitContext as string);
                     _exists = true;
                 }
             }

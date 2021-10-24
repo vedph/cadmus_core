@@ -10,7 +10,7 @@
     <Description>Philological parts for Cadmus.</Description>
     <Copyright>by Daniele Fusi 2018</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>2.4.0</Version>
+    <Version>2.4.1</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;philology parts</PackageTags>
   </PropertyGroup>

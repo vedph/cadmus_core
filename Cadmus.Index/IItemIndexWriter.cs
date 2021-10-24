@@ -21,6 +21,12 @@ namespace Cadmus.Index
         IDataPinFilter DataPinFilter { get; set; }
 
         /// <summary>
+        /// Gets the optional initialization context data, which can be used
+        /// when the writer has to create its target store.
+        /// </summary>
+        object InitContext { get; set; }
+
+        /// <summary>
         /// Writes the specified item and all its parts (if any) to the index.
         /// If the index does not exist, it is created.
         /// </summary>

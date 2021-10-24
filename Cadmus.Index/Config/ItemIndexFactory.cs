@@ -157,8 +157,11 @@ namespace Cadmus.Index.Config
         /// <see cref="NonGraphPinFilter"/>. These properties of this factory
         /// are set when the factory is created, and are read from the profile.
         /// </param>
+        /// <param name="graphSql">The optional SQL code to seed the index
+        /// database with preset data for the graph.</param>
         /// <returns>Item index writer or null.</returns>
-        public IItemIndexWriter GetItemIndexWriter(bool forGraph = false)
+        public IItemIndexWriter GetItemIndexWriter(bool forGraph = false,
+            string graphSql = null)
         {
             IItemIndexWriter writer = GetComponent<IItemIndexWriter>(
                 Configuration["index:writer:id"],
@@ -174,6 +177,7 @@ namespace Cadmus.Index.Config
                 };
             }
 
+            writer.InitContext = graphSql;
             return writer;
         }
 

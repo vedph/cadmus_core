@@ -1,0 +1,61 @@
+﻿[
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "is-a",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "comment",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "has Cadmus facet",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "is in Cadmus group",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "has linguistic form",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "has linguistic form (filtered)",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "has linguistic variant form",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "has linguistic variant form (filtered)",
+    "sourceType": 0
+  },
+  {
+    "isClass": false,
+    "tag": "property",
+    "label": "has part of speech",
+    "sourceType": 0
+  },
+  {
+    "isClass": true,
+    "label": "lemma",
+    "sourceType": 0
+  }
+]

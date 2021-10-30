@@ -1,0 +1,104 @@
+[
+  {
+    "id": 1,
+    "sourceType": 1,
+    "name": "Lemma item",
+    "facetFilter": "lemma",
+    "prefix": "x:lemmata/",
+    "labelTemplate": "{title}",
+    "description": "Lemma item -> node"
+  },
+  {
+    "id": 2,
+    "parentId": 1,
+    "sourceType": 1,
+    "name": "Item description",
+    "prefix": "x:lemmata/",
+    "tripleP": "rdfs:comment",
+    "tripleO": "$dsc",
+    "description": "Item's description -> rdfs:comment"
+  },
+  {
+    "id": 3,
+    "parentId": 1,
+    "sourceType": 1,
+    "name": "Item a lemma",
+    "tripleP": "a",
+    "tripleO": "x:lemma",
+    "description": "Item a x:lemma"
+  },
+  {
+    "id": 4,
+    "sourceType": 4,
+    "name": "Pin eid",
+    "facetFilter": "lemma",
+    "partType": "it.vedph.pura.forms",
+    "pinName": "eid",
+    "prefix": "x:forms/",
+    "labelTemplate": "{pin-value}",
+    "slot": "{pin-value}"
+  },
+  {
+    "id": 5,
+    "parentId": 4,
+    "sourceType": 4,
+    "name": "Pin eid kad:isInGroup ITEM",
+    "facetFilter": "lemma",
+    "partType": "it.vedph.pura.forms",
+    "pinName": "eid",
+    "tripleP": "kad:isInGroup",
+    "tripleO": "$item"
+  },
+  {
+    "id": 6,
+    "sourceType": 4,
+    "name": "Pin lemma@* x:hasForm ...",
+    "facetFilter": "lemma",
+    "partType": "it.vedph.pura.word-forms",
+    "pinName": "u-lemma@*",
+    "tripleS": "$slot:{pin-eid}",
+    "tripleP": "x:hasForm",
+    "tripleO": "$pin-value"
+  },
+  {
+    "id": 7,
+    "sourceType": 4,
+    "name": "Pin lemma@* x:hasIxForm ...",
+    "partType": "it.vedph.pura.word-forms",
+    "pinName": "lemma@*",
+    "tripleS": "$slot:{pin-eid}",
+    "tripleP": "x:hasIxForm",
+    "tripleO": "$pin-value"
+  },
+  {
+    "id": 8,
+    "sourceType": 4,
+    "name": "Pin pos@* x:hasPOS ...",
+    "partType": "it.vedph.pura.word-forms",
+    "pinName": "pos@*",
+    "tripleS": "$slot:{pin-eid}",
+    "tripleP": "x:hasPOS",
+    "tripleO": "$pin-value"
+  },
+  {
+    "id": 9,
+    "sourceType": 4,
+    "name": "Pin u-variant@* x:hasVariantForm ...",
+    "facetFilter": "",
+    "partType": "it.vedph.pura.word-forms",
+    "pinName": "u-variant@*",
+    "tripleS": "$slot:{pin-eid}",
+    "tripleP": "x:hasVariantForm",
+    "tripleO": "$pin-value"
+  },
+  {
+    "id": 10,
+    "sourceType": 4,
+    "name": "Pin variant@* x:hasIxVariantForm ...",
+    "partType": "it.vedph.pura.word-forms",
+    "pinName": "variant@*",
+    "tripleS": "$slot:{pin-eid}",
+    "tripleP": "x:hasIxVariantForm",
+    "tripleO": "$pin-value"
+  }
+]

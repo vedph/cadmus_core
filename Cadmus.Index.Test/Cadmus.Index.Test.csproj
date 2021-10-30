@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\PresetMappings.json" />
+    <None Remove="Assets\PresetNodes.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\PresetMappings.json" />
+    <EmbeddedResource Include="Assets\PresetNodes.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Fusi.DbManager.MySql" Version="1.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="xunit" Version="2.4.1" />

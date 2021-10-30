@@ -19,7 +19,7 @@ namespace Cadmus.Index.Test
         {
             JsonGraphPresetReader reader = new();
 
-            IList<Node> nodes = await reader.ReadNodesAsync(
+            IList<UriNode> nodes = await reader.ReadNodesAsync(
                 GetResourceStream("PresetNodes.json"));
 
             Assert.Equal(10, nodes.Count);

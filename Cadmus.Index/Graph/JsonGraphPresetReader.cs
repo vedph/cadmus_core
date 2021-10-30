@@ -30,11 +30,11 @@ namespace Cadmus.Index.Graph
         /// <param name="stream">The stream.</param>
         /// <returns>Nodes.</returns>
         /// <exception cref="ArgumentNullException">stream</exception>
-        public async Task<IList<Node>> ReadNodesAsync(Stream stream)
+        public async Task<IList<UriNode>> ReadNodesAsync(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
 
-            return await ReadAsync<Node>(stream);
+            return await ReadAsync<UriNode>(stream);
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <returns>Nodes.</returns>
-        Task<IList<Node>> ReadNodesAsync(Stream stream);
+        Task<IList<UriNode>> ReadNodesAsync(Stream stream);
 
         /// <summary>
         /// Reads the preset node mappings from the specified stream.

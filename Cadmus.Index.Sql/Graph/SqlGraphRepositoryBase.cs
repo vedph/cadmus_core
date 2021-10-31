@@ -1656,10 +1656,20 @@ namespace Cadmus.Index.Sql.Graph
 
         private int FindTripleByValue(Triple triple)
         {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT id FROM triple WHERE s_id=@s_id AND p_id=@p_id");
+            sb.Append(triple.ObjectId == 0 ?
+                " AND o_id IS NULL" : " AND o_id=@o_id");
+            sb.Append(triple.ObjectLiteral == null?
+                " AND o_lit IS NULL" : " AND o_lit=@o_lit");
+            sb.Append(triple.Sid == null ?
+                " AND sid IS NULL" : " AND sid=@sid");
+            sb.Append(triple.Tag == null ?
+                " AND tag IS NULL" : " AND tag=@tag");
+            sb.Append(';');
+
             DbCommand cmd = GetCommand();
-            cmd.CommandText = "SELECT id FROM triple WHERE s_id=@s_id " +
-                "AND p_id=@p_id AND o_id=@o_id AND o_lit=@o_lit " +
-                "AND sid=@sid AND tag=@tag;";
+            cmd.CommandText = sb.ToString();
             AddTripleParameters(triple, cmd);
             object result = cmd.ExecuteScalar();
             return result != null ? (int)result : 0;

@@ -953,6 +953,72 @@ namespace Cadmus.Index.MySql.Test
         #endregion
 
         #region Triple
+        private static Triple AddMichelangeloArtist(IGraphRepository repository)
+        {
+            Node michelangelo = new Node
+            {
+                Id = repository.AddUri("x:persons/michelangelo"),
+                Label = "Michelangelo"
+            };
+            repository.AddNode(michelangelo);
+            Node a = new Node
+            {
+                Id = repository.AddUri("rdf:type"),
+                Label = "a",
+                Tag = Node.TAG_PROPERTY
+            };
+            repository.AddNode(a);
+            Node artist = new Node
+            {
+                Id = repository.AddUri("x:artist"),
+                IsClass = true,
+                Label = "Artist class"
+            };
+            repository.AddNode(artist);
+
+            // triple: michelangelo a artist
+            Triple triple = new Triple
+            {
+                SubjectId = michelangelo.Id,
+                PredicateId = a.Id,
+                ObjectId = artist.Id
+            };
+            repository.AddTriple(triple);
+
+            return triple;
+        }
+
+        [Fact]
+        public void AddTriple_NotExisting_Added()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            Triple triple = AddMichelangeloArtist(repository);
+
+            TripleResult triple2 = repository.GetTriple(triple.Id);
+            Assert.NotNull(triple2);
+            Assert.Equal(triple.SubjectId, triple2.SubjectId);
+            Assert.Equal(triple.PredicateId, triple2.PredicateId);
+            Assert.Equal(triple.ObjectId, triple2.ObjectId);
+            Assert.Equal(triple.ObjectLiteral, triple2.ObjectLiteral);
+            Assert.Equal(triple.Sid, triple2.Sid);
+            Assert.Equal(triple.Tag, triple2.Tag);
+        }
+
+        [Fact]
+        public void AddTriple_Same_Unchanged()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+
+            Triple triple = AddMichelangeloArtist(repository);
+            Triple triple2 = AddMichelangeloArtist(repository);
+
+            Assert.Equal(triple.Id, triple2.Id);
+            Assert.Equal(1, repository.GetTriples(new TripleFilter()).Total);
+        }
+
         private static void AddTriples(IGraphRepository repository)
         {
             // nodes

@@ -1647,7 +1647,8 @@ namespace Cadmus.Index.Sql.Graph
         {
             AddParameter(cmd, "@s_id", DbType.Int32, triple.SubjectId);
             AddParameter(cmd, "@p_id", DbType.Int32, triple.PredicateId);
-            AddParameter(cmd, "@o_id", DbType.Int32, triple.ObjectId);
+            AddParameter(cmd, "@o_id", DbType.Int32,
+                triple.ObjectId != 0? (int?)triple.ObjectId : null);
             AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
             AddParameter(cmd, "@sid", DbType.String, triple.Sid);
             AddParameter(cmd, "@tag", DbType.String, triple.Tag);
@@ -1760,7 +1761,7 @@ namespace Cadmus.Index.Sql.Graph
                 {
                     if (!reader.Read()) return;
                     subjectId = reader.GetInt32(0);
-                    objectId = reader.GetInt32(1);
+                    objectId = reader.IsDBNull(1)? 0 : reader.GetInt32(1);
                 }
 
                 // delete

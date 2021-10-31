@@ -6,14 +6,13 @@
     "facetFilter": "lemma",
     "prefix": "x:lemmata/",
     "labelTemplate": "{title}",
-    "description": "Lemma item -> node"
+    "description": "Lemma item -> x:lemmata/TITLE"
   },
   {
     "id": 2,
     "parentId": 1,
     "sourceType": 1,
     "name": "Item description",
-    "prefix": "x:lemmata/",
     "tripleP": "rdfs:comment",
     "tripleO": "$dsc",
     "description": "Item's description -> rdfs:comment"
@@ -23,7 +22,7 @@
     "parentId": 1,
     "sourceType": 1,
     "name": "Item a lemma",
-    "tripleP": "a",
+    "tripleP": "rdf:type",
     "tripleO": "x:lemma",
     "description": "Item a x:lemma"
   },
@@ -32,28 +31,28 @@
     "sourceType": 4,
     "name": "Pin eid",
     "facetFilter": "lemma",
-    "partType": "it.vedph.pura.forms",
+    "partType": "it.vedph.pura.word-forms",
     "pinName": "eid",
     "prefix": "x:forms/",
     "labelTemplate": "{pin-value}",
-    "slot": "{pin-value}"
+    "slot": "{pin-value}",
+    "description": "eid -> x:forms/EID"
   },
   {
     "id": 5,
     "parentId": 4,
     "sourceType": 4,
     "name": "Pin eid kad:isInGroup ITEM",
-    "facetFilter": "lemma",
-    "partType": "it.vedph.pura.forms",
+    "partType": "it.vedph.pura.word-forms",
     "pinName": "eid",
     "tripleP": "kad:isInGroup",
-    "tripleO": "$item"
+    "tripleO": "$item",
+    "description": "x:forms/EID kad:isInGroup ITEM"
   },
   {
     "id": 6,
     "sourceType": 4,
     "name": "Pin lemma@* x:hasForm ...",
-    "facetFilter": "lemma",
     "partType": "it.vedph.pura.word-forms",
     "pinName": "u-lemma@*",
     "tripleS": "$slot:{pin-eid}",
@@ -73,7 +72,7 @@
   {
     "id": 8,
     "sourceType": 4,
-    "name": "Pin pos@* x:hasPOS ...",
+    "name": "Pin pos@* x:forms/EID x:hasPOS ...",
     "partType": "it.vedph.pura.word-forms",
     "pinName": "pos@*",
     "tripleS": "$slot:{pin-eid}",
@@ -84,7 +83,6 @@
     "id": 9,
     "sourceType": 4,
     "name": "Pin u-variant@* x:hasVariantForm ...",
-    "facetFilter": "",
     "partType": "it.vedph.pura.word-forms",
     "pinName": "u-variant@*",
     "tripleS": "$slot:{pin-eid}",

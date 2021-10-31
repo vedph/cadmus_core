@@ -1,69 +1,69 @@
 ﻿[
   {
-    "uri": "alpha",
+    "uri": "rdf:type",
     "isClass": false,
     "tag": "property",
     "label": "is-a",
     "sourceType": 0
   },
   {
-    "uri": "beta",
+    "uri": "rdfs:comment",
     "isClass": false,
     "tag": "property",
     "label": "comment",
     "sourceType": 0
   },
   {
-    "uri": "gamma",
+    "uri": "kad:hasFacet",
     "isClass": false,
     "tag": "property",
     "label": "has Cadmus facet",
     "sourceType": 0
   },
   {
-    "uri": "delta",
+    "uri": "kad:isInGroup",
     "isClass": false,
     "tag": "property",
     "label": "is in Cadmus group",
     "sourceType": 0
   },
   {
-    "uri": "epsilon",
+    "uri": "x:hasForm",
     "isClass": false,
     "tag": "property",
     "label": "has linguistic form",
     "sourceType": 0
   },
   {
-    "uri": "waw",
+    "uri": "x:hasIxForm",
     "isClass": false,
     "tag": "property",
     "label": "has linguistic form (filtered)",
     "sourceType": 0
   },
   {
-    "uri": "zeta",
+    "uri": "x:hasVariantForm",
     "isClass": false,
     "tag": "property",
     "label": "has linguistic variant form",
     "sourceType": 0
   },
   {
-    "uri": "eta",
+    "uri": "x:hasIxVariantForm",
     "isClass": false,
     "tag": "property",
     "label": "has linguistic variant form (filtered)",
     "sourceType": 0
   },
   {
-    "uri": "theta",
+    "uri": "x:hasPOS",
     "isClass": false,
     "tag": "property",
     "label": "has part of speech",
     "sourceType": 0
   },
   {
-    "uri": "iota",
+    "uri": "x:lemma",
     "isClass": true,
     "label": "lemma",
     "sourceType": 0

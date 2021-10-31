@@ -1258,7 +1258,8 @@ namespace Cadmus.Index.Sql.Graph
                 }
                 cmd.CommandText = sb.ToString();
 
-                AddParameter(cmd, "@parent_id", DbType.Int32, mapping.ParentId);
+                AddParameter(cmd, "@parent_id", DbType.Int32,
+                    mapping.ParentId != 0? (int?)mapping.ParentId : null);
                 AddParameter(cmd, "@ordinal", DbType.Int32, mapping.Ordinal);
                 AddParameter(cmd, "@facet_filter", DbType.String,
                     mapping.FacetFilter);
@@ -1333,9 +1334,17 @@ namespace Cadmus.Index.Sql.Graph
                 "label_template, triple_s, triple_p, triple_o, " +
                 "triple_o_prefix, reversed, slot")
                 .AddFrom("node_mapping")
-                .AddWhere("parent_id=@parent_id")
-                .AddParameter("@parent_id", DbType.Int32, parentId)
                 .AddOrder("source_type, ordinal, part_type, part_role, pin_name, name");
+
+            if (parentId != 0)
+            {
+                builder.AddWhere("parent_id=@parent_id")
+                       .AddParameter("@parent_id", DbType.Int32, parentId);
+            }
+            else
+            {
+                builder.AddWhere("parent_id IS NULL");
+            }
 
             // source_type IN(1,2,3) for items or =4 for parts
             if (part == null)

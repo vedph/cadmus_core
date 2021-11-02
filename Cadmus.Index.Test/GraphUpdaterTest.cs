@@ -199,7 +199,7 @@ namespace Cadmus.Index.Test
             // resulting triples:
             DataPage<TripleResult> tPage = repository.GetTriples(new TripleFilter());
             var triples = tPage.Items;
-            Assert.Equal(9, tPage.Total);
+            Assert.Equal(7, tPage.Total);
 
             // barbato a person
             Assert.Contains(triples, t => t.SubjectUri == barbato.Uri

@@ -12,17 +12,18 @@ namespace Cadmus.Core.Config
     /// Often, a common requirement for data is having some shared
     /// terminology to be used for the whole content. For instance, think of a
     /// collection of inscriptions: a typical requirement would be a set of
-    /// categories, which are traditionally used to group them according to their
-    /// type (e.g. funerary, votive, honorary, etc.). In fact, there are a number of
-    /// such thesauri, which vary according to the content being handled:
-    /// categories, languages, metres, etc. In such cases, usually we also want our
-    /// editing UI to provide these tags as a closed set of lookup values, so that
-    /// users can pick them from a list, rather than typing them (which would be more
-    /// difficult, and error-prone). Thus, Cadmus provides a generic solution to
-    /// these scenarios in the form of thesauri. Entries in these thesauri are
-    /// generic id/value pairs used by some parts to represent a set of selectable
-    /// options. Each thesaurus refers to a logical set (e.g. categories,
-    /// languages, etc.), and has a specific language.
+    /// categories, which are traditionally used to group them according to
+    /// their type (e.g. funerary, votive, honorary, etc.). In fact, there are
+    /// a number of such thesauri, which vary according to the content being
+    /// handled: categories, languages, metres, etc. In such cases, usually we
+    /// also want our editing UI to provide these tags as a closed set of
+    /// lookup values, so that users can pick them from a list, rather than
+    /// typing them (which would be more difficult, and error-prone). Thus,
+    /// Cadmus provides a generic solution to these scenarios in the form of
+    /// thesauri. Entries in these thesauri are generic id/value pairs used by
+    /// some parts to represent a set of selectable options. Each thesaurus
+    /// refers to a logical set (e.g. categories, languages, etc.), and has a
+    /// specific language.
     /// </remarks>
     public sealed class Thesaurus
     {

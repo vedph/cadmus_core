@@ -1,0 +1,58 @@
+﻿using Cadmus.Core.Config;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Xunit;
+
+namespace Cadmus.Core.Test.Config
+{
+    public sealed class ThesaurusTest
+    {
+        [Fact]
+        public void Visit_Ok()
+        {
+            Thesaurus thesaurus = new Thesaurus("sample");
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "colors",
+                Value = "colors"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "colors.red",
+                Value = "colors: red"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "colors.green",
+                Value = "colors: green"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "colors.blue",
+                Value = "colors: blue"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes",
+                Value = "shapes"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.circle",
+                Value = "shapes: circle"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.triangle",
+                Value = "shapes: triangle"
+            });
+
+            List<ThesaurusTreeEntry> visited = new List<ThesaurusTreeEntry>();
+            thesaurus.Visit(entry =>
+            {
+
+            })
+        }
+    }
+}

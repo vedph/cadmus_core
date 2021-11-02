@@ -26,8 +26,11 @@ namespace Cadmus.Core.Config
     /// </remarks>
     public sealed class Thesaurus
     {
+        private static readonly Regex _idRegex = new Regex(@".+\@[a-z]{2,3}$");
+
         private readonly Dictionary<string, ThesaurusEntry> _entries;
         private readonly List<string> _sortedIds;
+        private string _id;
 
         /// <summary>
         /// Gets or sets the thesaurus unique identifier.
@@ -38,7 +41,18 @@ namespace Cadmus.Core.Config
         /// it should be coherent.</value>
         /// <exception cref="ArgumentNullException">null value</exception>
         /// <exception cref="ArgumentException">invalid value</exception>
-        public string Id { get; }
+        public string Id
+        {
+            get { return _id; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+                if (!_idRegex.IsMatch(value))
+                    throw new ArgumentException(nameof(value));
+                _id = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the target thesaurus identifier. This is used only
@@ -59,10 +73,13 @@ namespace Cadmus.Core.Config
         /// Initializes a new instance of the <see cref="Thesaurus"/> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
+        /// <exception cref="ArgumentException">invalid ID</exception>
         /// <exception cref="ArgumentNullException">id</exception>
         public Thesaurus(string id)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
+            if (!_idRegex.IsMatch(id))
+                throw new ArgumentException(nameof(id));
 
             _entries = new Dictionary<string, ThesaurusEntry>();
             _sortedIds = new List<string>();
@@ -129,15 +146,53 @@ namespace Cadmus.Core.Config
         }
 
         /// <summary>
-        /// Visits this thesaurus entries as a tree.
+        /// Visits this thesaurus entries as a tree, by levels: first the top
+        /// siblings, then their children, etc.
         /// </summary>
+        /// <param name="visitor">The visitor function to invoke for each
+        /// node. This returns <c>true</c> to continue, or <c>false</c> to
+        /// stop visiting.</param>
+        /// <param name="preserveSiblingOrder">True to preserve sibling order
+        /// when visiting, false to just visit the siblings of each level in
+        /// any order.</param>
         /// <exception cref="ArgumentNullException">visitor</exception>
-        public void Visit(Func<ThesaurusTreeEntry,bool> visitor)
+        public void VisitByLevel(Func<ThesaurusTreeEntry, bool> visitor,
+            bool preserveSiblingOrder = false)
         {
             if (visitor is null)
                 throw new ArgumentNullException(nameof(visitor));
 
-            // TODO
+            var groups = from e in _entries.Values
+                          group e by CountDots(e.Id) into g
+                          select new
+                          {
+                              Level = g.Key + 1,
+                              Entries = g.ToList()
+                          };
+            Dictionary<string, ThesaurusTreeEntry> parents =
+                new Dictionary<string, ThesaurusTreeEntry>();
+
+            foreach (var group in groups)
+            {
+                var siblings = preserveSiblingOrder
+                    ? group.Entries.OrderBy(e => _sortedIds.IndexOf(e.Id)).ToList()
+                    : group.Entries;
+                foreach (ThesaurusEntry entry in siblings)
+                {
+                    int i = entry.Id.LastIndexOf('.');
+                    string parentId = i == -1? entry.Id : entry.Id.Substring(0, i);
+
+                    ThesaurusTreeEntry treeEntry = new ThesaurusTreeEntry(entry)
+                    {
+                        Parent = parents.ContainsKey(parentId)
+                            ? parents[parentId] : null
+                    };
+                    if (!visitor(treeEntry)) return;
+
+                    if (!parents.ContainsKey(entry.Id))
+                        parents[entry.Id] = treeEntry;
+                }
+            }
         }
 
         /// <summary>

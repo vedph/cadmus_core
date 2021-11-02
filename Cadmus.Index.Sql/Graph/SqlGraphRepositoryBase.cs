@@ -1894,22 +1894,77 @@ namespace Cadmus.Index.Sql.Graph
 
             try
             {
+                // ensure that we have rdfs:subClassOf
+                Node sub = GetNodeByUri("rdfs:subClassOf");
+                if (sub == null)
+                {
+                    AddNode(sub = new Node
+                    {
+                        Id = AddUri("rdfs:subClassOf"),
+                        Label = "subclass-of",
+                        IsClass = true
+                    }, true);
+                }
+
                 // include root if requested
+                Node root = null;
                 if (includeRoot)
                 {
+                    int atIndex = thesaurus.Id.LastIndexOf('@');
+                    string id = atIndex > -1
+                        ? thesaurus.Id.Substring(0, atIndex)
+                        : thesaurus.Id;
                     string uri = string.IsNullOrEmpty(prefix)
-                        ? thesaurus.Id : prefix + thesaurus.Id;
-                    AddNodeIfNotExists(new Node
+                        ? id : prefix + id;
+
+                    AddNode(root = new Node
+                    {
+                        Id = AddUri(uri),
+                        IsClass = true,
+                        Label = id,
+                        SourceType = NodeSourceType.User,
+                        Tag = "thesaurus"
+                    }, true);
+                }
+
+                Dictionary<string, int> ids = new Dictionary<string, int>();
+                thesaurus.VisitByLevel(entry =>
+                {
+                    string uri = string.IsNullOrEmpty(prefix)
+                        ? entry.Id : prefix + entry.Id;
+                    Node node = new Node
                     {
                         Id = AddUri(uri),
                         IsClass = true,
                         Label = thesaurus.Id,
                         SourceType = NodeSourceType.User,
                         Tag = "thesaurus"
-                    });
-                }
+                    };
+                    AddNode(node, true);
+                    ids[entry.Id] = node.Id;
 
-                // TODO
+                    // triple
+                    if (entry.Parent != null)
+                    {
+                        AddTriple(new Triple
+                        {
+                            SubjectId = node.Id,
+                            PredicateId = sub.Id,
+                            ObjectId = ids[entry.Parent.Id]
+                        });
+                    }
+                    else if (root != null)
+                    {
+                        AddTriple(new Triple
+                        {
+                            SubjectId = node.Id,
+                            PredicateId = sub.Id,
+                            ObjectId = root.Id
+                        });
+                    }
+
+                    return true;
+                });
 
                 CommitTransaction();
             }

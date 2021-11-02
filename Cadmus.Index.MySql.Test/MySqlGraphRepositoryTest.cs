@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using Cadmus.Core.Config;
 using Cadmus.Index.Graph;
 using Cadmus.Index.Sql;
 using Fusi.DbManager;
@@ -7,6 +8,7 @@ using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Cadmus.Index.MySql.Test
@@ -1268,6 +1270,88 @@ namespace Cadmus.Index.MySql.Test
 
             Assert.NotNull(repository.GetTriple(1));
             Assert.Null(repository.GetTriple(2));
+        }
+        #endregion
+
+        #region Thesaurus
+        private static Thesaurus GetThesaurus()
+        {
+            Thesaurus thesaurus = new("geometry@en");
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes",
+                Value = "shapes"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.2d",
+                Value = "shapes: 2D"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.2d.circle",
+                Value = "shapes: 2D: circle"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.2d.triangle",
+                Value = "shapes: 2D: triangle"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.3d",
+                Value = "shapes: 3D"
+            });
+            thesaurus.AddEntry(new ThesaurusEntry
+            {
+                Id = "shapes.3d.cube",
+                Value = "shapes: 3D: cube"
+            });
+
+            return thesaurus;
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("x:classes/")]
+        public void AddThesaurus_NoRoot_Ok(string prefix)
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            Thesaurus thesaurus = GetThesaurus();
+
+            repository.AddThesaurus(thesaurus, false, prefix);
+
+            IList<NodeResult> nodes = repository.GetNodes(new NodeFilter
+            {
+                IsClass = true
+            }).Items;
+            IList<TripleResult> triples =
+                repository.GetTriples(new TripleFilter()).Items;
+
+            // shapes
+            const string sub = "rdfs:subClassOf";
+            NodeResult shapes = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "shapes");
+            Assert.NotNull(shapes);
+
+            // shapes.2d
+            NodeResult node = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "shapes.2d");
+            Assert.NotNull(node);
+            TripleResult triple = triples.FirstOrDefault(
+                t => t.SubjectUri == node.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes.Uri);
+
+            // shapes.3d
+            node = nodes.FirstOrDefault(n => n.Uri == prefix + "shapes.3d");
+            Assert.NotNull(node);
+            triple = triples.FirstOrDefault(
+                t => t.SubjectUri == node.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes.Uri);
+            // TODO
         }
         #endregion
     }

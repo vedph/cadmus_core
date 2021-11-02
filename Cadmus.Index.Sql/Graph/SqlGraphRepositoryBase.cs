@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using Cadmus.Core.Config;
 using Cadmus.Index.Graph;
 using Fusi.DbManager;
 using Fusi.Tools;
@@ -1866,6 +1867,56 @@ namespace Cadmus.Index.Sql.Graph
             finally
             {
                 Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Adds the specified thesaurus as a set of class nodes.
+        /// </summary>
+        /// <param name="thesaurus">The thesaurus.</param>
+        /// <param name="includeRoot">If set to <c>true</c>, include a root node
+        /// corresponding to the thesaurus ID. This typically happens for
+        /// non-hierarchic thesauri, where a flat list of entries is grouped
+        /// under a single root.</param>
+        /// <param name="prefix">The optional prefix to prepend to each ID.</param>
+        /// <exception cref="ArgumentNullException">thesaurus</exception>
+        public void AddThesaurus(Thesaurus thesaurus, bool includeRoot,
+            string prefix = null)
+        {
+            if (thesaurus is null)
+                throw new ArgumentNullException(nameof(thesaurus));
+
+            // nothing to do for aliases
+            if (thesaurus.TargetId != null) return;
+
+            EnsureConnected();
+            BeginTransaction();
+
+            try
+            {
+                // include root if requested
+                if (includeRoot)
+                {
+                    string uri = string.IsNullOrEmpty(prefix)
+                        ? thesaurus.Id : prefix + thesaurus.Id;
+                    AddNodeIfNotExists(new Node
+                    {
+                        Id = AddUri(uri),
+                        IsClass = true,
+                        Label = thesaurus.Id,
+                        SourceType = NodeSourceType.User,
+                        Tag = "thesaurus"
+                    });
+                }
+
+                // TODO
+
+                CommitTransaction();
+            }
+            catch
+            {
+                RollbackTransaction();
+                throw;
             }
         }
         #endregion

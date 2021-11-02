@@ -145,6 +145,9 @@ namespace Cadmus.Index.Sql
         /// </summary>
         protected virtual void EnsureConnected()
         {
+            if (Connection != null && Connection.State == ConnectionState.Open)
+                return;
+
             // ensure the connection is open
             if (Connection == null)
             {

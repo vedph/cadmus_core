@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -29,13 +30,12 @@ namespace Cadmus.Core.Config
         private readonly List<string> _sortedIds;
 
         /// <summary>
-        /// Gets or sets the tag's unique identifier.
+        /// Gets or sets the thesaurus unique identifier.
         /// </summary>
-        /// <value>The tag ID must not be null, and should contain only letters
-        /// (a-z or A-Z), digits (0-9), underscores, dashes, dots, and end with
-        /// a language suffix like in RDF, using ISO639-2 or ISO639-3, e.g.
-        /// <c>@en</c> (or <c>eng</c>) = English. The choice between ISO639-2
-        /// and -3 is up to the user, but once set it should be coherent.</value>
+        /// <value>The ID must end with a language suffix like in RDF, using
+        /// ISO639-2 or ISO639-3, e.g. <c>@en</c> (or <c>eng</c>) = English.
+        /// The choice between ISO639-2 and -3 is up to the user, but once set
+        /// it should be coherent.</value>
         /// <exception cref="ArgumentNullException">null value</exception>
         /// <exception cref="ArgumentException">invalid value</exception>
         public string Id { get; }
@@ -62,14 +62,7 @@ namespace Cadmus.Core.Config
         /// <exception cref="ArgumentNullException">id</exception>
         public Thesaurus(string id)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-
-            if (!Regex.IsMatch(id, @"^[a-zA-Z0-9_\-\.]+\@[a-z]{2,3}$"))
-            {
-                throw new ArgumentException(LocalizedStrings.Format(
-                    Properties.Resources.InvalidTagSetId, id));
-            }
-            Id = id;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
 
             _entries = new Dictionary<string, ThesaurusEntry>();
             _sortedIds = new List<string>();
@@ -123,6 +116,28 @@ namespace Cadmus.Core.Config
             if (id == null) throw new ArgumentNullException(nameof(id));
 
             return _entries.ContainsKey(id) ? _entries[id].Value : null;
+        }
+
+        private static int CountDots(string text)
+        {
+            int n = 0;
+            foreach (char c in text)
+            {
+                if (c == '.') n++;
+            }
+            return n;
+        }
+
+        /// <summary>
+        /// Visits this thesaurus entries as a tree.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">visitor</exception>
+        public void Visit(Func<ThesaurusTreeEntry,bool> visitor)
+        {
+            if (visitor is null)
+                throw new ArgumentNullException(nameof(visitor));
+
+            // TODO
         }
 
         /// <summary>

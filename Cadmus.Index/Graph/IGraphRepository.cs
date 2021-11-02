@@ -1,4 +1,5 @@
 ﻿using Cadmus.Core;
+using Cadmus.Core.Config;
 using Fusi.Tools;
 using Fusi.Tools.Data;
 using System;
@@ -260,5 +261,16 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="sourceId">The source identifier.</param>
         void DeleteGraphSet(string sourceId);
+
+        /// <summary>
+        /// Adds the specified thesaurus as a set of class nodes.
+        /// </summary>
+        /// <param name="thesaurus">The thesaurus.</param>
+        /// <param name="includeRoot">If set to <c>true</c>, include a root node
+        /// corresponding to the thesaurus ID. This typically happens for
+        /// non-hierarchic thesauri, where a flat list of entries is grouped
+        /// under a single root.</param>
+        /// <param name="prefix">The optional prefix to prepend to each ID.</param>
+        void AddThesaurus(Thesaurus thesaurus, bool includeRoot, string prefix = null);
     }
 }

@@ -6,7 +6,7 @@ namespace Cadmus.Core.Config
     /// <summary>
     /// An entry used in a thesaurus (<see cref="Thesaurus"/>).
     /// </summary>
-    public sealed class ThesaurusEntry
+    public class ThesaurusEntry
     {
         private string _id;
 
@@ -69,7 +69,7 @@ namespace Cadmus.Core.Config
         /// Clones this instance.
         /// </summary>
         /// <returns>New instance.</returns>
-        public ThesaurusEntry Clone()
+        public virtual ThesaurusEntry Clone()
         {
             return new ThesaurusEntry(_id, Value);
         }

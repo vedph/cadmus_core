@@ -6,6 +6,7 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+- 2021-11-03: added `AddThesaurus` to `IGraphRepository` to allow importing thesaurus-based taxonomies as classes in the graph.
 - 2021-10-30: added `IGraphPresetReader` and its JSON implementation to read preset graph nodes and node mappings from an external source. This will be used in configuration via Cadmus tool.
 - 2021-10-24: added `InitContext` to `IItemIndexWriter` to allow for lazy graph database initialization.
 - 2021-10-15: refactored parts with `DocReferences` to use the new model from bricks.

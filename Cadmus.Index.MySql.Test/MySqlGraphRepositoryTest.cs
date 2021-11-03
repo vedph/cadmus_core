@@ -1387,6 +1387,94 @@ namespace Cadmus.Index.MySql.Test
                 && t.PredicateUri == sub
                 && t.ObjectUri == shapes3d.Uri);
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("x:classes/")]
+        public void AddThesaurus_Root_Ok(string prefix)
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            Thesaurus thesaurus = GetThesaurus();
+
+            repository.AddThesaurus(thesaurus, true, prefix);
+
+            // get nodes and triples
+            IList<NodeResult> nodes = repository.GetNodes(new NodeFilter
+            {
+                IsClass = true
+            }).Items;
+            Assert.Equal(8, nodes.Count);
+
+            IList<TripleResult> triples =
+                repository.GetTriples(new TripleFilter()).Items;
+            Assert.Equal(6, triples.Count);
+
+            const string sub = "rdfs:subClassOf";
+
+            // geometry (root from ID)
+            NodeResult geometry = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "geometry");
+            Assert.NotNull(geometry);
+
+            // shapes (root entry)
+            NodeResult shapes = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "shapes");
+            Assert.NotNull(shapes);
+            // shapes subclass of geometry
+            TripleResult triple = triples.FirstOrDefault(
+                t => t.SubjectUri == shapes.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == geometry.Uri);
+
+            // shapes.2d
+            NodeResult shapes2d = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "shapes.2d");
+            Assert.NotNull(shapes2d);
+            // shapes.2d subclass of shapes
+            triple = triples.FirstOrDefault(
+                t => t.SubjectUri == shapes2d.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes.Uri);
+
+            // shapes.3d
+            NodeResult shapes3d = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "shapes.3d");
+            Assert.NotNull(shapes3d);
+            // shapes.3d subclass of shapes
+            triple = triples.FirstOrDefault(
+                t => t.SubjectUri == shapes3d.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes.Uri);
+
+            // shapes.2d.circle
+            NodeResult node = nodes.FirstOrDefault(
+                n => n.Uri == prefix + "shapes.2d.circle");
+            Assert.NotNull(node);
+            // shapes.2d.circle subclass of shapes.2d
+            triple = triples.FirstOrDefault(
+                t => t.SubjectUri == node.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes2d.Uri);
+
+            // shapes.2d.triangle
+            node = nodes.FirstOrDefault(n => n.Uri == prefix + "shapes.2d.triangle");
+            Assert.NotNull(node);
+            // shapes.2d.triangle subclass of shapes.2d
+            triple = triples.FirstOrDefault(
+                t => t.SubjectUri == node.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes2d.Uri);
+
+            // shapes.3d.cube
+            node = nodes.FirstOrDefault(n => n.Uri == prefix + "shapes.3d.cube");
+            Assert.NotNull(node);
+            // shapes.3d.cube subclass of shapes.3d
+            triple = triples.FirstOrDefault(
+                t => t.SubjectUri == node.Uri
+                && t.PredicateUri == sub
+                && t.ObjectUri == shapes3d.Uri);
+        }
         #endregion
     }
 

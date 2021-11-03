@@ -1936,7 +1936,7 @@ namespace Cadmus.Index.Sql.Graph
                     {
                         Id = AddUri(uri),
                         IsClass = true,
-                        Label = thesaurus.Id,
+                        Label = entry.Id,
                         SourceType = NodeSourceType.User,
                         Tag = "thesaurus"
                     };

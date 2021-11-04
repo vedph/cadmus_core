@@ -122,7 +122,7 @@ namespace Cadmus.Index.Test
             });
             repository.AddNode(new Node
             {
-                Id = repository.AddUri("a"),    // a=rdfs:type
+                Id = repository.AddUri("a"),    // a=rdf:type
                 Tag = Node.TAG_PROPERTY,
                 Label = "Is-a"
             });

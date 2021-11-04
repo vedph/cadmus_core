@@ -748,7 +748,8 @@ namespace Cadmus.Index.Sql.Graph
 
                 cmd.ExecuteNonQuery();
 
-                UpdateNodeClasses(node.Id);
+                var asIds = GetASubIds();
+                UpdateNodeClasses(node.Id, asIds.Item1, asIds.Item2);
             }
             finally
             {
@@ -1743,7 +1744,11 @@ namespace Cadmus.Index.Sql.Graph
                 else cmd.ExecuteNonQuery();
 
                 // update subject node classes when O is not a literal
-                if (triple.ObjectId == 0) UpdateNodeClasses(triple.SubjectId);
+                if (triple.ObjectId == 0)
+                {
+                    var asIds = GetASubIds();
+                    UpdateNodeClasses(triple.SubjectId, asIds.Item1, asIds.Item2);
+                }
             }
             finally
             {
@@ -1783,7 +1788,11 @@ namespace Cadmus.Index.Sql.Graph
                 cmd.ExecuteNonQuery();
 
                 // update classes if required
-                if (objectId > 0) UpdateNodeClasses(subjectId);
+                if (objectId > 0)
+                {
+                    var asIds = GetASubIds();
+                    UpdateNodeClasses(subjectId, asIds.Item1, asIds.Item2);
+                }
             }
             finally
             {
@@ -1793,12 +1802,41 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Node Classes
-        private void UpdateNodeClasses(int nodeId)
+        private Tuple<int, int> GetASubIds()
+        {
+            // rdf:type and rdfs:subClassOf must exist
+            Node a = GetNodeByUri("rdf:type");
+            if (a == null)
+            {
+                AddNode(a = new Node
+                {
+                    Id = AddUri("rdf:type"),
+                    Label = "is-a",
+                    Tag = "property"
+                }, true);
+            }
+
+            Node sub = GetNodeByUri("rdfs:subClassOf");
+            if (sub == null)
+            {
+                AddNode(sub = new Node
+                {
+                    Id = AddUri("rdfs:subClassOf"),
+                    Label = "rdfs:subClassOf",
+                    Tag = "property"
+                }, true);
+            }
+            return Tuple.Create(a.Id, sub.Id);
+        }
+
+        private void UpdateNodeClasses(int nodeId, int aId, int subId)
         {
             DbCommand cmd = GetCommand();
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.CommandText = "populate_node_class";
             AddParameter(cmd, "instance_id", DbType.Int32, nodeId);
+            AddParameter(cmd, "a_id", DbType.Int32, aId);
+            AddParameter(cmd, "sub_id", DbType.Int32, subId);
             cmd.ExecuteNonQuery();
         }
 
@@ -1813,28 +1851,37 @@ namespace Cadmus.Index.Sql.Graph
             EnsureConnected();
             try
             {
+                // rdf:type and rdfs:subClassOf must exist
+                var asIds = GetASubIds();
+
                 DbCommand countCmd = GetCommand();
-                countCmd.CommandText = "SELECT COUNT(id) FROM node " +
-                    "INNER JOIN node_class WHERE node.id=node_class.node_id;";
+                countCmd.CommandText = "SELECT COUNT(node.id) FROM node " +
+                    "WHERE node.is_class=0;";
                 long? result = countCmd.ExecuteScalar() as long?;
                 if (result == null) return Task.CompletedTask;
 
                 int total = (int)result.Value;
 
                 DbCommand cmdSel = GetCommand();
-                cmdSel.CommandText = "SELECT id FROM node " +
-                    "INNER JOIN node_class WHERE node.id=node_class.node_id;";
+                cmdSel.CommandText = "SELECT node.id FROM node " +
+                    "WHERE node.is_class=0;";
 
                 using (DbDataReader reader = cmdSel.ExecuteReader())
+                using (DbConnection updaterConn = GetConnection())
                 {
+                    updaterConn.Open();
                     ProgressReport report =
                         progress != null ? new ProgressReport() : null;
                     int oldPercent = 0;
 
                     DbCommand updCmd = GetCommand();
+                    // we need another connection to update while reading
+                    updCmd.Connection = updaterConn;
                     updCmd.CommandType = CommandType.StoredProcedure;
                     updCmd.CommandText = "populate_node_class";
                     AddParameter(updCmd, "instance_id", DbType.Int32);
+                    AddParameter(updCmd, "a_id", DbType.Int32, asIds.Item1);
+                    AddParameter(updCmd, "sub_id", DbType.Int32, asIds.Item2);
 
                     while (reader.Read())
                     {
@@ -1861,7 +1908,6 @@ namespace Cadmus.Index.Sql.Graph
                         progress.Report(report);
                     }
                 }
-
                 return Task.CompletedTask;
             }
             finally

@@ -9,6 +9,8 @@ using Fusi.Tools.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Cadmus.Index.MySql.Test
@@ -1476,6 +1478,77 @@ namespace Cadmus.Index.MySql.Test
                 && t.ObjectUri == shapes3d.Uri);
         }
         #endregion
+
+        [Fact]
+        public async Task UpdateNodeClassesAsync_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            // add properties and classes
+            Thesaurus thesaurus = GetThesaurus();
+            repository.AddThesaurus(thesaurus, false);
+            Node a = new()
+            {
+                Id = repository.AddUri("rdf:type"),
+                Label = "is-a",
+                Tag = "property"
+            };
+            repository.AddNode(a, true);
+            Node sub = new()
+            {
+                Id = repository.AddUri("rdfs:subClassOf"),
+                Label = "rdfs:subClassOf",
+                Tag = "property"
+            };
+            repository.AddNode(sub, true);
+
+            Node circle = repository.GetNodeByUri("shapes.2d.circle");
+            Node cube = repository.GetNodeByUri("shapes.3d.cube");
+
+            // add nodes
+            // dish a circle
+            Node dish = new()
+            {
+                Id = repository.AddUri("x:dish"),
+                Label = "dish"
+            };
+            repository.AddNode(dish);
+            repository.AddTriple(new Triple
+            {
+                SubjectId = dish.Id,
+                PredicateId = a.Id,
+                ObjectId = circle.Id
+            });
+            // dice a cube
+            Node dice = new()
+            {
+                Id = repository.AddUri("x:dice"),
+                Label = "dice"
+            };
+            repository.AddNode(dice);
+            repository.AddTriple(new Triple
+            {
+                SubjectId = dice.Id,
+                PredicateId = a.Id,
+                ObjectId = cube.Id
+            });
+
+            // classes hierarchy:
+            // +-shapes
+            // +--shapes.2d
+            // +---shapes.2d.circle
+            // +---shapes.2d.triangle
+            // +--shapes.3d
+            // +---shapes.3d.cube
+            await repository.UpdateNodeClassesAsync(CancellationToken.None);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                ClassIds = new List<string>(new[] { "shapes" }),
+                IsClass = false
+            });
+            Assert.Equal(2, page.Total);
+        }
     }
 
     #region NamesPart

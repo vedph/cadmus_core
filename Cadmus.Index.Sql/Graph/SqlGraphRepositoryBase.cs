@@ -453,6 +453,20 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Node
+        private IList<int> GetUriIds(IList<string> uris)
+        {
+            DbCommand cmd = GetCommand();
+            cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri IN(" +
+                string.Join(", ", uris.Select(
+                    s => SqlHelper.SqlEncode(s, false, true, true))) + ");";
+            List<int> ids = new List<int>(uris.Count);
+            using (DbDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read()) ids.Add(reader.GetInt32(0));
+            }
+            return ids;
+        }
+
         private SqlSelectBuilder GetBuilderFor(NodeFilter filter)
         {
             SqlSelectBuilder builder = GetSelectBuilder();
@@ -558,13 +572,11 @@ namespace Cadmus.Index.Sql.Graph
             // class IDs
             if (filter.ClassIds?.Count > 0)
             {
-                string ids = string.Join(",",
-                    filter.ClassIds.Select(
-                        id => SqlHelper.SqlEncode(id, false, true)));
+                IList<int> ids = GetUriIds(filter.ClassIds);
 
                 builder.AddFrom("INNER JOIN node_class nc " +
-                    $"ON node.id=nc.node_id AND nc.class_id IN({ids})",
-                    slotId: "*");
+                    "ON node.id=nc.node_id AND nc.class_id " +
+                    $"IN({string.Join(", ", ids)})", slotId: "*");
             }
 
             // order and limit

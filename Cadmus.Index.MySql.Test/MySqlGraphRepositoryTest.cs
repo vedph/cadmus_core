@@ -291,8 +291,8 @@ namespace Cadmus.Index.MySql.Test
 
             DataPage<NodeResult> page = repository.GetNodes(new NodeFilter());
 
-            Assert.Equal(10, page.Total);
-            Assert.Equal(10, page.Items.Count);
+            Assert.Equal(10 + 2, page.Total);
+            Assert.Equal(10 + 2, page.Items.Count);
         }
 
         [Fact]
@@ -308,10 +308,10 @@ namespace Cadmus.Index.MySql.Test
                 PageSize = 5
             });
 
-            Assert.Equal(10, page.Total);
+            Assert.Equal(10 + 2, page.Total);
             Assert.Equal(5, page.Items.Count);
-            Assert.Equal("Node 06", page.Items[0].Label);
-            Assert.Equal("Node 10", page.Items[4].Label);
+            Assert.Equal("Node 05", page.Items[0].Label);
+            Assert.Equal("Node 09", page.Items[4].Label);
         }
 
         [Fact]
@@ -1113,7 +1113,7 @@ namespace Cadmus.Index.MySql.Test
 
             var page = repository.GetTriples(new TripleFilter
             {
-                PredicateId = 3
+                PredicateId = 4
             });
 
             Assert.Equal(1, page.Total);
@@ -1130,7 +1130,7 @@ namespace Cadmus.Index.MySql.Test
 
             var page = repository.GetTriples(new TripleFilter
             {
-                ObjectId = 4
+                ObjectId = 5
             });
 
             Assert.Equal(1, page.Total);

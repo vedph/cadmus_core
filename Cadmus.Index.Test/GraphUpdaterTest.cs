@@ -110,7 +110,7 @@ namespace Cadmus.Index.Test
             updater.Update(oldSet);
 
             var nodePage = repository.GetNodes(new NodeFilter());
-            Assert.Equal(11, nodePage.Total);
+            Assert.Equal(11 + 2, nodePage.Total);
 
             var triplePage = repository.GetTriples(new TripleFilter());
             Assert.Equal(7, triplePage.Total);
@@ -174,7 +174,7 @@ namespace Cadmus.Index.Test
 
             // resulting nodes:
             DataPage<NodeResult> nPage = repository.GetNodes(new NodeFilter());
-            Assert.Equal(11, nPage.Total);
+            Assert.Equal(11 + 2, nPage.Total);
             var nodes = nPage.Items;
 
             // barbato
@@ -299,7 +299,7 @@ namespace Cadmus.Index.Test
             TripleFilter tf = new TripleFilter();
 
             var nodePage = repository.GetNodes(nf);
-            Assert.Equal(10, nodePage.Total);
+            Assert.Equal(10 + 2, nodePage.Total);
 
             var triplePage = repository.GetTriples(tf);
             Assert.Equal(7, triplePage.Total);
@@ -308,8 +308,8 @@ namespace Cadmus.Index.Test
             updater.Delete(part.Id);
 
             nodePage = repository.GetNodes(nf);
-            Assert.Equal(7, nodePage.Total);
-            Assert.Equal(4, nodePage.Items.Count(n => n.Tag == Node.TAG_PROPERTY));
+            Assert.Equal(7 + 2, nodePage.Total);
+            Assert.Equal(4 + 2, nodePage.Items.Count(n => n.Tag == Node.TAG_PROPERTY));
             Assert.Equal(2, nodePage.Items.Count(n => n.IsClass));
             Assert.NotNull(nodePage.Items.FirstOrDefault(
                 n => n.Uri == "x:persons/scipione_barbato"));

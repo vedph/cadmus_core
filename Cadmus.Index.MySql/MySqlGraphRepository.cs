@@ -159,11 +159,12 @@ namespace Cadmus.Index.MySql
                 DbCommand cmd = GetCommand();
                 cmd.Transaction = Transaction;
                 cmd.CommandText = "INSERT IGNORE INTO node" +
-                    "(id, is_class, label, source_type, sid) " +
-                    "VALUES(@id, @is_class, @label, @source_type, @sid);";
+                    "(id, is_class, label, tag, source_type, sid) " +
+                    "VALUES(@id, @is_class, @label, @tag, @source_type, @sid);";
                 AddParameter(cmd, "@id", DbType.Int32, node.Id);
                 AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
                 AddParameter(cmd, "@label", DbType.String, node.Label);
+                AddParameter(cmd, "@tag", DbType.String, node.Tag);
                 AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
                 AddParameter(cmd, "@sid", DbType.String, node.Sid);
 

@@ -487,12 +487,11 @@ namespace Cadmus.TestBase
 
             Assert.NotNull(thesaurus);
             Assert.Equal("en", thesaurus.GetLanguage());
-            var entries = thesaurus.GetEntries();
-            Assert.Equal(5, entries.Count);
+            Assert.Equal(5, thesaurus.Entries.Count);
             for (int i = 1; i <= 5; i++)
             {
-                Assert.Equal($"entry{i}", entries[i - 1].Id);
-                Assert.Equal($"value of entry{i}", entries[i - 1].Value);
+                Assert.Equal($"entry{i}", thesaurus.Entries[i - 1].Id);
+                Assert.Equal($"value of entry{i}", thesaurus.Entries[i - 1].Value);
             }
         }
 
@@ -507,12 +506,11 @@ namespace Cadmus.TestBase
 
             Assert.NotNull(thesaurus);
             Assert.Equal("en", thesaurus.GetLanguage());
-            IList<ThesaurusEntry> entries = thesaurus.GetEntries();
-            Assert.Equal(5, entries.Count);
+            Assert.Equal(5, thesaurus.Entries.Count);
             for (int i = 1; i <= 5; i++)
             {
-                Assert.Equal($"entry{i}", entries[i - 1].Id);
-                Assert.Equal($"value of entry{i}", entries[i - 1].Value);
+                Assert.Equal($"entry{i}", thesaurus.Entries[i - 1].Id);
+                Assert.Equal($"value of entry{i}", thesaurus.Entries[i - 1].Value);
             }
         }
 
@@ -528,14 +526,13 @@ namespace Cadmus.TestBase
 
             Assert.NotNull(thesaurus);
             Assert.Equal("en", thesaurus.GetLanguage());
-            IList<ThesaurusEntry> entries = thesaurus.GetEntries();
-            Assert.Equal(6, entries.Count);
+            Assert.Equal(6, thesaurus.Entries.Count);
             for (int i = 1; i <= 5; i++)
             {
-                Assert.Equal($"entry{i}", entries[i - 1].Id);
-                Assert.Equal($"value of entry{i}", entries[i - 1].Value);
+                Assert.Equal($"entry{i}", thesaurus.Entries[i - 1].Id);
+                Assert.Equal($"value of entry{i}", thesaurus.Entries[i - 1].Value);
             }
-            ThesaurusEntry entry = entries[5];
+            ThesaurusEntry entry = thesaurus.Entries[5];
             Assert.Equal("added", entry.Id);
             Assert.Equal("here I am", entry.Value);
         }

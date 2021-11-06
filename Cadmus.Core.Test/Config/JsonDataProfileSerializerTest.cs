@@ -51,13 +51,13 @@ namespace Cadmus.Core.Test.Config
             Thesaurus thesaurus = Array.Find(profile.Thesauri,
                 t => t.Id == "categories@en");
             Assert.NotNull(thesaurus);
-            Assert.Equal(16, thesaurus.GetEntries().Count);
+            Assert.Equal(16, thesaurus.Entries.Count);
             // TODO: check each entry
 
             thesaurus = Array.Find(profile.Thesauri,
                 t => t.Id == "languages@en");
             Assert.NotNull(thesaurus);
-            Assert.Equal(8, thesaurus.GetEntries().Count);
+            Assert.Equal(8, thesaurus.Entries.Count);
             // TODO: check each entry
 
             Assert.NotNull(profile.GraphPinFilter);

@@ -8,29 +8,11 @@ namespace Cadmus.Core.Config
     /// </summary>
     public class ThesaurusEntry
     {
-        private string _id;
-
         /// <summary>
         /// Gets or sets the tag's unique identifier.
         /// </summary>
-        /// <value>The tag ID must not be null, and should contain only letters
-        /// (a-z or A-Z), digits (0-9), underscores, dashes, and dots (which can
-        /// be used to represent a hierarchy, e.g. <c>inscription.funerary</c>).
-        /// </value>
         /// <exception cref="ArgumentException">invalid ID</exception>
-        public string Id
-        {
-            get { return _id; }
-            set
-            {
-                if (!Regex.IsMatch(value, @"^[a-zA-Z0-9_\-\.]+$"))
-                {
-                    throw new ArgumentException(LocalizedStrings.Format(
-                        Properties.Resources.InvalidTagId, value));
-                }
-                _id = value;
-            }
-        }
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the entry's human-readable value.
@@ -60,7 +42,7 @@ namespace Cadmus.Core.Config
                 throw new ArgumentException(LocalizedStrings.Format(
                     Properties.Resources.InvalidTagId, id));
             }
-            _id = id;
+            Id = id;
 
             Value = value;
         }
@@ -71,7 +53,7 @@ namespace Cadmus.Core.Config
         /// <returns>New instance.</returns>
         public virtual ThesaurusEntry Clone()
         {
-            return new ThesaurusEntry(_id, Value);
+            return new ThesaurusEntry(Id, Value);
         }
 
         /// <summary>

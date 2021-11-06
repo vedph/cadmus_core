@@ -51,7 +51,7 @@ namespace Cadmus.Core.Test.Config
             {
                 visited.Add(entry);
                 return true;
-            }, true);
+            });
             Assert.Equal(7, visited.Count);
 
             Assert.Equal("colors", visited[0].Id);

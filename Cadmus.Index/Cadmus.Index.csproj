@@ -10,7 +10,7 @@
     <Product>Cadmus</Product>
     <Description>Cadmus items index.</Description>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>1.3.4</Version>
+    <Version>1.3.5</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;index</PackageTags>
   </PropertyGroup>

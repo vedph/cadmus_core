@@ -28,9 +28,6 @@ namespace Cadmus.Core.Config
     public sealed class Thesaurus
     {
         private static readonly Regex _idRegex = new Regex(@".+\@[a-z]{2,3}$");
-
-        private readonly Dictionary<string, ThesaurusEntry> _entries;
-        private readonly List<string> _sortedIds;
         private string _id;
 
         /// <summary>
@@ -64,10 +61,16 @@ namespace Cadmus.Core.Config
         public string TargetId { get; set; }
 
         /// <summary>
+        /// Gets or sets the entries.
+        /// </summary>
+        public IList<ThesaurusEntry> Entries { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Thesaurus"/> class.
         /// </summary>
         public Thesaurus()
         {
+            Entries = new List<ThesaurusEntry>();
         }
 
         /// <summary>
@@ -82,8 +85,7 @@ namespace Cadmus.Core.Config
             if (!_idRegex.IsMatch(id))
                 throw new ArgumentException(nameof(id));
 
-            _entries = new Dictionary<string, ThesaurusEntry>();
-            _sortedIds = new List<string>();
+            Entries = new List<ThesaurusEntry>();
         }
 
         /// <summary>
@@ -99,17 +101,6 @@ namespace Cadmus.Core.Config
         }
 
         /// <summary>
-        /// Gets the entries, sorted by their original order.
-        /// </summary>
-        public IList<ThesaurusEntry> GetEntries()
-        {
-            List<ThesaurusEntry> entries = new List<ThesaurusEntry>();
-            foreach (string key in _sortedIds)
-                entries.Add(_entries[key].Clone());
-            return entries;
-        }
-
-        /// <summary>
         /// Adds the specified entry to this thesaurus.
         /// If an entry with the same ID already exists, it will be replaced.
         /// </summary>
@@ -119,8 +110,23 @@ namespace Cadmus.Core.Config
         {
             if (entry == null) throw new ArgumentNullException(nameof(entry));
 
-            if (!_entries.ContainsKey(entry.Id)) _sortedIds.Add(entry.Id);
-            _entries[entry.Id] = entry.Clone();
+            if (Entries == null)
+            {
+                Entries = new List<ThesaurusEntry>
+                {
+                    entry
+                };
+                return;
+            }
+            for (int i = 0; i < Entries.Count; i++)
+            {
+                if (Entries[i].Id == entry.Id)
+                {
+                    Entries[i] = entry;
+                    return;
+                }
+            }
+            Entries.Add(entry);
         }
 
         /// <summary>
@@ -133,7 +139,8 @@ namespace Cadmus.Core.Config
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            return _entries.ContainsKey(id) ? _entries[id].Value : null;
+            ThesaurusEntry entry = Entries?.FirstOrDefault(e => e.Id == id);
+            return entry?.Value;
         }
 
         private static int CountDots(string text)
@@ -153,17 +160,14 @@ namespace Cadmus.Core.Config
         /// <param name="visitor">The visitor function to invoke for each
         /// node. This returns <c>true</c> to continue, or <c>false</c> to
         /// stop visiting.</param>
-        /// <param name="preserveSiblingOrder">True to preserve sibling order
-        /// when visiting, false to just visit the siblings of each level in
-        /// any order.</param>
         /// <exception cref="ArgumentNullException">visitor</exception>
-        public void VisitByLevel(Func<ThesaurusTreeEntry, bool> visitor,
-            bool preserveSiblingOrder = false)
+        public void VisitByLevel(Func<ThesaurusTreeEntry, bool> visitor)
         {
             if (visitor is null)
                 throw new ArgumentNullException(nameof(visitor));
+            if (Entries == null || Entries.Count == 0) return;
 
-            var groups = from e in _entries.Values
+            var groups = from e in Entries
                           group e by CountDots(e.Id) into g
                           select new
                           {
@@ -175,10 +179,7 @@ namespace Cadmus.Core.Config
 
             foreach (var group in groups)
             {
-                var siblings = preserveSiblingOrder
-                    ? group.Entries.OrderBy(e => _sortedIds.IndexOf(e.Id)).ToList()
-                    : group.Entries;
-                foreach (ThesaurusEntry entry in siblings)
+                foreach (ThesaurusEntry entry in group.Entries)
                 {
                     int i = entry.Id.LastIndexOf('.');
                     string parentId = i == -1? entry.Id : entry.Id.Substring(0, i);
@@ -204,7 +205,7 @@ namespace Cadmus.Core.Config
         /// </returns>
         public override string ToString()
         {
-            return $"{Id} ({_entries.Count})";
+            return $"{Id} ({Entries?.Count ?? 0})";
         }
     }
 }

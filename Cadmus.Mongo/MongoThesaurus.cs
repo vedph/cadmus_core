@@ -51,8 +51,11 @@ namespace Cadmus.Mongo
             Id = thesaurus.Id;
             TargetId = thesaurus.TargetId;
             Entries = new List<MongoThesaurusEntry>();
-            foreach (ThesaurusEntry entry in thesaurus.GetEntries())
-                Entries.Add(new MongoThesaurusEntry(entry));
+            if (thesaurus.Entries != null)
+            {
+                foreach (ThesaurusEntry entry in thesaurus.Entries)
+                    Entries.Add(new MongoThesaurusEntry(entry));
+            }
         }
 
         /// <summary>

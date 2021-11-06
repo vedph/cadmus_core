@@ -1,0 +1,32 @@
+﻿[
+  {
+    "id": "colors@en",
+    "entries": [
+      {
+        "id": "r",
+        "value": "red"
+      },
+      {
+        "id": "g",
+        "value": "green"
+      },
+      {
+        "id": "b",
+        "value": "blue"
+      }
+    ]
+  },
+  {
+    "id": "shapes@en",
+    "entries": [
+      {
+        "id": "crc",
+        "value": "circle"
+      },
+      {
+        "id": "trg",
+        "value": "triangle"
+      }
+    ]
+  }
+]

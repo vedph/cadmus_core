@@ -9,11 +9,13 @@
   <ItemGroup>
     <None Remove="Assets\PresetMappings.json" />
     <None Remove="Assets\PresetNodes.json" />
+    <None Remove="Assets\PresetThesauri.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\PresetMappings.json" />
     <EmbeddedResource Include="Assets\PresetNodes.json" />
+    <EmbeddedResource Include="Assets\PresetThesauri.json" />
   </ItemGroup>
 
   <ItemGroup>

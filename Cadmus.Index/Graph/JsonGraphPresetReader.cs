@@ -1,27 +1,46 @@
-﻿using System;
+﻿using Cadmus.Core.Config;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Cadmus.Index.Graph
 {
     /// <summary>
-    /// JSON-based graph preset reader. This reads nodes or node mappings
-    /// from JSON files, each being an array of node or node mapping objects.
+    /// JSON-based graph preset reader. This reads nodes, node mappings or
+    /// thesauri each from a JSON file, including an array of nodes or node
+    /// mappings, or thesauri.
     /// Deserialization is not case sensitive.
     /// </summary>
     /// <seealso cref="IGraphPresetReader" />
     public sealed class JsonGraphPresetReader : IGraphPresetReader
     {
-        private async Task<IList<T>> ReadAsync<T>(Stream stream)
+        private readonly JsonSerializerOptions _options;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonGraphPresetReader"/>
+        /// class.
+        /// </summary>
+        public JsonGraphPresetReader()
         {
-            return await JsonSerializer.DeserializeAsync<T[]>(stream,
-                new JsonSerializerOptions
-                {
-                    AllowTrailingCommas = true,
-                    PropertyNameCaseInsensitive = true
-                });
+            _options = new JsonSerializerOptions
+            {
+                AllowTrailingCommas = true,
+                PropertyNameCaseInsensitive = true
+            };
+        }
+
+        private IEnumerable<T> Read<T>(Stream stream)
+        {
+            JsonDocument doc = JsonDocument.Parse(stream, new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true
+            });
+            foreach (JsonElement elem in doc.RootElement.EnumerateArray())
+            {
+                yield return JsonSerializer.Deserialize<T>(elem.GetRawText(),
+                    _options);
+            }
         }
 
         /// <summary>
@@ -30,11 +49,10 @@ namespace Cadmus.Index.Graph
         /// <param name="stream">The stream.</param>
         /// <returns>Nodes.</returns>
         /// <exception cref="ArgumentNullException">stream</exception>
-        public async Task<IList<UriNode>> ReadNodesAsync(Stream stream)
+        public IEnumerable<UriNode> ReadNodes(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
-
-            return await ReadAsync<UriNode>(stream);
+            return Read<UriNode>(stream);
         }
 
         /// <summary>
@@ -48,21 +66,32 @@ namespace Cadmus.Index.Graph
         /// Node mappings.
         /// </returns>
         /// <exception cref="ArgumentNullException">stream</exception>
-        public async Task<IList<NodeMapping>> ReadMappingsAsync(Stream stream,
+        public IEnumerable<NodeMapping> ReadMappings(Stream stream,
             int idOffset = 0)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
 
-            IList<NodeMapping> mappings = await ReadAsync<NodeMapping>(stream);
-            if (idOffset != 0)
+            foreach (NodeMapping mapping in Read<NodeMapping>(stream))
             {
-                foreach (NodeMapping mapping in mappings)
+                if (idOffset != 0)
                 {
                     mapping.Id += idOffset;
                     mapping.ParentId += idOffset;
                 }
+                yield return mapping;
             }
-            return mappings;
+        }
+
+        /// <summary>
+        /// Reads the class thesauri from the specified stream.
+        /// </summary>
+        /// <param name="stream">The stream.</param>
+        /// <returns>Thesauri.</returns>
+        /// <exception cref="ArgumentNullException">stream</exception>
+        public IEnumerable<Thesaurus> ReadThesauri(Stream stream)
+        {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            return Read<Thesaurus>(stream);
         }
     }
 }

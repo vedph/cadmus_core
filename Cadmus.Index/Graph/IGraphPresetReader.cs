@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cadmus.Core.Config;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Cadmus.Index.Graph
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <returns>Nodes.</returns>
-        Task<IList<UriNode>> ReadNodesAsync(Stream stream);
+        IEnumerable<UriNode> ReadNodes(Stream stream);
 
         /// <summary>
         /// Reads the preset node mappings from the specified stream.
@@ -26,7 +27,14 @@ namespace Cadmus.Index.Graph
         /// read from the input. This can be used when you have to merge
         /// mappings into an existing database.</param>
         /// <returns>Node mappings.</returns>
-        Task<IList<NodeMapping>> ReadMappingsAsync(Stream stream,
+        IEnumerable<NodeMapping> ReadMappings(Stream stream,
             int idOffset = 0);
+
+        /// <summary>
+        /// Reads the class thesauri from the specified stream.
+        /// </summary>
+        /// <param name="stream">The stream.</param>
+        /// <returns>Thesauri.</returns>
+        IEnumerable<Thesaurus> ReadThesauri(Stream stream);
     }
 }

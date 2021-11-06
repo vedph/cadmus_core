@@ -1,7 +1,8 @@
-﻿using Cadmus.Index.Graph;
+﻿using Cadmus.Core.Config;
+using Cadmus.Index.Graph;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using Xunit;
 
 namespace Cadmus.Index.Test
@@ -15,12 +16,12 @@ namespace Cadmus.Index.Test
         }
 
         [Fact]
-        public async Task ReadNodes_Ok()
+        public void ReadNodes_Ok()
         {
             JsonGraphPresetReader reader = new();
 
-            IList<UriNode> nodes = await reader.ReadNodesAsync(
-                GetResourceStream("PresetNodes.json"));
+            IList<UriNode> nodes = reader.ReadNodes(
+                GetResourceStream("PresetNodes.json")).ToList();
 
             Assert.Equal(10, nodes.Count);
             Assert.Equal("is-a", nodes[0].Label);
@@ -28,12 +29,12 @@ namespace Cadmus.Index.Test
         }
 
         [Fact]
-        public async Task ReadNodeMappings_Ok()
+        public void ReadNodeMappings_Ok()
         {
             JsonGraphPresetReader reader = new();
 
-            IList<NodeMapping> mappings = await reader.ReadMappingsAsync(
-                GetResourceStream("PresetMappings.json"));
+            IList<NodeMapping> mappings = reader.ReadMappings(
+                GetResourceStream("PresetMappings.json")).ToList();
 
             Assert.Equal(10, mappings.Count);
             Assert.Equal("Lemma item", mappings[0].Name);
@@ -43,20 +44,33 @@ namespace Cadmus.Index.Test
         }
 
         [Fact]
-        public async Task ReadNodeMappingsWithOffset_Ok()
+        public void ReadNodeMappingsWithOffset_Ok()
         {
             JsonGraphPresetReader reader = new();
 
-            IList<NodeMapping> mappings = await reader.ReadMappingsAsync(
-                GetResourceStream("PresetMappings.json"));
-            IList<NodeMapping> mappings2 = await reader.ReadMappingsAsync(
-                GetResourceStream("PresetMappings.json"), 10);
+            IList<NodeMapping> mappings = reader.ReadMappings(
+                GetResourceStream("PresetMappings.json")).ToList();
+            IList<NodeMapping> mappings2 = reader.ReadMappings(
+                GetResourceStream("PresetMappings.json"), 10).ToList();
 
             for (int i = 0; i < 10; i++)
             {
                 Assert.Equal(mappings[i].Id + 10, mappings2[i].Id);
                 Assert.Equal(mappings[i].ParentId + 10, mappings2[i].ParentId);
             }
+        }
+
+        [Fact]
+        public void ReadThesauri_Ok()
+        {
+            JsonGraphPresetReader reader = new();
+
+            IList<Thesaurus> thesauri = reader.ReadThesauri(
+                GetResourceStream("PresetThesauri.json")).ToList();
+
+            Assert.Equal(2, thesauri.Count);
+            Assert.Equal("colors@en", thesauri[0].Id);
+            Assert.Equal("shapes@en", thesauri[1].Id);
         }
     }
 }

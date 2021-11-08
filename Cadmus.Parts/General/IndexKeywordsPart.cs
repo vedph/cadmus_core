@@ -85,12 +85,22 @@ namespace Cadmus.Parts.General
 
                 foreach (var g in keysByLang)
                 {
-                    var values = from k in g orderby k.Value
+                    // filtered
+                    var filteredValues = from k in g orderby k.Value
                                  select filter.Apply(k.Value, true);
+
+                    pins.AddRange(from value in filteredValues
+                                  select CreateDataPin(
+                                    $"keyword.{indexId}.{g.Key}", value));
+
+                    // unfiltered
+                    var values = from k in g
+                                 orderby k.Value
+                                 select k.Value;
 
                     pins.AddRange(from value in values
                                   select CreateDataPin(
-                                    $"keyword.{indexId}.{g.Key}", value));
+                                    $"u-keyword.{indexId}.{g.Key}", value));
                 }
             }
 
@@ -112,6 +122,10 @@ namespace Cadmus.Parts.General
                     "keyword.{INDEXID}.{LANG}",
                     "The list of keywords grouped by index ID and language.",
                     "Mf"),
+                new DataPinDefinition(DataPinValueType.String,
+                    "u-keyword.{INDEXID}.{LANG}",
+                    "The list of unfiltered keywords grouped by index ID and language.",
+                    "M"),
             });
         }
 

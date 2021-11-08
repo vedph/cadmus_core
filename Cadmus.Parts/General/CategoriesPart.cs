@@ -46,8 +46,7 @@ namespace Cadmus.Parts.General
 
             if (Categories?.Count > 0)
             {
-                builder.AddValues("category", Categories,
-                    filter: true, filterOptions: true);
+                builder.AddValues("category", Categories);
             }
 
             return builder.Build(this);
@@ -67,7 +66,7 @@ namespace Cadmus.Parts.General
                 new DataPinDefinition(DataPinValueType.String,
                     "category",
                     "The list of categories.",
-                    "Mf"),
+                    "M"),
             });
         }
 

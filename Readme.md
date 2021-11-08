@@ -6,6 +6,7 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+- 2021-11-08: changed pins for categories and keywords parts so that an unfiltered copy is emitted.
 - 2021-11-06: made `Thesaurus` serializable.
 - 2021-11-03: added `AddThesaurus` to `IGraphRepository` to allow importing thesaurus-based taxonomies as classes in the graph.
 - 2021-10-30: added `IGraphPresetReader` and its JSON implementation to read preset graph nodes and node mappings from an external source. This will be used in configuration via Cadmus tool.

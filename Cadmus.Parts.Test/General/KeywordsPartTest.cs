@@ -20,9 +20,9 @@ namespace Cadmus.Parts.Test.General
             };
             if (keywords)
             {
-                part.AddKeyword("eng", "red");
-                part.AddKeyword("eng", "green");
-                part.AddKeyword("ita", "rosso");
+                part.AddKeyword("eng", "Red");
+                part.AddKeyword("eng", "Green");
+                part.AddKeyword("ita", "Rosso");
             }
             return part;
         }
@@ -65,7 +65,7 @@ namespace Cadmus.Parts.Test.General
             KeywordsPart part = GetPart();
 
             List<DataPin> pins = part.GetDataPins().ToList();
-            Assert.Equal(4, pins.Count);
+            Assert.Equal(7, pins.Count);
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
@@ -78,15 +78,30 @@ namespace Cadmus.Parts.Test.General
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
 
+            pin = pins.Find(p => p.Name == "u-keyword.eng"
+                && p.Value == "Green");
+            Assert.NotNull(pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
+
             // keyword.eng = red
             pin = pins.Find(p => p.Name == "keyword.eng"
                 && p.Value == "red");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
 
+            pin = pins.Find(p => p.Name == "u-keyword.eng"
+                && p.Value == "Red");
+            Assert.NotNull(pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
+
             // keyword.ita = rosso
             pin = pins.Find(p => p.Name == "keyword.ita"
                 && p.Value == "rosso");
+            Assert.NotNull(pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
+
+            pin = pins.Find(p => p.Name == "u-keyword.ita"
+                && p.Value == "Rosso");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
         }

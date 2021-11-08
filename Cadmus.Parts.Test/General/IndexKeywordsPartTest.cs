@@ -24,7 +24,7 @@ namespace Cadmus.Parts.Test.General
                 {
                     IndexId = "colors",
                     Language = "eng",
-                    Value = "red",
+                    Value = "Red",
                     Note = "red note",
                     Tag = "tag"
                 });
@@ -32,7 +32,7 @@ namespace Cadmus.Parts.Test.General
                 {
                     IndexId = "colors",
                     Language = "eng",
-                    Value = "green",
+                    Value = "Green",
                     Note = "green note",
                     Tag = "tag"
                 });
@@ -85,7 +85,7 @@ namespace Cadmus.Parts.Test.General
             IndexKeywordsPart part = GetPart();
 
             List<DataPin> pins = part.GetDataPins().ToList();
-            Assert.Equal(4, pins.Count);
+            Assert.Equal(7, pins.Count);
 
             DataPin pin = pins.Find(p => p.Name == "tot-count");
             Assert.NotNull(pin);
@@ -98,15 +98,30 @@ namespace Cadmus.Parts.Test.General
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
 
+            pin = pins.Find(p => p.Name == "u-keyword..eng"
+                && p.Value == "Greek");
+            Assert.NotNull(pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
+
             // keyword.colors.eng = green
             pin = pins.Find(p => p.Name == "keyword.colors.eng"
                 && p.Value == "green");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
 
+            pin = pins.Find(p => p.Name == "u-keyword.colors.eng"
+                && p.Value == "Green");
+            Assert.NotNull(pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
+
             // keyword.colors.eng = red
             pin = pins.Find(p => p.Name == "keyword.colors.eng"
                 && p.Value == "red");
+            Assert.NotNull(pin);
+            TestHelper.AssertValidDataPinNames(part, pin);
+
+            pin = pins.Find(p => p.Name == "u-keyword.colors.eng"
+                && p.Value == "Red");
             Assert.NotNull(pin);
             TestHelper.AssertValidDataPinNames(part, pin);
         }

@@ -6,6 +6,7 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+- 2021-11-20: changed graph node filter class IDs type.
 - 2021-11-08: changed pins for categories and keywords parts so that an unfiltered copy is emitted.
 - 2021-11-06: made `Thesaurus` serializable.
 - 2021-11-03: added `AddThesaurus` to `IGraphRepository` to allow importing thesaurus-based taxonomies as classes in the graph.

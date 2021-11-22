@@ -572,11 +572,9 @@ namespace Cadmus.Index.Sql.Graph
             // class IDs
             if (filter.ClassIds?.Count > 0)
             {
-                IList<int> ids = GetUriIds(filter.ClassIds);
-
                 builder.AddFrom("INNER JOIN node_class nc " +
                     "ON node.id=nc.node_id AND nc.class_id " +
-                    $"IN({string.Join(", ", ids)})", slotId: "*");
+                    $"IN({string.Join(", ", filter.ClassIds)})", slotId: "*");
             }
 
             // order and limit

@@ -1502,6 +1502,7 @@ namespace Cadmus.Index.MySql.Test
             };
             repository.AddNode(sub, true);
 
+            Node shape = repository.GetNodeByUri("shapes");
             Node circle = repository.GetNodeByUri("shapes.2d.circle");
             Node cube = repository.GetNodeByUri("shapes.3d.cube");
 
@@ -1544,7 +1545,7 @@ namespace Cadmus.Index.MySql.Test
 
             DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
             {
-                ClassIds = new List<string>(new[] { "shapes" }),
+                ClassIds = new List<int>(new[] { shape.Id }),
                 IsClass = false
             });
             Assert.Equal(2, page.Total);

@@ -19,9 +19,8 @@ namespace Cadmus.Core
         /// <summary>
         /// Creates a Cadmus repository.
         /// </summary>
-        /// <param name="database">The database name.</param>
         /// <returns>repository</returns>
         /// <exception cref="ArgumentNullException">null database</exception>
-        ICadmusRepository CreateRepository(string database);
+        ICadmusRepository CreateRepository();
     }
 }

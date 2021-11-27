@@ -332,6 +332,23 @@ namespace Cadmus.Index.MySql.Test
         }
 
         [Fact]
+        public void GetNodes_ByLabelAndClass_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddNodes(10, repository);
+
+            DataPage<NodeResult> page = repository.GetNodes(new NodeFilter
+            {
+                Label = "05",
+                IsClass = true
+            });
+
+            Assert.Equal(0, page.Total);
+            Assert.Empty(page.Items);
+        }
+
+        [Fact]
         public void GetNodes_BySourceType_Ok()
         {
             Reset();
@@ -583,18 +600,18 @@ namespace Cadmus.Index.MySql.Test
         #region Property
         private static void AddProperties(IGraphRepository repository)
         {
-            Node comment = new Node
+            Node comment = new()
             {
                 Id = repository.AddUri("rdfs:comment"),
                 Label = "comment"
             };
             repository.AddNode(comment);
-            Node date = new Node
+            Node date = new()
             {
                 Id = repository.AddUri("x:date"),
                 Label = "Date"
             };
-            repository.AddNode(comment);
+            repository.AddNode(date);
 
             repository.AddProperty(new Property
             {
@@ -684,7 +701,7 @@ namespace Cadmus.Index.MySql.Test
         }
 
         [Fact]
-        public void GetProperty_Existing_Null()
+        public void GetProperty_Existing_NotNull()
         {
             Reset();
             IGraphRepository repository = GetRepository();
@@ -891,7 +908,7 @@ namespace Cadmus.Index.MySql.Test
             Assert.Null(repository.GetMapping(mapping.Id));
         }
 
-        private static IItem GetItem(int n, string facetId)
+        private static IItem GetItem(int n, string facetId, bool noFlags = false)
         {
             return new Item
             {
@@ -899,7 +916,7 @@ namespace Cadmus.Index.MySql.Test
                 Description = "Dsc for item " + n,
                 FacetId = facetId,
                 SortKey = $"{n:000}",
-                Flags = ((n & 1) == 1) ? 1 : 0,
+                Flags = noFlags? 0 : ((n & 1) == 1) ? 1 : 0,
                 CreatorId = "creator",
                 UserId = "user"
             };
@@ -911,7 +928,7 @@ namespace Cadmus.Index.MySql.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddMappings(repository);
-            IItem item = GetItem(1, "person");
+            IItem item = GetItem(1, "person", true);
 
             IList<NodeMapping> mappings = repository.FindMappingsFor(item);
 
@@ -925,7 +942,7 @@ namespace Cadmus.Index.MySql.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddMappings(repository);
-            IItem item = GetItem(1, "person");
+            IItem item = GetItem(1, "person", true);
 
             IList<NodeMapping> mappings = repository.FindMappingsFor(
                 item, new NamesPart(), "name");

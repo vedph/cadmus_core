@@ -106,8 +106,7 @@ namespace Cadmus.Index.Test
                 Tuple.Create("rel@wedding@x:persons/laura", "x:hasSpouse")
             });
             // 1) store initial set
-            GraphUpdater updater = new GraphUpdater(repository);
-            updater.Update(oldSet);
+            repository.UpdateGraph(oldSet);
 
             var nodePage = repository.GetNodes(new NodeFilter());
             Assert.Equal(11 + 2, nodePage.Total);
@@ -168,9 +167,7 @@ namespace Cadmus.Index.Test
             // - x:events/death - #a - x:classes/death
             // - x:events/death - #x:hasDate - 1345
 
-            // you can disable transactions when debugging
-            // updater.IsTransactionDisabled = true;
-            updater.Update(newSet);
+            repository.UpdateGraph(newSet);
 
             // resulting nodes:
             DataPage<NodeResult> nPage = repository.GetNodes(new NodeFilter());
@@ -248,9 +245,7 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
 
-            GraphUpdater updater = new GraphUpdater(repository);
-
-            updater.Delete("not-existing");
+            repository.DeleteGraphSet("not-existing");
         }
 
         [Fact]
@@ -293,8 +288,7 @@ namespace Cadmus.Index.Test
                 Tuple.Create("rel@wedding@x:persons/laura", "x:hasSpouse")
             });
             // store set
-            GraphUpdater updater = new GraphUpdater(repository);
-            updater.Update(oldSet);
+            repository.UpdateGraph(oldSet);
             NodeFilter nf = new NodeFilter();
             TripleFilter tf = new TripleFilter();
 
@@ -305,7 +299,7 @@ namespace Cadmus.Index.Test
             Assert.Equal(7, triplePage.Total);
 
             // delete set
-            updater.Delete(part.Id);
+            repository.DeleteGraphSet(part.Id);
 
             nodePage = repository.GetNodes(nf);
             Assert.Equal(7 + 2, nodePage.Total);

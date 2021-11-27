@@ -1,15 +1,16 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Index.Graph;
-using Fusi.DbManager;
 using Fusi.Tools;
 using Fusi.Tools.Data;
+using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,124 +19,76 @@ namespace Cadmus.Index.Sql.Graph
     /// <summary>
     /// Base class for SQL-based graph repositories.
     /// </summary>
-    public abstract class SqlGraphRepositoryBase : SqlRepositoryBase
+    public abstract class SqlGraphRepositoryBase
     {
         /// <summary>
-        /// Gets the currently active transaction if any.
+        /// Gets the connection string.
         /// </summary>
-        /// <remarks>All the write operations use this transaction, when set.
-        /// </remarks>
-        protected DbTransaction Transaction { get; set; }
+        protected string ConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets the SQL helper.
+        /// </summary>
+        protected ISqlHelper SqlHelper { get; }
+
+        /// <summary>
+        /// Gets the SQL compiler, set once in the constructor.
+        /// </summary>
+        protected Compiler SqlCompiler { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlGraphRepositoryBase"/>
         /// class.
         /// </summary>
-        /// <param name="tokenHelper">The token helper.</param>
-        protected SqlGraphRepositoryBase(ISqlTokenHelper tokenHelper) :
-            base(tokenHelper)
+        /// <param name="compiler">The SQL compiler.</param>
+        /// <param name="sqlHelper">The SQL helper</param>
+        /// <exception cref="ArgumentNullException">compiler or sqlHelper</exception>
+        protected SqlGraphRepositoryBase(Compiler compiler, ISqlHelper sqlHelper)
         {
+            SqlCompiler = compiler ??
+                throw new ArgumentNullException(nameof(compiler));
+            SqlHelper = sqlHelper ??
+                throw new ArgumentNullException(nameof(sqlHelper));
         }
 
-        #region Helpers
         /// <summary>
-        /// Gets the paging SQL for the specified options.
+        /// Configures the specified options. This sets the connection string.
+        /// If overriding this for more options, be sure to call the base
+        /// implementation.
         /// </summary>
         /// <param name="options">The options.</param>
-        /// <returns>SQL code.</returns>
-        protected abstract string GetPagingSql(PagingOptions options);
-
-        /// <summary>
-        /// Gets the SQL code for a regular expression clause.
-        /// </summary>
-        /// <param name="text">The text to be compared against the regular
-        /// expression pattern. This can be a field name or a literal between
-        /// quotes.</param>
-        /// <param name="pattern">The regular expression pattern. This can be
-        /// a field name or a literal between quotes.</param>
-        protected abstract string GetRegexClauseSql(string text, string pattern);
-
-        /// <summary>
-        /// Gets the SQL code to append to an insert command in order to get
-        /// the last inserted autonumber value.
-        /// </summary>
-        /// <returns>SQL code.</returns>
-        protected abstract string GetSelectIdentitySql();
-
-        /// <summary>
-        /// Gets the upsert tail SQL. This is the SQL code appended to a
-        /// standard INSERT statement to make it work as an UPSERT. The code
-        /// differs according to the RDBMS implementation, but for most RDBMS
-        /// it follows the INSERT statement, so this is a quick working solution.
-        /// </summary>
-        /// <param name="fields">The names of all the inserted fields,
-        /// assuming that the corresponding parameter names are equal but
-        /// prefixed by <c>@</c>.</param>
-        /// <returns>SQL.</returns>
-        /// <remarks>MySql: https://www.techbeamers.com/mysql-upsert/;
-        /// PostgreSQL: https://www.postgresqltutorial.com/postgresql-upsert/;
-        /// SQLServer: https://stackoverflow.com/questions/1197733/
-        /// does-sql-server-offer-anything-like-mysqls-on-duplicate-key-update
-        /// </remarks>
-        protected abstract string GetUpsertTailSql(params string[] fields);
-        #endregion
-
-        #region Transaction
-        /// <summary>
-        /// Begins the transaction.
-        /// </summary>
-        public void BeginTransaction()
+        public virtual void Configure(SqlRepositoryOptions options)
         {
-            EnsureConnected();
-            Transaction = Connection.BeginTransaction();
+            if (options == null) throw new ArgumentNullException(nameof(options));
+
+            ConnectionString = options.ConnectionString;
         }
 
         /// <summary>
-        /// Commits a write transaction.
+        /// Gets a connection.
         /// </summary>
-        public void CommitTransaction()
-        {
-            Transaction?.Commit();
-            Transaction = null;
-        }
+        /// <returns>Connection.</returns>
+        protected abstract IDbConnection GetConnection();
 
         /// <summary>
-        /// Rollbacks the write transaction.
+        /// Gets the query factory.
         /// </summary>
-        public void RollbackTransaction()
+        /// <returns>Query factory.</returns>
+        protected QueryFactory GetQueryFactory()
         {
-            Transaction?.Rollback();
-            Transaction = null;
+            QueryFactory qf = new QueryFactory(GetConnection(), SqlCompiler);
+            qf.Connection.Open();
+            return qf;
         }
-        #endregion
 
         #region Namespace Lookup
-        private SqlSelectBuilder GetBuilderFor(NamespaceFilter filter)
+        private void ApplyFilter(NamespaceFilter filter, Query query)
         {
-            SqlSelectBuilder builder = GetSelectBuilder();
-            builder.EnsureSlots(null, "c");
-
-            builder.AddWhat("id, uri")
-                   .AddWhat("COUNT(id)", slotId: "c")
-                   .AddFrom("namespace_lookup", slotId: "*")
-                   .AddOrder("id")
-                   .AddLimit(GetPagingSql(filter));
-
             if (!string.IsNullOrEmpty(filter.Prefix))
-            {
-                builder.AddWhere("id LIKE @id", slotId: "*")
-                       .AddParameter("@id", DbType.String, $"%{filter.Prefix}%",
-                            slotId: "*");
-            }
+                query.WhereLike("id", "%" + filter.Prefix + "%");
 
             if (!string.IsNullOrEmpty(filter.Uri))
-            {
-                builder.AddWhere("uri LIKE @uri", slotId: "*")
-                       .AddParameter("@uri", DbType.String, $"%{filter.Uri}%",
-                            slotId: "*");
-            }
-
-            return builder;
+                query.WhereLike("uri", "%" + filter.Uri + "%");
         }
 
         /// <summary>
@@ -148,47 +101,34 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            var query = qf.Query("namespace_lookup");
+            ApplyFilter(filter, query);
 
-            try
+            // get count and ret if no result
+            int total = query.Clone().Count<int>(new[] { "id" });
+            if (total == 0)
             {
-                SqlSelectBuilder builder = GetBuilderFor(filter);
-
-                // get count and ret if no result
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = builder.Build("c");
-                builder.AddParametersTo(cmd, "c");
-
-                long? count = cmd.ExecuteScalar() as long?;
-                if (count == null || count == 0)
-                {
-                    return new DataPage<NamespaceEntry>(
-                        filter.PageNumber, filter.PageSize, 0,
-                        Array.Empty<NamespaceEntry>());
-                }
-
-                // get page
-                cmd.CommandText = builder.Build();
-                List<NamespaceEntry> nss =
-                    new List<NamespaceEntry>();
-                using (DbDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        nss.Add(new NamespaceEntry
-                        {
-                            Prefix = reader.GetString(0),
-                            Uri = reader.GetString(1)
-                        });
-                    }
-                }
-                return new DataPage<NamespaceEntry>(filter.PageNumber,
-                    filter.PageSize, (int)count, nss);
+                return new DataPage<NamespaceEntry>(
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<NamespaceEntry>());
             }
-            finally
+
+            // complete query and get page
+            query.Select("id", "uri")
+                 .OrderBy("id", "uri")
+                 .Skip(filter.GetSkipCount()).Limit(filter.PageSize);
+            List<NamespaceEntry> nss = new List<NamespaceEntry>();
+            foreach (var d in query.Get())
             {
-                Disconnect();
+                nss.Add(new NamespaceEntry
+                {
+                    Prefix = d.id,
+                    Uri = d.uri
+                });
             }
+            return new DataPage<NamespaceEntry>(filter.PageNumber,
+                filter.PageSize, total, nss);
         }
 
         /// <summary>
@@ -203,22 +143,23 @@ namespace Cadmus.Index.Sql.Graph
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
             if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            bool update = qf.Query("namespace_lookup")
+                .Where("id", prefix)
+                .Where("uri", uri).Exists();
 
-            try
+            if (update)
             {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO namespace_lookup(id, uri) " +
-                    "VALUES(@id, @uri)\n" + GetUpsertTailSql("uri");
-                AddParameter(cmd, "@id", DbType.String, prefix);
-                AddParameter(cmd, "@uri", DbType.String, uri);
-
-                cmd.ExecuteNonQuery();
+                qf.Query("namespace_lookup").Where("id", prefix)
+                    .Update(new { uri });
             }
-            finally
+            else
             {
-                Disconnect();
+                qf.Query("namespace_lookup").Insert(new
+                {
+                    id = prefix,
+                    uri
+                });
             }
         }
 
@@ -232,19 +173,10 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT uri FROM namespace_lookup WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.String, prefix);
-                return cmd.ExecuteScalar() as string;
-            }
-            finally
-            {
-                Disconnect();
-            }
+            QueryFactory qf = GetQueryFactory();
+            return qf.Query("namespace_lookup")
+                     .Where("id", prefix)
+                     .Select("uri").Get<string>().FirstOrDefault();
         }
 
         /// <summary>
@@ -256,20 +188,8 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM namespace_lookup WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.String, prefix);
-                cmd.ExecuteNonQuery();
-            }
-            finally
-            {
-                Disconnect();
-            }
+            QueryFactory qf = GetQueryFactory();
+            qf.Query("namespace_lookup").Where("id", prefix).Delete();
         }
 
         /// <summary>
@@ -280,20 +200,8 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (uri is null) throw new ArgumentNullException(nameof(uri));
 
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM namespace_lookup WHERE uri=@uri;";
-                AddParameter(cmd, "@uri", DbType.String, uri);
-                cmd.ExecuteNonQuery();
-            }
-            finally
-            {
-                Disconnect();
-            }
+            QueryFactory qf = GetQueryFactory();
+            qf.Query("namespace_lookup").Where("uri", uri).Delete();
         }
         #endregion
 
@@ -310,63 +218,61 @@ namespace Cadmus.Index.Sql.Graph
             if (uid == null) throw new ArgumentNullException(nameof(uid));
             if (sid == null) throw new ArgumentNullException(nameof(sid));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
 
-            try
+            // check if any unsuffixed UID is already in use
+            if (!qf.Query("uid_lookup").Where("unsuffixed", uid).Exists())
             {
-                // prepare the insertion
-                DbCommand cmdIns = GetCommand();
-                cmdIns.Transaction = Transaction;
-                cmdIns.CommandText =
-                    "INSERT INTO uid_lookup(sid,unsuffixed,has_suffix) " +
-                    "VALUES(@sid,@unsuffixed,@has_suffix);\n" +
-                    GetSelectIdentitySql();
-                AddParameter(cmdIns, "@sid", DbType.String, sid);
-                AddParameter(cmdIns, "@unsuffixed", DbType.String, uid);
-                AddParameter(cmdIns, "@has_suffix", DbType.Boolean, false);
-
-                // check if any unsuffixed UID is already in use
-                DbCommand cmdSel = GetCommand();
-                cmdSel.CommandText =
-                    "SELECT 1 FROM uid_lookup WHERE unsuffixed=@uid;";
-                AddParameter(cmdSel, "@uid", DbType.String, uid);
-                long? result = cmdSel.ExecuteScalar() as long?;
-
                 // no: just insert the unsuffixed UID
-                if (result == null)
+                qf.Query("uid_lookup").Insert(new
                 {
-                    cmdIns.ExecuteNonQuery();
-                    return uid;
-                }
+                    sid,
+                    unsuffixed = uid,
+                    has_suffix = false
+                });
+                return uid;
+            }
 
-                // yes: check if a record with the same unsuffixed & SID exists;
-                // if so, reuse it; otherwise, add a new suffixed UID
-                cmdSel.CommandText = "SELECT id, has_suffix FROM uid_lookup " +
-                    "WHERE unsuffixed=@uid AND sid=@sid;";
-                AddParameter(cmdSel, "@sid", DbType.String, sid);
-                using (var reader = cmdSel.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        // found: reuse it, nothing gets inserted
-                        int oldId = reader.GetInt32(0);
-                        bool hasSuffix = reader.GetBoolean(1);
-                        return hasSuffix? uid + "#" + oldId : uid;
-                    }
-                }
-                // not found: add a new suffix
-                cmdIns.Parameters["@has_suffix"].Value = true;
-                int id = Convert.ToInt32(cmdIns.ExecuteScalar());
-                return uid + "#" + id;
-            }
-            finally
+            // yes: check if a record with the same unsuffixed & SID exists;
+            // if so, reuse it; otherwise, add a new suffixed UID
+            var d = qf.Query("uid_lookup")
+                      .Where("unsuffixed", uid)
+                      .Where("sid", sid)
+                      .Select("id", "has_suffix").Get().FirstOrDefault();
+            if (d != null)
             {
-                Disconnect();
+                // found: reuse it, nothing gets inserted
+                int oldId = d.id;
+                bool hasSuffix = Convert.ToBoolean(d.has_suffix);
+                return hasSuffix ? uid + "#" + oldId : uid;
             }
+            // not found: add a new suffix
+            int id = qf.Query("uid_lookup").InsertGetId<int>(new
+            {
+                sid,
+                unsuffixed = uid,
+                has_suffix = true
+            });
+            return uid + "#" + id;
         }
         #endregion
 
         #region URI Lookup
+        private int AddUri(string uri, QueryFactory qf)
+        {
+            // if the URI already exists, just return its ID
+            if (qf == null) qf = GetQueryFactory();
+            int id = qf.Query("uri_lookup")
+                       .Where("uri", uri).Get<int>().FirstOrDefault();
+            if (id > 0) return id;
+
+            // else insert it
+            return qf.Query("uri_lookup").InsertGetId<int>(new
+            {
+                uri
+            });
+        }
+
         /// <summary>
         /// Adds the specified URI in the mapped URIs set.
         /// </summary>
@@ -377,30 +283,7 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-            EnsureConnected();
-
-            try
-            {
-                // if the URI already exists, just return its ID
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri=@uri;";
-                AddParameter(cmd, "@uri", DbType.String, uri);
-                int? result = cmd.ExecuteScalar() as int?;
-                if (result != null) return result.Value;
-
-                // else insert it
-                DbCommand cmdIns = GetCommand();
-                cmdIns.Transaction = Transaction;
-                cmdIns.CommandText = "INSERT INTO uri_lookup(uri) " +
-                    "VALUES(@uri);\n" + GetSelectIdentitySql();
-                AddParameter(cmdIns, "@uri", DbType.String, uri);
-
-                return Convert.ToInt32(cmdIns.ExecuteScalar());
-            }
-            finally
-            {
-                Disconnect();
-            }
+            return AddUri(uri, null);
         }
 
         /// <summary>
@@ -410,19 +293,11 @@ namespace Cadmus.Index.Sql.Graph
         /// <returns>The URI, or null if not found.</returns>
         public string LookupUri(int id)
         {
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT uri FROM uri_lookup WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-                return cmd.ExecuteScalar() as string;
-            }
-            finally
-            {
-                Disconnect();
-            }
+            QueryFactory qf = GetQueryFactory();
+            return qf.Query("uri_lookup")
+                     .Where("id", id)
+                     .Select("uri")
+                     .Get<string>().FirstOrDefault();
         }
 
         /// <summary>
@@ -435,136 +310,67 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri=@uri;";
-                AddParameter(cmd, "@uri", DbType.String, uri);
-                object id = cmd.ExecuteScalar();
-                return id == null ? 0 : (int)id;
-            }
-            finally
-            {
-                Disconnect();
-            }
+            QueryFactory qf = GetQueryFactory();
+            return qf.Query("uri_lookup")
+                     .Where("uri", uri).Get<int>().FirstOrDefault();
         }
         #endregion
 
         #region Node
-        private IList<int> GetUriIds(IList<string> uris)
+        private static void ApplyFilter(NodeFilter filter, Query query)
         {
-            DbCommand cmd = GetCommand();
-            cmd.CommandText = "SELECT id FROM uri_lookup WHERE uri IN(" +
-                string.Join(", ", uris.Select(
-                    s => SqlHelper.SqlEncode(s, false, true, true))) + ");";
-            List<int> ids = new List<int>(uris.Count);
-            using (DbDataReader reader = cmd.ExecuteReader())
-            {
-                while (reader.Read()) ids.Add(reader.GetInt32(0));
-            }
-            return ids;
-        }
-
-        private SqlSelectBuilder GetBuilderFor(NodeFilter filter)
-        {
-            SqlSelectBuilder builder = GetSelectBuilder();
-            builder.EnsureSlots(null, "c");
-
-            builder.AddWhat("node.id, node.is_class, node.tag, node.label, " +
-                "node.source_type, node.sid, ul.uri")
-                   .AddWhat("COUNT(node.id)", slotId: "c")
-                   .AddFrom("node", slotId: "*")
-                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=node.id")
-                   .AddOrder("label, id");
-
             // uid
             if (!string.IsNullOrEmpty(filter.Uid))
             {
-                builder.AddFrom("INNER JOIN uri_lookup ul ON node.id=ul.id",
-                            slotId: "*")
-                       .AddWhere("uid LIKE @uid", slotId: "*")
-                       .AddParameter("@uid", DbType.String, $"%{filter.Uid}%",
-                            slotId: "*");
+                query.Join("uri_lookup AS ul", "node.id", "ul.id")
+                     .WhereLike("uid", "%" + filter.Uid + "%");
             }
 
             // class
             if (filter.IsClass.HasValue)
-            {
-                builder.AddWhere("is_class=@is_class", slotId: "*")
-                       .AddParameter("@is_class", DbType.Boolean, filter.IsClass.Value,
-                            slotId: "*");
-            }
+                query.Where("is_class", filter.IsClass.Value);
 
             // tag
             if (filter.Tag != null)
             {
-                builder.AddWhere(filter.Tag.Length == 0
-                            ? "tag IS NULL" : "tag=@tag", slotId: "*");
-                if (filter.Tag.Length > 0)
-                {
-                    builder.AddParameter("@tag", DbType.String, filter.Tag,
-                            slotId: "*");
-                }
+                if (filter.Tag.Length == 0) query.WhereNull("tag");
+                else query.Where("tag", filter.Tag);
             }
 
             // label
             if (!string.IsNullOrEmpty(filter.Label))
-            {
-                builder.AddWhere("label LIKE @label", slotId: "*")
-                       .AddParameter("@label", DbType.String, $"%{filter.Label}%",
-                            slotId: "*");
-            }
+                query.WhereLike("label", "%" + filter.Label + "%");
 
             // source type
             if (filter.SourceType != null)
-            {
-                builder.AddWhere("source_type=@source_type", slotId: "*")
-                       .AddParameter("@source_type",
-                            DbType.Int32, filter.SourceType.Value, slotId: "*");
-            }
+                query.Where("source_type", (int)filter.SourceType);
 
             // sid
             if (!string.IsNullOrEmpty(filter.Sid))
             {
-                if (filter.IsSidPrefix)
-                {
-                    builder.AddWhere("sid LIKE @sid", slotId: "*")
-                           .AddParameter("@sid", DbType.String, filter.Sid + "%",
-                                slotId: "*");
-                }
-                else
-                {
-                    builder.AddWhere("sid=@sid", slotId: "*")
-                           .AddParameter("@sid", DbType.String, filter.Sid,
-                                slotId: "*");
-                }
+                if (filter.IsSidPrefix) query.WhereLike("sid", filter.Sid + "%");
+                else query.Where("sid", filter.Sid);
             }
 
             // linked node ID and role
             if (filter.LinkedNodeId > 0)
             {
-                builder.AddParameter("@lnid", DbType.Int32, filter.LinkedNodeId,
-                    slotId: "*");
-
                 switch (char.ToUpperInvariant(filter.LinkedNodeRole))
                 {
                     case 'S':
-                        builder.AddFrom("INNER JOIN triple t " +
-                            "ON t.s_id=@lnid AND t.o_id=node.id",
-                            slotId: "*");
+                        query.Join("triple AS t",
+                            j => j.WhereRaw("t.o_id=node.id AND t.s_id=" +
+                            filter.LinkedNodeId));
                         break;
                     case 'O':
-                        builder.AddFrom("INNER JOIN triple t " +
-                            "ON t.o_id=@lnid AND t.s_id=node.id",
-                            slotId: "*");
+                        query.Join("triple AS t",
+                            j => j.WhereRaw("t.s_id=node.id AND t.o_id=" +
+                            filter.LinkedNodeId));
                         break;
                     default:
-                        builder.AddFrom("INNER JOIN triple t " +
-                            "ON (t.s_id=@lnid AND t.o_id=node.id) OR " +
-                            "(t.o_id=@lnid AND t.s_id=node.id)",
-                            slotId: "*");
+                        query.Join("triple AS t", j => j.WhereRaw(
+                            $"(t.o_id=node.id AND t.s_id={filter.LinkedNodeId}) OR " +
+                            $"(t.s_id=node.id AND t.o_id={filter.LinkedNodeId})"));
                         break;
                 }
             }
@@ -572,15 +378,9 @@ namespace Cadmus.Index.Sql.Graph
             // class IDs
             if (filter.ClassIds?.Count > 0)
             {
-                builder.AddFrom("INNER JOIN node_class nc " +
-                    "ON node.id=nc.node_id AND nc.class_id " +
-                    $"IN({string.Join(", ", filter.ClassIds)})", slotId: "*");
+                query.Join("node_class AS nc", "node.id", "nc.node_id")
+                     .WhereIn("nc.class_id", filter.ClassIds);
             }
-
-            // order and limit
-            builder.AddLimit(GetPagingSql(filter));
-
-            return builder;
         }
 
         /// <summary>
@@ -593,51 +393,41 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            Query query = qf.Query("node");
+            ApplyFilter(filter, query);
 
-            try
+            // get total
+            int total = query.Clone().Count<int>(new[] { "node.id" });
+            if (total == 0)
             {
-                SqlSelectBuilder builder = GetBuilderFor(filter);
-
-                // get count and ret if no result
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = builder.Build("c");
-                builder.AddParametersTo(cmd, "c");
-
-                long? count = cmd.ExecuteScalar() as long?;
-                if (count == null || count == 0)
-                {
-                    return new DataPage<NodeResult>(
-                        filter.PageNumber, filter.PageSize, 0,
-                        Array.Empty<NodeResult>());
-                }
-
-                // get page
-                cmd.CommandText = builder.Build();
-                List<NodeResult> nodes = new List<NodeResult>();
-                using (DbDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        nodes.Add(new NodeResult
-                        {
-                            Id = reader.GetInt32(0),
-                            IsClass = reader.GetBoolean(1),
-                            Tag = reader.GetValue<string>(2),
-                            Label = reader.GetValue<string>(3),
-                            SourceType = (NodeSourceType)reader.GetInt32(4),
-                            Sid = reader.GetValue<string>(5),
-                            Uri = reader.GetString(6)
-                        });
-                    }
-                }
-                return new DataPage<NodeResult>(filter.PageNumber, filter.PageSize,
-                    (int)count, nodes);
+                return new DataPage<NodeResult>(
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<NodeResult>());
             }
-            finally
+
+            // complete query and get page
+            query.Join("uri_lookup AS ul", "ul.id", "node.id")
+                 .Select("node.id", "node.is_class", "node.tag", "node.label",
+                         "node.source_type", "node.sid", "ul.uri")
+                 .OrderBy("node.label", "node.id")
+                 .Skip(filter.GetSkipCount()).Limit(filter.PageSize);
+            List<NodeResult> nodes = new List<NodeResult>();
+            foreach (var d in query.Get())
             {
-                Disconnect();
+                nodes.Add(new NodeResult
+                {
+                    Id = d.id,
+                    IsClass = Convert.ToBoolean(d.is_class),
+                    Tag = d.tag,
+                    Label = d.label,
+                    SourceType = (NodeSourceType)d.source_type,
+                    Sid = d.sid,
+                    Uri = d.uri
+                });
             }
+            return new DataPage<NodeResult>(filter.PageNumber, filter.PageSize,
+                total, nodes);
         }
 
         /// <summary>
@@ -647,34 +437,25 @@ namespace Cadmus.Index.Sql.Graph
         /// <returns>The node or null if not found.</returns>
         public NodeResult GetNode(int id)
         {
-            EnsureConnected();
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT n.is_class, n.tag, n.label, " +
-                    "n.source_type, n.sid, ul.uri FROM node n\n" +
-                    "INNER JOIN uri_lookup ul ON n.id=ul.id WHERE n.id=@id";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-
-                using (var reader = cmd.ExecuteReader())
+            QueryFactory qf = GetQueryFactory();
+            var d = qf.Query("node")
+              .Join("uri_lookup AS ul", "node.id", "ul.id")
+              .Where("node.id", id)
+              .Select("node.is_class", "node.tag", "node.label",
+                      "node.source_type", "node.sid", "ul.uri")
+              .Get().FirstOrDefault();
+            return d == null
+                ? null
+                : new NodeResult
                 {
-                    if (!reader.Read()) return null;
-                    return new NodeResult
-                    {
-                        Id = id,
-                        IsClass = reader.GetBoolean(0),
-                        Tag = reader.GetValue<string>(1),
-                        Label = reader.GetValue<string>(2),
-                        SourceType = (NodeSourceType)reader.GetInt32(3),
-                        Sid = reader.GetValue<string>(4),
-                        Uri = reader.GetString(5)
-                    };
-                }
-            }
-            finally
-            {
-                Disconnect();
-            }
+                    Id = id,
+                    IsClass = Convert.ToBoolean(d.is_class),
+                    Tag = d.tag,
+                    Label = d.label,
+                    SourceType = (NodeSourceType)d.source_type,
+                    Sid = d.sid,
+                    Uri = d.uri
+                };
         }
 
         /// <summary>
@@ -687,41 +468,74 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-            EnsureConnected();
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT n.id, n.is_class, n.tag, n.label, " +
-                    "n.source_type, n.sid FROM node n\n" +
-                    "INNER JOIN uri_lookup ul ON n.id=ul.id WHERE ul.uri=@uri";
-                AddParameter(cmd, "@uri", DbType.String, uri);
-
-                using (var reader = cmd.ExecuteReader())
+            QueryFactory qf = GetQueryFactory();
+            var d = qf.Query("node")
+              .Join("uri_lookup AS ul", "node.id", "ul.id")
+              .Where("uri", uri)
+              .Select("node.id", "node.is_class", "node.tag", "node.label",
+                      "node.source_type", "node.sid")
+              .Get().FirstOrDefault();
+            return d == null
+                ? null
+                : new NodeResult
                 {
-                    if (!reader.Read()) return null;
-                    return new NodeResult
-                    {
-                        Id = reader.GetInt32(0),
-                        IsClass = reader.GetBoolean(1),
-                        Tag = reader.GetValue<string>(2),
-                        Label = reader.GetValue<string>(3),
-                        SourceType = (NodeSourceType)reader.GetInt32(4),
-                        Sid = reader.GetValue<string>(5),
-                        Uri = uri
-                    };
-                }
-            }
-            finally
-            {
-                Disconnect();
-            }
+                    Id = d.id,
+                    IsClass = Convert.ToBoolean(d.is_class),
+                    Tag = d.tag,
+                    Label = d.label,
+                    SourceType = (NodeSourceType)d.source_type,
+                    Sid = d.sid,
+                    Uri = uri
+                };
         }
 
         /// <summary>
         /// Adds the node only if it does not exist; else do nothing.
         /// </summary>
         /// <param name="node">The node.</param>
-        protected abstract void AddNodeIfNotExists(Node node);
+        protected void AddNodeIfNotExists(Node node)
+        {
+            if (node is null) throw new ArgumentNullException(nameof(node));
+
+            QueryFactory qf = GetQueryFactory();
+            if (qf.Query("node").Where("id", node.Id).Exists()) return;
+
+            qf.Query("node").Insert(new
+            {
+                id = node.Id,
+                is_class = node.IsClass,
+                label = node.Label,
+                tag = node.Tag,
+                source_type = (int)node.SourceType,
+                sid = node.Sid
+            });
+        }
+
+        private void AddNode(Node node, bool noUpdate, QueryFactory qf)
+        {
+            if (qf == null) qf = GetQueryFactory();
+            var d = new
+            {
+                id = node.Id,
+                is_class = node.IsClass,
+                label = node.Label,
+                tag = node.Tag,
+                source_type = (int)node.SourceType,
+                sid = node.Sid
+            };
+            if (qf.Query("node").Where("id", node.Id).Exists())
+            {
+                if (noUpdate) return;
+                qf.Query("node").Where("id", node.Id).Update(d);
+            }
+            else
+            {
+                qf.Query("node").Insert(d);
+            }
+
+            var asIds = GetASubIds();
+            UpdateNodeClasses(node.Id, asIds.Item1, asIds.Item2, qf);
+        }
 
         /// <summary>
         /// Adds or updates the specified node.
@@ -734,37 +548,14 @@ namespace Cadmus.Index.Sql.Graph
         public void AddNode(Node node, bool noUpdate = false)
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
-            if (noUpdate)
-            {
-                AddNodeIfNotExists(node);
-                return;
-            }
 
-            EnsureConnected();
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO node" +
-                    "(id, is_class, tag, label, source_type, sid) " +
-                    "VALUES(@id, @is_class, @tag, @label, @source_type, @sid)\n"
-                    + GetUpsertTailSql("is_class", "tag", "label", "source_type", "sid");
-                AddParameter(cmd, "@id", DbType.Int32, node.Id);
-                AddParameter(cmd, "@is_class", DbType.Boolean, node.IsClass);
-                AddParameter(cmd, "@tag", DbType.String, node.Tag);
-                AddParameter(cmd, "@label", DbType.String, node.Label);
-                AddParameter(cmd, "@source_type", DbType.Int32, node.SourceType);
-                AddParameter(cmd, "@sid", DbType.String, node.Sid);
+            AddNode(node, noUpdate, null);
+        }
 
-                cmd.ExecuteNonQuery();
-
-                var asIds = GetASubIds();
-                UpdateNodeClasses(node.Id, asIds.Item1, asIds.Item2);
-            }
-            finally
-            {
-                Disconnect();
-            }
+        private void DeleteNode(int id, QueryFactory qf)
+        {
+            if (qf == null) qf = GetQueryFactory();
+            qf.Query("node").Where("id", id).Delete();
         }
 
         /// <summary>
@@ -773,64 +564,21 @@ namespace Cadmus.Index.Sql.Graph
         /// <param name="id">The node identifier.</param>
         public void DeleteNode(int id)
         {
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                // explicitly delete dependent triples
-                cmd.CommandText = "DELETE FROM node WHERE id=@id;\n" +
-                    "DELETE FROM triple WHERE s_id=@id OR p_id=@id OR o_id=@id";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-                cmd.ExecuteNonQuery();
-            }
-            finally
-            {
-                Disconnect();
-            }
+            DeleteNode(id, null);
         }
         #endregion
 
         #region Property
-        private SqlSelectBuilder GetBuilderFor(PropertyFilter filter)
+        private static void ApplyFilter(PropertyFilter filter, Query query)
         {
-            SqlSelectBuilder builder = GetSelectBuilder();
-            builder.EnsureSlots(null, "c");
-
-            builder.AddWhat("p.id, p.data_type, p.lit_editor, p.description, ul.uri")
-                   .AddWhat("COUNT(p.id)", slotId: "c")
-                   .AddFrom("property p", slotId: "*")
-                   .AddFrom("INNER JOIN uri_lookup ul ON ul.id=p.id")
-                   .AddOrder("ul.uri");
-
             if (!string.IsNullOrEmpty(filter.Uid))
-            {
-                builder.AddFrom("INNER JOIN uri_lookup ul ON ul.id=p.id",
-                            slotId: "c")
-                       .AddWhere("ul.uri LIKE @uid", slotId: "*")
-                       .AddParameter("@uid", DbType.String, $"%{filter.Uid}%",
-                            slotId: "*");
-            }
+                query.WhereLike("ul.uri", "%" + filter.Uid + "%");
 
             if (!string.IsNullOrEmpty(filter.DataType))
-            {
-                builder.AddWhere("data_type=@data_type", slotId: "*")
-                       .AddParameter("@data_type", DbType.String,
-                            filter.DataType, slotId: "*");
-            }
+                query.Where("data_type", filter.DataType);
 
             if (!string.IsNullOrEmpty(filter.LiteralEditor))
-            {
-                builder.AddWhere("lit_editor=@lit_editor", slotId: "*")
-                       .AddParameter("@lit_editor", DbType.String,
-                            filter.LiteralEditor, slotId: "*");
-            }
-
-            // limit
-            builder.AddLimit(GetPagingSql(filter));
-
-            return builder;
+                query.Where("lit_editor", filter.LiteralEditor);
         }
 
         /// <summary>
@@ -842,49 +590,40 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            Query query = qf.Query("property")
+                            .Join("uri_lookup AS ul", "ul.id", "property.id");
+            ApplyFilter(filter, query);
 
-            try
+            // get total
+            int total = query.Clone().Count<int>(new[] { "property.id" });
+            if (total == 0)
             {
-                SqlSelectBuilder builder = GetBuilderFor(filter);
-
-                // get count and ret if no result
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = builder.Build("c");
-                builder.AddParametersTo(cmd, "c");
-
-                long? count = cmd.ExecuteScalar() as long?;
-                if (count == null || count == 0)
-                {
-                    return new DataPage<PropertyResult>(
-                        filter.PageNumber, filter.PageSize, 0,
-                        Array.Empty<PropertyResult>());
-                }
-
-                // get page
-                cmd.CommandText = builder.Build();
-                List<PropertyResult> props = new List<PropertyResult>();
-                using (DbDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        props.Add(new PropertyResult
-                        {
-                            Id = reader.GetInt32(0),
-                            DataType = reader.GetValue<string>(1),
-                            LiteralEditor = reader.GetValue<string>(2),
-                            Description = reader.GetValue<string>(3),
-                            Uri = reader.GetString(4)
-                        });
-                    }
-                }
-                return new DataPage<PropertyResult>(filter.PageNumber,
-                    filter.PageSize, (int)count, props);
+                return new DataPage<PropertyResult>(
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<PropertyResult>());
             }
-            finally
+
+            // complete query and get page
+            query.Select("property.id", "property.data_type",
+                "property.lit_editor", "property.description", "ul.uri")
+                 .OrderBy("ul.uri")
+                 .Skip(filter.GetSkipCount()).Limit(filter.PageSize);
+            List<PropertyResult> props = new List<PropertyResult>();
+            foreach (var d in query.Get())
             {
-                Disconnect();
+                props.Add(new PropertyResult
+                {
+                    Id = d.id,
+                    DataType = d.data_type,
+                    LiteralEditor = d.lit_editor,
+                    Description = d.description,
+                    Uri = d.uri
+                });
             }
+
+            return new DataPage<PropertyResult>(filter.PageNumber,
+                filter.PageSize, total, props);
         }
 
         /// <summary>
@@ -894,32 +633,21 @@ namespace Cadmus.Index.Sql.Graph
         /// <returns>The property or null if not found.</returns>
         public PropertyResult GetProperty(int id)
         {
-            EnsureConnected();
-            try
+            QueryFactory qf = GetQueryFactory();
+            var d = qf.Query("property")
+                .Join("uri_lookup AS ul", "property.id", "ul.id")
+                .Where("property.id", id)
+                .Select("property.data_type", "property.lit_editor",
+                    "property.description", "ul.uri")
+                .Get().FirstOrDefault();
+            return d == null ? null : new PropertyResult
             {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT p.data_type, p.lit_editor, " +
-                    "p.description, ul.uri FROM property p\n" +
-                    "INNER JOIN uri_lookup ul ON p.id=ul.id WHERE p.id=@id";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (!reader.Read()) return null;
-                    return new PropertyResult
-                    {
-                        Id = id,
-                        DataType = reader.GetValue<string>(0),
-                        LiteralEditor = reader.GetValue<string>(1),
-                        Description = reader.GetValue<string>(2),
-                        Uri = reader.GetString(3)
-                    };
-                }
-            }
-            finally
-            {
-                Disconnect();
-            }
+                Id = id,
+                DataType = d.data_type,
+                LiteralEditor = d.lit_editor,
+                Description = d.description,
+                Uri = d.uri
+            };
         }
 
         /// <summary>
@@ -932,32 +660,21 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-            EnsureConnected();
-            try
+            QueryFactory qf = GetQueryFactory();
+            var d = qf.Query("property")
+                .Join("uri_lookup AS ul", "property.id", "ul.id")
+                .Where("ul.uri", uri)
+                .Select("property.id", "property.data_type",
+                    "property.lit_editor", "property.description")
+                .Get().FirstOrDefault();
+            return d == null ? null : new PropertyResult
             {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT p.id, p.data_type, p.lit_editor, " +
-                    "p.description FROM property p\n" +
-                    "INNER JOIN uri_lookup ul ON p.id=ul.id WHERE ul.uri=@uri";
-                AddParameter(cmd, "@uri", DbType.String, uri);
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (!reader.Read()) return null;
-                    return new PropertyResult
-                    {
-                        Id = reader.GetInt32(0),
-                        DataType = reader.GetValue<string>(1),
-                        LiteralEditor = reader.GetValue<string>(2),
-                        Description = reader.GetValue<string>(3),
-                        Uri = uri
-                    };
-                }
-            }
-            finally
-            {
-                Disconnect();
-            }
+                Id = d.id,
+                DataType = d.data_type,
+                LiteralEditor = d.lit_editor,
+                Description = d.description,
+                Uri = uri
+            };
         }
 
         /// <summary>
@@ -970,27 +687,18 @@ namespace Cadmus.Index.Sql.Graph
             if (property == null)
                 throw new ArgumentNullException(nameof(property));
 
-            EnsureConnected();
-
-            try
+            QueryFactory qf = GetQueryFactory();
+            var d = new
             {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "INSERT INTO property(" +
-                    "id, data_type, lit_editor, description) " +
-                    "VALUES(@id, @data_type, @lit_editor, @description)\n" +
-                    GetUpsertTailSql("data_type", "lit_editor", "description");
-                AddParameter(cmd, "@id", DbType.Int32, property.Id);
-                AddParameter(cmd, "@data_type", DbType.String, property.DataType);
-                AddParameter(cmd, "@lit_editor", DbType.String, property.LiteralEditor);
-                AddParameter(cmd, "@description", DbType.String, property.Description);
-
-                cmd.ExecuteNonQuery();
-            }
-            finally
-            {
-                Disconnect();
-            }
+                id = property.Id,
+                data_type = property.DataType,
+                lit_editor = property.LiteralEditor,
+                description = property.Description
+            };
+            if (qf.Query("property").Where("id", property.Id).Exists())
+                qf.Query("property").Where("id", property.Id).Update(d);
+            else
+                qf.Query("property").Insert(d);
         }
 
         /// <summary>
@@ -999,134 +707,45 @@ namespace Cadmus.Index.Sql.Graph
         /// <param name="id">The property identifier.</param>
         public void DeleteProperty(int id)
         {
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM property WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-                cmd.ExecuteNonQuery();
-            }
-            finally
-            {
-                Disconnect();
-            }
+            GetQueryFactory().Query("property").Where("id", id).Delete();
         }
         #endregion
 
         #region Node Mapping
-        private SqlSelectBuilder GetBuilderFor(NodeMappingFilter filter)
+        private void ApplyFilter(NodeMappingFilter filter, Query query)
         {
-            SqlSelectBuilder builder = GetSelectBuilder();
-            builder.EnsureSlots(null, "c");
-
-            builder.AddWhat("id, parent_id, source_type, name, ordinal, " +
-                "facet_filter, group_filter, flags_filter, title_filter, " +
-                "part_type, part_role, pin_name, prefix, label_template, " +
-                "triple_s, triple_p, triple_o, triple_o_prefix, reversed, " +
-                "slot, description")
-                   .AddWhat("COUNT(id)", slotId: "c")
-                   .AddFrom("node_mapping", slotId: "*")
-                   .AddOrder("ul.uri, id");
-
             if (filter.ParentId > 0)
-            {
-                builder.AddWhere("parent_id=@parent_id", slotId: "*")
-                       .AddParameter("@parent_id", DbType.Int32, filter.ParentId);
-            }
+                query.Where("parent_id", filter.ParentId);
 
             if (filter.SourceTypes?.Count > 0)
-            {
-                string ids = string.Join(", ", filter.SourceTypes);
-                builder.AddWhere($"source_type IN ({ids})", slotId: "*");
-            }
+                query.WhereIn("source_type", filter.SourceTypes);
 
             if (!string.IsNullOrEmpty(filter.Name))
-            {
-                builder.AddWhere("name LIKE @name", slotId: "*")
-                       .AddParameter("@name", DbType.String, $"%{filter.Name}%");
-            }
+                query.WhereLike("name", "%" + filter.Name + "%");
 
             if (!string.IsNullOrEmpty(filter.Facet))
-            {
-                builder.AddWhere("facet=@facet", slotId: "*")
-                       .AddParameter("@facet", DbType.String, filter.Facet);
-            }
+                query.Where("facet", filter.Facet);
 
             if (!string.IsNullOrEmpty(filter.Group))
             {
-                builder.AddWhere(GetRegexClauseSql("group", "@group"), slotId: "*")
-                       .AddParameter("@group", DbType.String, filter.Group);
+                query.WhereRaw(SqlHelper.BuildRegexMatch("group",
+                    SqlHelper.SqlEncode(filter.Group, false, true, false)));
             }
 
             if (filter.Flags > 0)
-            {
-                builder.AddWhere("(flags & @flags)=@flags", slotId: "*")
-                       .AddParameter("@flags", DbType.Int32, filter.Flags);
-            }
+                query.WhereRaw($"(flags & {filter.Flags})={filter.Flags}");
 
             if (!string.IsNullOrEmpty(filter.Title))
-            {
-                builder.AddWhere(GetRegexClauseSql("title", "@title"), slotId: "*")
-                       .AddParameter("@title", DbType.String, filter.Title);
-            }
+                query.Where("title", filter.Title);
 
             if (!string.IsNullOrEmpty(filter.PartType))
-            {
-                builder.AddWhere("part_type=@part_type", slotId: "*")
-                       .AddParameter("@part_type", DbType.String, filter.PartType);
-            }
+                query.Where("part_type", filter.PartType);
 
             if (!string.IsNullOrEmpty(filter.PartRole))
-            {
-                builder.AddWhere("part_role=@part_role", slotId: "*")
-                       .AddParameter("@part_role", DbType.String, filter.PartRole);
-            }
+                query.Where("part_role", filter.PartRole);
 
             if (!string.IsNullOrEmpty(filter.PinName))
-            {
-                builder.AddWhere("pin_name=@pin_name", slotId: "*")
-                       .AddParameter("@pin_name", DbType.String, filter.PinName);
-            }
-
-            // limit
-            builder.AddLimit(GetPagingSql(filter));
-
-            return builder;
-        }
-
-        private static NodeMapping ReadNodeMapping(DbDataReader reader,
-            bool noDescription = false)
-        {
-            NodeMapping mapping = new NodeMapping
-            {
-                Id = reader.GetInt32(0),
-                ParentId = reader.GetValue<int>(1),
-                SourceType = (NodeSourceType)reader.GetInt32(2),
-                Name = reader.GetString(3),
-                Ordinal = reader.GetValue<int>(4),
-                FacetFilter = reader.GetValue<string>(5),
-                GroupFilter = reader.GetValue<string>(6),
-                FlagsFilter = reader.GetInt32(7),
-                TitleFilter = reader.GetValue<string>(8),
-                PartType = reader.GetValue<string>(9),
-                PartRole = reader.GetValue<string>(10),
-                PinName = reader.GetValue<string>(11),
-                Prefix = reader.GetValue<string>(12),
-                LabelTemplate = reader.GetValue<string>(13),
-                TripleS = reader.GetValue<string>(14),
-                TripleP = reader.GetValue<string>(15),
-                TripleO = reader.GetValue<string>(16),
-                TripleOPrefix = reader.GetValue<string>(17),
-                IsReversed = reader.GetBoolean(18),
-                Slot = reader.GetValue<string>(19)
-            };
-            if (!noDescription)
-                mapping.Description = reader.GetValue<string>(20);
-
-            return mapping;
+                query.Where("pin_name", filter.PinName);
         }
 
         /// <summary>
@@ -1140,43 +759,57 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            Query query = qf.Query("node_mapping");
+            ApplyFilter(filter, query);
 
-            try
+            // get total
+            int total = query.Clone().Count<int>(new[] { "id" });
+            if (total == 0)
             {
-                SqlSelectBuilder builder = GetBuilderFor(filter);
-
-                // get count and ret if no result
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = builder.Build("c");
-                builder.AddParametersTo(cmd, "c");
-
-                long? count = cmd.ExecuteScalar() as long?;
-                if (count == null || count == 0)
-                {
-                    return new DataPage<NodeMapping>(
-                        filter.PageNumber, filter.PageSize, 0,
-                        Array.Empty<NodeMapping>());
-                }
-
-                // get page
-                cmd.CommandText = builder.Build();
-                List<NodeMapping> mappings =
-                    new List<NodeMapping>();
-                using (DbDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        mappings.Add(ReadNodeMapping(reader));
-                    }
-                }
-                return new DataPage<NodeMapping>(filter.PageNumber,
-                    filter.PageSize, (int)count, mappings);
+                return new DataPage<NodeMapping>(
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<NodeMapping>());
             }
-            finally
+
+            // complete query and get page
+            query.Select("id", "parent_id", "source_type", "name", "ordinal",
+                "facet_filter", "group_filter", "flags_filter", "title_filter",
+                "part_type", "part_role", "pin_name", "prefix", "label_template",
+                "triple_s", "triple_p", "triple_o", "triple_o_prefix", "reversed",
+                "slot", "description")
+                .OrderBy("ul.uri", "id");
+            List<NodeMapping> mappings = new List<NodeMapping>();
+            foreach (var d in query.Get())
             {
-                Disconnect();
+                mappings.Add(new NodeMapping
+                {
+                    Id = d.id,
+                    ParentId = d.parent_id ?? 0,
+                    SourceType = (NodeSourceType)d.source_type,
+                    Name = d.name,
+                    Ordinal = d.ordinal,
+                    FacetFilter = d.facet_filter,
+                    GroupFilter = d.group_filter,
+                    FlagsFilter = d.flags_filter,
+                    TitleFilter = d.title_filter,
+                    PartType = d.part_type,
+                    PartRole = d.part_role,
+                    PinName = d.pin_name,
+                    Prefix = d.prefix,
+                    LabelTemplate = d.label_template,
+                    TripleS = d.triple_s,
+                    TripleP = d.triple_p,
+                    TripleO = d.triple_o,
+                    TripleOPrefix = d.triple_o_prefix,
+                    IsReversed = Convert.ToBoolean(d.reversed),
+                    Slot = d.slot,
+                    Description = d.description
+                });
             }
+
+            return new DataPage<NodeMapping>(filter.PageNumber,
+                filter.PageSize, total, mappings);
         }
 
         /// <summary>
@@ -1186,27 +819,33 @@ namespace Cadmus.Index.Sql.Graph
         /// <returns>The mapping or null if not found.</returns>
         public NodeMapping GetMapping(int id)
         {
-            EnsureConnected();
-            try
+            QueryFactory qf = GetQueryFactory();
+            Query query = qf.Query("node_mapping").Where("id", id);
+            var d = query.Get().FirstOrDefault();
+            return d == null ? null : new NodeMapping
             {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT id, parent_id, source_type, name, " +
-                    "ordinal, facet_filter, group_filter, flags_filter, " +
-                    "title_filter, part_type, part_role, pin_name, prefix, " +
-                    "label_template, triple_s, triple_p, triple_o, triple_o_prefix, " +
-                    "reversed, slot, description FROM node_mapping WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (!reader.Read()) return null;
-                    return ReadNodeMapping(reader);
-                }
-            }
-            finally
-            {
-                Disconnect();
-            }
+                Id = d.id,
+                ParentId = d.parent_id ?? 0,
+                SourceType = (NodeSourceType)d.source_type,
+                Name = d.name,
+                Ordinal = d.ordinal,
+                FacetFilter = d.facet_filter,
+                GroupFilter = d.group_filter,
+                FlagsFilter = (int)d.flags_filter,
+                TitleFilter = d.title_filter,
+                PartType = d.part_type,
+                PartRole = d.part_role,
+                PinName = d.pin_name,
+                Prefix = d.prefix,
+                LabelTemplate = d.label_template,
+                TripleS = d.triple_s,
+                TripleP = d.triple_p,
+                TripleO = d.triple_o,
+                TripleOPrefix = d.triple_o_prefix,
+                IsReversed = Convert.ToBoolean(d.reversed),
+                Slot = d.slot,
+                Description = d.description
+            };
         }
 
         /// <summary>
@@ -1221,94 +860,60 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (mapping == null) throw new ArgumentNullException(nameof(mapping));
 
-            EnsureConnected();
-
-            try
+            QueryFactory qf = GetQueryFactory();
+            if (mapping.Id > 0
+                && qf.Query("node_mapping").Where("id", mapping.Id).Exists())
             {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-
-                StringBuilder sb = new StringBuilder();
-                sb.Append("INSERT INTO node_mapping(");
-
-                // an existing mapping must add id
-                if (mapping.Id > 0) sb.Append("id, ");
-
-                sb.Append("parent_id, ordinal, facet_filter, group_filter, " +
-                    "flags_filter, title_filter, part_type, part_role, " +
-                    "pin_name, source_type, name, prefix, label_template, " +
-                    "triple_s, triple_p, triple_o, triple_o_prefix, " +
-                    "reversed, slot, description)\n");
-                sb.Append("VALUES(");
-
-                // an existing mapping must add @id
-                if (mapping.Id > 0) sb.Append("@id, ");
-
-                sb.Append("@parent_id, @ordinal, @facet_filter, @group_filter, " +
-                    "@flags_filter, @title_filter, @part_type, @part_role, " +
-                    "@pin_name, @source_type, @name, @prefix, @label_template, " +
-                    "@triple_s, @triple_p, @triple_o, @triple_o_prefix, " +
-                    "@reversed, @slot, @description)");
-
-                // an existing mapping is an UPSERT, otherwise we have an INSERT
-                // and we must retrieve the ID of the newly inserted row
-                if (mapping.Id > 0)
+                qf.Query("node_mapping").Where("id", mapping.Id).Update(new
                 {
-                    AddParameter(cmd, "@id", DbType.Int32, mapping.Id);
-
-                    sb.Append('\n').Append(
-                        GetUpsertTailSql("parent_id", "ordinal", "facet_filter",
-                        "group_filter", "flags_filter", "title_filter",
-                        "part_type", "part_role", "pin_name", "source_type", "name",
-                        "prefix", "label_template", "triple_s", "triple_p",
-                        "triple_o", "triple_o_prefix", "reversed", "slot",
-                        "description"));
-                }
-                else
-                {
-                    sb.Append(";\n").Append(GetSelectIdentitySql());
-                }
-                cmd.CommandText = sb.ToString();
-
-                AddParameter(cmd, "@parent_id", DbType.Int32,
-                    mapping.ParentId != 0? (int?)mapping.ParentId : null);
-                AddParameter(cmd, "@ordinal", DbType.Int32, mapping.Ordinal);
-                AddParameter(cmd, "@facet_filter", DbType.String,
-                    mapping.FacetFilter);
-                AddParameter(cmd, "@group_filter", DbType.String,
-                    mapping.GroupFilter);
-                AddParameter(cmd, "@flags_filter", DbType.Int32,
-                    mapping.FlagsFilter);
-                AddParameter(cmd, "@title_filter", DbType.String,
-                    mapping.TitleFilter);
-                AddParameter(cmd, "@part_type", DbType.String, mapping.PartType);
-                AddParameter(cmd, "@part_role", DbType.String, mapping.PartRole);
-                AddParameter(cmd, "@pin_name", DbType.String, mapping.PinName);
-                AddParameter(cmd, "@source_type", DbType.Int32, mapping.SourceType);
-                AddParameter(cmd, "@name", DbType.String, mapping.Name);
-                AddParameter(cmd, "@prefix", DbType.String, mapping.Prefix);
-                AddParameter(cmd, "@label_template", DbType.String,
-                    mapping.LabelTemplate);
-                AddParameter(cmd, "@triple_s", DbType.String, mapping.TripleS);
-                AddParameter(cmd, "@triple_p", DbType.String, mapping.TripleP);
-                AddParameter(cmd, "@triple_o", DbType.String, mapping.TripleO);
-                AddParameter(cmd, "@triple_o_prefix", DbType.String,
-                    mapping.TripleOPrefix);
-                AddParameter(cmd, "@reversed", DbType.Boolean, mapping.IsReversed);
-                AddParameter(cmd, "@slot", DbType.String, mapping.Slot);
-                AddParameter(cmd, "@description", DbType.String,
-                    mapping.Description);
-
-                if (mapping.Id == 0)
-                {
-                    object result = cmd.ExecuteScalar();
-                    mapping.Id = Convert.ToInt32(result);
-                }
-                else cmd.ExecuteNonQuery();
+                    id = mapping.Id,
+                    parent_Id = mapping.ParentId == 0 ? null : (int?)mapping.ParentId,
+                    source_type = (int)mapping.SourceType,
+                    name = mapping.Name,
+                    ordinal = mapping.Ordinal,
+                    facet_filter = mapping.FacetFilter,
+                    group_filter = mapping.GroupFilter,
+                    flags_filter = mapping.FlagsFilter,
+                    title_filter = mapping.TitleFilter,
+                    part_type = mapping.PartType,
+                    part_role = mapping.PartRole,
+                    pin_name = mapping.PinName,
+                    prefix = mapping.Prefix,
+                    label_template = mapping.LabelTemplate,
+                    triple_s = mapping.TripleS,
+                    triple_p = mapping.TripleP,
+                    triple_o = mapping.TripleO,
+                    triple_o_prefix = mapping.TripleOPrefix,
+                    reversed = mapping.IsReversed,
+                    slot = mapping.Slot,
+                    description = mapping.Description
+                });
             }
-            finally
+            else
             {
-                Disconnect();
+                mapping.Id = qf.Query("node_mapping").InsertGetId<int>(new
+                {
+                    parent_Id = mapping.ParentId == 0? null : (int?)mapping.ParentId,
+                    source_type = (int)mapping.SourceType,
+                    name = mapping.Name,
+                    ordinal = mapping.Ordinal,
+                    facet_filter = mapping.FacetFilter,
+                    group_filter = mapping.GroupFilter,
+                    flags_filter = mapping.FlagsFilter,
+                    title_filter = mapping.TitleFilter,
+                    part_type = mapping.PartType,
+                    part_role = mapping.PartRole,
+                    pin_name = mapping.PinName,
+                    prefix = mapping.Prefix,
+                    label_template = mapping.LabelTemplate,
+                    triple_s = mapping.TripleS,
+                    triple_p = mapping.TripleP,
+                    triple_o = mapping.TripleO,
+                    triple_o_prefix = mapping.TripleOPrefix,
+                    reversed = mapping.IsReversed,
+                    slot = mapping.Slot,
+                    description = mapping.Description
+                });
             }
         }
 
@@ -1318,128 +923,138 @@ namespace Cadmus.Index.Sql.Graph
         /// <param name="id">The mapping identifier.</param>
         public void DeleteMapping(int id)
         {
-            EnsureConnected();
-
-            try
-            {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM node_mapping WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-                cmd.ExecuteNonQuery();
-            }
-            finally
-            {
-                Disconnect();
-            }
+            GetQueryFactory().Query("node_mapping").Where("id", id).Delete();
         }
 
-        private SqlSelectBuilder GetBuilderForMappings(IItem item, IPart part,
-            string pin, int parentId)
+        private void ApplyMappingFilter(IItem item, IPart part, string pin,
+            int parentId, Query query)
         {
-            SqlSelectBuilder builder = new SqlSelectBuilder(
-                () => GetCommand(Connection));
-
-            builder.AddWhat("id, parent_id, source_type, name, " +
-                "ordinal, facet_filter, group_filter, flags_filter, " +
-                "title_filter, part_type, part_role, pin_name, prefix, " +
-                "label_template, triple_s, triple_p, triple_o, " +
-                "triple_o_prefix, reversed, slot")
-                .AddFrom("node_mapping")
-                .AddOrder("source_type, ordinal, part_type, part_role, pin_name, name");
-
-            if (parentId != 0)
-            {
-                builder.AddWhere("parent_id=@parent_id")
-                       .AddParameter("@parent_id", DbType.Int32, parentId);
-            }
-            else
-            {
-                builder.AddWhere("parent_id IS NULL");
-            }
+            if (parentId != 0) query.Where("parent_id", parentId);
+            else query.WhereNull("parent_id");
 
             // source_type IN(1,2,3) for items or =4 for parts
             if (part == null)
             {
-                builder.AddWhere("AND source_type IN(" +
-                    string.Join(", ", new[]
+                query.WhereIn("source_type", new[]
                     {
                         (int)NodeSourceType.Item,
                         (int)NodeSourceType.ItemFacet,
                         (int)NodeSourceType.ItemGroup
-                    }) + ")");
+                    });
             }
             else
             {
-                builder.AddWhere("AND source_type=" + (int)NodeSourceType.Pin);
+                query.Where("source_type", (int)NodeSourceType.Pin);
             }
 
-            // facet
-            builder.AddWhere("AND (facet_filter IS NULL OR facet_filter=@facet)")
-                   .AddParameter("@facet", DbType.String, item.FacetId);
+            // facet: a mapping with no facet filter applies to any facet;
+            // a mapping with it applies only to the specified facet.
+            if (item.FacetId != null)
+            {
+                query.Where(q =>
+                    q.WhereNull("facet_filter").OrWhere("facet_filter", item.FacetId));
+            }
+            else query.WhereNull("facet_filter");
 
-            // flags
-            builder.AddWhere("AND (flags_filter=0 OR (flags_filter & @flags)=@flags)")
-                   .AddParameter("@flags", DbType.Int32, item.Flags);
+            // flags: a mapping with 0 flags filter applies to any flags;
+            // a mapping with non-0 applies only to the specified flags.
+            if (item.Flags != 0)
+            {
+                query.Where(q =>
+                    q.Where("flags_filter", 0)
+                     .OrWhereRaw($"(flags_filter & {item.Flags})={item.Flags}"));
+            }
+            else query.Where("flags_filter", 0);
 
-            // group
-            builder.AddWhere("AND (group_filter IS NULL OR " +
-                GetRegexClauseSql("@group", "group_filter") + ")")
-                .AddParameter("@group", DbType.String, item.GroupId ?? "");
+            // group: a mapping without group ID filter applies to any groups;
+            // a mapping with it applies only to the specified group ID.
+            if (item.GroupId != null)
+            {
+                query.Where(q =>
+                    q.WhereNull("group_filter")
+                     .OrWhereRaw(SqlHelper.BuildRegexMatch("group_filter",
+                     SqlHelper.SqlEncode(item.GroupId, false, true, false))));
+            }
+            else query.WhereNull("group_filter");
 
             // title
-            builder.AddWhere("AND (title_filter IS NULL OR " +
-                GetRegexClauseSql("@title", "title_filter") + ")")
-                .AddParameter("@title", DbType.String, item.Title);
+            if (item.Title != null)
+            {
+                query.Where(q =>
+                    q.WhereNull("title_filter")
+                     .OrWhereRaw(SqlHelper.BuildRegexMatch("title_filter",
+                       SqlHelper.SqlEncode(item.Title, false, true, false)))
+                );
+            }
+            else query.WhereNull("title_filter");
 
             if (part != null)
             {
                 // part_type
-                builder.AddWhere("AND (part_type IS NULL OR part_type=@part_type)")
-                       .AddParameter("@part_type", DbType.String, part.TypeId);
+                query.WhereNull("part_type").OrWhere("part_type", part.TypeId);
 
                 // part_role
-                builder.AddWhere("AND (part_role IS NULL OR part_role=@part_role)")
-                       .AddParameter("@part_role", DbType.String, part.RoleId ?? "");
+                query.WhereNull("part_role").OrWhere("part_role", part.RoleId);
 
-                builder.AddWhere("AND (" +
-                    "pin_name IS NULL OR pin_name=@pin_name " +
-                    "OR (" +
-                    "INSTR(pin_name, '@*') > 0 " +
-                    "AND @pin_name LIKE REPLACE(pin_name, '*', '%') " +
-                    "AND LENGTH(@pin_name) - LENGTH(REPLACE(@pin_name, '@', '')) = " +
-                    "LENGTH(pin_name) - LENGTH(REPLACE(pin_name, '@', ''))" +
-                    "))")
-                    .AddParameter("@pin_name", DbType.String, pin ?? "");
+                // pin
+                query.WhereNull("pin_name");
+                if (pin != null)
+                {
+                    string pf = SqlHelper.SqlEncode(pin, false, true, false);
+                    query.Where(q =>
+                        q.OrWhere("pin_name", pin)
+                         .OrWhereRaw("INSTR(pin_name, '@*') > 0 " +
+                           $"AND {pf} LIKE REPLACE(pin_name, '*', '%') " +
+                           $"AND LENGTH({pf}) - LENGTH(REPLACE({pf}, '@', '')) = " +
+                           "LENGTH(pin_name) - LENGTH(REPLACE(pin_name, '@', ''))")
+                    );
+                }
+                else query.WhereNull("pin_name");
             }
-
-            return builder;
         }
 
         private IList<NodeMapping> FindMappings(IItem item, IPart part, string pin,
             int parentId)
         {
-            try
-            {
-                EnsureConnected();
-                SqlSelectBuilder builder = GetBuilderForMappings(item, part,
-                    pin, parentId);
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = builder.Build();
-                builder.AddParametersTo(cmd);
+            QueryFactory qf = GetQueryFactory();
+            Query query = qf.Query("node_mapping");
+            ApplyMappingFilter(item, part, pin, parentId, query);
+            query.Select("id", "parent_id", "source_type", "name", "ordinal",
+                "facet_filter", "group_filter", "flags_filter", "title_filter",
+                "part_type", "part_role", "pin_name", "prefix", "label_template",
+                "triple_s", "triple_p", "triple_o", "triple_o_prefix",
+                "reversed", "slot")
+                .OrderBy("source_type", "ordinal", "part_type", "part_role", "pin_name", "name");
 
-                using (DbDataReader reader = cmd.ExecuteReader())
-                {
-                    List<NodeMapping> mappings = new List<NodeMapping>();
-                    while (reader.Read())
-                        mappings.Add(ReadNodeMapping(reader, true));
-                    return mappings;
-                }
-            }
-            finally
+            List<NodeMapping> mappings = new List<NodeMapping>();
+            foreach (var d in query.Get())
             {
-                Disconnect();
+                mappings.Add(new NodeMapping
+                {
+                    Id = d.id,
+                    ParentId = d.parent_id ?? 0,
+                    SourceType = (NodeSourceType)d.source_type,
+                    Name = d.name,
+                    Ordinal = d.ordinal,
+                    FacetFilter = d.facet_filter,
+                    GroupFilter = d.group_filter,
+                    FlagsFilter = (int)d.flags_filter,
+                    TitleFilter = d.title_filter,
+                    PartType = d.part_type,
+                    PartRole = d.part_role,
+                    PinName = d.pin_name,
+                    Prefix = d.prefix,
+                    LabelTemplate = d.label_template,
+                    TripleS = d.triple_s,
+                    TripleP = d.triple_p,
+                    TripleO = d.triple_o,
+                    TripleOPrefix = d.triple_o_prefix,
+                    IsReversed = Convert.ToBoolean(d.reversed),
+                    Slot = d.slot,
+                    // Description = d.description
+                });
             }
+            return mappings;
         }
 
         /// <summary>
@@ -1479,136 +1094,91 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Triples
-        private SqlSelectBuilder GetBuilderFor(TripleFilter filter)
+        private void ApplyFilter(TripleFilter filter, Query query)
         {
-            SqlSelectBuilder builder = GetSelectBuilder();
-            builder.EnsureSlots(null, "c")
-                    .AddWhat("t.id, t.s_id, t.p_id, t.o_id, t.o_lit, t.sid, t.tag, " +
-                             "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri")
-                    .AddWhat("COUNT(t.id)", slotId: "c")
-                    .AddFrom("triple t", slotId: "*")
-                    .AddFrom("INNER JOIN uri_lookup uls ON t.s_id=uls.id")
-                    .AddFrom("INNER JOIN uri_lookup ulp ON t.p_id=ulp.id")
-                    .AddFrom("LEFT JOIN uri_lookup ulo ON t.o_id=ulo.id")
-                    .AddOrder("s_uri, p_uri, t.id");
-
             if (filter.SubjectId > 0)
-            {
-                builder.AddWhere("s_id=@s_id", slotId: "*")
-                       .AddParameter("@s_id", DbType.Int32, filter.SubjectId,
-                            slotId: "*");
-            }
+                query.Where("s_id", filter.SubjectId);
 
             if (filter.PredicateId > 0)
-            {
-                builder.AddWhere("p_id=@p_id", slotId: "*")
-                       .AddParameter("@p_id", DbType.Int32, filter.PredicateId,
-                            slotId: "*");
-            }
+                query.Where("p_id", filter.PredicateId);
 
             if (filter.ObjectId > 0)
-            {
-                builder.AddWhere("o_id=@o_id", slotId: "*")
-                       .AddParameter("@o_id", DbType.Int32, filter.ObjectId,
-                            slotId: "*");
-            }
+                query.Where("o_id", filter.ObjectId);
 
             if (!string.IsNullOrEmpty(filter.ObjectLiteral))
             {
-                builder.AddWhere(GetRegexClauseSql("o_lit", "@o_lit"), slotId: "*")
-                       .AddParameter("@o_lit", DbType.String, filter.ObjectLiteral,
-                            slotId: "*");
+                query.WhereRaw(SqlHelper.BuildRegexMatch("o_lit",
+                    SqlHelper.SqlEncode(filter.ObjectLiteral, false, true, false)));
             }
 
             // sid
             if (!string.IsNullOrEmpty(filter.Sid))
             {
-                if (filter.IsSidPrefix)
-                {
-                    builder.AddWhere("sid LIKE @sid", slotId: "*")
-                           .AddParameter("@sid", DbType.String, filter.Sid + "%",
-                                slotId: "*");
-                }
-                else
-                {
-                    builder.AddWhere("sid=@sid", slotId: "*")
-                           .AddParameter("@sid", DbType.String, filter.Sid,
-                                slotId: "*");
-                }
+                if (filter.IsSidPrefix) query.WhereLike("sid", filter.Sid + "%");
+                else query.Where("sid", filter.Sid);
             }
 
             if (filter.Tag != null)
             {
-                builder.AddWhere(filter.Tag.Length == 0
-                    ? "tag IS NULL" : "tag=@tag", slotId: "*");
-                if (filter.Tag.Length > 0)
-                {
-                    builder.AddParameter("@tag", DbType.String, filter.Tag,
-                        slotId: "*");
-                }
+                if (filter.Tag.Length == 0) query.WhereNull("tag");
+                else query.Where("tag", filter.Tag);
             }
-
-            return builder;
         }
 
         /// <summary>
         /// Gets the specified page of triples.
         /// </summary>
-        /// <param name="filter">The filter.</param>
+        /// <param name="filter">The filter. You can set the page size to 0
+        /// to get all the matches at once.</param>
         /// <returns>Page.</returns>
         /// <exception cref="ArgumentNullException">filter</exception>
         public DataPage<TripleResult> GetTriples(TripleFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            Query query = qf.Query("triple")
+                .Join("uri_lookup AS uls", "triple.s_id", "uls.id")
+                .Join("uri_lookup AS ulp", "triple.p_id", "ulp.id")
+                .LeftJoin("uri_lookup AS ulo", "triple.o_id", "ulo.id");
+            ApplyFilter(filter, query);
 
-            try
+            // get total
+            int total = query.Clone().Count<int>(new[] { "triple.id" });
+            if (total == 0)
             {
-                SqlSelectBuilder builder = GetBuilderFor(filter);
-
-                // get count and ret if no result
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = builder.Build("c");
-                builder.AddParametersTo(cmd, "c");
-
-                long? count = cmd.ExecuteScalar() as long?;
-                if (count == null || count == 0)
-                {
-                    return new DataPage<TripleResult>(
-                        filter.PageNumber, filter.PageSize, 0,
-                        Array.Empty<TripleResult>());
-                }
-
-                // get page
-                cmd.CommandText = builder.Build();
-                List<TripleResult> triples = new List<TripleResult>();
-                using (DbDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        triples.Add(new TripleResult
-                        {
-                            Id = reader.GetInt32(0),
-                            SubjectId = reader.GetInt32(1),
-                            PredicateId = reader.GetInt32(2),
-                            ObjectId = reader.GetValue<int>(3),
-                            ObjectLiteral = reader.GetValue<string>(4),
-                            Sid = reader.GetValue<string>(5),
-                            Tag = reader.GetValue<string>(6),
-                            SubjectUri = reader.GetString(7),
-                            PredicateUri = reader.GetString(8),
-                            ObjectUri = reader.GetValue<string>(9)
-                        });
-                    }
-                }
-                return new DataPage<TripleResult>(filter.PageNumber,
-                    filter.PageSize, (int)count, triples);
+                return new DataPage<TripleResult>(
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<TripleResult>());
             }
-            finally
+
+            // complete query and get page
+            query.Select("triple.id", "triple.s_id", "triple.p_id", "triple.o_id",
+                "triple.o_lit", "triple.sid", "triple.tag", "uls.uri AS s_uri",
+                "ulp.uri AS p_uri", "ulo.uri AS o_uri")
+                 .OrderBy("s_uri", "p_uri", "triple.id")
+                 .Skip(filter.GetSkipCount());
+            if (filter.PageSize > 0) query.Limit(filter.PageSize);
+
+            List<TripleResult> triples = new List<TripleResult>();
+            foreach (var d in query.Get())
             {
-                Disconnect();
+                triples.Add(new TripleResult
+                {
+                    Id = d.id,
+                    SubjectId = d.s_id,
+                    PredicateId = d.p_id,
+                    ObjectId = d.o_id == null? 0 : d.o_id,
+                    ObjectLiteral = d.o_lit,
+                    Sid = d.sid,
+                    Tag = d.tag,
+                    SubjectUri = d.s_uri,
+                    PredicateUri = d.p_uri,
+                    ObjectUri = d.o_uri
+                });
             }
+            return new DataPage<TripleResult>(filter.PageNumber,
+                filter.PageSize, total, triples);
         }
 
         /// <summary>
@@ -1617,74 +1187,94 @@ namespace Cadmus.Index.Sql.Graph
         /// <param name="id">The triple's ID.</param>
         public TripleResult GetTriple(int id)
         {
-            EnsureConnected();
-            try
+            QueryFactory qf = GetQueryFactory();
+            var d = qf.Query("triple")
+                .Join("uri_lookup AS uls", "triple.s_id", "uls.id")
+                .Join("uri_lookup AS ulp", "triple.p_id", "ulp.id")
+                .LeftJoin("uri_lookup AS ulo", "triple.o_id", "ulo.id")
+                .Where("triple.id", id)
+                .Select("triple.id", "triple.s_id", "triple.p_id", "triple.o_id",
+                "triple.o_lit", "triple.sid", "triple.tag", "uls.uri AS s_uri",
+                "ulp.uri AS p_uri", "ulo.uri AS o_uri")
+                .Get().FirstOrDefault();
+            return d == null ? null : new TripleResult
             {
-                DbCommand cmd = GetCommand();
-                cmd.CommandText = "SELECT t.s_id, t.p_id, t.o_id, t.o_lit, " +
-                    "t.sid, t.tag, " +
-                    "uls.uri AS s_uri, ulp.uri AS p_uri, ulo.uri AS o_uri\n" +
-                    "FROM triple t\n" +
-                    "INNER JOIN uri_lookup uls ON t.s_id=uls.id\n" +
-                    "INNER JOIN uri_lookup ulp ON t.p_id=ulp.id\n" +
-                    "LEFT JOIN uri_lookup ulo ON t.o_id=ulo.id\n" +
-                    "WHERE t.id=@id;";
-                AddParameter(cmd, "@id", DbType.Int32, id);
+                Id = id,
+                SubjectId = d.s_id,
+                PredicateId = d.p_id,
+                ObjectId = d.o_id == null? 0 : d.o_id,
+                ObjectLiteral = d.o_lit,
+                Sid = d.sid,
+                Tag = d.tag,
+                SubjectUri = d.s_uri,
+                PredicateUri = d.p_uri,
+                ObjectUri = d.o_uri
+            };
+        }
 
-                using (var reader = cmd.ExecuteReader())
+        private int FindTripleByValue(Triple triple, QueryFactory qf)
+        {
+            var query = qf.Query("triple")
+                .Where("s_id", triple.SubjectId)
+                .Where("p_id", triple.PredicateId)
+                .Select("id");
+
+            if (triple.ObjectId == 0) query.WhereNull("o_id");
+            else query.Where("o_id", triple.ObjectId);
+
+            if (triple.ObjectLiteral == null) query.WhereNull("o_lit");
+            else query.Where("o_lit", triple.ObjectLiteral);
+
+            if (triple.Sid == null) query.WhereNull("sid");
+            else query.Where("sid", triple.Sid);
+
+            if (triple.Tag == null) query.WhereNull("tag");
+            else query.Where("tag", triple.Tag);
+
+            var d = query.Get().FirstOrDefault();
+            return d == null? 0 : d.id;
+        }
+
+        private void AddTriple(Triple triple, QueryFactory qf)
+        {
+            if (qf == null) qf = GetQueryFactory();
+
+            // do not insert if exactly the same triple already exists;
+            // in this case, update the triple's ID to ensure it's valid
+            int existingId = FindTripleByValue(triple, qf);
+            if (existingId > 0)
+            {
+                triple.Id = existingId;
+                return;
+            }
+
+            // else update/insert
+            if (triple.Id > 0 &&
+                qf.Query("triple").Where("id", triple.Id).Exists())
+            {
+                qf.Query("triple").Update(new
                 {
-                    if (!reader.Read()) return null;
-                    return new TripleResult
-                    {
-                        Id = id,
-                        SubjectId = reader.GetInt32(0),
-                        PredicateId = reader.GetInt32(1),
-                        ObjectId = reader.GetValue<int>(2),
-                        ObjectLiteral = reader.GetValue<string>(3),
-                        Sid = reader.GetValue<string>(4),
-                        Tag = reader.GetValue<string>(5),
-                        SubjectUri = reader.GetString(6),
-                        PredicateUri = reader.GetString(7),
-                        ObjectUri = reader.GetValue<string>(8)
-                    };
-                }
+                    id = triple.Id,
+                    s_id = triple.SubjectId,
+                    p_id = triple.PredicateId,
+                    o_id = triple.ObjectId == 0? null : (int?)triple.ObjectId,
+                    o_lit = triple.ObjectLiteral,
+                    sid = triple.Sid,
+                    tag = triple.Tag,
+                });
             }
-            finally
+            else
             {
-                Disconnect();
+                triple.Id = qf.Query("triple").InsertGetId<int>(new
+                {
+                    s_id = triple.SubjectId,
+                    p_id = triple.PredicateId,
+                    o_id = triple.ObjectId == 0 ? null : (int?)triple.ObjectId,
+                    o_lit = triple.ObjectLiteral,
+                    sid = triple.Sid,
+                    tag = triple.Tag,
+                });
             }
-        }
-
-        private static void AddTripleParameters(Triple triple, DbCommand cmd)
-        {
-            AddParameter(cmd, "@s_id", DbType.Int32, triple.SubjectId);
-            AddParameter(cmd, "@p_id", DbType.Int32, triple.PredicateId);
-            AddParameter(cmd, "@o_id", DbType.Int32,
-                triple.ObjectId != 0? (int?)triple.ObjectId : null);
-            AddParameter(cmd, "@o_lit", DbType.String, triple.ObjectLiteral);
-            AddParameter(cmd, "@sid", DbType.String, triple.Sid);
-            AddParameter(cmd, "@tag", DbType.String, triple.Tag);
-        }
-
-        private int FindTripleByValue(Triple triple)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("SELECT id FROM triple WHERE s_id=@s_id AND p_id=@p_id");
-            sb.Append(triple.ObjectId == 0 ?
-                " AND o_id IS NULL" : " AND o_id=@o_id");
-            sb.Append(triple.ObjectLiteral == null?
-                " AND o_lit IS NULL" : " AND o_lit=@o_lit");
-            sb.Append(triple.Sid == null ?
-                " AND sid IS NULL" : " AND sid=@sid");
-            sb.Append(triple.Tag == null ?
-                " AND tag IS NULL" : " AND tag=@tag");
-            sb.Append(';');
-
-            DbCommand cmd = GetCommand();
-            cmd.CommandText = sb.ToString();
-            AddTripleParameters(triple, cmd);
-            object result = cmd.ExecuteScalar();
-            return result != null ? (int)result : 0;
         }
 
         /// <summary>
@@ -1701,68 +1291,30 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (triple == null) throw new ArgumentNullException(nameof(triple));
 
-            EnsureConnected();
+            AddTriple(triple, null);
+        }
 
-            try
+        private void DeleteTriple(int id, QueryFactory qf)
+        {
+            // get the triple to delete as its deletion might affect
+            // the classes assigned to its subject node
+            if (qf == null) qf = GetQueryFactory();
+            var d = qf.Query("triple")
+                .Where("id", id)
+                .Select("s_id", "o_id")
+                .Get().FirstOrDefault();
+
+            // delete
+            if (d != null)
             {
-                // do not insert if exactly the same triple already exists;
-                // in this case, update the triple's ID to ensure it's valid
-                int existingId = FindTripleByValue(triple);
-                if (existingId > 0)
-                {
-                    triple.Id = existingId;
-                    return;
-                }
+                qf.Query("triple").Where("id", id).Delete();
 
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-
-                StringBuilder sb = new StringBuilder();
-                sb.Append("INSERT INTO triple(");
-
-                // an existing triple must add id
-                if (triple.Id > 0) sb.Append("id, ");
-
-                sb.Append("s_id, p_id, o_id, o_lit, sid, tag) VALUES(");
-
-                // an existing triple must add @id
-                if (triple.Id > 0) sb.Append("@id, ");
-
-                sb.Append("@s_id, @p_id, @o_id, @o_lit, @sid, @tag)");
-
-                // an existing triple is an UPSERT, otherwise we have an INSERT
-                // and we must retrieve the ID of the newly inserted row
-                if (triple.Id > 0)
-                {
-                    AddParameter(cmd, "@id", DbType.Int32, triple.Id);
-                    sb.Append('\n').Append(GetUpsertTailSql(
-                        "s_id", "p_id", "o_id", "o_lit", "sid"));
-                }
-                else
-                {
-                    sb.Append(";\n").Append(GetSelectIdentitySql());
-                }
-                cmd.CommandText = sb.ToString();
-
-                AddTripleParameters(triple, cmd);
-
-                if (triple.Id == 0)
-                {
-                    object result = cmd.ExecuteScalar();
-                    triple.Id = Convert.ToInt32(result);
-                }
-                else cmd.ExecuteNonQuery();
-
-                // update subject node classes when O is not a literal
-                if (triple.ObjectId == 0)
+                // update classes if required
+                if (d.o_id != null && d.o_id > 0)
                 {
                     var asIds = GetASubIds();
-                    UpdateNodeClasses(triple.SubjectId, asIds.Item1, asIds.Item2);
+                    UpdateNodeClasses(d.s_id, asIds.Item1, asIds.Item2, qf);
                 }
-            }
-            finally
-            {
-                Disconnect();
             }
         }
 
@@ -1772,42 +1324,7 @@ namespace Cadmus.Index.Sql.Graph
         /// <param name="id">The identifier.</param>
         public void DeleteTriple(int id)
         {
-            EnsureConnected();
-
-            try
-            {
-                // get the triple to delete as its deletion might affect
-                // the classes assigned to its subject node
-                int subjectId, objectId;
-                DbCommand selCmd = GetCommand();
-                selCmd.CommandText = "SELECT s_id, o_id\n" +
-                    "FROM triple WHERE id=@id;";
-                AddParameter(selCmd, "@id", DbType.Int32, id);
-                using (DbDataReader reader = selCmd.ExecuteReader())
-                {
-                    if (!reader.Read()) return;
-                    subjectId = reader.GetInt32(0);
-                    objectId = reader.IsDBNull(1)? 0 : reader.GetInt32(1);
-                }
-
-                // delete
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
-                cmd.CommandText = "DELETE FROM triple WHERE id=@id;";
-                AddParameter(cmd, "@id", DbType.Int32, id);
-                cmd.ExecuteNonQuery();
-
-                // update classes if required
-                if (objectId > 0)
-                {
-                    var asIds = GetASubIds();
-                    UpdateNodeClasses(subjectId, asIds.Item1, asIds.Item2);
-                }
-            }
-            finally
-            {
-                Disconnect();
-            }
+            DeleteTriple(id, null);
         }
         #endregion
 
@@ -1839,15 +1356,25 @@ namespace Cadmus.Index.Sql.Graph
             return Tuple.Create(a.Id, sub.Id);
         }
 
-        private void UpdateNodeClasses(int nodeId, int aId, int subId)
+        private void UpdateNodeClasses(int nodeId, int aId, int subId,
+            QueryFactory qf) =>
+            qf.Statement($"CALL populate_node_class({nodeId},{aId},{subId});");
+
+        /// <summary>
+        /// Adds the specified parameter to <paramref name="command"/>.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="value">The optional value.</param>
+        protected static void AddParameter(IDbCommand command, string name,
+            DbType type, object value = null)
         {
-            DbCommand cmd = GetCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "populate_node_class";
-            AddParameter(cmd, "instance_id", DbType.Int32, nodeId);
-            AddParameter(cmd, "a_id", DbType.Int32, aId);
-            AddParameter(cmd, "sub_id", DbType.Int32, subId);
-            cmd.ExecuteNonQuery();
+            IDbDataParameter p = command.CreateParameter();
+            p.ParameterName = name;
+            p.DbType = type;
+            if (value != null) p.Value = value;
+            command.Parameters.Add(p);
         }
 
         /// <summary>
@@ -1858,72 +1385,62 @@ namespace Cadmus.Index.Sql.Graph
         public Task UpdateNodeClassesAsync(CancellationToken cancel,
             IProgress<ProgressReport> progress = null)
         {
-            EnsureConnected();
-            try
+            QueryFactory qf = GetQueryFactory();
+
+            // rdf:type and rdfs:subClassOf must exist
+            var asIds = GetASubIds();
+
+            // get total nodes to go
+            int total = qf.Query("node").Where("is_class", false)
+                          .Count<int>(new[] { "id" });
+
+            IDbCommand cmd = qf.Connection.CreateCommand();
+            cmd.CommandText = "SELECT node.id FROM node " +
+                "WHERE node.is_class=0;";
+
+            using (IDataReader reader = cmd.ExecuteReader())
+            using (IDbConnection updaterConn = GetConnection())
             {
-                // rdf:type and rdfs:subClassOf must exist
-                var asIds = GetASubIds();
+                updaterConn.Open();
+                ProgressReport report =
+                    progress != null ? new ProgressReport() : null;
+                int oldPercent = 0;
 
-                DbCommand countCmd = GetCommand();
-                countCmd.CommandText = "SELECT COUNT(node.id) FROM node " +
-                    "WHERE node.is_class=0;";
-                long? result = countCmd.ExecuteScalar() as long?;
-                if (result == null) return Task.CompletedTask;
+                IDbCommand updCmd = updaterConn.CreateCommand();
+                // we need another connection to update while reading
+                updCmd.Connection = updaterConn;
+                updCmd.CommandType = CommandType.StoredProcedure;
+                updCmd.CommandText = "populate_node_class";
+                AddParameter(updCmd, "instance_id", DbType.Int32);
+                AddParameter(updCmd, "a_id", DbType.Int32, asIds.Item1);
+                AddParameter(updCmd, "sub_id", DbType.Int32, asIds.Item2);
 
-                int total = (int)result.Value;
-
-                DbCommand cmdSel = GetCommand();
-                cmdSel.CommandText = "SELECT node.id FROM node " +
-                    "WHERE node.is_class=0;";
-
-                using (DbDataReader reader = cmdSel.ExecuteReader())
-                using (DbConnection updaterConn = GetConnection())
+                while (reader.Read())
                 {
-                    updaterConn.Open();
-                    ProgressReport report =
-                        progress != null ? new ProgressReport() : null;
-                    int oldPercent = 0;
+                    ((DbParameter)updCmd.Parameters[0]).Value = reader.GetInt32(0);
+                    updCmd.ExecuteNonQuery();
 
-                    DbCommand updCmd = GetCommand();
-                    // we need another connection to update while reading
-                    updCmd.Connection = updaterConn;
-                    updCmd.CommandType = CommandType.StoredProcedure;
-                    updCmd.CommandText = "populate_node_class";
-                    AddParameter(updCmd, "instance_id", DbType.Int32);
-                    AddParameter(updCmd, "a_id", DbType.Int32, asIds.Item1);
-                    AddParameter(updCmd, "sub_id", DbType.Int32, asIds.Item2);
-
-                    while (reader.Read())
+                    if (report != null && ++report.Count % 10 == 0)
                     {
-                        updCmd.Parameters[0].Value = reader.GetInt32(0);
-                        updCmd.ExecuteNonQuery();
-
-                        if (report != null && ++report.Count % 10 == 0)
+                        report.Percent = report.Count * 100 / total;
+                        if (report.Percent != oldPercent)
                         {
-                            report.Percent = report.Count * 100 / total;
-                            if (report.Percent != oldPercent)
-                            {
-                                progress.Report(report);
-                                oldPercent = report.Percent;
-                            }
+                            progress.Report(report);
+                            oldPercent = report.Percent;
                         }
-                        if (cancel.IsCancellationRequested)
-                            return Task.CompletedTask;
                     }
-
-                    if (report != null)
-                    {
-                        report.Percent = 100;
-                        report.Count = total;
-                        progress.Report(report);
-                    }
+                    if (cancel.IsCancellationRequested)
+                        return Task.CompletedTask;
                 }
-                return Task.CompletedTask;
+
+                if (report != null)
+                {
+                    report.Percent = 100;
+                    report.Count = total;
+                    progress.Report(report);
+                }
             }
-            finally
-            {
-                Disconnect();
-            }
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -1945,8 +1462,8 @@ namespace Cadmus.Index.Sql.Graph
             // nothing to do for aliases
             if (thesaurus.TargetId != null) return;
 
-            EnsureConnected();
-            BeginTransaction();
+            QueryFactory qf = GetQueryFactory();
+            IDbTransaction trans = qf.Connection.BeginTransaction();
 
             try
             {
@@ -1956,10 +1473,10 @@ namespace Cadmus.Index.Sql.Graph
                 {
                     AddNode(sub = new Node
                     {
-                        Id = AddUri("rdfs:subClassOf"),
+                        Id = AddUri("rdfs:subClassOf", qf),
                         Label = "subclass-of",
                         IsClass = true
-                    }, true);
+                    }, true, qf);
                 }
 
                 // include root if requested
@@ -1975,12 +1492,12 @@ namespace Cadmus.Index.Sql.Graph
 
                     AddNode(root = new Node
                     {
-                        Id = AddUri(uri),
+                        Id = AddUri(uri, qf),
                         IsClass = true,
                         Label = id,
                         SourceType = NodeSourceType.User,
                         Tag = "thesaurus"
-                    }, true);
+                    }, true, qf);
                 }
 
                 Dictionary<string, int> ids = new Dictionary<string, int>();
@@ -1990,13 +1507,13 @@ namespace Cadmus.Index.Sql.Graph
                         ? entry.Id : prefix + entry.Id;
                     Node node = new Node
                     {
-                        Id = AddUri(uri),
+                        Id = AddUri(uri, qf),
                         IsClass = true,
                         Label = entry.Id,
                         SourceType = NodeSourceType.User,
                         Tag = "thesaurus"
                     };
-                    AddNode(node, true);
+                    AddNode(node, true, qf);
                     ids[entry.Id] = node.Id;
 
                     // triple
@@ -2007,7 +1524,7 @@ namespace Cadmus.Index.Sql.Graph
                             SubjectId = node.Id,
                             PredicateId = sub.Id,
                             ObjectId = ids[entry.Parent.Id]
-                        });
+                        }, qf);
                     }
                     else if (root != null)
                     {
@@ -2016,17 +1533,17 @@ namespace Cadmus.Index.Sql.Graph
                             SubjectId = node.Id,
                             PredicateId = sub.Id,
                             ObjectId = root.Id
-                        });
+                        }, qf);
                     }
 
                     return true;
                 });
 
-                CommitTransaction();
+                trans.Commit();
             }
             catch
             {
-                RollbackTransaction();
+                trans.Rollback();
                 throw;
             }
         }
@@ -2045,50 +1562,40 @@ namespace Cadmus.Index.Sql.Graph
             if (sourceId is null)
                 throw new ArgumentNullException(nameof(sourceId));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
 
-            try
+            // nodes
+            Query query = qf.Query("node")
+              .Join("uri_lookup AS ul", "node.id", "ul.id")
+              .WhereLike("sid", sourceId + "%")
+              .Select("node.id", "node.is_class", "node.tag", "node.label",
+                "node.source_type", "node.sid", "ul.uri");
+
+            List<NodeResult> nodes = new List<NodeResult>();
+            foreach (var d in query.Get())
             {
-                DbCommand nodeCmd = GetCommand();
-                nodeCmd.CommandText =
-                    "SELECT n.id, n.is_class, n.tag, n.label, n.source_type, " +
-                    "n.sid, ul.uri\n" +
-                    "FROM node n INNER JOIN uri_lookup ul ON n.id=ul.id\n" +
-                    "WHERE sid LIKE @sid;";
-                AddParameter(nodeCmd, "@sid", DbType.String, sourceId + "%");
-
-                List<NodeResult> nodes = new List<NodeResult>();
-                using (var nodeReader = nodeCmd.ExecuteReader())
+                nodes.Add(new NodeResult
                 {
-                    while (nodeReader.Read())
-                    {
-                        nodes.Add(
-                            new NodeResult
-                            {
-                                Id = nodeReader.GetInt32(0),
-                                IsClass = nodeReader.GetBoolean(1),
-                                Tag = nodeReader.GetValue<string>(2),
-                                Label = nodeReader.GetValue<string>(3),
-                                SourceType = (NodeSourceType)nodeReader.GetInt32(4),
-                                Sid = nodeReader.GetValue<string>(5),
-                                Uri = nodeReader.GetString(6)
-                            });
-                    }
-                }
-
-                DataPage<TripleResult> page = GetTriples(new TripleFilter
-                {
-                    PageNumber = 1,
-                    PageSize = 0,
-                    Sid = sourceId,
-                    IsSidPrefix = true
+                    Id = d.id,
+                    IsClass = Convert.ToBoolean(d.is_class),
+                    Tag = d.tag,
+                    Label = d.label,
+                    SourceType = (NodeSourceType)d.source_type,
+                    Sid = d.sid,
+                    Uri = d.uri
                 });
-                return new GraphSet(nodes, page.Items);
             }
-            finally
+
+            // triples
+            DataPage<TripleResult> page = GetTriples(new TripleFilter
             {
-                Disconnect();
-            }
+                PageNumber = 1,
+                PageSize = 0,
+                Sid = sourceId,
+                IsSidPrefix = true
+            });
+
+            return new GraphSet(nodes, page.Items);
         }
 
         /// <summary>
@@ -2102,24 +1609,118 @@ namespace Cadmus.Index.Sql.Graph
         {
             if (sourceId == null) throw new ArgumentNullException(nameof(sourceId));
 
-            EnsureConnected();
+            QueryFactory qf = GetQueryFactory();
+            IDbTransaction trans = qf.Connection.BeginTransaction();
 
             try
             {
-                DbCommand cmd = GetCommand();
-                cmd.Transaction = Transaction;
+                qf.Query("triple").WhereLike("sid", sourceId + "%").Delete();
+                qf.Query("node").WhereLike("sid", sourceId + "%").Delete();
 
-                cmd.CommandText = "DELETE FROM triple WHERE sid LIKE @sid;";
-                AddParameter(cmd, "@sid", DbType.String, sourceId + "%");
-                cmd.ExecuteNonQuery();
-
-                cmd.CommandText = "DELETE FROM node WHERE sid LIKE @sid;";
-                cmd.ExecuteNonQuery();
+                trans.Commit();
             }
-            finally
+            catch (Exception)
             {
-                Disconnect();
+                trans.Rollback();
+                throw;
             }
         }
+
+        private void UpdateGraph(string sourceId, IList<NodeResult> nodes,
+            IList<TripleResult> triples, QueryFactory qf)
+        {
+            // corner case: sourceId = null/empty:
+            // this happens only for nodes generated as the objects of a
+            // generated triple, and in this case we must only ensure that
+            // such nodes exist, without updating them.
+            if (string.IsNullOrEmpty(sourceId))
+            {
+                foreach (NodeResult node in nodes) AddNode(node, true);
+                return;
+            }
+
+            GraphSet oldSet = GetGraphSet(sourceId);
+
+            // compare sets
+            CrudGrouper<NodeResult> nodeGrouper = new CrudGrouper<NodeResult>();
+            nodeGrouper.Group(nodes, oldSet.Nodes,
+                (NodeResult a, NodeResult b) => a.Id == b.Id);
+
+            CrudGrouper<TripleResult> tripleGrouper = new CrudGrouper<TripleResult>();
+            tripleGrouper.Group(triples, oldSet.Triples,
+                (TripleResult a, TripleResult b) =>
+                {
+                    return a.SubjectId == b.SubjectId &&
+                        a.PredicateId == b.PredicateId &&
+                        a.ObjectId == b.ObjectId &&
+                        a.ObjectLiteral == b.ObjectLiteral &&
+                        a.Sid == b.Sid;
+                });
+
+            // filter deleted nodes to ensure that no property/class gets deleted
+            nodeGrouper.FilterDeleted(n => !n.IsClass && n.Tag != Node.TAG_PROPERTY);
+
+            // nodes
+            foreach (NodeResult node in nodeGrouper.Deleted)
+                DeleteNode(node.Id, qf);
+            foreach (NodeResult node in nodeGrouper.Added)
+                AddNode(node, true, qf);
+            foreach (NodeResult node in nodeGrouper.Updated)
+                AddNode(node, node.Sid == null, qf);
+
+            // triples
+            foreach (TripleResult triple in tripleGrouper.Deleted)
+                DeleteTriple(triple.Id, qf);
+            foreach (TripleResult triple in tripleGrouper.Added)
+                AddTriple(triple, qf);
+            foreach (TripleResult triple in tripleGrouper.Updated)
+                AddTriple(triple, qf);
+        }
+
+        /// <summary>
+        /// Updates the graph with the specified nodes and triples.
+        /// </summary>
+        /// <param name="set">The new set of nodes and triples.</param>
+        /// <exception cref="ArgumentNullException">set</exception>
+        public void UpdateGraph(GraphSet set)
+        {
+            if (set == null) throw new ArgumentNullException(nameof(set));
+
+            // get nodes and triples grouped by their SID's GUID
+            var nodeGroups = set.GetNodesByGuid();
+            var tripleGroups = set.GetTriplesByGuid();
+
+            QueryFactory qf = GetQueryFactory();
+            IDbTransaction trans = qf.Connection.BeginTransaction();
+
+            try
+            {
+                // order by key so that empty (=null SID) keys come before
+                foreach (string key in nodeGroups.Keys.OrderBy(s => s))
+                {
+                    UpdateGraph(key,
+                        nodeGroups[key],
+                        tripleGroups.ContainsKey(key)
+                            ? tripleGroups[key] : Array.Empty<TripleResult>(), qf);
+                }
+                trans.Commit();
+            }
+            catch (Exception)
+            {
+                trans.Rollback();
+                throw;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Options for SQL-based repositories.
+    /// </summary>
+    public class SqlRepositoryOptions
+    {
+        /// <summary>
+        /// Gets or sets the connection string.
+        /// </summary>
+        public string ConnectionString { get; set; }
     }
 }

@@ -15,23 +15,6 @@ namespace Cadmus.Index.Graph
     public interface IGraphRepository
     {
         /// <summary>
-        /// Begins a write transaction. All the write methods of this repository
-        /// get connected to this transaction until it is either committed
-        /// or rejected.
-        /// </summary>
-        void BeginTransaction();
-
-        /// <summary>
-        /// Commits a write transaction.
-        /// </summary>
-        void CommitTransaction();
-
-        /// <summary>
-        /// Rollbacks the write transaction.
-        /// </summary>
-        void RollbackTransaction();
-
-        /// <summary>
         /// Gets the specified page of namespaces with their prefixes.
         /// </summary>
         /// <param name="filter">The filter.</param>
@@ -272,5 +255,11 @@ namespace Cadmus.Index.Graph
         /// under a single root.</param>
         /// <param name="prefix">The optional prefix to prepend to each ID.</param>
         void AddThesaurus(Thesaurus thesaurus, bool includeRoot, string prefix = null);
+
+        /// <summary>
+        /// Updates the graph with the specified nodes and triples.
+        /// </summary>
+        /// <param name="set">The new set of nodes and triples.</param>
+        void UpdateGraph(GraphSet set);
     }
 }

@@ -95,15 +95,6 @@ namespace Cadmus.Index.Sql
         protected abstract DbCommand GetCommand(DbConnection connection = null);
 
         /// <summary>
-        /// Gets a SQL select statement builder.
-        /// </summary>
-        /// <returns>Builder.</returns>
-        protected SqlSelectBuilder GetSelectBuilder()
-        {
-            return new SqlSelectBuilder(() => GetCommand(null));
-        }
-
-        /// <summary>
         /// Adds the specified parameter to <paramref name="command"/>.
         /// </summary>
         /// <param name="command">The command.</param>

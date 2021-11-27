@@ -2,6 +2,7 @@
 using Cadmus.Core.Config;
 using Cadmus.Index.Graph;
 using Fusi.Tools;
+using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using SqlKata;
 using SqlKata.Compilers;
@@ -19,7 +20,7 @@ namespace Cadmus.Index.Sql.Graph
     /// <summary>
     /// Base class for SQL-based graph repositories.
     /// </summary>
-    public abstract class SqlGraphRepositoryBase
+    public abstract class SqlGraphRepositoryBase : IConfigurable<SqlOptions>
     {
         /// <summary>
         /// Gets the connection string.
@@ -57,7 +58,7 @@ namespace Cadmus.Index.Sql.Graph
         /// implementation.
         /// </summary>
         /// <param name="options">The options.</param>
-        public virtual void Configure(SqlRepositoryOptions options)
+        public void Configure(SqlOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
 
@@ -1711,16 +1712,5 @@ namespace Cadmus.Index.Sql.Graph
                 throw;
             }
         }
-    }
-
-    /// <summary>
-    /// Options for SQL-based repositories.
-    /// </summary>
-    public class SqlRepositoryOptions
-    {
-        /// <summary>
-        /// Gets or sets the connection string.
-        /// </summary>
-        public string ConnectionString { get; set; }
     }
 }

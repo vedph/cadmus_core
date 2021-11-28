@@ -957,6 +957,20 @@ namespace Cadmus.Index.MySql.Test
         }
 
         [Fact]
+        public void FindMappings_PinNameNotMatching_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            AddMappings(repository);
+            IItem item = GetItem(1, "person", true);
+
+            IList<NodeMapping> mappings = repository.FindMappingsFor(
+                item, new NamesPart(), "not-mapped");
+
+            Assert.Empty(mappings);
+        }
+
+        [Fact]
         public void FindMappings_PinWithSuffix_Ok()
         {
             Reset();

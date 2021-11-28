@@ -1044,10 +1044,12 @@ namespace Cadmus.Index.Sql.Graph
             if (part != null)
             {
                 // part_type
-                query.WhereNull("part_type").OrWhere("part_type", part.TypeId);
+                query.Where(q =>
+                    q.WhereNull("part_type").OrWhere("part_type", part.TypeId));
 
                 // part_role
-                query.WhereNull("part_role").OrWhere("part_role", part.RoleId);
+                query.Where(q =>
+                    query.WhereNull("part_role").OrWhere("part_role", part.RoleId));
 
                 // pin
                 query.WhereNull("pin_name");

@@ -459,17 +459,10 @@ namespace Cadmus.Index.Sql.Graph
                 };
         }
 
-        /// <summary>
-        /// Gets the node by its URI.
-        /// </summary>
-        /// <param name="uri">The URI.</param>
-        /// <returns>The node or null if not found.</returns>
-        /// <exception cref="ArgumentNullException">uri</exception>
-        public NodeResult GetNodeByUri(string uri)
+        private NodeResult GetNodeByUri(string uri, QueryFactory qf)
         {
-            if (uri == null) throw new ArgumentNullException(nameof(uri));
+            if (qf == null) qf = GetQueryFactory();
 
-            QueryFactory qf = GetQueryFactory();
             var d = qf.Query("node")
               .Join("uri_lookup AS ul", "node.id", "ul.id")
               .Where("uri", uri)
@@ -488,6 +481,19 @@ namespace Cadmus.Index.Sql.Graph
                     Sid = d.sid,
                     Uri = uri
                 };
+        }
+
+        /// <summary>
+        /// Gets the node by its URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>The node or null if not found.</returns>
+        /// <exception cref="ArgumentNullException">uri</exception>
+        public NodeResult GetNodeByUri(string uri)
+        {
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            return GetNodeByUri(uri, null);
         }
 
         /// <summary>
@@ -534,7 +540,7 @@ namespace Cadmus.Index.Sql.Graph
                 qf.Query("node").Insert(d);
             }
 
-            var asIds = GetASubIds();
+            var asIds = GetASubIds(qf);
             UpdateNodeClasses(node.Id, asIds.Item1, asIds.Item2, qf);
         }
 
@@ -1313,7 +1319,7 @@ namespace Cadmus.Index.Sql.Graph
                 // update classes if required
                 if (d.o_id != null && d.o_id > 0)
                 {
-                    var asIds = GetASubIds();
+                    var asIds = GetASubIds(qf);
                     UpdateNodeClasses(d.s_id, asIds.Item1, asIds.Item2, qf);
                 }
             }
@@ -1330,21 +1336,21 @@ namespace Cadmus.Index.Sql.Graph
         #endregion
 
         #region Node Classes
-        private Tuple<int, int> GetASubIds()
+        private Tuple<int, int> GetASubIds(QueryFactory qf)
         {
             // rdf:type and rdfs:subClassOf must exist
-            Node a = GetNodeByUri("rdf:type");
+            Node a = GetNodeByUri("rdf:type", qf);
             if (a == null)
             {
                 AddNode(a = new Node
                 {
-                    Id = AddUri("rdf:type"),
+                    Id = AddUri("rdf:type", qf),
                     Label = "is-a",
                     Tag = "property"
-                }, true);
+                }, true, qf);
             }
 
-            Node sub = GetNodeByUri("rdfs:subClassOf");
+            Node sub = GetNodeByUri("rdfs:subClassOf", qf);
             if (sub == null)
             {
                 AddNode(sub = new Node
@@ -1352,7 +1358,7 @@ namespace Cadmus.Index.Sql.Graph
                     Id = AddUri("rdfs:subClassOf"),
                     Label = "rdfs:subClassOf",
                     Tag = "property"
-                }, true);
+                }, true, qf);
             }
             return Tuple.Create(a.Id, sub.Id);
         }
@@ -1389,7 +1395,7 @@ namespace Cadmus.Index.Sql.Graph
             QueryFactory qf = GetQueryFactory();
 
             // rdf:type and rdfs:subClassOf must exist
-            var asIds = GetASubIds();
+            var asIds = GetASubIds(qf);
 
             // get total nodes to go
             int total = qf.Query("node").Where("is_class", false)
@@ -1469,7 +1475,7 @@ namespace Cadmus.Index.Sql.Graph
             try
             {
                 // ensure that we have rdfs:subClassOf
-                Node sub = GetNodeByUri("rdfs:subClassOf");
+                Node sub = GetNodeByUri("rdfs:subClassOf", qf);
                 if (sub == null)
                 {
                     AddNode(sub = new Node
@@ -1514,12 +1520,14 @@ namespace Cadmus.Index.Sql.Graph
                         SourceType = NodeSourceType.User,
                         Tag = "thesaurus"
                     };
+                    System.Diagnostics.Debug.WriteLine(node);
                     AddNode(node, true, qf);
                     ids[entry.Id] = node.Id;
 
                     // triple
                     if (entry.Parent != null)
                     {
+                        System.Diagnostics.Debug.WriteLine("adding triple 1");
                         AddTriple(new Triple
                         {
                             SubjectId = node.Id,
@@ -1529,6 +1537,7 @@ namespace Cadmus.Index.Sql.Graph
                     }
                     else if (root != null)
                     {
+                        System.Diagnostics.Debug.WriteLine("adding triple 2");
                         AddTriple(new Triple
                         {
                             SubjectId = node.Id,

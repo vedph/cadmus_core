@@ -8,6 +8,7 @@ using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +48,10 @@ namespace Cadmus.Index.MySql.Test
             });
             return repository;
         }
+
+        static private Stream GetResourceStream(string name) =>
+            typeof(MySqlGraphRepositoryTest).Assembly.GetManifestResourceStream(
+        "Cadmus.Index.MySql.Test.Assets." + name);
 
         #region Namespace
         private static void AddNamespaces(int count, IGraphRepository repository)
@@ -1493,6 +1498,20 @@ namespace Cadmus.Index.MySql.Test
                 t => t.SubjectUri == node.Uri
                 && t.PredicateUri == sub
                 && t.ObjectUri == shapes3d.Uri);
+        }
+
+        [Fact]
+        public void AddRealThesaurus_Ok()
+        {
+            Reset();
+            IGraphRepository repository = GetRepository();
+            IGraphPresetReader reader = new JsonGraphPresetReader();
+
+            using var stream = GetResourceStream("Thesauri.json");
+            foreach (Thesaurus thesaurus in reader.ReadThesauri(stream))
+            {
+                repository.AddThesaurus(thesaurus, false, "x:classes/");
+            }
         }
         #endregion
 

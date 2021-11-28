@@ -806,6 +806,7 @@ namespace Cadmus.Index.MySql.Test
                 FacetFilter = "person",
                 Name = "Name",
                 PartType = "it.vedph.bricks.names",
+                PinName = "name",
                 TripleP = "foaf:name",
                 TripleO = "$pin-value"
             };

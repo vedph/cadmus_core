@@ -41,7 +41,7 @@ namespace Cadmus.Index.Test
 
         private static IGraphRepository GetRepository()
         {
-            MySqlGraphRepository repository = new MySqlGraphRepository();
+            MySqlGraphRepository repository = new();
             repository.Configure(new SqlOptions
             {
                 ConnectionString = CS
@@ -146,7 +146,7 @@ namespace Cadmus.Index.Test
             });
 
             // item
-            NodeMapping itemMapping = new NodeMapping
+            NodeMapping itemMapping = new()
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Person item",
@@ -158,7 +158,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(itemMapping);
 
             // item comment dsc
-            NodeMapping itemDscMapping = new NodeMapping
+            NodeMapping itemDscMapping = new()
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Item description",
@@ -170,7 +170,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(itemDscMapping);
 
             // item a person
-            NodeMapping itemPersonMapping = new NodeMapping
+            NodeMapping itemPersonMapping = new()
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Item person link",
@@ -183,7 +183,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(itemPersonMapping);
 
             // item facet
-            NodeMapping facetMapping = new NodeMapping
+            NodeMapping facetMapping = new()
             {
                 SourceType = NodeSourceType.ItemFacet,
                 Name = "Item facet",
@@ -194,7 +194,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(facetMapping);
 
             // item has-facet facet
-            NodeMapping facetLinkMapping = new NodeMapping
+            NodeMapping facetLinkMapping = new()
             {
                 SourceType = NodeSourceType.ItemFacet,
                 ParentId = facetMapping.Id,
@@ -207,7 +207,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(facetLinkMapping);
 
             // item group
-            NodeMapping groupMapping = new NodeMapping
+            NodeMapping groupMapping = new()
             {
                 SourceType = NodeSourceType.ItemGroup,
                 Name = "Item group",
@@ -218,7 +218,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(groupMapping);
 
             // item is-in-group group
-            NodeMapping groupLinkMapping = new NodeMapping
+            NodeMapping groupLinkMapping = new()
             {
                 SourceType = NodeSourceType.ItemGroup,
                 ParentId = groupMapping.Id,
@@ -245,7 +245,7 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddItemRules(repository);
-            NodeMapper mapper = new NodeMapper(repository);
+            NodeMapper mapper = new(repository);
 
             IItem item = new Item
             {
@@ -352,7 +352,7 @@ namespace Cadmus.Index.Test
             });
 
             // item
-            NodeMapping itemMapping = new NodeMapping
+            NodeMapping itemMapping = new()
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Person item",
@@ -364,7 +364,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(itemMapping);
 
             // pin full-name
-            NodeMapping pinMapping = new NodeMapping
+            NodeMapping pinMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Pin full-name",
@@ -383,7 +383,7 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddSingleEntityPartRules(repository);
-            NodeMapper mapper = new NodeMapper(repository);
+            NodeMapper mapper = new(repository);
 
             IItem item = new Item
             {
@@ -445,7 +445,7 @@ namespace Cadmus.Index.Test
             });
 
             // manuscript item
-            NodeMapping itemMapping = new NodeMapping
+            NodeMapping itemMapping = new()
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Manuscript item",
@@ -457,7 +457,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(itemMapping);
 
             // eid pin
-            NodeMapping eidMapping = new NodeMapping
+            NodeMapping eidMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Pin eid",
@@ -474,7 +474,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(eidMapping);
 
             // eid in-group item
-            NodeMapping eidGroupMapping = new NodeMapping
+            NodeMapping eidGroupMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 ParentId = eidMapping.Id,
@@ -487,7 +487,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(eidGroupMapping);
 
             // eid has-color literal
-            NodeMapping eidColorMapping = new NodeMapping
+            NodeMapping eidColorMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Pin eid color",
@@ -508,7 +508,7 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddMultiEntityPartRules(repository);
-            NodeMapper mapper = new NodeMapper(repository);
+            NodeMapper mapper = new(repository);
 
             IItem item = new Item
             {
@@ -656,7 +656,7 @@ namespace Cadmus.Index.Test
 
             // mappings
             // person item
-            NodeMapping itemMapping = new NodeMapping
+            NodeMapping itemMapping = new()
             {
                 SourceType = NodeSourceType.Item,
                 Name = "Person item",
@@ -668,7 +668,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(itemMapping);
 
             // eid pin
-            NodeMapping eidMapping = new NodeMapping
+            NodeMapping eidMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Event eid",
@@ -682,7 +682,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(eidMapping);
 
             // eid in-group item
-            NodeMapping eidGroupMapping = new NodeMapping
+            NodeMapping eidGroupMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 ParentId = eidMapping.Id,
@@ -696,7 +696,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(eidGroupMapping);
 
             // date pin
-            NodeMapping dateMapping = new NodeMapping
+            NodeMapping dateMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Date pin",
@@ -710,7 +710,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(dateMapping);
 
             // type pin
-            NodeMapping typeMapping = new NodeMapping
+            NodeMapping typeMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Type pin",
@@ -724,7 +724,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(typeMapping);
 
             // eid2@* pin
-            NodeMapping eid2Mapping = new NodeMapping
+            NodeMapping eid2Mapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Pin eid2@*",
@@ -736,7 +736,7 @@ namespace Cadmus.Index.Test
             repository.AddMapping(eid2Mapping);
 
             // rel@*@* pin
-            NodeMapping relMapping = new NodeMapping
+            NodeMapping relMapping = new()
             {
                 SourceType = NodeSourceType.Pin,
                 Name = "Pin rel@*@*",
@@ -755,7 +755,7 @@ namespace Cadmus.Index.Test
             Reset();
             IGraphRepository repository = GetRepository();
             AddDeepEntityPartRules(repository);
-            NodeMapper mapper = new NodeMapper(repository);
+            NodeMapper mapper = new(repository);
 
             IItem item = new Item
             {

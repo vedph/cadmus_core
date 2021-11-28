@@ -522,6 +522,7 @@ namespace Cadmus.Index.Sql.Graph
         /// Adds the node only if it does not exist; else do nothing.
         /// </summary>
         /// <param name="node">The node.</param>
+        /// <param name="qf">The query factory.</param>
         protected void AddNodeIfNotExists(Node node, QueryFactory qf)
         {
             if (node is null) throw new ArgumentNullException(nameof(node));
@@ -1049,19 +1050,18 @@ namespace Cadmus.Index.Sql.Graph
 
                 // part_role
                 query.Where(q =>
-                    query.WhereNull("part_role").OrWhere("part_role", part.RoleId));
+                    q.WhereNull("part_role").OrWhere("part_role", part.RoleId));
 
                 // pin
-                query.WhereNull("pin_name");
                 if (pin != null)
                 {
                     string pf = SqlHelper.SqlEncode(pin, false, true, false);
                     query.Where(q =>
                         q.OrWhere("pin_name", pin)
-                         .OrWhereRaw("INSTR(pin_name, '@*') > 0 " +
+                         .OrWhereRaw("(INSTR(pin_name, '@*') > 0 " +
                            $"AND {pf} LIKE REPLACE(pin_name, '*', '%') " +
                            $"AND LENGTH({pf}) - LENGTH(REPLACE({pf}, '@', '')) = " +
-                           "LENGTH(pin_name) - LENGTH(REPLACE(pin_name, '@', ''))")
+                           "LENGTH(pin_name) - LENGTH(REPLACE(pin_name, '@', '')))")
                     );
                 }
                 else query.WhereNull("pin_name");
@@ -1452,7 +1452,6 @@ namespace Cadmus.Index.Sql.Graph
         {
             using (QueryFactory qf = GetQueryFactory())
             {
-
                 // rdf:type and rdfs:subClassOf must exist
                 var asIds = GetASubIds(qf);
 

@@ -34,7 +34,7 @@ namespace Cadmus.Parts.General
         /// <summary>
         /// Gets or sets the optional external IDs related to this comment.
         /// </summary>
-        public List<string> ExternalIds { get; set; }
+        public List<ExternalId> ExternalIds { get; set; }
 
         /// <summary>
         /// Gets or sets the optional categories.
@@ -53,7 +53,7 @@ namespace Cadmus.Parts.General
         public Comment()
         {
             References = new List<DocReference>();
-            ExternalIds = new List<string>();
+            ExternalIds = new List<ExternalId>();
             Categories = new List<string>();
             Keywords = new List<IndexKeyword>();
         }
@@ -128,7 +128,7 @@ namespace Cadmus.Parts.General
 
             // fr.id
             if (ExternalIds?.Count > 0)
-                builder.AddValues(prefix + "id", ExternalIds);
+                builder.AddValues(prefix + "id", ExternalIds.Select(e => e.Value));
 
             // fr.cat
             if (Categories?.Count > 0)

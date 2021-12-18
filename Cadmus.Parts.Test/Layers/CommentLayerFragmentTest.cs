@@ -75,7 +75,7 @@ namespace Cadmus.Parts.Test.Layers
                 {
                     Citation = $"w{n}"
                 });
-                fr.ExternalIds.Add($"i{n}");
+                fr.ExternalIds.Add(new ExternalId { Value = $"i{n}" });
                 fr.Categories.Add($"c{n}");
                 fr.Keywords.Add(new IndexKeyword
                 {

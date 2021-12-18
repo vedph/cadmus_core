@@ -78,7 +78,7 @@ namespace Cadmus.Parts.Test.General
                 {
                     Citation = $"w{n}"
                 });
-                part.ExternalIds.Add($"i{n}");
+                part.ExternalIds.Add(new ExternalId { Value = $"i{n}" });
                 part.Categories.Add($"c{n}");
                 part.Keywords.Add(new IndexKeyword
                 {

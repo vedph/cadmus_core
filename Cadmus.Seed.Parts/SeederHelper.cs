@@ -36,16 +36,23 @@ namespace Cadmus.Seed.Parts
         /// <param name="min">The min number of IDs to get.</param>
         /// <param name="max">The max number of IDs to get.</param>
         /// <returns>IDs.</returns>
-        public static List<string> GetExternalIds(int min, int max)
+        public static List<ExternalId> GetExternalIds(int min, int max)
         {
-            List<string> ids = new List<string>();
+            List<ExternalId> ids = new List<ExternalId>();
             Faker faker = new Faker();
 
             for (int n = 1; n <= Randomizer.Seed.Next(min, max + 1); n++)
             {
                 ids.Add(faker.Random.Bool()
-                    ? faker.Hacker.Abbreviation()
-                    : faker.Internet.Url());
+                    ? new ExternalId
+                    {
+                        Value = faker.Internet.Url(),
+                        Scope = "myweb"
+                    } : new ExternalId
+                    {
+                        Value = faker.Hacker.Abbreviation(),
+                        Scope = "mydb"
+                    });
             }
 
             return ids;

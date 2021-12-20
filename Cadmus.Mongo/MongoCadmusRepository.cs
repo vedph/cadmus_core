@@ -441,7 +441,7 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.GroupId))
             {
                 f &= new ExpressionFilterDefinition<MongoItem>(
-                    i => i.GroupId.Equals(filter.GroupId));
+                    i => i.GroupId.Contains(filter.GroupId));
             }
 
             if (filter.Flags.HasValue)

@@ -1,25 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29424.173
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Core", "Cadmus.Core\Cadmus.Core.csproj", "{89196680-947D-4DAD-B3E8-86BBF3DBF8FF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Core.Test", "Cadmus.Core.Test\Cadmus.Core.Test.csproj", "{486E4616-ACAD-4C9E-9A3F-D12C5E70F484}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Parts", "Cadmus.Parts\Cadmus.Parts.csproj", "{9CA3106C-A1E5-46F0-AAD3-24BE8DFA15D5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Mongo", "Cadmus.Mongo\Cadmus.Mongo.csproj", "{A7776A9E-AB5F-4ED4-AE64-340FF5990191}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Mongo.Test", "Cadmus.Mongo.Test\Cadmus.Mongo.Test.csproj", "{E2D1F995-55BF-4533-ACC1-304A1ABF64EB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Archive.Parts", "Cadmus.Archive.Parts\Cadmus.Archive.Parts.csproj", "{0842F887-AA9C-4A53-BE85-15B81124AFE8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Archive.Parts.Test", "Cadmus.Archive.Parts.Test\Cadmus.Archive.Parts.Test.csproj", "{091C8CBF-03F0-4B66-981D-A1C0FEB3A365}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Lexicon.Parts", "Cadmus.Lexicon.Parts\Cadmus.Lexicon.Parts.csproj", "{3B8D713E-9F09-4C71-8308-9094B65E2AEB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Philology.Parts", "Cadmus.Philology.Parts\Cadmus.Philology.Parts.csproj", "{1A52DE20-9046-4576-9F93-09CB1F786F85}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B5ECE5C-C394-4FE1-B8E6-C941A3F7C3BA}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,19 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Philology.Parts.Test", "Cadmus.Philology.Parts.Test\Cadmus.Philology.Parts.Test.csproj", "{CD08415A-2919-4C4F-92B2-507F39EC9E51}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed", "Cadmus.Seed\Cadmus.Seed.csproj", "{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Parts", "Cadmus.Seed.Parts\Cadmus.Seed.Parts.csproj", "{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Philology.Parts", "Cadmus.Seed.Philology.Parts\Cadmus.Seed.Philology.Parts.csproj", "{9582D03A-7088-4058-BCE7-492E0B036945}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Parts.Test", "Cadmus.Seed.Parts.Test\Cadmus.Seed.Parts.Test.csproj", "{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed.Philology.Parts.Test", "Cadmus.Seed.Philology.Parts.Test\Cadmus.Seed.Philology.Parts.Test.csproj", "{3D097ECE-8572-411F-B4DB-16A08E2DBC39}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Parts.Test", "Cadmus.Parts.Test\Cadmus.Parts.Test.csproj", "{10334072-8A33-46AF-B1DA-50E30DE49AE9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index", "Cadmus.Index\Cadmus.Index.csproj", "{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}"
 EndProject
@@ -57,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.MySql.Test", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Test", "Cadmus.Index.Test\Cadmus.Index.Test.csproj", "{A64ECA67-E338-406D-ABA3-D513F8298EAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Cli.Core", "Cadmus.Cli.Core\Cadmus.Cli.Core.csproj", "{AE0CBE88-627B-479B-82E2-B9294EE1BADA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Cli.Core", "Cadmus.Cli.Core\Cadmus.Cli.Core.csproj", "{AE0CBE88-627B-479B-82E2-B9294EE1BADA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,10 +51,6 @@ Global
 		{486E4616-ACAD-4C9E-9A3F-D12C5E70F484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{486E4616-ACAD-4C9E-9A3F-D12C5E70F484}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{486E4616-ACAD-4C9E-9A3F-D12C5E70F484}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9CA3106C-A1E5-46F0-AAD3-24BE8DFA15D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CA3106C-A1E5-46F0-AAD3-24BE8DFA15D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CA3106C-A1E5-46F0-AAD3-24BE8DFA15D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CA3106C-A1E5-46F0-AAD3-24BE8DFA15D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A7776A9E-AB5F-4ED4-AE64-340FF5990191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7776A9E-AB5F-4ED4-AE64-340FF5990191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7776A9E-AB5F-4ED4-AE64-340FF5990191}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,50 +59,10 @@ Global
 		{E2D1F995-55BF-4533-ACC1-304A1ABF64EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2D1F995-55BF-4533-ACC1-304A1ABF64EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2D1F995-55BF-4533-ACC1-304A1ABF64EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0842F887-AA9C-4A53-BE85-15B81124AFE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0842F887-AA9C-4A53-BE85-15B81124AFE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0842F887-AA9C-4A53-BE85-15B81124AFE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0842F887-AA9C-4A53-BE85-15B81124AFE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{091C8CBF-03F0-4B66-981D-A1C0FEB3A365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{091C8CBF-03F0-4B66-981D-A1C0FEB3A365}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{091C8CBF-03F0-4B66-981D-A1C0FEB3A365}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{091C8CBF-03F0-4B66-981D-A1C0FEB3A365}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B8D713E-9F09-4C71-8308-9094B65E2AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B8D713E-9F09-4C71-8308-9094B65E2AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B8D713E-9F09-4C71-8308-9094B65E2AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B8D713E-9F09-4C71-8308-9094B65E2AEB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A52DE20-9046-4576-9F93-09CB1F786F85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A52DE20-9046-4576-9F93-09CB1F786F85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A52DE20-9046-4576-9F93-09CB1F786F85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A52DE20-9046-4576-9F93-09CB1F786F85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD08415A-2919-4C4F-92B2-507F39EC9E51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD08415A-2919-4C4F-92B2-507F39EC9E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD08415A-2919-4C4F-92B2-507F39EC9E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD08415A-2919-4C4F-92B2-507F39EC9E51}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0789E20-B998-4AE7-B00E-11BF1E4E0D7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9582D03A-7088-4058-BCE7-492E0B036945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9582D03A-7088-4058-BCE7-492E0B036945}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9582D03A-7088-4058-BCE7-492E0B036945}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9582D03A-7088-4058-BCE7-492E0B036945}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51C929BA-64E6-46AE-9CAE-3C6562A6C7DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D097ECE-8572-411F-B4DB-16A08E2DBC39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10334072-8A33-46AF-B1DA-50E30DE49AE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10334072-8A33-46AF-B1DA-50E30DE49AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10334072-8A33-46AF-B1DA-50E30DE49AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10334072-8A33-46AF-B1DA-50E30DE49AE9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5DBD866-61DE-48A7-88C7-5548E3ABF3A5}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,6 +1,5 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Storage;
-using Cadmus.Parts.General;
 using Fusi.Tools.Config;
 using Fusi.Tools.Data;
 using MongoDB.Bson;
@@ -15,7 +14,7 @@ namespace Cadmus.Mongo
 {
     /// <summary>
     /// MongoDB hierarchy-based items browser. This browser assumes that
-    /// each item to be browsed has at least 1 <see cref="HierarchyPart"/>,
+    /// each item to be browsed has at least 1 HierarchyPart,
     /// representing its relationships in a single-parent hierarchy: this
     /// parts tells which is the parent item, and which are the children items,
     /// and the item's depth level (Y) and sibling ordinal number (X) (neither
@@ -40,7 +39,8 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoHierarchyItemBrowser()
         {
-            _partTypeId = new HierarchyPart().TypeId;
+            // the part ID of HierarchyPart
+            _partTypeId = "it.vedph.hierarchy";
         }
 
         /// <summary>

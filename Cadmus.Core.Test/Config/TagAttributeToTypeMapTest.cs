@@ -1,6 +1,5 @@
 ﻿using Cadmus.Core.Config;
-using Cadmus.Parts.General;
-using Cadmus.Parts.Layers;
+using Cadmus.General.Parts;
 using System;
 using Xunit;
 
@@ -8,9 +7,9 @@ namespace Cadmus.Core.Test.Config
 {
     public sealed class TagAttributeToTypeMapTest
     {
-        private TagAttributeToTypeMap GetMap()
+        private static TagAttributeToTypeMap GetMap()
         {
-            TagAttributeToTypeMap map = new TagAttributeToTypeMap();
+            TagAttributeToTypeMap map = new();
             map.Add(new[] { typeof(NotePart).Assembly });
             return map;
         }

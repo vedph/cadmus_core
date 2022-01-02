@@ -1,7 +1,7 @@
 ﻿using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
-using Cadmus.Parts.General;
+using Cadmus.General.Parts;
 using Fusi.Tools.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -24,15 +24,15 @@ namespace Cadmus.Mongo.Test
         private const string DB_NAME = "cadmus-browser-test";
         private const string CONNECTION = "mongodb://localhost:27017/" + DB_NAME;
 
-        private void PrepareDatabase()
+        private static void PrepareDatabase()
         {
             // create or clear
-            MongoDatabaseManager manager = new MongoDatabaseManager();
+            MongoDatabaseManager manager = new();
             if (manager.DatabaseExists(CONNECTION))
                 manager.ClearDatabase(CONNECTION);
             else
             {
-                DataProfile profile = new DataProfile
+                DataProfile profile = new()
                 {
                     Facets = new FacetDefinition[]
                     {
@@ -122,7 +122,7 @@ namespace Cadmus.Mongo.Test
                 char letter = (char)('A' + i);
 
                 // item
-                MongoItem mongoItem = new MongoItem
+                MongoItem mongoItem = new()
                 {
                     Id = itemIds[i],
                     Title = $"Item {letter}",
@@ -136,7 +136,7 @@ namespace Cadmus.Mongo.Test
                 items.InsertOne(mongoItem);
 
                 // hierarchy part
-                HierarchyPart part = new HierarchyPart
+                HierarchyPart part = new()
                 {
                     ItemId = mongoItem.Id,
                     CreatorId = mongoItem.CreatorId,
@@ -159,7 +159,7 @@ namespace Cadmus.Mongo.Test
             PrepareDatabase();
             MongoItem[] items = SeedItems();
 
-            MongoHierarchyItemBrowser browser = new MongoHierarchyItemBrowser();
+            MongoHierarchyItemBrowser browser = new();
             browser.Configure(new ItemBrowserOptions
             {
                 ConnectionString = CONNECTION_TEMPLATE,
@@ -195,7 +195,7 @@ namespace Cadmus.Mongo.Test
             PrepareDatabase();
             MongoItem[] items = SeedItems();
 
-            MongoHierarchyItemBrowser browser = new MongoHierarchyItemBrowser();
+            MongoHierarchyItemBrowser browser = new();
             browser.Configure(new ItemBrowserOptions
             {
                 ConnectionString = CONNECTION_TEMPLATE,

@@ -1,5 +1,5 @@
 ﻿using Cadmus.Core.Layers;
-using Cadmus.Parts.Layers;
+using Cadmus.General.Parts;
 using DiffMatchPatch;
 using System;
 using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace Cadmus.Core.Test.Layers
         {
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta", "alpha beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -69,7 +69,7 @@ namespace Cadmus.Core.Test.Layers
         {
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta", "alpha x beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -99,7 +99,7 @@ namespace Cadmus.Core.Test.Layers
         {
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta", "alpha x beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -129,7 +129,7 @@ namespace Cadmus.Core.Test.Layers
         {
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta", "beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -152,7 +152,7 @@ namespace Cadmus.Core.Test.Layers
         {
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta", "beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -176,7 +176,7 @@ namespace Cadmus.Core.Test.Layers
         {
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta", "beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -201,7 +201,7 @@ namespace Cadmus.Core.Test.Layers
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta gamma",
                               "alpha gamma beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -226,7 +226,7 @@ namespace Cadmus.Core.Test.Layers
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta gamma",
                               "alpha gamma beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -251,7 +251,7 @@ namespace Cadmus.Core.Test.Layers
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta gamma",
                               "alpha gamma beta");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -276,7 +276,7 @@ namespace Cadmus.Core.Test.Layers
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta",
                               "alpha x");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {
@@ -303,7 +303,7 @@ namespace Cadmus.Core.Test.Layers
             IList<YXEditOperation> operations =
                 GetOperations("alpha beta",
                               "alpha x");
-            AnonLayerPart part = new AnonLayerPart
+            AnonLayerPart part = new()
             {
                 Fragments = new List<AnonFragment>
                 {

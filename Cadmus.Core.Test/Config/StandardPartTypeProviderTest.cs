@@ -1,6 +1,5 @@
 ﻿using Cadmus.Core.Config;
-using Cadmus.Parts.General;
-using Cadmus.Parts.Layers;
+using Cadmus.General.Parts;
 using System;
 using System.Reflection;
 using Xunit;

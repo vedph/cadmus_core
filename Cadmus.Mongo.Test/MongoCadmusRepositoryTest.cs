@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
-using Cadmus.Parts.General;
-using Cadmus.Parts.Layers;
+using Cadmus.General.Parts;
 using Cadmus.TestBase;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Conventions;
@@ -39,12 +38,12 @@ namespace Cadmus.Mongo.Test
 
         protected override ICadmusRepository GetRepository()
         {
-            TagAttributeToTypeMap map = new TagAttributeToTypeMap();
+            TagAttributeToTypeMap map = new();
             map.Add(new[]
             {
                 typeof(NotePart).Assembly
             });
-            MongoCadmusRepository repository = new MongoCadmusRepository(
+            MongoCadmusRepository repository = new(
                 new StandardPartTypeProvider(map),
                 new StandardItemSortKeyBuilder());
             repository.Configure(new MongoCadmusRepositoryOptions
@@ -84,7 +83,7 @@ namespace Cadmus.Mongo.Test
             var collection = db.GetCollection<MongoFacetDefinition>(
                 MongoFacetDefinition.COLLECTION);
 
-            MongoFacetDefinition facetA = new MongoFacetDefinition
+            MongoFacetDefinition facetA = new()
             {
                 Id = "alpha",
                 Label = "Alpha",
@@ -117,7 +116,7 @@ namespace Cadmus.Mongo.Test
                 }
             });
 
-            MongoFacetDefinition facetB = new MongoFacetDefinition
+            MongoFacetDefinition facetB = new()
             {
                 Id = "beta",
                 Label = "Beta",
@@ -164,9 +163,9 @@ namespace Cadmus.Mongo.Test
             for (int i = 1; i <= 20; i++)
             {
                 string userId = (i & 1) == 1 ? "Odd" : "Even";
-                DateTime dt = new DateTime(2015, 12, i, 0, 0, 0, DateTimeKind.Utc);
+                DateTime dt = new(2015, 12, i, 0, 0, 0, DateTimeKind.Utc);
 
-                MongoItem item = new MongoItem
+                MongoItem item = new()
                 {
                     Id = $"item-{i:000}",
                     Title = $"Item {i}",
@@ -200,7 +199,7 @@ namespace Cadmus.Mongo.Test
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
 
             // categories
-            CategoriesPart categoriesPart = new CategoriesPart
+            CategoriesPart categoriesPart = new()
             {
                 Id = "part-001",
                 ItemId = "item-001",
@@ -212,7 +211,7 @@ namespace Cadmus.Mongo.Test
             collection.InsertOne(CreateMongoPart(categoriesPart));
 
             // note
-            NotePart notePart = new NotePart
+            NotePart notePart = new()
             {
                 Id = "part-002",
                 ItemId = "item-001",
@@ -225,7 +224,7 @@ namespace Cadmus.Mongo.Test
 
             // layer: comments
             TokenTextLayerPart<CommentLayerFragment> commentLayerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     Id = "part-003",
                     ItemId = "item-001",
@@ -261,7 +260,7 @@ namespace Cadmus.Mongo.Test
         {
             // camel case everything:
             // https://stackoverflow.com/questions/19521626/mongodb-convention-packs/19521784#19521784
-            ConventionPack pack = new ConventionPack
+            ConventionPack pack = new()
             {
                 new CamelCaseElementNameConvention()
             };

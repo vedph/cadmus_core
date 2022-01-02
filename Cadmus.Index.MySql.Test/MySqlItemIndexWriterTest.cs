@@ -1,5 +1,5 @@
 using Cadmus.Core;
-using Cadmus.Parts.General;
+using Cadmus.General.Parts;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -23,17 +23,11 @@ namespace Cadmus.Index.MySql.Test
         static private readonly string CS = string.Format(CST, DB_NAME);
 
         #region Helpers
-        //private static void Reset()
-        //{
-        //    IDbManager manager = new MySqlDbManager(CST);
-        //    if (manager.Exists(DB_NAME)) manager.ClearDatabase(DB_NAME);
-        //}
-
         private static IDbConnection GetConnection() => new MySqlConnection(CS);
 
         private static IItemIndexWriter GetWriter()
         {
-            MySqlItemIndexWriter writer = new MySqlItemIndexWriter();
+            MySqlItemIndexWriter writer = new();
             writer.Configure(new Sql.SqlOptions
             {
                 ConnectionString = CS
@@ -65,8 +59,6 @@ namespace Cadmus.Index.MySql.Test
             Assert.Equal(expected.SortKey, actual.SortKey);
             Assert.Equal(expected.Flags, actual.Flags);
             Assert.Equal(expected.CreatorId, actual.CreatorId);
-            //Assert.Equal(expected.TimeCreated, actual.TimeCreated);
-            //Assert.Equal(expected.TimeModified, actual.TimeModified);
         }
 
         private static int GetItemCount(IDbConnection connection)
@@ -75,7 +67,7 @@ namespace Cadmus.Index.MySql.Test
             cmd.Connection = connection;
             cmd.CommandText = "SELECT COUNT(id) FROM item;";
             int? result = cmd.ExecuteScalar() as int?;
-            return result != null ? result.Value : 0;
+            return result ?? 0;
         }
 
         private static bool ItemExists(string itemId, IDbConnection connection)
@@ -109,7 +101,7 @@ namespace Cadmus.Index.MySql.Test
             using IDataReader reader = cmd.ExecuteReader();
             Assert.True(reader.Read());
 
-            Item actual = new Item
+            Item actual = new()
             {
                 Id = item.Id,
                 Title = reader.GetString(0),
@@ -153,7 +145,7 @@ namespace Cadmus.Index.MySql.Test
                 int i = pin.IndexOf('=', StringComparison.Ordinal);
                 Debug.Assert(i > -1);
                 expectedPins.Add(Tuple.Create(
-                    pin.Substring(0, i),
+                    pin[..i],
                     pin[(i + 1)..]));
             }
 
@@ -216,8 +208,7 @@ namespace Cadmus.Index.MySql.Test
 
             IItem item = GetItem(1);
             // add part
-            IPart part;
-            item.Parts.Add(part = new NotePart
+            IPart part = new NotePart
             {
                 ItemId = item.Id,
                 CreatorId = "creator",
@@ -225,7 +216,8 @@ namespace Cadmus.Index.MySql.Test
                 Tag = "tag",
                 Text = "A note",
                 UserId = "user"
-            });
+            };
+            item.Parts.Add(part);
 
             writer.WriteItem(item);
 
@@ -284,7 +276,7 @@ namespace Cadmus.Index.MySql.Test
 
             IItem item = GetItem(1);
             // add part
-            NotePart notePart = new NotePart
+            NotePart notePart = new()
             {
                 ItemId = item.Id,
                 RoleId = null,
@@ -301,15 +293,15 @@ namespace Cadmus.Index.MySql.Test
             // item + text part
             item.Title = "Updated";
             notePart.Tag = "updated";
-            TokenTextPart textPart;
-            item.Parts.Add(textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 RoleId = null,
                 CreatorId = "creator",
                 UserId = "user",
                 Citation = "Il.1,2"
-            });
+            };
+            item.Parts.Add(textPart);
             textPart.Lines.Add(new TextLine
             {
                 Y = 1,
@@ -476,15 +468,15 @@ namespace Cadmus.Index.MySql.Test
                 Text = "A note",
                 UserId = "user"
             });
-            TokenTextPart textPart;
-            item.Parts.Add(textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 RoleId = null,
                 CreatorId = "creator",
                 UserId = "user",
                 Citation = "Il.1,2"
-            });
+            };
+            item.Parts.Add(textPart);
             textPart.Lines.Add(new TextLine
             {
                 Y = 1,

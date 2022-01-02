@@ -8,8 +8,7 @@ using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Layers;
 using Cadmus.Core.Storage;
-using Cadmus.Parts.General;
-using Cadmus.Parts.Layers;
+using Cadmus.General.Parts;
 using Fusi.Tools.Data;
 using Xunit;
 
@@ -79,7 +78,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            FlagDefinition def = new FlagDefinition
+            FlagDefinition def = new()
             {
                 Id = 1,
                 Label = "Alpha",
@@ -101,7 +100,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            FlagDefinition def = new FlagDefinition
+            FlagDefinition def = new()
             {
                 Id = 4,
                 Label = "Gamma",
@@ -196,7 +195,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            FacetDefinition facet = new FacetDefinition
+            FacetDefinition facet = new()
             {
                 Id = "alpha",
                 Label = "Alpha",
@@ -248,7 +247,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
 
-            FacetDefinition facet = new FacetDefinition
+            FacetDefinition facet = new()
             {
                 Id = "gamma",
                 Label = "Gamma",
@@ -316,7 +315,7 @@ namespace Cadmus.TestBase
                 else
                     id += "en";
 
-                Thesaurus thesaurus = new Thesaurus(id);
+                Thesaurus thesaurus = new(id);
 
                 for (int j = 1; j <= 5; j++)
                 {
@@ -661,7 +660,7 @@ namespace Cadmus.TestBase
 
             IItem item = repository.GetItem("item-001");
 
-            DateTime expectedTime = new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime expectedTime = new(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc);
             Assert.NotNull(item);
             Assert.Equal("Item 1", item.Title);
             Assert.Equal("Description of item 1", item.Description);
@@ -684,7 +683,7 @@ namespace Cadmus.TestBase
 
             IItem item = repository.GetItem("item-001", false);
 
-            DateTime expectedTime = new DateTime(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime expectedTime = new(2015, 12, 1, 0, 0, 0, DateTimeKind.Utc);
             Assert.NotNull(item);
             Assert.Equal("Item 1", item.Title);
             Assert.Equal("Description of item 1", item.Description);
@@ -872,7 +871,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = "item-001",
                     CreatorId = "zeus",
@@ -986,11 +985,11 @@ namespace Cadmus.TestBase
             Assert.Empty(ids);
         }
 
-        private string AddItemWithLayers(ICadmusRepository repository,
+        private static string AddItemWithLayers(ICadmusRepository repository,
             bool addPart = false)
         {
             // a facet with 1 base text part and 2 layer parts
-            FacetDefinition facet = new FacetDefinition
+            FacetDefinition facet = new()
             {
                 Id = "default",
                 Label = "default",
@@ -1051,7 +1050,7 @@ namespace Cadmus.TestBase
             if (addPart)
             {
                 TokenTextLayerPart<CommentLayerFragment> part =
-                    new TokenTextLayerPart<CommentLayerFragment>
+                    new()
                     {
                         ItemId = item.Id,
                         CreatorId = "zeus",
@@ -1202,7 +1201,7 @@ namespace Cadmus.TestBase
 
         private static void SeedHierarchyParts(ICadmusRepository repository)
         {
-            HierarchyPart part1 = new HierarchyPart
+            HierarchyPart part1 = new()
             {
                 ItemId = "item-001",
                 ChildrenIds = new HashSet<string> { "item-002", "item-003" },
@@ -1213,7 +1212,7 @@ namespace Cadmus.TestBase
             };
             repository.AddPart(part1);
 
-            HierarchyPart part2 = new HierarchyPart
+            HierarchyPart part2 = new()
             {
                 ItemId = "item-002",
                 ParentId = "item-001",
@@ -1224,7 +1223,7 @@ namespace Cadmus.TestBase
             };
             repository.AddPart(part2);
 
-            HierarchyPart part3 = new HierarchyPart
+            HierarchyPart part3 = new()
             {
                 ItemId = "item-003",
                 ParentId = "item-001",
@@ -1404,7 +1403,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
             DateTime now = DateTime.UtcNow;
-            NotePart part = new NotePart
+            NotePart part = new()
             {
                 Id = "new",
                 ItemId = "item-001",
@@ -1488,7 +1487,7 @@ namespace Cadmus.TestBase
             PrepareDatabase();
             ICadmusRepository repository = GetRepository();
             DateTime now = DateTime.UtcNow;
-            NotePart part = new NotePart
+            NotePart part = new()
             {
                 Id = "new",
                 ItemId = "item-001",
@@ -1651,7 +1650,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -1666,7 +1665,7 @@ namespace Cadmus.TestBase
             repository.AddPart(textPart);
             // add layer part
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -1686,7 +1685,7 @@ namespace Cadmus.TestBase
 
         private static FacetDefinition GetLayeredFacetDefinition()
         {
-            FacetDefinition facet = new FacetDefinition
+            FacetDefinition facet = new()
             {
                 Id = "layered",
                 ColorKey = "FF0000",
@@ -1739,7 +1738,7 @@ namespace Cadmus.TestBase
             repository.AddItem(item);
             // add layer part
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -1776,7 +1775,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item, history);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -1791,7 +1790,7 @@ namespace Cadmus.TestBase
             repository.AddPart(textPart, history);
             // add layer part
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -1833,7 +1832,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item, history);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -1849,7 +1848,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -1891,7 +1890,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item, history);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -1907,7 +1906,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -1944,7 +1943,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item, history);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -1960,7 +1959,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -1998,7 +1997,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item, history);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -2018,7 +2017,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -2054,7 +2053,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -2070,7 +2069,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -2107,7 +2106,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -2123,7 +2122,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,
@@ -2165,7 +2164,7 @@ namespace Cadmus.TestBase
             };
             repository.AddItem(item);
             // add text part
-            TokenTextPart textPart = new TokenTextPart
+            TokenTextPart textPart = new()
             {
                 ItemId = item.Id,
                 CreatorId = item.CreatorId,
@@ -2181,7 +2180,7 @@ namespace Cadmus.TestBase
             // wait and add layer part
             Thread.Sleep(500);
             TokenTextLayerPart<CommentLayerFragment> layerPart =
-                new TokenTextLayerPart<CommentLayerFragment>
+                new()
                 {
                     ItemId = item.Id,
                     CreatorId = item.CreatorId,

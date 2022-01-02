@@ -1,4 +1,4 @@
-﻿using Cadmus.Parts.General;
+﻿using Cadmus.General.Parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Ctor_Id_Set()
         {
-            NotePart part = new NotePart();
+            NotePart part = new();
 
             Assert.Matches(
                 "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-" +
@@ -21,7 +21,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Ctor_TypeId_Set()
         {
-            NotePart part = new NotePart();
+            NotePart part = new();
 
             Assert.Equal("it.vedph.note", part.TypeId);
         }
@@ -30,7 +30,7 @@ namespace Cadmus.Core.Test
         public void Ctor_Times_Set()
         {
             DateTime now = DateTime.UtcNow;
-            NotePart part = new NotePart();
+            NotePart part = new();
 
             Assert.True(part.TimeCreated >= now);
             Assert.True(part.TimeModified>= now);
@@ -69,7 +69,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void CreateDataPin_Note_CreatedWithIds()
         {
-            NotePart part = new NotePart
+            NotePart part = new()
             {
                 ItemId = Guid.NewGuid().ToString(),
                 RoleId = "role",

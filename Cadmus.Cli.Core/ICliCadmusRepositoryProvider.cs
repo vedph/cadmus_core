@@ -3,9 +3,9 @@
 namespace Cadmus.Cli.Core
 {
     /// <summary>
-    /// CLI repository factory provider.
+    /// CLI Cadmus repository provider.
     /// </summary>
-    public interface ICliRepositoryFactoryProvider
+    public interface ICliCadmusRepositoryProvider
     {
         /// <summary>
         /// Gets or sets the connection string template, having placeholder

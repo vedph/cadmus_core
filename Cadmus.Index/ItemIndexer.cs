@@ -3,6 +3,7 @@ using Cadmus.Core.Storage;
 using Cadmus.Index.Config;
 using Fusi.Tools;
 using Fusi.Tools.Data;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,11 @@ namespace Cadmus.Index
     public sealed class ItemIndexer
     {
         private readonly IItemIndexWriter _writer;
+
+        /// <summary>
+        /// Gets or sets the optional logger.
+        /// </summary>
+        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemIndexer"/> class.
@@ -77,17 +83,26 @@ namespace Cadmus.Index
             ProgressReport report = progress != null
                 ? new ProgressReport()
                 : null;
+            ItemInfo currentInfo = null;
 
             do
             {
-                // index all the items in page
-                foreach (ItemInfo info in page.Items)
+                try
                 {
-                    IItem item = repository.GetItem(info.Id);
-                    if (item == null) continue;
-                    _writer.WriteItem(item);
+                    // index all the items in page
+                    foreach (ItemInfo info in page.Items)
+                    {
+                        currentInfo = info;
+                        IItem item = repository.GetItem(info.Id);
+                        if (item == null) continue;
+                        _writer.WriteItem(item);
+                    }
                 }
-
+                catch (Exception ex)
+                {
+                    Logger?.LogError(
+                        $"Error indexing {currentInfo}: {ex.Message}: {ex}");
+                }
                 // handle cancel and progress
                 if (cancel.IsCancellationRequested) break;
 

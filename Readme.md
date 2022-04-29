@@ -6,6 +6,12 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 3.0.0
+
+- 2022-04-29: upgraded to .NET 6.
+
+### 2.x.x
+
 - 2022-02-14: added resiliency to ItemIndexer. Now a failing indexing operation is logged (via the new Logger property, when set) and indexing then continues.
 - 2022-01-02: moved parts-related libraries into external solutions. For general parts, this implies relocating their namespaces as libraries were renamed from `Cadmus.Parts` to `Cadmus.General.Parts`, and from `Cadmus.Seed.Parts` to `Cadmus.Seed.General.Parts`.
 - 2021-11-20: changed graph node filter class IDs type.

@@ -175,12 +175,10 @@ namespace Cadmus.Seed
 
             SeedOptions options = GetSeedOptions();
 
-            IList<IPartSeeder> seeders =
-                GetComponents<IPartSeeder>(entries, false, true);
+            IList<IPartSeeder> seeders = GetComponents<IPartSeeder>(entries);
 
             int i = 0;
-            Dictionary<string, IPartSeeder> result =
-                new Dictionary<string, IPartSeeder>();
+            Dictionary<string, IPartSeeder> result = new();
 
             foreach (IPartSeeder seeder in seeders)
             {

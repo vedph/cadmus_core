@@ -6,6 +6,10 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 3.0.1
+
+-2022-05-18: upgraded dependencies to NET 6.
+
 ### 3.0.0
 
 - 2022-04-29: upgraded to .NET 6.

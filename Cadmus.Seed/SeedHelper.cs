@@ -26,7 +26,7 @@ namespace Cadmus.Seed
         {
             if (entries == null || entries.Count == 0) return default;
 
-            HashSet<int> pickedIndexes = new HashSet<int>();
+            HashSet<int> pickedIndexes = new();
 
             while (pickedIndexes.Count < count)
             {

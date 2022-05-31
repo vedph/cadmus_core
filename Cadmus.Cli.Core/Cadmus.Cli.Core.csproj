@@ -10,9 +10,9 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus</PackageTags>
-    <Version>3.0.1</Version>
-    <FileVersion>3.0.1</FileVersion>
-    <AssemblyVersion>3.0.1</AssemblyVersion>
+    <Version>4.0.1</Version>
+    <FileVersion>4.0.1</FileVersion>
+    <AssemblyVersion>4.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

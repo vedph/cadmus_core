@@ -59,11 +59,6 @@ namespace Cadmus.Core.Test.Config
             Assert.NotNull(thesaurus);
             Assert.Equal(8, thesaurus.Entries.Count);
             // TODO: check each entry
-
-            Assert.NotNull(profile.GraphPinFilter);
-            Assert.Single(profile.GraphPinFilter.Clauses);
-            Assert.NotNull(profile.NonGraphPinFilter);
-            Assert.Single(profile.NonGraphPinFilter.Clauses);
         }
     }
 }

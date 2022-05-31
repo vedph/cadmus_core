@@ -16,11 +16,6 @@ namespace Cadmus.Index
     public interface IItemIndexWriter
     {
         /// <summary>
-        /// Gets or sets the optional data pin filter to use.
-        /// </summary>
-        IDataPinFilter DataPinFilter { get; set; }
-
-        /// <summary>
         /// Gets the optional initialization context data, which can be used
         /// when the writer has to create its target store.
         /// </summary>

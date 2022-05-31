@@ -1,4 +1,5 @@
-﻿using Cadmus.Index.Sql;
+﻿using Cadmus.Graph.MySql;
+using Cadmus.Index.Sql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
 using Fusi.Tools.Config;
@@ -71,25 +72,25 @@ namespace Cadmus.Index.MySql
 
         static private string LoadResource(string name)
         {
-            using (StreamReader reader = new StreamReader(
+            using StreamReader reader = new(
                 Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    $"Cadmus.Index.MySql.Assets.{name}"), Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+                    $"Cadmus.Index.MySql.Assets.{name}"), Encoding.UTF8);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
         /// Gets the MySql schema used to populate a created database.
         /// </summary>
         /// <returns>SQL code.</returns>
-        public static string GetMySqlSchema() => LoadResource("Schema.mysql");
+        public static string GetMySqlSchema() =>
+            LoadResource("Schema.mysql")
+            + "\n" + MySqlGraphRepository.GetSchema();
 
         /// <summary>
         /// Gets the schema SQL used to populate a created database.
         /// </summary>
         /// <returns>SQL code.</returns>
-        protected override string GetSchemaSql() => LoadResource("Schema.mysql");
+        protected override string GetSchemaSql() => GetMySqlSchema();
 
         /// <summary>
         /// Gets the database manager.

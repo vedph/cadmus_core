@@ -55,10 +55,6 @@ namespace Cadmus.Core.Config
                 }
             }
 
-            // data pin filters
-            profile.GraphPinFilter = options.GraphPinFilter;
-            profile.NonGraphPinFilter = options.NonGraphPinFilter;
-
             return profile;
         }
     }

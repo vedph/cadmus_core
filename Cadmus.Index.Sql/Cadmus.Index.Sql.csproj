@@ -9,21 +9,17 @@
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>3.0.1</Version>
+    <Version>4.0.1</Version>
     <Description>SQL implementation of Cadmus index.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;SQL index</PackageTags>
-    <FileVersion>3.0.1</FileVersion>
-    <AssemblyVersion>3.0.1</AssemblyVersion>
+    <FileVersion>4.0.1</FileVersion>
+    <AssemblyVersion>4.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>.\bin\Debug\netstandard2.0\Cadmus.Index.Sql.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Graph\SqlGraphRepositoryBase.cs~RF23132447.TMP" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Fusi.DbManager" Version="2.0.0" />

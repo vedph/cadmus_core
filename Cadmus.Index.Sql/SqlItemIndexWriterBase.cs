@@ -18,11 +18,6 @@ namespace Cadmus.Index.Sql
         private bool _exists;
 
         /// <summary>
-        /// Gets or sets the optional data pin filter.
-        /// </summary>
-        public IDataPinFilter DataPinFilter { get; set; }
-
-        /// <summary>
         /// Gets or sets the initialize context. For SQL-based writers, this
         /// is a string with SQL code to execute after the database gets
         /// created.
@@ -65,7 +60,6 @@ namespace Cadmus.Index.Sql
         private DbCommand GetInsertItemCommand(bool upsert, DbTransaction tr = null)
         {
             DbCommand cmd = GetCommand();
-            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText =
                 $"INSERT INTO {ET("item")}(" +
@@ -113,7 +107,6 @@ namespace Cadmus.Index.Sql
         {
             // delete item (and its pins by FK constraints)
             DbCommand cmd = GetCommand();
-            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText = "DELETE FROM `item` WHERE `id`=@id";
             AddParameter(cmd, "@id", DbType.String);
@@ -123,7 +116,6 @@ namespace Cadmus.Index.Sql
         private DbCommand GetInsertPinCommand(DbTransaction tr = null)
         {
             DbCommand cmd = GetCommand();
-            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText =
                 $"INSERT INTO {ET("pin")}(" +
@@ -151,7 +143,6 @@ namespace Cadmus.Index.Sql
         {
             // delete part pins
             DbCommand cmd = GetCommand();
-            // cmd.Connection = Connection;
             cmd.Transaction = tr;
             cmd.CommandText = "DELETE FROM `pin` WHERE `partId`=@partId;";
             AddParameter(cmd, "@partId", DbType.String);
@@ -183,7 +174,7 @@ namespace Cadmus.Index.Sql
             base.EnsureConnected();
         }
 
-        private void InsertItem(IndexItem item, DbCommand cmd)
+        private static void InsertItem(IndexItem item, DbCommand cmd)
         {
             cmd.Parameters["@id"].Value = item.Id;
             cmd.Parameters["@title"].Value = item.Title;
@@ -199,7 +190,7 @@ namespace Cadmus.Index.Sql
             cmd.ExecuteNonQuery();
         }
 
-        private void InsertPin(IndexPin pin, DbCommand cmd)
+        private static void InsertPin(IndexPin pin, DbCommand cmd)
         {
             cmd.Parameters["@itemId"].Value = pin.ItemId;
             cmd.Parameters["@partId"].Value = pin.PartId;
@@ -211,13 +202,13 @@ namespace Cadmus.Index.Sql
             cmd.ExecuteNonQuery();
         }
 
-        private void DeleteItem(string id, DbCommand cmd)
+        private static void DeleteItem(string id, DbCommand cmd)
         {
             cmd.Parameters["@id"].Value = id;
             cmd.ExecuteNonQuery();
         }
 
-        private void DeletePartPins(string partId, DbCommand cmd)
+        private static void DeletePartPins(string partId, DbCommand cmd)
         {
             cmd.Parameters["@partId"].Value = partId;
             cmd.ExecuteNonQuery();
@@ -262,19 +253,13 @@ namespace Cadmus.Index.Sql
                 // parts
                 if (item.Parts?.Count > 0)
                 {
-                    DbCommand delPinsCommand = GetDeletePartPinsCommand();
                     DbCommand insPinCmd = GetInsertPinCommand();
                     DateTime now = DateTime.UtcNow;
 
                     foreach (IPart part in item.Parts)
                     {
-                        // insert all the new part's pins
-                        DataPinFilter?.Reset();
                         foreach (DataPin pin in part.GetDataPins(item))
                         {
-                            if (DataPinFilter?.Apply(pin) == false)
-                                continue;
-
                             InsertPin(GetIndexPin(pin, part.TypeId, now),
                                 insPinCmd);
                         }
@@ -307,7 +292,7 @@ namespace Cadmus.Index.Sql
             {
                 try
                 {
-                    // upsert the item (so that its pins are not removed;
+                    // upsert the item (so that its pins are not removed -
                     // pins from a removed part are deleted when the part is removed)
                     DbCommand cmd = GetInsertItemCommand(true, tr);
                     InsertItem(new IndexItem(item), cmd);
@@ -321,17 +306,12 @@ namespace Cadmus.Index.Sql
 
                         foreach (IPart part in item.Parts)
                         {
-                            DataPinFilter?.Reset();
-
                             // delete all the part's pins
                             DeletePartPins(part.Id, delPinsCommand);
 
                             // insert all the new part's pins
                             foreach (DataPin pin in part.GetDataPins(item))
                             {
-                                if (DataPinFilter?.Apply(pin) == false)
-                                    continue;
-
                                 InsertPin(GetIndexPin(pin, part.TypeId, now),
                                     insPinCmd);
                             }

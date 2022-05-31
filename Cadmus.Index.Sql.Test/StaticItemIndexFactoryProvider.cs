@@ -27,10 +27,8 @@ namespace Cadmus.Index.Sql.Test
             // build the container for seeders
             Assembly[] indexAssemblies = new[]
             {
-                // Cadmus.Index.Sql
-                typeof(MySqlItemIndexWriter).Assembly,
                 // Cadmus.Index.MySql
-                typeof(MySqlGraphRepository).Assembly
+                typeof(MySqlItemIndexWriter).Assembly,
             };
 
             Container container = new Container();

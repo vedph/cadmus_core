@@ -5,24 +5,12 @@
 
     <IsPackable>false</IsPackable>
 
-    <Version>3.0.1</Version>
+    <Version>4.0.1</Version>
 
-    <FileVersion>3.0.1</FileVersion>
+    <FileVersion>4.0.1</FileVersion>
 
-    <AssemblyVersion>3.0.1</AssemblyVersion>
+    <AssemblyVersion>4.0.1</AssemblyVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Assets\PresetMappings.json" />
-    <None Remove="Assets\PresetNodes.json" />
-    <None Remove="Assets\PresetThesauri.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\PresetMappings.json" />
-    <EmbeddedResource Include="Assets\PresetNodes.json" />
-    <EmbeddedResource Include="Assets\PresetThesauri.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Fusi.DbManager.MySql" Version="2.0.0" />

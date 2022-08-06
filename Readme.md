@@ -6,6 +6,10 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.0.2
+
+- 2022-08-06: updated packages.
+
 ### 4.0.1
 
 - 2022-05-31: replaced legacy pin-based graph with new [Cadmus.Graph](https://github.com/vedph/cadmus-graph).

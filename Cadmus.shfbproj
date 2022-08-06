@@ -13,41 +13,18 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET Framework 4.8</FrameworkVersion>
+    <FrameworkVersion>.NET Core/.NET Standard/.NET 5.0+</FrameworkVersion>
     <OutputPath>.\Help\</OutputPath>
     <HtmlHelpName>Cadmus</HtmlHelpName>
     <Language>en-US</Language>
     <DocumentationSources>
-      <DocumentationSource sourceFile="Cadmus.Core\bin\Debug\netstandard2.0\Cadmus.Core.dll" />
-<DocumentationSource sourceFile="Cadmus.Core\bin\Debug\netstandard2.0\Cadmus.Core.xml" />
-<DocumentationSource sourceFile="Cadmus.Archive.Parts\bin\Debug\netstandard2.0\Cadmus.Archive.Parts.dll" />
-<DocumentationSource sourceFile="Cadmus.Archive.Parts\bin\Debug\netstandard2.0\Cadmus.Archive.Parts.xml" />
-<DocumentationSource sourceFile="Cadmus.Mongo\bin\Debug\netstandard2.0\Cadmus.Mongo.dll" />
-<DocumentationSource sourceFile="Cadmus.Mongo\bin\Debug\netstandard2.0\Cadmus.Mongo.xml" />
-<DocumentationSource sourceFile="Cadmus.Parts\bin\Debug\netstandard2.0\Cadmus.Parts.dll" />
-<DocumentationSource sourceFile="Cadmus.Parts\bin\Debug\netstandard2.0\Cadmus.Parts.xml" />
-<DocumentationSource sourceFile="Cadmus.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Philology.Parts.dll" />
-<DocumentationSource sourceFile="Cadmus.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Philology.Parts.xml" />
-<DocumentationSource sourceFile="..\Antiquity\Fusi.Antiquity\bin\Debug\netstandard2.0\Fusi.Antiquity.dll" />
-<DocumentationSource sourceFile="..\Antiquity\Fusi.Antiquity\bin\Debug\netstandard2.0\Fusi.Antiquity.xml" />
-<DocumentationSource sourceFile="..\Tools\Fusi.Tools\bin\Debug\netstandard2.0\Fusi.Tools.dll" />
-<DocumentationSource sourceFile="..\Tools\Fusi.Tools\bin\Debug\netstandard2.0\Fusi.Tools.xml" />
-<DocumentationSource sourceFile="..\Tools\Fusi.Tools.Config\bin\Debug\netstandard2.0\Fusi.Tools.Config.dll" />
-<DocumentationSource sourceFile="..\Tools\Fusi.Tools.Config\bin\Debug\netstandard2.0\Fusi.Tools.Config.xml" />
-<DocumentationSource sourceFile="Cadmus.Lexicon.Parts\bin\Debug\netstandard2.0\Cadmus.Lexicon.Parts.dll" />
-<DocumentationSource sourceFile="Cadmus.Lexicon.Parts\bin\Debug\netstandard2.0\Cadmus.Lexicon.Parts.xml" />
-<DocumentationSource sourceFile="Cadmus.Seed\bin\Debug\netstandard2.0\Cadmus.Seed.dll" />
-<DocumentationSource sourceFile="Cadmus.Seed\bin\Debug\netstandard2.0\Cadmus.Seed.xml" />
-<DocumentationSource sourceFile="Cadmus.Seed.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Parts.dll" />
-<DocumentationSource sourceFile="Cadmus.Seed.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Parts.xml" />
-<DocumentationSource sourceFile="Cadmus.Seed.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Philology.Parts.dll" />
-<DocumentationSource sourceFile="Cadmus.Seed.Philology.Parts\bin\Debug\netstandard2.0\Cadmus.Seed.Philology.Parts.xml" />
-<DocumentationSource sourceFile="Cadmus.Index\bin\Debug\netstandard2.0\Cadmus.Index.dll" />
-<DocumentationSource sourceFile="Cadmus.Index\bin\Debug\netstandard2.0\Cadmus.Index.xml" />
-<DocumentationSource sourceFile="Cadmus.Index.Sql\bin\Debug\netstandard2.0\Cadmus.Index.Sql.dll" />
-<DocumentationSource sourceFile="Cadmus.Index.Sql\bin\Debug\netstandard2.0\Cadmus.Index.Sql.xml" />
-<DocumentationSource sourceFile="Cadmus.Index.MySql\bin\Debug\netstandard2.0\Cadmus.Index.MySql.dll" />
-<DocumentationSource sourceFile="Cadmus.Index.MySql\bin\Debug\netstandard2.0\Cadmus.Index.MySql.xml" /></DocumentationSources>
+      <DocumentationSource sourceFile="Cadmus.Cli.Core\Cadmus.Cli.Core.csproj" />
+<DocumentationSource sourceFile="Cadmus.Core\Cadmus.Core.csproj" />
+<DocumentationSource sourceFile="Cadmus.Index\Cadmus.Index.csproj" />
+<DocumentationSource sourceFile="Cadmus.Index.MySql\Cadmus.Index.MySql.csproj" />
+<DocumentationSource sourceFile="Cadmus.Index.Sql\Cadmus.Index.Sql.csproj" />
+<DocumentationSource sourceFile="Cadmus.Mongo\Cadmus.Mongo.csproj" />
+<DocumentationSource sourceFile="Cadmus.Seed\Cadmus.Seed.csproj" /></DocumentationSources>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>

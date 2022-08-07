@@ -6,6 +6,10 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.0.3
+
+- 2022-08-07: updated packages (`Fusi.Config`).
+
 ### 4.0.2
 
 - 2022-08-06: updated packages.

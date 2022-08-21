@@ -171,7 +171,7 @@ namespace Cadmus.Mongo
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(Id).Append(' ').Append(TypeId);
             if (RoleId != null) sb.Append(" [").Append(RoleId).Append(']');
             return sb.ToString();

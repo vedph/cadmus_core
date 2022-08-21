@@ -6,6 +6,17 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.0.4
+
+- 2022-08-21:
+  - updated packages.
+  - added `FlagMatching` to item/history item filters. This does not affect the previous behavior, which remains the default one; yet, now it is possible to match the flags value with these modes:
+    - all the bits set (the default, as before);
+    - any of the bits set;
+    - all the bits clear;
+    - any of the bits clear.
+Consequently, the `IHasFlags` interface has been added, so that both filters can be handled in the same way for what concerns flags.
+
 ### 4.0.3
 
 - 2022-08-07: updated packages (`Fusi.Config`).

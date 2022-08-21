@@ -76,7 +76,7 @@ namespace Cadmus.Mongo
         /// <returns>Facet definition.</returns>
         public FacetDefinition ToFacetDefinition()
         {
-            FacetDefinition definition = new FacetDefinition
+            FacetDefinition definition = new()
             {
                 Id = Id,
                 Label = Label,

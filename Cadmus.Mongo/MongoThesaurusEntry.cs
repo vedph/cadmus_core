@@ -42,7 +42,7 @@ namespace Cadmus.Mongo
         /// Get a <see cref="ThesaurusEntry"/> from this object.
         /// </summary>
         /// <returns>The entry.</returns>
-        public ThesaurusEntry ToThesaurusEntry() => new ThesaurusEntry(Id, Value);
+        public ThesaurusEntry ToThesaurusEntry() => new(Id, Value);
 
         /// <summary>
         /// Converts to string.

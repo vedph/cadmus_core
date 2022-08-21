@@ -64,7 +64,7 @@ namespace Cadmus.Mongo
         /// <returns>Thesaurus.</returns>
         public Thesaurus ToThesaurus()
         {
-            Thesaurus thesaurus = new Thesaurus(Id)
+            Thesaurus thesaurus = new(Id)
             {
                 TargetId = TargetId
             };

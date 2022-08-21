@@ -403,6 +403,26 @@ namespace Cadmus.Mongo
         #endregion
 
         #region Items
+        private static FilterDefinition<T> ApplyFlagMatching<T>(
+            FlagMatching matching, int flags, FilterDefinition<T> filter)
+            where T : IHasFlags
+        {
+            return matching switch
+            {
+                FlagMatching.BitsAnySet =>
+                    filter & Builders<T>.Filter.BitsAnySet(
+                        i => i.Flags, flags),
+                FlagMatching.BitsAllClear =>
+                    filter & Builders<T>.Filter.BitsAllClear(
+                        i => i.Flags, flags),
+                FlagMatching.BitsAnyClear =>
+                    filter & Builders<T>.Filter.BitsAnyClear(
+                        i => i.Flags, flags),
+                _ => filter & Builders<T>.Filter.BitsAllSet(
+                        i => i.Flags, flags),
+            };
+        }
+
         /// <summary>
         /// Gets a page of items.
         /// </summary>
@@ -446,8 +466,7 @@ namespace Cadmus.Mongo
 
             if (filter.Flags.HasValue)
             {
-                f &= Builders<MongoItem>.Filter.BitsAllSet(
-                    i => i.Flags, filter.Flags.Value);
+                f &= ApplyFlagMatching(filter.FlagMatching, filter.Flags.Value, f);
             }
 
             if (!string.IsNullOrEmpty(filter.UserId))
@@ -496,6 +515,8 @@ namespace Cadmus.Mongo
         /// item's parts.</param>
         /// <returns>item or null if not found</returns>
         /// <exception cref="ArgumentNullException">null item ID</exception>
+        /// <exception cref="InvalidOperationException">unable to instantiate part
+        /// </exception>
         public IItem GetItem(string id, bool includeParts = true)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
@@ -557,7 +578,7 @@ namespace Cadmus.Mongo
                 // add the new item to the history, as newly created or updated
                 bool exists = items.AsQueryable().Any(i => i.Id.Equals(item.Id));
 
-                MongoHistoryItem historyItem = new MongoHistoryItem(item)
+                MongoHistoryItem historyItem = new(item)
                 {
                     Status = exists ? EditStatus.Updated : EditStatus.Created
                 };
@@ -607,7 +628,7 @@ namespace Cadmus.Mongo
             // the specified user
             if (history)
             {
-                MongoHistoryItem historyItem = new MongoHistoryItem(mongoItem)
+                MongoHistoryItem historyItem = new(mongoItem)
                 {
                     // user deleted it now
                     UserId = userId,
@@ -809,7 +830,7 @@ namespace Cadmus.Mongo
             };
 
             int total = await GetDistinctGroupIdsCountAsync(items, aggOptions);
-            List<string> ids = new List<string>();
+            List<string> ids = new();
 
             if (total > 0)
             {
@@ -968,7 +989,7 @@ namespace Cadmus.Mongo
             IMongoDatabase db = Client.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
-            var builder = new FilterDefinitionBuilder<MongoHistoryItem>();
+            // var builder = new FilterDefinitionBuilder<MongoHistoryItem>()
             FilterDefinition<MongoHistoryItem> f =
                 Builders<MongoHistoryItem>.Filter.Empty;
 
@@ -998,7 +1019,7 @@ namespace Cadmus.Mongo
 
             if (filter.Flags.HasValue)
             {
-                f = f & builder.BitsAllSet(i => i.Flags, filter.Flags.Value);
+                f &= ApplyFlagMatching(filter.FlagMatching, filter.Flags.Value, f);
             }
 
             if (!string.IsNullOrEmpty(filter.ReferenceId))
@@ -1121,7 +1142,7 @@ namespace Cadmus.Mongo
         private IList<IPart> InstantiateParts(IEnumerable<MongoPart> parts,
             bool throwOnNull = true)
         {
-            List<IPart> results = new List<IPart>();
+            List<IPart> results = new();
 
             foreach (MongoPart mongoPart in parts)
             {
@@ -1133,7 +1154,7 @@ namespace Cadmus.Mongo
                     string error = "Unable to instantiate part for type.role=" +
                         $"{mongoPart.TypeId}.{mongoPart.RoleId}";
                     Debug.WriteLine(error);
-                    if (throwOnNull) throw new ApplicationException(error);
+                    if (throwOnNull) throw new InvalidOperationException(error);
                 }
                 else
                 {
@@ -1263,7 +1284,7 @@ namespace Cadmus.Mongo
 
             parts = ApplyPartFilters(parts, itemIds, typeId, roleId, null);
 
-            List<IPart> itemParts = new List<IPart>();
+            List<IPart> itemParts = new();
             itemParts.AddRange(InstantiateParts(
                 parts.OrderBy(p => p.TypeId).ThenBy(p => p.RoleId)));
 
@@ -1298,7 +1319,7 @@ namespace Cadmus.Mongo
                 .ToList();
 
             // generate the corresponding layer part infos
-            List<LayerPartInfo> results = new List<LayerPartInfo>(
+            List<LayerPartInfo> results = new(
                 from p in parts select p.ToLayerPartInfo());
 
             // append to these results the absent layer parts if requested
@@ -1449,7 +1470,7 @@ namespace Cadmus.Mongo
             string json = JsonSerializer.Serialize(part, part.GetType(),
                 _jsonOptions);
 
-            MongoPart mongoPart = new MongoPart(part)
+            MongoPart mongoPart = new(part)
             {
                 Content = BsonDocument.Parse(json)
             };
@@ -1457,7 +1478,7 @@ namespace Cadmus.Mongo
             if (history)
             {
                 bool exists = parts.AsQueryable().Any(p => p.Id.Equals(part.Id));
-                MongoHistoryPart historyPart = new MongoHistoryPart(part)
+                MongoHistoryPart historyPart = new(part)
                 {
                     Content = mongoPart.Content,
                     Status = exists ? EditStatus.Updated : EditStatus.Created
@@ -1519,7 +1540,7 @@ namespace Cadmus.Mongo
 
             if (history)
             {
-                MongoHistoryPart historyPart = new MongoHistoryPart(part)
+                MongoHistoryPart historyPart = new(part)
                 {
                     // user deleted it now
                     UserId = userId,
@@ -1857,7 +1878,7 @@ namespace Cadmus.Mongo
             EnsureClientCreated(_options.ConnectionString);
             IMongoDatabase db = Client.GetDatabase(_databaseName);
 
-            List<LayerHint> hints = new List<LayerHint>();
+            List<LayerHint> hints = new();
 
             // get the layer part
             MongoPart mongoLayerPart = db.GetCollection<MongoPart>

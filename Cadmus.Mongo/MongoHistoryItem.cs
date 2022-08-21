@@ -8,7 +8,7 @@ namespace Cadmus.Mongo
     /// <summary>
     /// A history item as stored in Mongo database.
     /// </summary>
-    public sealed class MongoHistoryItem : IHasHistory
+    public sealed class MongoHistoryItem : IHasHistory, IHasFlags
     {
         /// <summary>
         /// The collection name.

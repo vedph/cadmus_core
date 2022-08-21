@@ -5,7 +5,7 @@ namespace Cadmus.Core.Storage
     /// <summary>
     /// History item.
     /// </summary>
-    public sealed class HistoryItem : IHasHistory
+    public sealed class HistoryItem : IHasHistory, IHasFlags
     {
         /// <summary>
         /// Gets or sets the identifier.

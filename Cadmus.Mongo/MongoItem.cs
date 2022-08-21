@@ -7,7 +7,7 @@ namespace Cadmus.Mongo
     /// <summary>
     /// An item as stored in the Mongo database.
     /// </summary>
-    public class MongoItem : IHasVersion
+    public class MongoItem : IHasVersion, IHasFlags
     {
         /// <summary>
         /// The collection name.

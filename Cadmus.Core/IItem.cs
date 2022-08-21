@@ -5,7 +5,7 @@ namespace Cadmus.Core
     /// <summary>
     /// Item.
     /// </summary>
-    public interface IItem : IHasVersion
+    public interface IItem : IHasVersion, IHasFlags
     {
         /// <summary>
         /// Gets or sets the identifier.
@@ -43,11 +43,6 @@ namespace Cadmus.Core
         /// in a list.
         /// </summary>
         string SortKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets generic flags for the item.
-        /// </summary>
-        int Flags { get; set; }
 
         /// <summary>
         /// Gets or sets the item's parts.

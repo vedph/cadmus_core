@@ -24,7 +24,7 @@ namespace Cadmus.Mongo
         {
             // camel case everything:
             // https://stackoverflow.com/questions/19521626/mongodb-convention-packs/19521784#19521784
-            ConventionPack pack = new ConventionPack
+            ConventionPack pack = new()
             {
                 new CamelCaseElementNameConvention()
             };

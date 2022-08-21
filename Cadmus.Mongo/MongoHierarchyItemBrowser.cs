@@ -108,7 +108,7 @@ namespace Cadmus.Mongo
             // );
             #endregion
 
-            AggregateOptions aggOptions = new AggregateOptions()
+            AggregateOptions aggOptions = new()
             {
                 AllowDiskUse = false
             };
@@ -249,12 +249,12 @@ namespace Cadmus.Mongo
             // get all the hierarchy parts with the specified Y level,
             // and eventually with the specified tag; get the corresponding
             // item; sort, page, and return
-            AggregateOptions aggOptions = new AggregateOptions()
+            AggregateOptions aggOptions = new()
             {
                 AllowDiskUse = false
             };
 
-            List<BsonDocument> stages = new List<BsonDocument>(new BsonDocument[]
+            List<BsonDocument> stages = new(new BsonDocument[]
             {
                 BuildMatchStage(parentId, tag),
                 new BsonDocument("$lookup", new BsonDocument()
@@ -274,7 +274,7 @@ namespace Cadmus.Mongo
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = stages.ToArray();
 
             // collect all their items, in the paging range
-            List<ItemInfo> items = new List<ItemInfo>();
+            List<ItemInfo> items = new();
             using (var cursor = await parts.AggregateAsync(pipeline, aggOptions))
             {
                 while (await cursor.MoveNextAsync())

@@ -5,16 +5,16 @@
 
     <IsPackable>false</IsPackable>
 
-    <Version>4.0.3</Version>
+    <Version>4.0.4</Version>
 
-    <FileVersion>4.0.3</FileVersion>
+    <FileVersion>4.0.4</FileVersion>
 
-    <AssemblyVersion>4.0.3</AssemblyVersion>
+    <AssemblyVersion>4.0.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <PrivateAssets>all</PrivateAssets>

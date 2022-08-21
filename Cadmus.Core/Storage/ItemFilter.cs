@@ -29,5 +29,34 @@
         /// Gets or sets the flags filter.
         /// </summary>
         public int? Flags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the flag matching mode to use for <see cref="Flags"/>
+        /// when it is not null.
+        /// </summary>
+        public FlagMatching FlagMatching {get;set;}
+    }
+
+    /// <summary>
+    /// Matching mode for item's flags.
+    /// </summary>
+    public enum FlagMatching
+    {
+        /// <summary>
+        /// All the bits specified must be set.
+        /// </summary>
+        BitsAllSet = 0,
+        /// <summary>
+        /// Any of the bits specified must be set.
+        /// </summary>
+        BitsAnySet,
+        /// <summary>
+        /// All the bits specified must be clear.
+        /// </summary>
+        BitsAllClear,
+        /// <summary>
+        /// Any of the bits specified must be clear.
+        /// </summary>
+        BitsAnyClear
     }
 }

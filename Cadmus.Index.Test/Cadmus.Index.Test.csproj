@@ -5,16 +5,16 @@
 
     <IsPackable>false</IsPackable>
 
-    <Version>4.0.4</Version>
+    <Version>4.0.5</Version>
 
-    <FileVersion>4.0.4</FileVersion>
+    <FileVersion>4.0.5</FileVersion>
 
-    <AssemblyVersion>4.0.4</AssemblyVersion>
+    <AssemblyVersion>4.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fusi.DbManager.MySql" Version="2.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
+    <PackageReference Include="Fusi.DbManager.MySql" Version="2.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

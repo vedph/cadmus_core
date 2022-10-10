@@ -6,6 +6,10 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.0.5
+
+- 2022-10-10: updated packages.
+
 ### 4.0.4
 
 - 2022-08-21:

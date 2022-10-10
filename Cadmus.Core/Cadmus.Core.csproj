@@ -4,7 +4,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>4.0.4</Version>
+    <Version>4.0.5</Version>
     <Authors>Daniele Fusi</Authors>
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
@@ -13,8 +13,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus</PackageTags>
-    <FileVersion>4.0.4</FileVersion>
-    <AssemblyVersion>4.0.4</AssemblyVersion>
+    <FileVersion>4.0.5</FileVersion>
+    <AssemblyVersion>4.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -32,7 +32,7 @@
     <PackageReference Include="Fusi.Tools.Config" Version="2.1.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
   </ItemGroup>
 
   <ItemGroup>

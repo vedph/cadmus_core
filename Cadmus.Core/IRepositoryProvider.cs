@@ -11,6 +11,11 @@ namespace Cadmus.Core
     public interface IRepositoryProvider
     {
         /// <summary>
+        /// Gets or sets the connection string to use.
+        /// </summary>
+        public string ConnectionString { get; set; }
+
+        /// <summary>
         /// Gets the part type provider.
         /// </summary>
         /// <returns>part type provider</returns>
@@ -18,9 +23,9 @@ namespace Cadmus.Core
 
         /// <summary>
         /// Creates a Cadmus repository.
+        /// You must set <see cref="ConnectionString"/> before calling this method.
         /// </summary>
         /// <returns>repository</returns>
-        /// <exception cref="ArgumentNullException">null database</exception>
         ICadmusRepository CreateRepository();
     }
 }

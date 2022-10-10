@@ -1,10 +1,13 @@
 ﻿using Cadmus.Core.Storage;
+using System;
 
 namespace Cadmus.Cli.Core
 {
     /// <summary>
     /// CLI Cadmus repository provider.
     /// </summary>
+    [Obsolete("CLI providers will be removed. Use providers from PRJ.Services " +
+        "library implementing Cadmus.Core.IRepositoryProvider instead.")]
     public interface ICliCadmusRepositoryProvider
     {
         /// <summary>
@@ -16,7 +19,7 @@ namespace Cadmus.Cli.Core
         /// <summary>
         /// Creates the repository.
         /// </summary>
-        /// <param name="database">The database.</param>
+        /// <param name="database">The database name.</param>
         /// <returns>Repository.</returns>
         ICadmusRepository CreateRepository(string database);
     }

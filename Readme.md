@@ -6,6 +6,76 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.1.0
+
+- 2022-10-10: **breaking change**: refactoring providers for repository and part seeder factory. As Cadmus core is now on .NET 6.0, we're going to remove the CLI-specific providers and let the CLI tool use the generic providers (from each project's PRJ.Services library) together with the API. The only change in the core for this is adding a `ConnectionString` property to `Cadmus.Core.IRepositoryProvider`. Correspondingly, the provider interfaces in `Cadmus.Cli.Core` have been marked as obsolete.
+
+This change has these effects:
+
+- **project API**: update your packages, and change the injected service in `Startup.cs` so that you specify the connection string:
+
+```cs
+// old code (Configuration was injected via ASPNET dependency injector):
+// services.AddSingleton<IRepositoryProvider, MyProjectRepositoryProvider>();
+// new code:
+string dataCS = string.Format(
+  Configuration.GetConnectionString("Default"),
+  Configuration.GetValue<string>("DatabaseNames:Data"));
+services.AddSingleton<IRepositoryProvider>(
+  _ => new AppRepositoryProvider { ConnectionString = dataCS });
+```
+
+- **project models**: you can remove the CLI providers library, and ensure that you implement correctly the repository provider in the `Services` library (see below).
+
+- **CLI tool**: the CLI tool will adapt to the new architecture so that it consumes providers from the shared library rather than from the CLI-specific one, i.e. in its `IRepositoryProvider` implementation:
+  - add a `ConnectionString` property to `CreateRepository`.
+  - add a `TagAttribute` to the class so that it can be retrieved from a plugin.
+
+Sample (remove the injected `IConfiguration`, no more used):
+
+```cs
+/// <summary>
+/// Cadmus TGR repository provider.
+/// Tag: <c>repository-provider.tgr</c>.
+/// </summary>
+[Tag("repository-provider.tgr")]
+public sealed class TgrRepositoryProvider : IRepositoryProvider
+{
+    /// <summary>
+    /// The connection string.
+    /// </summary>
+    public string? ConnectionString { get; set; }
+
+    // ... other code unchanged ...
+
+    /// <summary>
+    /// Creates a Cadmus repository.
+    /// </summary>
+    /// <param name="database">The optional database name. If not specified,
+    /// this will be read from the configuration object used by this
+    /// provider (<c>ConnectionStrings:Default</c> and <c>DatabaseNames:Data</c>).
+    /// </param>
+    /// <returns>repository</returns>
+    /// <exception cref="InvalidOperationException">connection string not set
+    /// </exception>
+    public ICadmusRepository CreateRepository(string? database = null)
+    {
+        // create the repository (no need to use container here)
+        MongoCadmusRepository repository = new(_partTypeProvider,
+                new StandardItemSortKeyBuilder());
+
+        repository.Configure(new MongoCadmusRepositoryOptions
+        {
+            ConnectionString = ConnectionString ??
+                throw new InvalidOperationException(
+                    "No connection string set for IRepositoryProvider implementation")
+        });
+
+        return repository;
+    }
+}
+```
+
 ### 4.0.5
 
 - 2022-10-10: updated packages.

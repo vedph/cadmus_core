@@ -10,11 +10,11 @@
     <Product>Cadmus</Product>
     <Description>Cadmus items index.</Description>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>4.0.5</Version>
+    <Version>4.1.0</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;index</PackageTags>
-    <FileVersion>4.0.5</FileVersion>
-    <AssemblyVersion>4.0.5</AssemblyVersion>
+    <FileVersion>4.1.0</FileVersion>
+    <AssemblyVersion>4.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

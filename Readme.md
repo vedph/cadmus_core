@@ -6,6 +6,8 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+- 2022-10-12: moved `Cadmus.Cli.Core` to Cadmus tool solution.
+
 ### 4.1.0
 
 - 2022-10-10: **breaking change**: refactoring providers for repository and part seeder factory. As Cadmus core is now on .NET 6.0, we're going to remove the CLI-specific providers and let the CLI tool use the generic providers (from each project's PRJ.Services library) together with the API. The only change in the core for this is adding a `ConnectionString` property to `Cadmus.Core.IRepositoryProvider`. Correspondingly, the provider interfaces in `Cadmus.Cli.Core` have been marked as obsolete.

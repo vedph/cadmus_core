@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 
 namespace Cadmus.Core.Config
 {
@@ -35,16 +34,8 @@ namespace Cadmus.Core.Config
         /// <exception cref="ArgumentException">invalid ID</exception>
         public ThesaurusEntry(string id, string value)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-
-            if (!Regex.IsMatch(id, @"^[a-zA-Z0-9_\-\.]+$"))
-            {
-                throw new ArgumentException(LocalizedStrings.Format(
-                    Properties.Resources.InvalidTagId, id));
-            }
-            Id = id;
-
-            Value = value;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Value = value ?? "";
         }
 
         /// <summary>

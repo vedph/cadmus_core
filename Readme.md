@@ -6,6 +6,11 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.1.1
+
+- 2022-11-03:
+  - removed legacy ID check from thesaurus entry constructor.
+  - updated packages.
 - 2022-10-12: moved `Cadmus.Cli.Core` to Cadmus tool solution.
 
 ### 4.1.0

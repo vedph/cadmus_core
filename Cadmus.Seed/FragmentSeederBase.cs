@@ -33,13 +33,13 @@ namespace Cadmus.Seed
         public abstract Type GetFragmentType();
 
         /// <summary>
-        /// Creates and seeds a new part.
+        /// Creates and seeds a new fragment.
         /// </summary>
         /// <param name="item">The item this part should belong to.</param>
         /// <param name="location">The location.</param>
         /// <param name="baseText">The base text.</param>
         /// <returns>A new fragment.</returns>
-        public abstract ITextLayerFragment GetFragment(
+        public abstract ITextLayerFragment? GetFragment(
             IItem item, string location, string baseText);
     }
 }

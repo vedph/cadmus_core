@@ -148,6 +148,6 @@ namespace Cadmus.Core.Layers
         /// <param name="baseTextPart">The base text part to get text from.</param>
         /// <param name="location">The location.</param>
         /// <returns>The text, or null if location is invalid.</returns>
-        public abstract string GetTextAt(IPart baseTextPart, string location);
+        public abstract string? GetTextAt(IPart baseTextPart, string location);
     }
 }

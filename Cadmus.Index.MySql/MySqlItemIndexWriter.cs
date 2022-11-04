@@ -39,7 +39,7 @@ namespace Cadmus.Index.MySql
         public void Configure(SqlOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
-            ConnectionString = options.ConnectionString;
+            ConnectionString = options.ConnectionString!;
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Cadmus.Index.MySql
             return new MySqlCommand
             {
                 Connection = (MySqlConnection)
-                    (connection as MySqlConnection ?? Connection)
+                    (connection as MySqlConnection ?? Connection!)
             };
         }
     }

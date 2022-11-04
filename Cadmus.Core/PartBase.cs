@@ -114,7 +114,7 @@ namespace Cadmus.Core
         /// <param name="value">The value.</param>
         /// <returns>data pin</returns>
         /// <exception cref="ArgumentNullException">null name</exception>
-        protected DataPin CreateDataPin(string name, string value)
+        protected DataPin CreateDataPin(string name, string? value)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 

@@ -36,7 +36,7 @@ namespace Cadmus.Seed
         /// <param name="roleId">The part's role ID or null.</param>
         /// <param name="item">The item.</param>
         /// <exception cref="ArgumentNullException">part or item</exception>
-        protected void SetPartMetadata(IPart part, string roleId, IItem item)
+        protected void SetPartMetadata(IPart part, string? roleId, IItem item)
         {
             if (part == null) throw new ArgumentNullException(nameof(part));
             if (item == null) throw new ArgumentNullException(nameof(item));

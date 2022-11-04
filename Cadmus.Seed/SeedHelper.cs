@@ -11,7 +11,7 @@ namespace Cadmus.Seed
         /// <summary>
         /// Randomly pick <paramref name="count"/> distinct entries from
         /// <paramref name="entries"/>. This uses the Bogus randomizer
-        /// (<see cref="Bogus.Randomizer.Seed"/>).
+        /// (<see cref="Randomizer.Seed"/>).
         /// </summary>
         /// <typeparam name="T">The type of entries.</typeparam>
         /// <param name="entries">The entries.</param>
@@ -20,7 +20,7 @@ namespace Cadmus.Seed
         /// giving up finding a distinct entry.</param>
         /// <returns>Entries (from 1 to <paramref name="count"/>; default(T)
         /// if no entries).</returns>
-        public static T[]? RandomPickOf<T>(IList<T> entries,
+        public static IList<T>? RandomPickOf<T>(IList<T> entries,
             int count = 1,
             int maxAttempts = 10)
         {
@@ -49,7 +49,7 @@ namespace Cadmus.Seed
 
         /// <summary>
         /// Randomly pick a single entry from <paramref name="entries"/>.
-        /// This uses the Bogus randomizer (<see cref="Bogus.Randomizer.Seed"/>).
+        /// This uses the Bogus randomizer (<see cref="Randomizer.Seed"/>).
         /// </summary>
         /// <typeparam name="T">The type of entries.</typeparam>
         /// <param name="entries">The entries.</param>

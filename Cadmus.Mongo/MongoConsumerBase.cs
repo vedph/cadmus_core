@@ -9,13 +9,13 @@ namespace Cadmus.Mongo
     /// </summary>
     public abstract class MongoConsumerBase
     {
-        private string _currentConnString;
+        private string? _currentConnString;
 
         /// <summary>
         /// The Mongo client. This gets created by <see cref="EnsureClientCreated(string)"/>
         /// and cached until the received connection string changes.
         /// </summary>
-        protected MongoClient Client { get; private set; }
+        protected MongoClient? Client { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoConsumerBase"/> class.
@@ -35,9 +35,9 @@ namespace Cadmus.Mongo
         /// Gets the name of the database from the specified source.
         /// </summary>
         /// <param name="source">The source (connection string).</param>
-        /// <returns></returns>
+        /// <returns>Database name.</returns>
         /// <exception cref="ArgumentNullException">source</exception>
-        protected string GetDatabaseName(string source)
+        protected static string GetDatabaseName(string source)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 

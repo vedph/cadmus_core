@@ -14,6 +14,6 @@
         /// <returns>Filtered text.</returns>
         /// <param name="options">An optional object with filter-specific
         /// options.</param>
-        string Apply(string text, object options = null);
+        string? Apply(string? text, object? options = null);
     }
 }

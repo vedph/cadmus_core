@@ -15,7 +15,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void GetPins_Empty_0()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             Assert.Empty(builder.Build(new MockPart()));
         }
@@ -23,7 +23,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Increase_WithoutTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Increase("alpha", false);
             for (int i = 0; i < 3; i++) builder.Increase("beta", false);
@@ -32,7 +32,7 @@ namespace Cadmus.Core.Test
             List<DataPin> pins = builder.Build(part);
             Assert.Equal(2, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -46,7 +46,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Increase_WithTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Increase("alpha");
             for (int i = 0; i < 3; i++) builder.Increase("beta");
@@ -55,7 +55,7 @@ namespace Cadmus.Core.Test
             List<DataPin> pins = builder.Build(part);
             Assert.Equal(2 + 1, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -74,7 +74,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Increase_With0NoTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Increase("alpha", false);
             for (int i = 0; i < 3; i++) builder.Increase("beta", false);
@@ -84,7 +84,7 @@ namespace Cadmus.Core.Test
             List<DataPin> pins = builder.Build(part, "gamma");
             Assert.Equal(3, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -103,7 +103,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Set_WithoutTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Set("alpha", 1, false);
             builder.Set("beta", 3, false);
@@ -112,7 +112,7 @@ namespace Cadmus.Core.Test
             List<DataPin> pins = builder.Build(part);
             Assert.Equal(2, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -126,7 +126,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Set_WithTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Set("alpha", 1);
             builder.Set("beta", 3);
@@ -135,7 +135,7 @@ namespace Cadmus.Core.Test
             List<DataPin> pins = builder.Build(part);
             Assert.Equal(2 + 1, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -154,7 +154,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void IncreaseMulti_WithTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Increase(new[] { "alpha", "beta", "beta", null }, true, "tag-");
 
@@ -163,7 +163,7 @@ namespace Cadmus.Core.Test
 
             Assert.Equal(2 + 1, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "tag-alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "tag-alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -182,7 +182,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void IncreaseMulti_WithoutTotal_Ok()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             builder.Increase(new[] { "alpha", "beta", "beta", null }, false, "tag-");
 
@@ -191,7 +191,7 @@ namespace Cadmus.Core.Test
 
             Assert.Equal(2, pins.Count);
 
-            DataPin pin = pins.Find(p => p.Name == "tag-alpha-count");
+            DataPin? pin = pins.Find(p => p.Name == "tag-alpha-count");
             Assert.NotNull(pin);
             AssertPinIds(part, pin);
             Assert.Equal("1", pin.Value);
@@ -205,7 +205,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void AddValue_MultipleWithSameKey_Once()
         {
-            DataPinBuilder builder = new DataPinBuilder();
+            DataPinBuilder builder = new();
 
             const string text = "The álpha!";
             builder.AddValue("alpha", text);
@@ -224,7 +224,7 @@ namespace Cadmus.Core.Test
         [InlineData(true)]
         public void AddValue_Unfiltered_Ok(bool preserveDigits)
         {
-            DataPinBuilder builder = new DataPinBuilder(
+            DataPinBuilder builder = new(
                 new StandardDataPinTextFilter());
             builder.AddValue("alpha", " The  álpha1 is here! ", null, true,
                 preserveDigits);
@@ -245,7 +245,7 @@ namespace Cadmus.Core.Test
             "Héllo 1! baz @")]
         public void ApplyFilter_Ok(object[] filtersAndValues, string expected)
         {
-            DataPinBuilder builder = new DataPinBuilder(
+            DataPinBuilder builder = new(
                 new StandardDataPinTextFilter());
 
             string actual = builder.ApplyFilter(false, filtersAndValues);
@@ -256,7 +256,7 @@ namespace Cadmus.Core.Test
 
     internal sealed class MockPart : PartBase
     {
-        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+        public override IEnumerable<DataPin> GetDataPins(IItem? item = null)
         {
             return new List<DataPin>();
         }

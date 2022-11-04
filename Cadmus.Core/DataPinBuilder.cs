@@ -44,14 +44,14 @@ namespace Cadmus.Core
         /// <summary>
         /// Gets the optional filter used in adding text values.
         /// </summary>
-        public IDataPinTextFilter Filter { get; }
+        public IDataPinTextFilter? Filter { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataPinBuilder"/> class.
         /// </summary>
         /// <param name="filter">The optional text filter to be used on request.
         /// </param>
-        public DataPinBuilder(IDataPinTextFilter filter = null)
+        public DataPinBuilder(IDataPinTextFilter? filter = null)
         {
             Filter = filter;
             _counts = new Dictionary<string, int>();
@@ -79,7 +79,7 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Set(string key, int value, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
         {
             if (includeTotal)
             {
@@ -104,7 +104,7 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Set(bool key, int value, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
             => Set(key ? "1" : "0", value, includeTotal, prefix);
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Set(int key, int value, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
             => Set(key.ToString(CultureInfo.InvariantCulture), value,
                 includeTotal, prefix);
 
@@ -129,13 +129,13 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Set(double key, int value, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
             => Set(key.ToString(CultureInfo.InvariantCulture), value,
                 includeTotal, prefix);
         #endregion
 
         #region Increase
-        private void IncreaseTotal(string prefix)
+        private void IncreaseTotal(string? prefix)
         {
             string k = (prefix ?? "") + _totKey + (CountKeySuffix ?? "");
             if (!_counts.ContainsKey(k)) _counts[k] = 1;
@@ -149,8 +149,8 @@ namespace Cadmus.Core
         /// <param name="includeTotal">True to also increase the count under
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
-        public void Increase(string key, bool includeTotal = true,
-            string prefix = null)
+        public void Increase(string? key, bool includeTotal = true,
+            string? prefix = null)
         {
             if (includeTotal) IncreaseTotal(prefix);
 
@@ -169,7 +169,7 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Increase(bool key, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
             => Increase(key ? "1" : "0", includeTotal, prefix);
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Increase(int key, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
             => Increase(key.ToString(CultureInfo.InvariantCulture),
                 includeTotal, prefix);
 
@@ -192,7 +192,7 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         public void Increase(double key, bool includeTotal = true,
-            string prefix = null)
+            string? prefix = null)
             => Increase(key.ToString(CultureInfo.InvariantCulture),
                 includeTotal, prefix);
 
@@ -205,16 +205,23 @@ namespace Cadmus.Core
         /// the corresponding total key.</param>
         /// <param name="prefix">The optional key prefix.</param>
         /// <exception cref="ArgumentNullException">keys</exception>
-        public void Increase(IEnumerable<string> keys, bool includeTotal = true,
-            string prefix = null)
+        public void Increase(IEnumerable<string?> keys, bool includeTotal = true,
+            string? prefix = null)
         {
             if (keys == null) throw new ArgumentNullException(nameof(keys));
 
             int total = 0;
-            foreach (string key in keys)
+            foreach (string? key in keys)
             {
-                if (key != null) Increase(key, includeTotal, prefix);
-                else if (includeTotal) IncreaseTotal(prefix);
+                if (key != null)
+                {
+                    Increase(key, includeTotal, prefix);
+                }
+                else if (includeTotal)
+                {
+                    IncreaseTotal(prefix);
+                }
+
                 total++;
             }
         }
@@ -230,8 +237,8 @@ namespace Cadmus.Core
         /// <param name="filter">True to apply filtering.</param>
         /// <param name="filterOptions">The options for the filter.</param>
         /// </param>
-        public void AddValue(string key, string value, string prefix = null,
-            bool filter = false, object filterOptions = null)
+        public void AddValue(string? key, string? value, string? prefix = null,
+            bool filter = false, object? filterOptions = null)
         {
             if (key == null || value == null) return;
 
@@ -239,7 +246,7 @@ namespace Cadmus.Core
             if (!_values.ContainsKey(k)) _values[k] = new HashSet<string>();
 
             _values[k].Add(filter && Filter != null
-                ? Filter.Apply(value, filterOptions) : value);
+                ? Filter.Apply(value, filterOptions) ?? "" : value);
         }
 
         /// <summary>
@@ -250,8 +257,8 @@ namespace Cadmus.Core
         /// <param name="prefix">The optional key prefix.</param>
         /// <param name="filter">True to apply filtering.</param>
         /// <param name="filterOptions">The options for the filter.</param>
-        public void AddValue(string key, bool value, string prefix = null,
-            bool filter = false, object filterOptions = null)
+        public void AddValue(string key, bool value, string? prefix = null,
+            bool filter = false, object? filterOptions = null)
             => AddValue(key, value ? "1" : "0", prefix, filter, filterOptions);
 
         /// <summary>
@@ -262,8 +269,8 @@ namespace Cadmus.Core
         /// <param name="prefix">The optional key prefix.</param>
         /// <param name="filter">True to apply filtering.</param>
         /// <param name="filterOptions">The options for the filter.</param>
-        public void AddValue(string key, int value, string prefix = null,
-            bool filter = false, object filterOptions = null)
+        public void AddValue(string key, int value, string? prefix = null,
+            bool filter = false, object? filterOptions = null)
             => AddValue(key, value.ToString(CultureInfo.InvariantCulture),
                 prefix, filter, filterOptions);
 
@@ -275,8 +282,8 @@ namespace Cadmus.Core
         /// <param name="prefix">The optional key prefix.</param>
         /// <param name="filter">True to apply filtering.</param>
         /// <param name="filterOptions">The options for the filter.</param>
-        public void AddValue(string key, double value, string prefix = null,
-            bool filter = false, object filterOptions = null)
+        public void AddValue(string key, double value, string? prefix = null,
+            bool filter = false, object? filterOptions = null)
             => AddValue(key, value.ToString(CultureInfo.InvariantCulture),
                 prefix, filter, filterOptions);
 
@@ -289,11 +296,13 @@ namespace Cadmus.Core
         /// <param name="filter">True to apply filtering.</param>
         /// <param name="filterOptions">The options for the filter.</param>
         public void AddValues(string key, IEnumerable<string> values,
-            string prefix = null, bool filter = false, object filterOptions = null)
+            string? prefix = null, bool filter = false, object? filterOptions = null)
         {
             if (key == null) return;
-            foreach (string value in values) AddValue(key, value, prefix, filter,
-                filterOptions);
+            foreach (string value in values)
+            {
+                AddValue(key, value, prefix, filter, filterOptions);
+            }
         }
         #endregion
 
@@ -311,7 +320,7 @@ namespace Cadmus.Core
         /// <returns>The resulting string.</returns>
         public string ApplyFilter(object options, params object[] filtersAndValues)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool on = false;
 
             for (int i = 0; i < filtersAndValues.Length; i++)
@@ -331,7 +340,7 @@ namespace Cadmus.Core
             return sb.ToString();
         }
 
-        private DataPin CreateDataPin(IPart part, string name, string value)
+        private static DataPin CreateDataPin(IPart part, string name, string value)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -347,7 +356,7 @@ namespace Cadmus.Core
 
         private HashSet<string> AdjustZeroKeys(string[] zeroKeys)
         {
-            HashSet<string> keys = new HashSet<string>();
+            HashSet<string> keys = new();
 
             foreach (string key in zeroKeys)
             {
@@ -356,7 +365,10 @@ namespace Cadmus.Core
                 {
                     keys.Add(key + CountKeySuffix);
                 }
-                else keys.Add(key);
+                else
+                {
+                    keys.Add(key);
+                }
             }
 
             return keys;
@@ -373,7 +385,7 @@ namespace Cadmus.Core
         /// <returns>Pins.</returns>
         public List<DataPin> Build(IPart part, params string[] zeroKeys)
         {
-            List<DataPin> pins = new List<DataPin>();
+            List<DataPin> pins = new();
 
             // counts
             foreach (string key in _counts.Keys)

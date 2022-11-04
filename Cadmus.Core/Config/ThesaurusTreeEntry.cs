@@ -12,7 +12,7 @@ namespace Cadmus.Core.Config
         /// <summary>
         /// Gets or sets the parent node.
         /// </summary>
-        public ThesaurusTreeEntry Parent { get; set; }
+        public ThesaurusTreeEntry? Parent { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThesaurusTreeEntry"/>

@@ -26,6 +26,6 @@ namespace Cadmus.Core.Storage
         Task<DataPage<ItemInfo>> BrowseAsync(
             string database,
             IPagingOptions options,
-            IDictionary<string, string> filters);
+            IDictionary<string, string?> filters);
     }
 }

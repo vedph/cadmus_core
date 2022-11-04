@@ -10,17 +10,17 @@ namespace Cadmus.Core
         /// <summary>
         /// Gets or sets the part identifier.
         /// </summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the item the parts belongs to.
         /// </summary>
-        public string ItemId { get; set; }
+        public string? ItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the part's type identifier.
         /// </summary>
-        public string TypeId { get; set; }
+        public string? TypeId { get; set; }
 
         /// <summary>
         /// Gets or sets the role identifier.
@@ -29,7 +29,7 @@ namespace Cadmus.Core
         /// roles. For instance, two date parts may refer to the date of the original
         /// text and to that of its later copy. In this case, a role ID helps
         /// selecting the desired part from an item.</remarks>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Gets or sets the thesaurus scope. This is an arbitrary string
@@ -48,7 +48,7 @@ namespace Cadmus.Core
         /// <see cref="ThesaurusScope"/> equal to <c>lucr</c>, the editor will
         /// rather load <c>witnesses.lucr@en</c>.
         /// </remarks>
-        public string ThesaurusScope { get; set; }
+        public string? ThesaurusScope { get; set; }
 
         /// <summary>
         /// Creation date and time (UTC).
@@ -69,6 +69,14 @@ namespace Cadmus.Core
         /// ID of the user who last saved the resource.
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PartInfo"/> class.
+        /// </summary>
+        public PartInfo()
+        {
+            CreatorId = UserId = "";
+        }
 
         /// <summary>
         /// Converts to string.

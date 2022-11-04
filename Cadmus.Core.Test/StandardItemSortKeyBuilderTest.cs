@@ -5,7 +5,7 @@ namespace Cadmus.Core.Test
     public sealed class StandardItemSortKeyBuilderTest
     {
         [Theory]
-        [InlineData((string)null, "")]
+        [InlineData((string?)null, "")]
         [InlineData("", "")]
         [InlineData(" abc", "abc")]
         [InlineData("abc ", "abc")]

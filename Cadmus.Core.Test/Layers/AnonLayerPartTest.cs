@@ -28,11 +28,11 @@ namespace Cadmus.Core.Test.Layers
             JsonSerializer.Serialize(part, part.GetType(), _jsonOptions);
 
         private IPart DeserializePart(string json, Type type) =>
-            (IPart)JsonSerializer.Deserialize(json, type, _jsonOptions);
+            (IPart)JsonSerializer.Deserialize(json, type, _jsonOptions)!;
 
         private AnonLayerPart DeserializeAnonLayerPart(string json) =>
             (AnonLayerPart)JsonSerializer.Deserialize(json,
-                typeof(AnonLayerPart), _jsonOptions);
+                typeof(AnonLayerPart), _jsonOptions)!;
 
         private IList<YXEditOperation> GetOperations(string a, string b)
         {
@@ -323,11 +323,11 @@ namespace Cadmus.Core.Test.Layers
         #endregion
 
         #region ApplyPatches
-        private TokenTextLayerPart<CommentLayerFragment> GetCommentLayerPart(
+        private static TokenTextLayerPart<CommentLayerFragment> GetCommentLayerPart(
             string[] locations)
         {
             TokenTextLayerPart<CommentLayerFragment> part =
-                new TokenTextLayerPart<CommentLayerFragment>();
+                new();
 
             for (int i = 0; i < locations.Length; i++)
             {
@@ -415,7 +415,7 @@ namespace Cadmus.Core.Test.Layers
                 DeserializePart(json2, part.GetType());
             Assert.Equal(2, part2.Fragments.Count);
 
-            CommentLayerFragment fr = part2.Fragments.Find(fr => fr.Location == "3.1");
+            CommentLayerFragment? fr = part2.Fragments.Find(fr => fr.Location == "3.1");
             Assert.NotNull(fr);
             Assert.Equal("3.1", fr.Location);
             Assert.Equal("tag", fr.Tag);

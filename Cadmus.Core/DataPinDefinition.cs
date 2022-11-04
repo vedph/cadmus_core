@@ -11,12 +11,12 @@ namespace Cadmus.Core
         /// <summary>
         /// Gets or sets the pin's name.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets a tip about this pin and its usage.
         /// </summary>
-        public string Tip { get; set; }
+        public string? Tip { get; set; }
 
         /// <summary>
         /// Gets or sets a set of attributes, each represented by a single
@@ -25,7 +25,7 @@ namespace Cadmus.Core
         /// <c>F</c>=filtered text value (without digits), <c>f</c>=filtered
         /// text value (with digits).
         /// </summary>
-        public string Attributes { get; set; }
+        public string? Attributes { get; set; }
 
         /// <summary>
         /// Gets or sets the type of this pin's value. All pin values are
@@ -49,7 +49,7 @@ namespace Cadmus.Core
         /// <param name="attributes">The optional attributes.</param>
         /// <exception cref="ArgumentNullException">name</exception>
         public DataPinDefinition(DataPinValueType type, string name, string tip,
-            string attributes = null)
+            string? attributes = null)
         {
             Type = type;
             Name = name ?? throw new ArgumentNullException(nameof(name));

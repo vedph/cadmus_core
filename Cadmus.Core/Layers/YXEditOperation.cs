@@ -33,30 +33,30 @@ namespace Cadmus.Core.Layers
         /// <summary>
         /// Gets or sets the old location.
         /// </summary>
-        public string OldLocation { get; set; }
+        public string? OldLocation { get; set; }
 
         /// <summary>
         /// Gets or sets the location. In a delete operation, this is meaningless
         /// and you can refer only to the <see cref="OldLocation"/>.
         /// </summary>
-        public string Location { get; set; }
+        public string? Location { get; set; }
 
         /// <summary>
         /// Gets or sets the operator.
         /// </summary>
-        public string Operator { get; set; }
+        public string? Operator { get; set; }
 
         /// <summary>
         /// Gets or sets the text value involved in the operation.
         /// </summary>
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         /// <summary>
         /// Gets or sets the old text value. This is used for replacements or
         /// deletions only, which require to store two different values
         /// instead of just one.
         /// </summary>
-        public string OldValue { get; set; }
+        public string? OldValue { get; set; }
 
         /// <summary>
         /// Gets or sets the group identifier. This is used for movements only.
@@ -70,12 +70,12 @@ namespace Cadmus.Core.Layers
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns>The filtered text</returns>
-        public static string FilterTextForDisplay(string text)
+        public static string? FilterTextForDisplay(string? text)
         {
             if (string.IsNullOrEmpty(text)) return text;
 
             // https://superuser.com/questions/382163/how-do-i-visualize-cr-lf-in-word
-            StringBuilder sb = new StringBuilder(text);
+            StringBuilder sb = new(text);
             sb.Replace('\r', '\u21a9');
             sb.Replace('\n', '\u240d');
             sb.Replace(' ', '\u00b7');
@@ -90,7 +90,7 @@ namespace Cadmus.Core.Layers
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(OldLocation).Append("->")
                 .Append(Location).Append(' ')
                 .Append(Operator).Append(' ');

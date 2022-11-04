@@ -33,9 +33,9 @@ namespace Cadmus.Mongo
         private readonly IItemSortKeyBuilder _itemSortKeyBuilder;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly JsonWriterSettings _jsonSettings;
-        private IEditOperationDiffAdapter<YXEditOperation> _opDiffAdapter;
-        private MongoCadmusRepositoryOptions _options;
-        private string _databaseName;
+        private IEditOperationDiffAdapter<YXEditOperation>? _opDiffAdapter;
+        private MongoCadmusRepositoryOptions? _options;
+        private string? _databaseName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoCadmusRepository"/>
@@ -72,7 +72,7 @@ namespace Cadmus.Mongo
         public void Configure(MongoCadmusRepositoryOptions options)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            _databaseName = GetDatabaseName(_options.ConnectionString);
+            _databaseName = GetDatabaseName(_options.ConnectionString!);
         }
 
         #region Flags
@@ -82,9 +82,9 @@ namespace Cadmus.Mongo
         /// <returns>definitions</returns>
         public IList<FlagDefinition> GetFlagDefinitions()
         {
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var flags = db.GetCollection<MongoFlagDefinition>(
                 MongoFlagDefinition.COLLECTION);
 
@@ -99,11 +99,11 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="id">The flag identifier.</param>
         /// <returns>definition or null if not found</returns>
-        public FlagDefinition GetFlagDefinition(int id)
+        public FlagDefinition? GetFlagDefinition(int id)
         {
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var flags = db.GetCollection<MongoFlagDefinition>(
                 MongoFlagDefinition.COLLECTION);
 
@@ -121,8 +121,8 @@ namespace Cadmus.Mongo
             if (definition == null)
                 throw new ArgumentNullException(nameof(definition));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var flags = db.GetCollection<MongoFlagDefinition>(
                 MongoFlagDefinition.COLLECTION);
 
@@ -137,8 +137,8 @@ namespace Cadmus.Mongo
         /// <param name="id">The flag identifier.</param>
         public void DeleteFlagDefinition(int id)
         {
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var flags = db.GetCollection<MongoFlagDefinition>(
                 MongoFlagDefinition.COLLECTION);
 
@@ -153,8 +153,8 @@ namespace Cadmus.Mongo
         /// <returns>facets</returns>
         public IList<FacetDefinition> GetFacetDefinitions()
         {
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var facets = db.GetCollection<MongoFacetDefinition>(
                 MongoFacetDefinition.COLLECTION);
 
@@ -169,16 +169,16 @@ namespace Cadmus.Mongo
         /// <param name="id">The facet identifier.</param>
         /// <returns>facet or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public FacetDefinition GetFacetDefinition(string id)
+        public FacetDefinition? GetFacetDefinition(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var facets = db.GetCollection<MongoFacetDefinition>(
                 MongoFacetDefinition.COLLECTION);
 
-            return facets.Find(f => f.Id.Equals(id)).FirstOrDefault()?
+            return facets.Find(f => f.Id!.Equals(id)).FirstOrDefault()?
                 .ToFacetDefinition();
         }
 
@@ -191,12 +191,12 @@ namespace Cadmus.Mongo
         {
             if (facet == null) throw new ArgumentNullException(nameof(facet));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var facets = db.GetCollection<MongoFacetDefinition>(
                     MongoFacetDefinition.COLLECTION);
 
-            facets.ReplaceOne(f => f.Id.Equals(facet.Id),
+            facets.ReplaceOne(f => f.Id!.Equals(facet.Id),
                 new MongoFacetDefinition(facet),
                 new ReplaceOptions { IsUpsert = true });
         }
@@ -210,12 +210,12 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var facets = db.GetCollection<MongoFacetDefinition>(
                 MongoFacetDefinition.COLLECTION);
 
-            facets.DeleteOne(f => f.Id.Equals(id));
+            facets.DeleteOne(f => f.Id!.Equals(id));
         }
         #endregion
 
@@ -226,11 +226,11 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="filter">The optional filter.</param>
         /// <returns>IDs</returns>
-        public IList<string> GetThesaurusIds(ThesaurusFilter filter = null)
+        public IList<string> GetThesaurusIds(ThesaurusFilter? filter = null)
         {
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
                     .AsQueryable();
             if (filter == null)
@@ -268,7 +268,7 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.Language))
             {
                 string suffix = "@" + filter.Language;
-                thesauri = thesauri.Where(t => t.Id.EndsWith(suffix));
+                thesauri = thesauri.Where(t => t.Id!.EndsWith(suffix));
             }
 
             return thesauri;
@@ -284,8 +284,8 @@ namespace Cadmus.Mongo
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
                 .AsQueryable();
 
@@ -328,17 +328,17 @@ namespace Cadmus.Mongo
         /// requested thesaurus is an alias, it is its target thesaurus that
         /// will be returned, if any.</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public Thesaurus GetThesaurus(string id)
+        public Thesaurus? GetThesaurus(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
                 .AsQueryable();
 
-            MongoThesaurus mongo;
+            MongoThesaurus? mongo;
             do
             {
                 mongo = thesauri.FirstOrDefault(set => set.Id == id);
@@ -374,12 +374,12 @@ namespace Cadmus.Mongo
         {
             if (thesaurus == null) throw new ArgumentNullException(nameof(thesaurus));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
 
-            thesauri.ReplaceOne(old => old.Id.Equals(thesaurus.Id),
+            thesauri.ReplaceOne(old => old.Id!.Equals(thesaurus.Id),
                 new MongoThesaurus(thesaurus),
                 new ReplaceOptions { IsUpsert = true });
         }
@@ -393,12 +393,12 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION);
 
-            thesauri.DeleteOne(t => t.Id.Equals(id));
+            thesauri.DeleteOne(t => t.Id!.Equals(id));
         }
         #endregion
 
@@ -433,9 +433,9 @@ namespace Cadmus.Mongo
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             FilterDefinition<MongoItem> f = Builders<MongoItem>.Filter.Empty;
@@ -461,7 +461,7 @@ namespace Cadmus.Mongo
             if (!string.IsNullOrEmpty(filter.GroupId))
             {
                 f &= new ExpressionFilterDefinition<MongoItem>(
-                    i => i.GroupId.Contains(filter.GroupId));
+                    i => i.GroupId!.Contains(filter.GroupId));
             }
 
             if (filter.Flags.HasValue)
@@ -491,7 +491,8 @@ namespace Cadmus.Mongo
             if (total == 0)
             {
                 return new DataPage<ItemInfo>(
-                    filter.PageNumber, filter.PageSize, 0, null);
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<ItemInfo>());
             }
 
             var mongoItems = items.Find(f)
@@ -502,7 +503,7 @@ namespace Cadmus.Mongo
                 .ToList();
 
             IList<ItemInfo> results =
-                mongoItems.Select(i => i.ToItemInfo()).ToList();
+                mongoItems.ConvertAll(i => i.ToItemInfo());
             return new DataPage<ItemInfo>(
                 filter.PageNumber, filter.PageSize, total, results);
         }
@@ -517,13 +518,13 @@ namespace Cadmus.Mongo
         /// <exception cref="ArgumentNullException">null item ID</exception>
         /// <exception cref="InvalidOperationException">unable to instantiate part
         /// </exception>
-        public IItem GetItem(string id, bool includeParts = true)
+        public IItem? GetItem(string id, bool includeParts = true)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             MongoItem mongoItem = items.Find(i => i.Id.Equals(id)).FirstOrDefault();
@@ -555,14 +556,14 @@ namespace Cadmus.Mongo
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
             // update sort key
             item.SortKey = _itemSortKeyBuilder.BuildKey(item, this);
             // set time modified
             item.TimeModified = DateTime.UtcNow;
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             // creator and creation time cannot be changed once set
@@ -607,9 +608,9 @@ namespace Cadmus.Mongo
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (userId == null) throw new ArgumentNullException(nameof(userId));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
 
             // find the item to delete
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
@@ -655,9 +656,9 @@ namespace Cadmus.Mongo
         {
             if (ids == null) throw new ArgumentNullException(nameof(ids));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             items.UpdateMany(
@@ -675,9 +676,9 @@ namespace Cadmus.Mongo
         {
             if (ids == null) throw new ArgumentNullException(nameof(ids));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoItem>(MongoItem.COLLECTION);
 
             items.UpdateMany(
@@ -685,7 +686,7 @@ namespace Cadmus.Mongo
                 Builders<MongoItem>.Update.Set(i => i.GroupId, groupId));
         }
 
-        private async Task<int> GetDistinctGroupIdsCountAsync(
+        private static async Task<int> GetDistinctGroupIdsCountAsync(
             IMongoCollection<BsonDocument> items, AggregateOptions options)
         {
             #region Mongo query
@@ -750,12 +751,10 @@ namespace Cadmus.Mongo
                 new BsonDocument("$count", "count")
             };
 
-            using (var cursor = await items.AggregateAsync(pipeline, options))
-            {
-                await cursor.MoveNextAsync();
-                BsonDocument first = cursor.Current.FirstOrDefault();
-                return first?["count"].AsInt32 ?? 0;
-            }
+            using var cursor = await items.AggregateAsync(pipeline, options);
+            await cursor.MoveNextAsync();
+            BsonDocument? first = cursor.Current.FirstOrDefault();
+            return first?["count"].AsInt32 ?? 0;
         }
 
         /// <summary>
@@ -819,9 +818,9 @@ namespace Cadmus.Mongo
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
 
             var aggOptions = new AggregateOptions()
@@ -859,13 +858,11 @@ namespace Cadmus.Mongo
                 new BsonDocument("$limit", options.PageSize)
                 };
 
-                using (var cursor = await items.AggregateAsync(pipeline, aggOptions))
+                using var cursor = await items.AggregateAsync(pipeline, aggOptions);
+                while (await cursor.MoveNextAsync())
                 {
-                    while (await cursor.MoveNextAsync())
-                    {
-                        foreach (BsonDocument document in cursor.Current)
-                            ids.Add(document["_id"].AsString);
-                    }
+                    foreach (BsonDocument document in cursor.Current)
+                        ids.Add(document["_id"].AsString);
                 }
             }
 
@@ -931,9 +928,9 @@ namespace Cadmus.Mongo
             if (groupId is null)
                 throw new ArgumentNullException(nameof(groupId));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var parts = db.GetCollection<BsonDocument>(MongoPart.COLLECTION);
 
             var aggOptions = new AggregateOptions()
@@ -966,12 +963,10 @@ namespace Cadmus.Mongo
                 new BsonDocument("$count", "count")
             };
 
-            using (var cursor = await parts.AggregateAsync(pipeline, aggOptions))
-            {
-                await cursor.MoveNextAsync();
-                BsonDocument first = cursor.Current.FirstOrDefault();
-                return first?["count"].AsInt32 ?? 0;
-            }
+            using var cursor = await parts.AggregateAsync(pipeline, aggOptions);
+            await cursor.MoveNextAsync();
+            BsonDocument? first = cursor.Current.FirstOrDefault();
+            return first?["count"].AsInt32 ?? 0;
         }
 
         /// <summary>
@@ -984,9 +979,9 @@ namespace Cadmus.Mongo
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
             // var builder = new FilterDefinitionBuilder<MongoHistoryItem>()
@@ -995,26 +990,26 @@ namespace Cadmus.Mongo
 
             if (!string.IsNullOrEmpty(filter.Title))
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Title.ToLower().Contains(filter.Title.ToLower()));
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Title.ToLower().Contains(filter.Title!.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.Description))
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.Description.ToLower().Contains(filter.Description.ToLower()));
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.Description.ToLower().Contains(filter.Description!.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(filter.FacetId))
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.Description.Contains(filter.FacetId));
             }
 
             if (!string.IsNullOrEmpty(filter.GroupId))
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
-                    i => i.GroupId.Equals(filter.GroupId));
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
+                    i => i.GroupId!.Equals(filter.GroupId));
             }
 
             if (filter.Flags.HasValue)
@@ -1024,31 +1019,31 @@ namespace Cadmus.Mongo
 
             if (!string.IsNullOrEmpty(filter.ReferenceId))
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.ReferenceId.Equals(filter.ReferenceId));
             }
 
             if (filter.Status.HasValue)
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.Status.Equals(filter.Status.Value));
             }
 
             if (!string.IsNullOrEmpty(filter.UserId))
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.UserId.Equals(filter.UserId));
             }
 
             if (filter.MinModified.HasValue)
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.TimeModified >= filter.MinModified.Value);
             }
 
             if (filter.MaxModified.HasValue)
             {
-                f = f & new ExpressionFilterDefinition<MongoHistoryItem>(
+                f &= new ExpressionFilterDefinition<MongoHistoryItem>(
                     i => i.TimeModified <= filter.MaxModified.Value);
             }
 
@@ -1057,7 +1052,7 @@ namespace Cadmus.Mongo
             {
                 return new DataPage<HistoryItemInfo>(
                     filter.PageNumber, filter.PageSize, 0,
-                    null);
+                    Array.Empty<HistoryItemInfo>());
             }
 
             var mongoItems = items.Find(f)
@@ -1068,7 +1063,7 @@ namespace Cadmus.Mongo
                 .Limit(filter.PageSize)
                 .ToList();
 
-            var results = mongoItems.Select(i => i.ToHistoryItemInfo()).ToList();
+            var results = mongoItems.ConvertAll(i => i.ToHistoryItemInfo());
             return new DataPage<HistoryItemInfo>(
                 filter.PageNumber, filter.PageSize, total, results);
         }
@@ -1079,17 +1074,17 @@ namespace Cadmus.Mongo
         /// <param name="id">The history item's identifier.</param>
         /// <returns>item or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public HistoryItem GetHistoryItem(string id)
+        public HistoryItem? GetHistoryItem(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
             MongoHistoryItem item = items.Find(
-                i => i.Id.Equals(id)).FirstOrDefault();
+                i => i.Id!.Equals(id)).FirstOrDefault();
             return item?.ToHistoryItem();
         }
 
@@ -1102,12 +1097,12 @@ namespace Cadmus.Mongo
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
-            items.ReplaceOne(h => h.Id.Equals(item.Id),
+            items.ReplaceOne(h => h.Id!.Equals(item.Id),
                 new MongoHistoryItem(item));
         }
 
@@ -1120,23 +1115,23 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var items = db.GetCollection<MongoHistoryItem>(MongoHistoryItem.COLLECTION);
 
-            items.DeleteOne(i => i.Id.Equals(id));
+            items.DeleteOne(i => i.Id!.Equals(id));
         }
         #endregion
 
         #region Parts
-        private IPart InstantiatePart(string typeId, string roleId, string content)
+        private IPart? InstantiatePart(string typeId, string? roleId, string content)
         {
             string reqTypeId = PartBase.BuildProviderId(typeId, roleId);
-            Type type = _partTypeProvider.Get(reqTypeId);
+            Type? type = _partTypeProvider.Get(reqTypeId);
             if (type == null) return null;
 
-            return (IPart)JsonSerializer.Deserialize(content, type, _jsonOptions);
+            return (IPart?)JsonSerializer.Deserialize(content, type, _jsonOptions);
         }
 
         private IList<IPart> InstantiateParts(IEnumerable<MongoPart> parts,
@@ -1146,7 +1141,7 @@ namespace Cadmus.Mongo
 
             foreach (MongoPart mongoPart in parts)
             {
-                IPart part = InstantiatePart(mongoPart.TypeId, mongoPart.RoleId,
+                IPart? part = InstantiatePart(mongoPart.TypeId, mongoPart.RoleId,
                     mongoPart.Content.ToJson(_jsonSettings));
 
                 if (part == null)
@@ -1165,12 +1160,12 @@ namespace Cadmus.Mongo
         }
 
         private static IMongoQueryable<MongoPart> ApplyPartFilters(
-            IMongoQueryable<MongoPart> parts, string[] itemIds,
-            string typeId, string roleId, string thesaurusScope)
+            IMongoQueryable<MongoPart> parts, IList<string>? itemIds,
+            string? typeId, string? roleId, string? thesaurusScope)
         {
-            if (itemIds?.Length > 0)
+            if (itemIds?.Count > 0)
             {
-                if (itemIds.Length == 1)
+                if (itemIds.Count == 1)
                 {
                     parts = parts.Where(p => p.ItemId.Equals(itemIds[0]));
                 }
@@ -1184,10 +1179,10 @@ namespace Cadmus.Mongo
                 parts = parts.Where(p => p.TypeId.Equals(typeId));
 
             if (!string.IsNullOrEmpty(roleId))
-                parts = parts.Where(p => p.RoleId.Equals(roleId));
+                parts = parts.Where(p => p.RoleId!.Equals(roleId));
 
             if (!string.IsNullOrEmpty(thesaurusScope))
-                parts = parts.Where(p => p.ThesaurusScope.Equals(thesaurusScope));
+                parts = parts.Where(p => p.ThesaurusScope!.Equals(thesaurusScope));
 
             return parts;
         }
@@ -1202,9 +1197,9 @@ namespace Cadmus.Mongo
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var partCollection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             IMongoQueryable<MongoPart> parts = partCollection.AsQueryable();
 
@@ -1228,7 +1223,8 @@ namespace Cadmus.Mongo
             if (total == 0)
             {
                 return new DataPage<PartInfo>(
-                    filter.PageNumber, filter.PageSize, 0, null);
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<PartInfo>());
             }
 
             List<MongoPart> results;
@@ -1254,7 +1250,7 @@ namespace Cadmus.Mongo
 
             return new DataPage<PartInfo>(
                 filter.PageNumber, filter.PageSize, total,
-                results.Select(p => p.ToPartInfo()).ToList());
+                results.ConvertAll(p => p.ToPartInfo()));
         }
 
         /// <summary>
@@ -1268,17 +1264,17 @@ namespace Cadmus.Mongo
         /// <exception cref="ArgumentNullException">null item ID(s)</exception>
         /// <exception cref="ArgumentOutOfRangeException">empty item IDs array
         /// </exception>
-        public IList<IPart> GetItemParts(string[] itemIds, string typeId = null,
-            string roleId = null)
+        public IList<IPart> GetItemParts(string[] itemIds, string? typeId = null,
+            string? roleId = null)
         {
             if (itemIds == null)
                 throw new ArgumentNullException(nameof(itemIds));
             if (itemIds.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(itemIds));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             IMongoQueryable<MongoPart> parts = collection.AsQueryable();
 
@@ -1306,15 +1302,15 @@ namespace Cadmus.Mongo
                 throw new ArgumentNullException(nameof(itemId));
 
             // get all the layer parts for the specified item
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
 
             List<MongoPart> parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
                 .Find(Builders<MongoPart>.Filter
                     .And(
                         Builders<MongoPart>.Filter.Eq(p => p.ItemId, itemId),
                         Builders<MongoPart>.Filter.Where(
-                            p => p.RoleId.StartsWith(PartBase.FR_PREFIX))))
+                            p => p.RoleId!.StartsWith(PartBase.FR_PREFIX))))
                 .SortBy(p => p.RoleId)
                 .ToList();
 
@@ -1335,7 +1331,7 @@ namespace Cadmus.Mongo
                     MongoFacetDefinition facet =
                         db.GetCollection<MongoFacetDefinition>(
                             MongoFacetDefinition.COLLECTION)
-                        .Find(f => f.Id.Equals(item.FacetId)).FirstOrDefault();
+                        .Find(f => f.Id!.Equals(item.FacetId)).FirstOrDefault();
                     if (facet != null)
                     {
                         // append each layer part definition not already present
@@ -1355,9 +1351,9 @@ namespace Cadmus.Mongo
                                 TypeId = def.TypeId,
                                 RoleId = def.RoleId,
                                 TimeCreated = DateTime.UtcNow,
-                                CreatorId = null,
+                                CreatorId = "",
                                 TimeModified = DateTime.UtcNow,
-                                UserId = null,
+                                UserId = "",
                                 IsAbsent = true
                             });
                         }
@@ -1376,13 +1372,13 @@ namespace Cadmus.Mongo
         /// <param name="id">The part identifier.</param>
         /// <returns>part or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public T GetPart<T>(string id) where T : class, IPart
+        public T? GetPart<T>(string id) where T : class, IPart
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             MongoPart part = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
                 .Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
@@ -1391,9 +1387,9 @@ namespace Cadmus.Mongo
 
             string providerId = PartBase.BuildProviderId(part.TypeId, part.RoleId);
 
-            return (T)JsonSerializer.Deserialize(
+            return (T?)JsonSerializer.Deserialize(
                 part.Content.ToJson(_jsonSettings),
-                _partTypeProvider.Get(providerId),
+                _partTypeProvider.Get(providerId)!,
                 _jsonOptions);
         }
 
@@ -1406,13 +1402,13 @@ namespace Cadmus.Mongo
         /// The item identifier, or null if part not found
         /// </returns>
         /// <exception cref="ArgumentNullException">id</exception>
-        public string GetPartItemId(string id)
+        public string? GetPartItemId(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             MongoPart part = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
                 .Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
@@ -1426,13 +1422,13 @@ namespace Cadmus.Mongo
         /// <param name="id">The part identifier.</param>
         /// <returns>JSON code or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public string GetPartContent(string id)
+        public string? GetPartContent(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             MongoPart part = db.GetCollection<MongoPart>(MongoPart.COLLECTION)
                 .Find(p => p.Id.Equals(id))
                 .FirstOrDefault();
@@ -1452,9 +1448,9 @@ namespace Cadmus.Mongo
         {
             if (part == null) throw new ArgumentNullException(nameof(part));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
 
             // creator and creation time cannot be changed once set
@@ -1505,13 +1501,19 @@ namespace Cadmus.Mongo
             if (content == null) throw new ArgumentNullException(nameof(content));
 
             JsonDocument doc = JsonDocument.Parse(content);
-            string typeId = doc.RootElement.GetProperty("typeId").GetString();
+            string typeId = doc.RootElement.GetProperty("typeId").GetString()!;
 
-            string roleId = null;
+            string? roleId = null;
             if (doc.RootElement.TryGetProperty("roleId", out JsonElement rid))
                 roleId = rid.GetString();
 
-            IPart part = InstantiatePart(typeId, roleId, content);
+            IPart? part = InstantiatePart(typeId, roleId, content);
+            if (part == null)
+            {
+                throw new InvalidOperationException(
+                    $"Unable to instantiate part with type ID {typeId} " +
+                    $"and role ID {roleId} from content: " + content);
+            }
             AddPart(part, history);
         }
 
@@ -1530,9 +1532,9 @@ namespace Cadmus.Mongo
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (userId == null) throw new ArgumentNullException(nameof(userId));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
 
             MongoPart part = parts.Find(p => p.Id.Equals(id)).FirstOrDefault();
@@ -1555,30 +1557,30 @@ namespace Cadmus.Mongo
             parts.DeleteOne(p => p.Id.Equals(id));
         }
 
-        private DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter,
-            IMongoDatabase db)
+        private static DataPage<HistoryPartInfo> GetHistoryParts(
+            HistoryPartFilter filter, IMongoDatabase db)
         {
             var collection = db.GetCollection<MongoHistoryPart>(
                 MongoHistoryPart.COLLECTION);
             IQueryable<MongoHistoryPart> parts = collection.AsQueryable();
 
-            if (filter.ItemIds?.Length > 0)
+            if (filter.ItemIds?.Count > 0)
             {
-                if (filter.ItemIds.Length == 1)
+                if (filter.ItemIds.Count == 1)
                 {
-                    parts = parts.Where(p => p.ItemId.Equals(filter.ItemIds[0]));
+                    parts = parts.Where(p => p.ItemId!.Equals(filter.ItemIds[0]));
                 }
                 else
                 {
-                    parts = parts.Where(p => filter.ItemIds.Contains(p.ItemId));
+                    parts = parts.Where(p => filter.ItemIds.Contains(p.ItemId!));
                 }
             }
 
             if (!string.IsNullOrEmpty(filter.TypeId))
-                parts = parts.Where(p => p.TypeId.Equals(filter.TypeId));
+                parts = parts.Where(p => p.TypeId!.Equals(filter.TypeId));
 
             if (!string.IsNullOrEmpty(filter.RoleId))
-                parts = parts.Where(p => p.RoleId.Equals(filter.RoleId));
+                parts = parts.Where(p => p.RoleId!.Equals(filter.RoleId));
 
             if (!string.IsNullOrEmpty(filter.ReferenceId))
             {
@@ -1607,7 +1609,8 @@ namespace Cadmus.Mongo
             if (total == 0)
             {
                 return new DataPage<HistoryPartInfo>(
-                    filter.PageNumber, filter.PageSize, 0, null);
+                    filter.PageNumber, filter.PageSize, 0,
+                    Array.Empty<HistoryPartInfo>());
             }
 
             var page = parts.OrderByDescending(p => p.TimeModified)
@@ -1618,7 +1621,7 @@ namespace Cadmus.Mongo
 
             return new DataPage<HistoryPartInfo>(
                 filter.PageNumber, filter.PageSize, total,
-                page.Select(p => p.ToHistoryPartInfo()).ToList());
+                page.ConvertAll(p => p.ToHistoryPartInfo()));
         }
 
         /// <summary>
@@ -1630,9 +1633,9 @@ namespace Cadmus.Mongo
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
 
             return GetHistoryParts(filter, db);
         }
@@ -1643,25 +1646,25 @@ namespace Cadmus.Mongo
         /// <param name="id">The identifier.</param>
         /// <returns>part or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public HistoryPart<T> GetHistoryPart<T>(string id)
+        public HistoryPart<T>? GetHistoryPart<T>(string id)
             where T : class, IPart
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var collection = db.GetCollection<MongoHistoryPart>(
                 MongoHistoryPart.COLLECTION);
 
-            MongoHistoryPart part = collection.Find(p => p.Id.Equals(id))
+            MongoHistoryPart part = collection.Find(p => p.Id!.Equals(id))
                 .FirstOrDefault();
             if (part == null) return null;
 
             T wrapped = JsonSerializer.Deserialize<T>(
                 part.Content.ToJson(_jsonSettings),
-                _jsonOptions);
-            return new HistoryPart<T>(part.Id, wrapped)
+                _jsonOptions)!;
+            return new HistoryPart<T>(part.Id!, wrapped)
             {
                 UserId = part.UserId,
                 Status = part.Status
@@ -1677,11 +1680,11 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
-                .DeleteOne(p => p.Id.Equals(id));
+                .DeleteOne(p => p.Id!.Equals(id));
         }
 
         /// <summary>
@@ -1689,11 +1692,11 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="id">The part ID.</param>
         /// <returns>Creator ID, or null.</returns>
-        public string GetPartCreatorId(string id)
+        public string? GetPartCreatorId(string id)
         {
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             var filter = Builders<MongoPart>.Filter.Eq(p => p.Id, id);
             var fields = Builders<MongoPart>.Projection.Include(p => p.CreatorId);
@@ -1704,8 +1707,8 @@ namespace Cadmus.Mongo
                 ?.CreatorId;
         }
 
-        private Tuple<string, DateTime> GetPartItemIdAndLastModified(string id,
-            IMongoDatabase db)
+        private static Tuple<string, DateTime>? GetPartItemIdAndLastModified(
+            string id, IMongoDatabase db)
         {
             var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
             var filter = Builders<MongoPart>.Filter.Eq(p => p.Id, id);
@@ -1721,8 +1724,8 @@ namespace Cadmus.Mongo
                 : null;
         }
 
-        private Tuple<MongoHistoryPart, int> FindLastBaseTextChange(IMongoDatabase db,
-            string baseTextPartId)
+        private Tuple<MongoHistoryPart, int>? FindLastBaseTextChange(
+            IMongoDatabase db, string baseTextPartId)
         {
             int total =
                 db.GetCollection<MongoHistoryPart>(MongoHistoryPart.COLLECTION)
@@ -1745,10 +1748,10 @@ namespace Cadmus.Mongo
 
                 MongoHistoryPart hp1 = historyParts[0];
                 MongoHistoryPart hp2 = historyParts[1];
-                IHasText part1 = InstantiatePart(hp1.TypeId, hp1.RoleId,
+                IHasText? part1 = InstantiatePart(hp1.TypeId, hp1.RoleId,
                     hp1.Content.ToJson(_jsonSettings))
                     as IHasText;
-                IHasText part2 = InstantiatePart(hp2.TypeId, hp2.RoleId,
+                IHasText? part2 = InstantiatePart(hp2.TypeId, hp2.RoleId,
                     hp2.Content.ToJson(_jsonSettings))
                     as IHasText;
                 if (part1 == null || part2 == null) return null;
@@ -1795,8 +1798,8 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
 
             // get the layer part item ID and its last modified time
             // (if there is no such part, there's nothing which can be broken!)
@@ -1815,12 +1818,12 @@ namespace Cadmus.Mongo
             // get the item's facet
             MongoFacetDefinition facet = db.GetCollection<MongoFacetDefinition>
                 (MongoFacetDefinition.COLLECTION)
-                .Find(f => f.Id.Equals(item.FacetId))
+                .Find(f => f.Id!.Equals(item.FacetId))
                 .FirstOrDefault();
             if (facet == null) return 1; // defensive
 
             // get the base text part from the role defined in the facet
-            // (if not found, it's broken for sure, as any other layer in this item;
+            // (if not found, it's broken for sure, as any other layer in this item:
             // in this case, all the layers are orphaned)
             MongoPart baseTextPart = db.GetCollection<MongoPart>(
                 MongoPart.COLLECTION)
@@ -1875,8 +1878,8 @@ namespace Cadmus.Mongo
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
 
             List<LayerHint> hints = new();
 
@@ -1896,7 +1899,7 @@ namespace Cadmus.Mongo
             // get the item's facet
             MongoFacetDefinition facet = db.GetCollection<MongoFacetDefinition>
                 (MongoFacetDefinition.COLLECTION)
-                .Find(f => f.Id.Equals(item.FacetId))
+                .Find(f => f.Id!.Equals(item.FacetId))
                 .FirstOrDefault();
             if (facet == null) return hints;
 
@@ -1908,10 +1911,17 @@ namespace Cadmus.Mongo
             if (mongoTextPart == null) return hints;
 
             // get the current text
-            IPart textPart = InstantiatePart(mongoTextPart.TypeId,
+            IPart? textPart = InstantiatePart(mongoTextPart.TypeId,
                 mongoTextPart.RoleId,
                 mongoTextPart.Content.ToJson(_jsonSettings));
-            string currentText = (textPart as IHasText)?.GetText();
+            if (textPart == null)
+            {
+                throw new InvalidOperationException(
+                    $"Unable to instantiate part with type ID {mongoTextPart.TypeId} " +
+                    $"and role ID {mongoTextPart.RoleId} from content: " +
+                    mongoTextPart.Content);
+            }
+            string? currentText = (textPart as IHasText)?.GetText();
             if (currentText == null) return hints;
 
             // locate the text which was current when the layer part
@@ -1925,9 +1935,9 @@ namespace Cadmus.Mongo
             if (hp == null) return hints;
 
             // get the old text
-            IPart oldTextPart = InstantiatePart(hp.TypeId, hp.RoleId,
+            IPart? oldTextPart = InstantiatePart(hp.TypeId, hp.RoleId,
                 hp.Content.ToJson(_jsonSettings));
-            string oldText = (oldTextPart as IHasText)?.GetText();
+            string? oldText = (oldTextPart as IHasText)?.GetText();
             if (oldText == null) return hints;
 
             // calculate diff's between old and new text
@@ -1936,8 +1946,7 @@ namespace Cadmus.Mongo
 
             // adapt them into YX-based edit operations (the adapter is
             // created lazily here if required)
-            if (_opDiffAdapter == null)
-                _opDiffAdapter = new YXEditOperationDiffAdapter();
+            _opDiffAdapter ??= new YXEditOperationDiffAdapter();
             IList<YXEditOperation> operations = _opDiffAdapter.Adapt(diffs);
 
             // to create hints, just load the layer part as a stripped down
@@ -1948,7 +1957,7 @@ namespace Cadmus.Mongo
                 JsonSerializer.Deserialize(
                     mongoLayerPart.Content.ToJson(_jsonSettings),
                     typeof(AnonLayerPart),
-                    _jsonOptions);
+                    _jsonOptions)!;
 
             return anonLayerPart.GetFragmentHints(operations);
         }
@@ -1961,10 +1970,11 @@ namespace Cadmus.Mongo
         /// <param name="userId">The user identifier. This will be set as
         /// the author of the changes in the part.</param>
         /// <param name="patches">The patch instructions.</param>
-        /// <returns>The patched layer part content.</returns>
+        /// <returns>The patched layer part content or null if layer part not
+        /// found.</returns>
         /// <exception cref="ArgumentNullException">id or userId or patches
         /// </exception>
-        public string ApplyLayerPartPatches(string id, string userId,
+        public string? ApplyLayerPartPatches(string id, string userId,
             IList<string> patches)
         {
             if (id == null)
@@ -1974,8 +1984,8 @@ namespace Cadmus.Mongo
             if (patches == null)
                 throw new ArgumentNullException(nameof(patches));
 
-            EnsureClientCreated(_options.ConnectionString);
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            EnsureClientCreated(_options!.ConnectionString!);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
 
             // get the layer part
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
@@ -1989,7 +1999,7 @@ namespace Cadmus.Mongo
                 JsonSerializer.Deserialize(
                     json,
                     typeof(AnonLayerPart),
-                    _jsonOptions);
+                    _jsonOptions)!;
 
             // apply patches to it
             mongoLayerPart.Content =
@@ -2010,7 +2020,7 @@ namespace Cadmus.Mongo
         {
             if (string.IsNullOrEmpty(s)) return s;
             if (s.Length == 1) return s.ToLowerInvariant();
-            return $"{char.ToLowerInvariant(s[0])}{s.Substring(1)}";
+            return $"{char.ToLowerInvariant(s[0])}{s[1..]}";
         }
 
         /// <summary>
@@ -2025,9 +2035,9 @@ namespace Cadmus.Mongo
         {
             if (ids == null) throw new ArgumentNullException(nameof(ids));
 
-            EnsureClientCreated(_options.ConnectionString);
+            EnsureClientCreated(_options!.ConnectionString!);
 
-            IMongoDatabase db = Client.GetDatabase(_databaseName);
+            IMongoDatabase db = Client!.GetDatabase(_databaseName);
             var parts = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
 
             foreach (MongoPart part in parts.AsQueryable()
@@ -2038,7 +2048,7 @@ namespace Cadmus.Mongo
 
                 // patch property in serialized content, too
                 string propName = ToCamelCase(nameof(IPart.ThesaurusScope));
-                if (part.Content.Contains(propName))
+                if (part.Content!.Contains(propName))
                     part.Content[propName] = scope;
                 else
                     part.Content.Add(propName, scope);
@@ -2061,6 +2071,6 @@ namespace Cadmus.Mongo
         /// Gets or sets the MongoDB connection string, like e.g.
         /// <c>mongodb://localhost:27017/cadmus</c>.
         /// </summary>
-        public string ConnectionString { get; set; }
+        public string? ConnectionString { get; set; }
     }
 }

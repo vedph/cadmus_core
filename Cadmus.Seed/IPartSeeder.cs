@@ -21,6 +21,6 @@ namespace Cadmus.Seed
         /// <param name="factory">The part seeder factory. This is used
         /// for layer parts, which need to seed a set of fragments.</param>
         /// <returns>A new part.</returns>
-        IPart GetPart(IItem item, string roleId, PartSeederFactory factory);
+        IPart GetPart(IItem item, string? roleId, PartSeederFactory factory);
     }
 }

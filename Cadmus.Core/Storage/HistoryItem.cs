@@ -36,7 +36,7 @@ namespace Cadmus.Core.Storage
         /// might have a set of items belonging to the same literary work,
         /// a set of lemmata belonging to the same dictionary letter, etc.
         /// </summary>
-        public string GroupId { get; set; }
+        public string? GroupId { get; set; }
 
         /// <summary>
         /// The sort key for the item. This is a value used to sort items in
@@ -92,6 +92,10 @@ namespace Cadmus.Core.Storage
             ReferenceId = referenceId
                 ?? throw new ArgumentNullException(nameof(referenceId));
             TimeCreated = TimeModified = DateTime.UtcNow;
+            FacetId = "";
+            Title = Description = "";
+            CreatorId = UserId = "";
+            SortKey = "";
         }
 
         /// <summary>

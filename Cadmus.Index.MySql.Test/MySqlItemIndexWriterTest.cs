@@ -133,7 +133,7 @@ namespace Cadmus.Index.MySql.Test
 
             int? actual = cmd.ExecuteScalar() as int?;
             if (count == 0 && actual == null) return;
-            Assert.Equal(count, actual.Value);
+            Assert.Equal(count, actual!.Value);
         }
 
         private static void ExpectItemPins(string itemId,
@@ -159,7 +159,7 @@ namespace Cadmus.Index.MySql.Test
                 DbType = DbType.String,
             });
             using IDataReader reader = cmd.ExecuteReader();
-            List<Tuple<string, string>> actualPins = new();
+            List<Tuple<string, string?>> actualPins = new();
             while (reader.Read())
             {
                 actualPins.Add(Tuple.Create(
@@ -388,7 +388,7 @@ namespace Cadmus.Index.MySql.Test
         [Fact]
         public void DeleteItem_Existing_Ok()
         {
-            // an existing item with its pins is deleted;
+            // an existing item with its pins is deleted,
             // all other data are unchanged.
             IItemIndexWriter writer = GetWriter();
             writer.Clear();
@@ -452,7 +452,7 @@ namespace Cadmus.Index.MySql.Test
         [Fact]
         public void DeletePart_Existing_Ok()
         {
-            // an existing item with 2 parts has 1 of its part deleted;
+            // an existing item with 2 parts has 1 of its part deleted,
             // the other part's pins are unchanged.
             IItemIndexWriter writer = GetWriter();
             writer.Clear();

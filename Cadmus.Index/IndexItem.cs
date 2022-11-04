@@ -38,7 +38,7 @@ namespace Cadmus.Index
         /// might have a set of items belonging to the same literary work,
         /// a set of lemmata belonging to the same dictionary letter, etc.
         /// </summary>
-        public string GroupId { get; set; }
+        public string? GroupId { get; set; }
 
         /// <summary>
         /// The sort key for the item. This is a value used to sort items
@@ -76,6 +76,11 @@ namespace Cadmus.Index
         /// </summary>
         public IndexItem()
         {
+            Id = "";
+            FacetId = "";
+            SortKey = "";
+            Title = Description = "";
+            UserId = CreatorId = "";
         }
 
         /// <summary>

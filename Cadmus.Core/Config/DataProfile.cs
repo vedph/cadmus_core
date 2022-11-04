@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Cadmus.Core.Config
@@ -12,17 +13,17 @@ namespace Cadmus.Core.Config
         /// <summary>
         /// Gets the facets.
         /// </summary>
-        public FacetDefinition[] Facets { get; set; }
+        public IList<FacetDefinition>? Facets { get; set; }
 
         /// <summary>
         /// Gets the flags definitions.
         /// </summary>
-        public FlagDefinition[] Flags { get; set; }
+        public IList<FlagDefinition>? Flags { get; set; }
 
         /// <summary>
         /// Gets the thesauri.
         /// </summary>
-        public Thesaurus[] Thesauri { get; set; }
+        public IList<Thesaurus>? Thesauri { get; set; }
 
         /// <summary>
         /// Validate this profile.
@@ -54,15 +55,15 @@ namespace Cadmus.Core.Config
         /// <returns>
         /// An error message if the profile is not valid; else, null.
         /// </returns>
-        public string Validate()
+        public string? Validate()
         {
             // at least 1 facet
-            if (Facets == null || Facets.Length == 0)
+            if (Facets == null || Facets.Count == 0)
                 return Properties.Resources.NoFacetInProfile;
 
             // at least 1 part per facet
-            FacetDefinition emptyFacet = Array.Find(
-                Facets, f => f.PartDefinitions.Count == 0);
+            FacetDefinition? emptyFacet = Facets.FirstOrDefault(
+                f => f.PartDefinitions.Count == 0);
             if (emptyFacet != null)
             {
                 return LocalizedStrings.Format(

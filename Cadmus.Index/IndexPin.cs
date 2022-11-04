@@ -25,7 +25,7 @@ namespace Cadmus.Index
         /// <summary>
         /// Gets or sets the optional role identifier.
         /// </summary>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Gets or sets the pin name.
@@ -42,6 +42,14 @@ namespace Cadmus.Index
         /// to the index.
         /// </summary>
         public DateTime TimeIndexed { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndexPin"/> class.
+        /// </summary>
+        public IndexPin()
+        {
+            ItemId = PartId = PartTypeId = Name = Value = "";
+        }
 
         /// <summary>
         /// Converts to string.

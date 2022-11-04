@@ -23,6 +23,7 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoThesaurusEntry()
         {
+            Id = Value = "";
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ namespace Cadmus.Seed
     {
         private readonly PartSeederFactory _factory;
         private readonly SeedOptions _options;
-        private Dictionary<string, IPartSeeder> _partSeeders;
+        private Dictionary<string, IPartSeeder>? _partSeeders;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CadmusSeeder"/> class.
@@ -30,9 +30,9 @@ namespace Cadmus.Seed
             _options = _factory.GetSeedOptions();
         }
 
-        private IPart GetPart(IItem item, PartDefinition definition)
+        private IPart? GetPart(IItem item, PartDefinition definition)
         {
-            if (!_partSeeders.ContainsKey(definition.TypeId)) return null;
+            if (!_partSeeders!.ContainsKey(definition.TypeId)) return null;
 
             return _partSeeders[definition.TypeId]
                 ?.GetPart(item, definition.RoleId, _factory);
@@ -48,7 +48,7 @@ namespace Cadmus.Seed
             {
                 if (optional && Randomizer.Seed.Next(0, 2) == 0) continue;
 
-                IPart part = GetPart(item, partDef);
+                IPart? part = GetPart(item, partDef);
                 if (part != null) item.Parts.Add(part);
             }
         }
@@ -62,27 +62,29 @@ namespace Cadmus.Seed
         {
             if (count < 1
                 || _options.FacetDefinitions == null
-                || _options.FacetDefinitions.Length == 0)
+                || _options.FacetDefinitions.Count == 0)
             {
                 yield break;
             }
 
             // init
             if (_options.Seed.HasValue)
+            {
                 Randomizer.Seed = new Random(_options.Seed.Value);
+            }
 
             ItemSeeder itemSeeder = _factory.GetItemSeeder();
             _partSeeders = _factory.GetPartSeeders();
-            IItemSortKeyBuilder sortKeyBuilder = _factory.GetItemSortKeyBuilder();
+            IItemSortKeyBuilder? sortKeyBuilder = _factory.GetItemSortKeyBuilder();
 
             // generate items
             for (int n = 1; n <= count; n++)
             {
                 // pick a facet
                 FacetDefinition facet = _options.FacetDefinitions[
-                    _options.FacetDefinitions.Length == 1
+                    _options.FacetDefinitions.Count == 1
                     ? 0
-                    : Randomizer.Seed.Next(0, _options.FacetDefinitions.Length)];
+                    : Randomizer.Seed.Next(0, _options.FacetDefinitions.Count)];
 
                 // get item
                 IItem item = itemSeeder.GetItem(n, facet.Id);
@@ -105,14 +107,14 @@ namespace Cadmus.Seed
 
                 // 3) layer-parts
                 // we must have a base text definition to have layers
-                PartDefinition baseTextDef = facet.PartDefinitions.Find(
+                PartDefinition? baseTextDef = facet.PartDefinitions.Find(
                     def => def.RoleId == PartBase.BASE_TEXT_ROLE_ID);
 
                 if (baseTextDef != null && Randomizer.Seed.Next(0, 2) == 1)
                 {
                     // ensure there is a base text. This is required for
                     // the text layer part seeder, which must rely on a base text.
-                    IPart baseTextPart = item.Parts.Find(
+                    IPart? baseTextPart = item.Parts.Find(
                         p => p.TypeId == baseTextDef.TypeId);
 
                     // add a base text if none found

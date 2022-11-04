@@ -19,18 +19,18 @@ namespace Cadmus.Mongo
         /// Gets or sets the facet's identifier.
         /// </summary>
         [BsonId]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the facet's label.
         /// </summary>
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// Gets or sets the facet's description.
         /// </summary>
         [BsonIgnoreIfNull]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the color key.
@@ -39,7 +39,7 @@ namespace Cadmus.Mongo
         /// The color key, with format RRGGBB.
         /// </value>
         [BsonIgnoreIfNull]
-        public string ColorKey { get; set; }
+        public string? ColorKey { get; set; }
 
         /// <summary>
         /// Gets the part definitions.
@@ -78,8 +78,8 @@ namespace Cadmus.Mongo
         {
             FacetDefinition definition = new()
             {
-                Id = Id,
-                Label = Label,
+                Id = Id!,
+                Label = Label ?? "",
                 Description = Description,
                 ColorKey = ColorKey
             };

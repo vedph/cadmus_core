@@ -19,26 +19,25 @@ namespace Cadmus.Core
     [Tag("item-sort-key-builder.standard")]
     public sealed class StandardItemSortKeyBuilder : IItemSortKeyBuilder
     {
-        private static UniData _ud;
+        private readonly static UniData _ud = new();
 
         /// <summary>
         /// Builds the sort key from the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <param name="repository">The repository.</param>
+        /// <param name="repository">The optional repository.</param>
         /// <returns>Sort key.</returns>
         /// <exception cref="ArgumentNullException">item</exception>
-        public string BuildKey(IItem item, ICadmusRepository repository)
+        public string BuildKey(IItem item, ICadmusRepository? repository)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
-            if (_ud == null) _ud = new UniData();
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (char c in item.Title ?? "")
             {
                 if (char.IsWhiteSpace(c))
                 {
-                    if (sb.Length > 0 && (sb[sb.Length - 1] != ' '))
+                    if (sb.Length > 0 && (sb[^1] != ' '))
                         sb.Append(' ');
                 }
                 else

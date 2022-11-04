@@ -14,7 +14,7 @@
         /// <summary>
         /// Gets or sets the optional secondary point.
         /// </summary>
-        TPoint B { get; set; }
+        TPoint? B { get; set; }
 
         /// <summary>
         /// True if this location represents a range defined

@@ -12,15 +12,15 @@ namespace Cadmus.Index.Sql
     /// <seealso cref="IItemIndexReader" />
     public abstract class SqlItemIndexReaderBase
     {
-        private string _connectionString;
-        private ISqlQueryBuilder _queryBuilder;
+        private string? _connectionString;
+        private ISqlQueryBuilder? _queryBuilder;
 
         /// <summary>
         /// Gets or sets the connection string.
         /// </summary>
         protected string ConnectionString
         {
-            get { return _connectionString; }
+            get { return _connectionString ?? ""; }
             set
             {
                 if (_connectionString == value) return;
@@ -33,7 +33,7 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Gets or sets the connection.
         /// </summary>
-        protected DbConnection Connection { get; private set; }
+        protected DbConnection? Connection { get; private set; }
 
         /// <summary>
         /// Gets the connection.
@@ -67,8 +67,12 @@ namespace Cadmus.Index.Sql
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (_queryBuilder == null) _queryBuilder = GetQueryBuilder();
-            if (_queryBuilder == null) return null;
+            _queryBuilder ??= GetQueryBuilder();
+            if (_queryBuilder == null)
+            {
+                return new DataPage<ItemInfo>(options.PageNumber, options.PageSize,
+                    0, Array.Empty<ItemInfo>());
+            }
 
             var pageAndTot = _queryBuilder.BuildForItem(query, options);
 
@@ -88,7 +92,7 @@ namespace Cadmus.Index.Sql
             totCommand.Connection = Connection;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
 
-            List<ItemInfo> items = new List<ItemInfo>();
+            List<ItemInfo> items = new();
 
             int total = Convert.ToInt32(totCommand.ExecuteScalar());
             if (total == 0)
@@ -104,7 +108,7 @@ namespace Cadmus.Index.Sql
             {
                 while (reader.Read())
                 {
-                    ItemInfo item = new ItemInfo
+                    ItemInfo item = new()
                     {
                         // for some reason, the type from MySql is GUID here
                         Id = reader.GetValue(reader.GetOrdinal("id")).ToString(),
@@ -154,8 +158,12 @@ namespace Cadmus.Index.Sql
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (_queryBuilder == null) _queryBuilder = GetQueryBuilder();
-            if (_queryBuilder == null) return null;
+            _queryBuilder ??= GetQueryBuilder();
+            if (_queryBuilder == null)
+            {
+                return new DataPage<DataPinInfo>(options.PageNumber, options.PageSize,
+                    0, Array.Empty<DataPinInfo>());
+            }
 
             var pageAndTot = _queryBuilder.BuildForPin(query, options);
 
@@ -175,7 +183,7 @@ namespace Cadmus.Index.Sql
             totCommand.Connection = Connection;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
 
-            List<DataPinInfo> pins = new List<DataPinInfo>();
+            List<DataPinInfo> pins = new();
 
             int total = Convert.ToInt32(totCommand.ExecuteScalar());
             if (total == 0)
@@ -191,7 +199,7 @@ namespace Cadmus.Index.Sql
             {
                 while (reader.Read())
                 {
-                    DataPinInfo pin = new DataPinInfo
+                    DataPinInfo pin = new()
                     {
                         ItemId = reader.GetValue(reader.GetOrdinal("itemId"))
                             .ToString(),

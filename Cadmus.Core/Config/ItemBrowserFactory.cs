@@ -45,19 +45,19 @@ namespace Cadmus.Core.Config
         }
 
         private static object SupplyProperty(Type optionType,
-            PropertyInfo property, object options, object defaultValue)
+            PropertyInfo property, object? options, object? defaultValue)
         {
             // if options have been loaded, supply if not specified
             if (options != null)
             {
-                string value = (string)property.GetValue(options);
+                string? value = (string?)property.GetValue(options);
                 if (string.IsNullOrEmpty(value))
                     property.SetValue(options, defaultValue);
             }
             // else create empty options and supply it
             else
             {
-                options = Activator.CreateInstance(optionType);
+                options = Activator.CreateInstance(optionType)!;
                 property.SetValue(options, defaultValue);
             }
 
@@ -77,12 +77,12 @@ namespace Cadmus.Core.Config
             IConfigurationSection section, TypeInfo targetType, Type optionType)
         {
             // get the options if specified
-            object options = section?.Get(optionType);
+            object? options = section?.Get(optionType);
 
             // if we have a default connection AND the options type
             // has a ConnectionString property, see if we should supply a value
             // for it
-            PropertyInfo property;
+            PropertyInfo? property;
             if (_connectionString != null
                 && (property = optionType.GetProperty(CONNECTION_STRING_NAME)) != null)
             {
@@ -92,7 +92,7 @@ namespace Cadmus.Core.Config
             // apply options if any
             if (options != null)
             {
-                targetType.GetMethod("Configure").Invoke(component,
+                targetType.GetMethod("Configure")?.Invoke(component,
                     new[] { options });
             }
 
@@ -153,12 +153,12 @@ namespace Cadmus.Core.Config
         /// <see cref="StandardItemSortKeyBuilder"/> will be used.
         /// </summary>
         /// <returns>Item sort key builder.</returns>
-        public IItemBrowser GetItemBrowser(string id)
+        public IItemBrowser? GetItemBrowser(string id)
         {
             IList<ComponentFactoryConfigEntry> entries =
                 ComponentFactoryConfigEntry.ReadComponentEntries(
                 Configuration, "browsers");
-            ComponentFactoryConfigEntry entry =
+            ComponentFactoryConfigEntry? entry =
                 entries.FirstOrDefault(e => e.Id == id);
             if (entry == null) return null;
 

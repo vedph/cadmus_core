@@ -12,7 +12,7 @@ namespace Cadmus.Index.Sql
     public abstract class SqlRepositoryBase
     {
         private readonly ISqlTokenHelper _tokenHelper;
-        private string _connectionString;
+        private string? _connectionString;
         private bool _autoConnected;
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Cadmus.Index.Sql
         /// </summary>
         protected string ConnectionString
         {
-            get { return _connectionString; }
+            get { return _connectionString ?? ""; }
             set
             {
                 if (_connectionString == value) return;
@@ -72,13 +72,13 @@ namespace Cadmus.Index.Sql
         /// <summary>
         /// Gets or sets the connection.
         /// </summary>
-        protected DbConnection Connection { get; set; }
+        protected DbConnection? Connection { get; set; }
 
         /// <summary>
         /// Gets the name of the database from the connection string.
         /// </summary>
         /// <returns>Database name or null.</returns>
-        protected abstract string GetDbName();
+        protected abstract string? GetDbName();
 
         /// <summary>
         /// Gets the connection.
@@ -92,7 +92,7 @@ namespace Cadmus.Index.Sql
         /// <param name="connection">The connection to use, or null to use
         /// <see cref="Connection"/>.</param>
         /// <returns>Command.</returns>
-        protected abstract DbCommand GetCommand(DbConnection connection = null);
+        protected abstract DbCommand GetCommand(DbConnection? connection = null);
 
         /// <summary>
         /// Adds the specified parameter to <paramref name="command"/>.
@@ -102,7 +102,7 @@ namespace Cadmus.Index.Sql
         /// <param name="type">The type.</param>
         /// <param name="value">The optional value.</param>
         protected static void AddParameter(DbCommand command, string name,
-            DbType type, object value = null)
+            DbType type, object? value = null)
         {
             DbParameter p = command.CreateParameter();
             p.ParameterName = name;
@@ -121,7 +121,7 @@ namespace Cadmus.Index.Sql
         /// <param name="value">The optional value.</param>
         protected static void AddParameter(DbCommand command, string name,
             DbType type, ParameterDirection direction,
-            object value = null)
+            object? value = null)
         {
             DbParameter p = command.CreateParameter();
             p.ParameterName = name;
@@ -136,17 +136,16 @@ namespace Cadmus.Index.Sql
         /// </summary>
         protected virtual void EnsureConnected()
         {
-            //if (Connection != null && Connection.State == ConnectionState.Open)
-            //    return;
-
             // ensure the connection is open
             if (Connection == null)
             {
                 Connection = GetConnection();
                 _autoConnected = true;
             }
-            else _autoConnected = false;
-
+            else
+            {
+                _autoConnected = false;
+            }
             if (Connection.State == ConnectionState.Closed)
             {
                 Connection.Open();

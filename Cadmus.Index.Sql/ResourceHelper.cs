@@ -8,12 +8,10 @@ namespace Cadmus.Index.Sql
     {
         static public string LoadResource(string name)
         {
-            using (StreamReader reader = new StreamReader(
+            using StreamReader reader = new(
                 Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    $"Cadmus.Index.Sql.Assets.{name}"), Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+                    $"Cadmus.Index.Sql.Assets.{name}")!, Encoding.UTF8);
+            return reader.ReadToEnd();
         }
     }
 }

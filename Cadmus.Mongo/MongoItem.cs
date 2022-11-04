@@ -45,7 +45,7 @@ namespace Cadmus.Mongo
         /// might have a set of items belonging to the same literary work,
         /// a set of lemmata belonging to the same dictionary letter, etc.
         /// </summary>
-        public string GroupId { get; set; }
+        public string? GroupId { get; set; }
 
         /// <summary>
         /// The sort key for the item. This is a value used to sort items in a
@@ -84,6 +84,10 @@ namespace Cadmus.Mongo
         public MongoItem()
         {
             Id = Guid.NewGuid().ToString();
+            FacetId = "default";
+            Title = Description = "";
+            SortKey = "";
+            CreatorId = UserId = "";
             TimeCreated = TimeModified = DateTime.UtcNow;
         }
 

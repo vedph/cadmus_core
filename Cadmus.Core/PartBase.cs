@@ -52,7 +52,7 @@ namespace Cadmus.Core
         /// original text and to that of its later copy. In this case, a
         /// role ID helps selecting the desired part from an item.
         /// </remarks>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Gets or sets the thesaurus scope. This is an arbitrary string
@@ -71,7 +71,7 @@ namespace Cadmus.Core
         /// <see cref="ThesaurusScope"/> equal to <c>lucr</c>, the editor will
         /// rather load <c>witnesses.lucr@en</c>.
         /// </remarks>
-        public string ThesaurusScope { get; set; }
+        public string? ThesaurusScope { get; set; }
 
         /// <summary>
         /// Creation date and time (UTC).
@@ -99,9 +99,11 @@ namespace Cadmus.Core
         protected PartBase()
         {
             Id = Guid.NewGuid().ToString();
-            TagAttribute attr = GetType().GetTypeInfo()
+            ItemId = "";
+            CreatorId = UserId = "";
+            TagAttribute? attr = GetType().GetTypeInfo()
                 .GetCustomAttribute<TagAttribute>();
-            TypeId = attr != null ? attr.Tag : GetType().FullName;
+            TypeId = attr != null ? attr.Tag : GetType().FullName!;
             TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
@@ -133,7 +135,7 @@ namespace Cadmus.Core
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
         /// <returns>pins</returns>
-        public abstract IEnumerable<DataPin> GetDataPins(IItem item = null);
+        public abstract IEnumerable<DataPin> GetDataPins(IItem? item = null);
 
         /// <summary>
         /// Gets the definitions of data pins used by the implementor.
@@ -168,7 +170,7 @@ namespace Cadmus.Core
         /// <param name="roleId">The role identifier.</param>
         /// <returns>Provider ID.</returns>
         /// <exception cref="ArgumentNullException">typeId</exception>
-        public static string BuildProviderId(string typeId, string roleId)
+        public static string BuildProviderId(string typeId, string? roleId)
         {
             if (typeId == null) throw new ArgumentNullException(nameof(typeId));
 
@@ -180,7 +182,7 @@ namespace Cadmus.Core
                 // (excluded) if any, as all what follows the dot does not belong
                 // to the fragment type ID (e.g. "fr.comment:scholarly")
                 int i = roleId.IndexOf(':', FR_PREFIX.Length);
-                string frType = i > -1 ? roleId.Substring(0, i) : roleId;
+                string frType = i > -1 ? roleId[..i] : roleId;
                 result += ":" + frType;
             }
 
@@ -195,7 +197,7 @@ namespace Cadmus.Core
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(Id).Append(' ').Append(TypeId);
             if (RoleId != null) sb.Append(" [").Append(RoleId).Append(']');
             return sb.ToString();

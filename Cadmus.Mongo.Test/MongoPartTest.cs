@@ -10,7 +10,7 @@ namespace Cadmus.Mongo.Test
         [Fact]
         public void ToLayerPartInfo_EmptyLayerPart_FrCount0()
         {
-            MongoPart part = new MongoPart
+            MongoPart part = new()
             {
                 Id = Guid.NewGuid().ToString(),
                 ItemId = Guid.NewGuid().ToString(),
@@ -27,7 +27,7 @@ namespace Cadmus.Mongo.Test
         [Fact]
         public void ToLayerPartInfo_NonEmptyLayerPart_FrCount3()
         {
-            MongoPart part = new MongoPart
+            MongoPart part = new()
             {
                 Id = Guid.NewGuid().ToString(),
                 ItemId = Guid.NewGuid().ToString(),

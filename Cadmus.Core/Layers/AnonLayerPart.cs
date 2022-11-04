@@ -25,13 +25,21 @@ namespace Cadmus.Core.Layers
         public List<AnonFragment> Fragments { get; set; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="AnonLayerPart"/> class.
+        /// </summary>
+        public AnonLayerPart()
+        {
+            Fragments = new();
+        }
+
+        /// <summary>
         /// Get all the key=value pairs exposed by the implementor.
         /// </summary>
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
         /// <returns>No pins.</returns>
-        public override IEnumerable<DataPin> GetDataPins(IItem item = null)
+        public override IEnumerable<DataPin> GetDataPins(IItem? item = null)
         {
             return Enumerable.Empty<DataPin>();
         }
@@ -69,7 +77,7 @@ namespace Cadmus.Core.Layers
             if (Fragments == null) return json;
 
             JObject doc = JObject.Parse(json);
-            JArray frr = (JArray)doc["fragments"];
+            JArray frr = (JArray)doc["fragments"]!;
 
             TokenTextLocation refLoc = TokenTextLocation.Parse(location);
 
@@ -105,7 +113,7 @@ namespace Cadmus.Core.Layers
             if (Fragments == null) return json;
 
             JObject doc = JObject.Parse(json);
-            JArray frr = (JArray)doc["fragments"];
+            JArray frr = (JArray)doc["fragments"]!;
 
             foreach (string patch in patches
                 .OrderBy(p => p, new PatchOperationComparer()))
@@ -123,7 +131,7 @@ namespace Cadmus.Core.Layers
                 }
 
                 // find index of fragment in array by its location
-                AnonFragment fragment =
+                AnonFragment? fragment =
                     Fragments.Find(fr => fr.Location == opTokens[1]);
                 if (fragment == null) continue;
                 int frIndex = Fragments.IndexOf(fragment);
@@ -160,7 +168,7 @@ namespace Cadmus.Core.Layers
             if (location is null)
                 throw new ArgumentNullException(nameof(location));
 
-            List<AnonFragment> frr = new List<AnonFragment>();
+            List<AnonFragment> frr = new();
             TokenTextLocation refLoc = TokenTextLocation.Parse(location);
 
             if (Fragments != null)
@@ -209,12 +217,12 @@ namespace Cadmus.Core.Layers
             if (operations == null)
                 throw new ArgumentNullException(nameof(operations));
 
-            List<LayerHint> hints = new List<LayerHint>();
+            List<LayerHint> hints = new();
 
             foreach (AnonFragment fr in Fragments)
             {
                 TokenTextLocation frLoc = TokenTextLocation.Parse(fr.Location);
-                LayerHint hint = new LayerHint
+                LayerHint hint = new()
                 {
                     Location = fr.Location
                 };
@@ -223,7 +231,7 @@ namespace Cadmus.Core.Layers
                 foreach (YXEditOperation operation in operations)
                 {
                     TokenTextLocation opLoc = TokenTextLocation.Parse(
-                        operation.OldLocation);
+                        operation.OldLocation!);
 
                     bool isOverlap = frLoc.Overlaps(opLoc);
                     bool isCoincident = !frLoc.IsRange
@@ -245,7 +253,10 @@ namespace Cadmus.Core.Layers
                                     hint.PatchOperation =
                                         $"mov {operation.OldLocation} {operation.Location}";
                                 }
-                                else hint.ImpactLevel = 1;
+                                else
+                                {
+                                    hint.ImpactLevel = 1;
+                                }
                             }
                             break;
 
@@ -261,7 +272,10 @@ namespace Cadmus.Core.Layers
                                     hint.PatchOperation =
                                         $"del {operation.OldLocation}";
                                 }
-                                else hint.ImpactLevel = 1;
+                                else
+                                {
+                                    hint.ImpactLevel = 1;
+                                }
                             }
                             break;
 
@@ -274,7 +288,7 @@ namespace Cadmus.Core.Layers
                                 hint.ImpactLevel = 2;
                                 string newLoc = operations.First(o =>
                                     o.GroupId == operation.GroupId
-                                    && o != operation).OldLocation;
+                                    && o != operation).OldLocation!;
                                 hint.PatchOperation =
                                     $"mov {operation.Location} {newLoc}";
                                 break;
@@ -317,10 +331,10 @@ namespace Cadmus.Core.Layers
             _opCmdRegex = new Regex(@"^[^\s]+");
         }
 
-        public int Compare(string a, string b)
+        public int Compare(string? a, string? b)
         {
-            string aCmd = _opCmdRegex.Match(a).Value;
-            string bCmd = _opCmdRegex.Match(b).Value;
+            string aCmd = _opCmdRegex.Match(a ?? "").Value;
+            string bCmd = _opCmdRegex.Match(b ?? "").Value;
 
             // operations are only del and mov, and del must come first
             if (aCmd != bCmd)
@@ -329,8 +343,8 @@ namespace Cadmus.Core.Layers
             }
 
             // if operations are equal, compare by location
-            TokenTextLocation aLoc = TokenTextLocation.Parse(a);
-            TokenTextLocation bLoc = TokenTextLocation.Parse(b);
+            TokenTextLocation aLoc = TokenTextLocation.Parse(a!);
+            TokenTextLocation bLoc = TokenTextLocation.Parse(b!);
 
             return aLoc.CompareTo(bLoc);
         }
@@ -352,6 +366,7 @@ namespace Cadmus.Core.Layers
         /// </summary>
         public AnonFragment()
         {
+            Location = "";
         }
 
         /// <summary>

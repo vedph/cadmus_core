@@ -34,8 +34,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.MsSql", "Cadmu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.MySql.Test", "Cadmus.Index.MySql.Test\Cadmus.Index.MySql.Test.csproj", "{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Test", "Cadmus.Index.Test\Cadmus.Index.Test.csproj", "{A64ECA67-E338-406D-ABA3-D513F8298EAE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,10 +84,6 @@ Global
 		{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C49D2AA0-F2EA-4CA8-9A3C-7089AD0B1F5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A64ECA67-E338-406D-ABA3-D513F8298EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

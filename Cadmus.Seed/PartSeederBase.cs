@@ -16,7 +16,7 @@ namespace Cadmus.Seed
         /// <summary>
         /// Gets the options.
         /// </summary>
-        protected SeedOptions Options { get; private set;}
+        protected SeedOptions? Options { get; private set;}
 
         /// <summary>
         /// Set the general options for seeding.
@@ -50,22 +50,19 @@ namespace Cadmus.Seed
             // eventually assign a role
             if (roleId?.StartsWith(PartBase.FR_PREFIX) == true)
             {
-                if (roleId.IndexOf(':') == -1
-                    && Options?.FragmentRoles?.Length > 0
+                if (!roleId.Contains(':')
+                    && Options?.FragmentRoles?.Count > 0
                     && Randomizer.Seed.Next(0, ASSIGN_ROLE_MAX) == 1)
                 {
                     part.RoleId += ":" + SeedHelper.RandomPickOneOf(
                         Options.FragmentRoles);
                 }
             }
-            else
-            {
-                if (string.IsNullOrEmpty(roleId)
-                    && Options?.PartRoles?.Length > 0
+            else if (string.IsNullOrEmpty(roleId)
+                    && Options?.PartRoles?.Count > 0
                     && Randomizer.Seed.Next(0, ASSIGN_ROLE_MAX) == 1)
-                {
-                    part.RoleId = SeedHelper.RandomPickOneOf(Options.PartRoles);
-                }
+            {
+                part.RoleId = SeedHelper.RandomPickOneOf(Options.PartRoles);
             }
         }
 
@@ -77,7 +74,7 @@ namespace Cadmus.Seed
         /// <param name="factory">The part seeder factory. This is used
         /// for layer parts, which need to seed a set of fragments.</param>
         /// <returns>A new part.</returns>
-        public abstract IPart GetPart(IItem item, string roleId,
+        public abstract IPart GetPart(IItem item, string? roleId,
             PartSeederFactory factory);
     }
 }

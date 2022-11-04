@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
+	<Nullable>enable</Nullable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<TargetFramework>net6.0</TargetFramework>
     <Authors>Daniele Fusi</Authors>
@@ -10,11 +11,11 @@
     <Description>Cadmus fake data seed core components.</Description>
     <Copyright>by Daniele Fusi</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>4.1.1</Version>
+    <Version>4.2.0</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;seed</PackageTags>
-    <FileVersion>4.1.1</FileVersion>
-    <AssemblyVersion>4.1.1</AssemblyVersion>
+    <FileVersion>4.2.0</FileVersion>
+    <AssemblyVersion>4.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

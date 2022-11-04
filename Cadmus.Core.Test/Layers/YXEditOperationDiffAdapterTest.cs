@@ -10,10 +10,10 @@ namespace Cadmus.Core.Test.Layers
     {
         private static IList<YXEditOperation> GetOperations(string a, string b)
         {
-            diff_match_patch dmp = new diff_match_patch();
+            diff_match_patch dmp = new();
             List<Diff> diffs = dmp.diff_main(a, b);
             dmp.diff_cleanupSemanticLossless(diffs);
-            YXEditOperationDiffAdapter adapter = new YXEditOperationDiffAdapter();
+            YXEditOperationDiffAdapter adapter = new();
 
             return adapter.Adapt(diffs);
         }

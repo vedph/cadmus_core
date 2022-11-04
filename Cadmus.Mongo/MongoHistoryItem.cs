@@ -46,7 +46,7 @@ namespace Cadmus.Mongo
         /// might have a set of items belonging to the same literary work,
         /// a set of lemmata belonging to the same dictionary letter, etc.
         /// </summary>
-        public string GroupId { get; set; }
+        public string? GroupId { get; set; }
 
         /// <summary>
         /// The sort key for the item. This is a value used to sort items in
@@ -95,6 +95,12 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoHistoryItem()
         {
+            Id = Guid.NewGuid().ToString();
+            Title = Description = "";
+            FacetId = "default";
+            SortKey = "";
+            CreatorId = UserId = "";
+            ReferenceId = "";
             TimeCreated = TimeModified = DateTime.UtcNow;
         }
 
@@ -178,13 +184,13 @@ namespace Cadmus.Mongo
         /// <returns>History item.</returns>
         public HistoryItem ToHistoryItem()
         {
-            return new HistoryItem(Id, ReferenceId)
+            return new HistoryItem(Id!, ReferenceId)
             {
-                Title = Title,
-                Description = Description,
-                FacetId = FacetId,
+                Title = Title!,
+                Description = Description!,
+                FacetId = FacetId!,
                 GroupId = GroupId,
-                SortKey = SortKey,
+                SortKey = SortKey!,
                 Flags = Flags,
 
                 TimeCreated = TimeCreated,
@@ -202,7 +208,7 @@ namespace Cadmus.Mongo
         /// <returns>History item info.</returns>
         public HistoryItemInfo ToHistoryItemInfo()
         {
-            return new HistoryItemInfo(Id, ReferenceId)
+            return new HistoryItemInfo(Id!, ReferenceId)
             {
                 Title = Title,
                 Description = Description,

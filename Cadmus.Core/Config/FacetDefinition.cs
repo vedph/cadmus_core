@@ -20,7 +20,7 @@ namespace Cadmus.Core.Config
         /// <summary>
         /// Gets or sets the facet's description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the color key.
@@ -28,7 +28,7 @@ namespace Cadmus.Core.Config
         /// <value>
         /// The color key, with format RRGGBB.
         /// </value>
-        public string ColorKey { get; set; }
+        public string? ColorKey { get; set; }
 
         /// <summary>
         /// Gets the part definitions.
@@ -40,6 +40,7 @@ namespace Cadmus.Core.Config
         /// </summary>
         public FacetDefinition()
         {
+            Id = Label = "";
             PartDefinitions = new List<PartDefinition>();
         }
 

@@ -24,14 +24,14 @@ namespace Cadmus.Index.MySql
         /// Appends the regex clause.
         /// </summary>
         /// <param name="fieldName">Name of the field.</param>
-        /// <param name="pattern">The regular expression pattern.</param>
+        /// <param name="value">The regular expression pattern.</param>
         /// <param name="sb">The string builder to append to.</param>
-        protected override void AppendRegexClause(string fieldName, string pattern,
+        protected override void AppendRegexClause(string fieldName, string value,
             StringBuilder sb)
         {
             sb.Append(fieldName)
               .Append(" REGEXP ")
-              .AppendLine(SQE(pattern, false, true, false));
+              .AppendLine(SQE(value, false, true, false));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Cadmus.Index.MySql
               .Append(" REGEXP '^[0-9]+$',CAST(")
               .Append(fieldName)
               .AppendLine(" AS SIGNED),NULL)")
-              .Append(")")
+              .Append(')')
               .Append(op)
               .AppendLine(value);
         }

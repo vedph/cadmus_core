@@ -3,6 +3,7 @@
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	<Nullable>enable</Nullable>
     <TargetFramework>net6.0</TargetFramework>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Daniele Fusi</Authors>
@@ -10,11 +11,11 @@
     <Product>Cadmus</Product>
     <Description>Cadmus items index.</Description>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>4.1.1</Version>
+    <Version>4.2.0</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;index</PackageTags>
-    <FileVersion>4.1.1</FileVersion>
-    <AssemblyVersion>4.1.1</AssemblyVersion>
+    <FileVersion>4.2.0</FileVersion>
+    <AssemblyVersion>4.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

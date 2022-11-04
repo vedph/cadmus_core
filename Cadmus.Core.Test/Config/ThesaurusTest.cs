@@ -9,7 +9,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void VisitByLevel_Ok()
         {
-            Thesaurus thesaurus = new Thesaurus("sample@en");
+            Thesaurus thesaurus = new("sample@en");
             thesaurus.AddEntry(new ThesaurusEntry
             {
                 Id = "colors",
@@ -46,7 +46,7 @@ namespace Cadmus.Core.Test.Config
                 Value = "shapes: triangle"
             });
 
-            List<ThesaurusTreeEntry> visited = new List<ThesaurusTreeEntry>();
+            List<ThesaurusTreeEntry> visited = new();
             thesaurus.VisitByLevel(entry =>
             {
                 visited.Add(entry);

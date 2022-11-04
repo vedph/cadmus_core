@@ -22,7 +22,7 @@
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the color key.
@@ -30,7 +30,15 @@
         /// <value>
         /// The color key, with format RRGGBB.
         /// </value>
-        public string ColorKey { get; set; }
+        public string? ColorKey { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FlagDefinition"/> class.
+        /// </summary>
+        public FlagDefinition()
+        {
+            Label = "";
+        }
 
         /// <summary>
         /// Returns a string that represents the current object.

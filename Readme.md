@@ -6,6 +6,10 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.2.0
+
+- 2022-11-04: all the projects refactored for nullability check.
+
 ### 4.1.1
 
 - 2022-11-03:

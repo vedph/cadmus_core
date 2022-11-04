@@ -23,7 +23,8 @@ namespace Cadmus.Index.MsSql
         public void Configure(SqlOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
-            ConnectionString = options.ConnectionString;
+            ConnectionString = options.ConnectionString
+                ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <summary>

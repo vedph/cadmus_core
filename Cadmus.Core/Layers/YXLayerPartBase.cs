@@ -49,7 +49,7 @@ namespace Cadmus.Core.Layers
         {
             if (fragment == null) throw new ArgumentNullException(nameof(fragment));
 
-            if (Fragments == null) Fragments = new List<TFragment>();
+            Fragments ??= new List<TFragment>();
 
             // remove all the existing overlapping fragments
             TokenTextLocation newLoc = TokenTextLocation.Parse(fragment.Location);
@@ -105,7 +105,7 @@ namespace Cadmus.Core.Layers
             if (location is null)
                 throw new ArgumentNullException(nameof(location));
 
-            List<TFragment> frr = new List<TFragment>();
+            List<TFragment> frr = new();
             TokenTextLocation refLoc = TokenTextLocation.Parse(location);
 
             if (Fragments != null)

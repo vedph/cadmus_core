@@ -27,7 +27,7 @@ namespace Cadmus.Index
         /// <summary>
         /// Gets or sets the optional logger.
         /// </summary>
-        public ILogger Logger { get; set; }
+        public ILogger? Logger { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemIndexer"/> class.
@@ -70,7 +70,7 @@ namespace Cadmus.Index
             ICadmusRepository repository,
             ItemFilter filter,
             CancellationToken cancel,
-            IProgress<ProgressReport> progress = null)
+            IProgress<ProgressReport>? progress = null)
         {
             if (filter == null) filter = new ItemFilter();
             filter.PageNumber = 1;
@@ -80,10 +80,10 @@ namespace Cadmus.Index
             DataPage<ItemInfo> page = repository.GetItems(filter);
             if (page.Total == 0) return;
 
-            ProgressReport report = progress != null
+            ProgressReport? report = progress != null
                 ? new ProgressReport()
                 : null;
-            ItemInfo currentInfo = null;
+            ItemInfo? currentInfo = null;
 
             do
             {
@@ -93,7 +93,7 @@ namespace Cadmus.Index
                     foreach (ItemInfo info in page.Items)
                     {
                         currentInfo = info;
-                        IItem item = repository.GetItem(info.Id);
+                        IItem? item = repository.GetItem(info.Id!);
                         if (item == null) continue;
                         _writer.WriteItem(item);
                     }
@@ -108,7 +108,7 @@ namespace Cadmus.Index
 
                 if (progress != null)
                 {
-                    report.Count += page.Items.Count;
+                    report!.Count += page.Items.Count;
                     report.Percent = report.Count * 100 / page.Total;
                     progress.Report(report);
                 }

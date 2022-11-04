@@ -19,7 +19,7 @@ namespace Cadmus.Core.Test.Config
         {
             TagAttributeToTypeMap map = GetMap();
 
-            Type t = map.Get("not-existing");
+            Type? t = map.Get("not-existing");
 
             Assert.Null(t);
         }
@@ -29,7 +29,7 @@ namespace Cadmus.Core.Test.Config
         {
             TagAttributeToTypeMap map = GetMap();
 
-            Type t = map.Get("it.vedph.note");
+            Type? t = map.Get("it.vedph.note");
 
             Assert.Equal(typeof(NotePart), t);
         }
@@ -39,7 +39,7 @@ namespace Cadmus.Core.Test.Config
         {
             TagAttributeToTypeMap map = GetMap();
 
-            Type t = map.Get(
+            Type? t = map.Get(
                 "it.vedph.token-text-layer:fr.it.vedph.comment");
 
             Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);

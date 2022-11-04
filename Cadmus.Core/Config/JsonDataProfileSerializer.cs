@@ -24,9 +24,9 @@ namespace Cadmus.Core.Config
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     PropertyNameCaseInsensitive = true
-                });
+                })!;
 
-            DataProfile profile = new DataProfile
+            DataProfile profile = new()
             {
                 // facets
                 Facets = options.Facets,
@@ -37,18 +37,18 @@ namespace Cadmus.Core.Config
             // thesauri
             if (options.Thesauri != null)
             {
-                profile.Thesauri = new Thesaurus[options.Thesauri.Length];
+                profile.Thesauri = new Thesaurus[options.Thesauri.Count];
                 int i = 0;
                 foreach (ThesaurusOptions to in options.Thesauri)
                 {
-                    Thesaurus thesaurus = new Thesaurus(to.Id)
+                    Thesaurus thesaurus = new(to.Id!)
                     {
                         TargetId = to.TargetId
                     };
-                    if (to.Entries?.Length > 0)
+                    if (to.Entries?.Count > 0)
                     {
                         foreach (ThesaurusEntryOptions eo in to.Entries)
-                            thesaurus.AddEntry(new ThesaurusEntry(eo.Id, eo.Value));
+                            thesaurus.AddEntry(new ThesaurusEntry(eo.Id!, eo.Value!));
                     }
 
                     profile.Thesauri[i++] = thesaurus;

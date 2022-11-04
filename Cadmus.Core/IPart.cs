@@ -27,7 +27,7 @@
         /// roles. For instance, two date parts may refer to the date of the
         /// original text and to that of its later copy. In this case, a role
         /// ID helps selecting the desired part from an item.</remarks>
-        string RoleId { get; set; }
+        string? RoleId { get; set; }
 
         /// <summary>
         /// Gets or sets the thesaurus scope. This is an arbitrary string
@@ -46,6 +46,6 @@
         /// <see cref="ThesaurusScope"/> equal to <c>lucr</c>, the editor will
         /// rather load <c>witnesses.lucr@en</c>.
         /// </remarks>
-        string ThesaurusScope { get; set; }
+        string? ThesaurusScope { get; set; }
     }
 }

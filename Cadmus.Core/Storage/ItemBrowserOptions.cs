@@ -13,6 +13,6 @@ namespace Cadmus.Core.Storage
         /// object's property. It should be a full connection string, having
         /// the <c>{0}</c> placeholder for the database name.
         /// </summary>
-        public string ConnectionString { get; set; }
+        public string? ConnectionString { get; set; }
     }
 }

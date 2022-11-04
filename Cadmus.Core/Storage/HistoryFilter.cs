@@ -8,7 +8,7 @@
         /// <summary>
         /// Gets or sets the content identifier.
         /// </summary>
-        public string ReferenceId { get; set; }
+        public string? ReferenceId { get; set; }
 
         /// <summary>
         /// Gets or sets the status filter.

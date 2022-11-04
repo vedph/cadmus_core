@@ -11,12 +11,12 @@ namespace Cadmus.Core.Layers
     /// its target, starting from a character ordinal and extending for the
     /// specified run of characters.
     /// </summary>
-    public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>
+    public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>,
+        IEquatable<TokenTextLocation>
     {
         private TokenTextPoint _a;
-        private TokenTextPoint _b;
+        private TokenTextPoint? _b;
 
-        #region Properties
         /// <summary>
         /// Gets or sets the primary.
         /// </summary>
@@ -26,7 +26,7 @@ namespace Cadmus.Core.Layers
             get => _a;
             set
             {
-                if (value == null) throw new ArgumentNullException(nameof(value));
+                if (value is null) throw new ArgumentNullException(nameof(value));
                 _a = (TokenTextPoint)value.Clone();
             }
         }
@@ -34,17 +34,16 @@ namespace Cadmus.Core.Layers
         /// <summary>
         /// Gets or sets the secondary point.
         /// </summary>
-        public TokenTextPoint B
+        public TokenTextPoint? B
         {
-            get { return (TokenTextPoint)_b?.Clone(); }
-            set { _b = (TokenTextPoint)value?.Clone(); }
+            get { return (TokenTextPoint?)_b?.Clone(); }
+            set { _b = (TokenTextPoint?)value?.Clone(); }
         }
 
         /// <summary>
         /// Gets a value indicating whether this instance is a range.
         /// </summary>
-        public bool IsRange => _b != null;
-        #endregion
+        public bool IsRange => _b is not null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenTextLocation"/> class.
@@ -61,7 +60,7 @@ namespace Cadmus.Core.Layers
         /// <returns>true if the current object is equal to the
         /// <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(TokenTextLocation other)
+        public bool Equals(TokenTextLocation? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -72,11 +71,11 @@ namespace Cadmus.Core.Layers
         /// Determines whether the specified object is equal to the current
         /// object.
         /// </summary>
-        /// <returns>true if the specified object is equal to the current object; 
+        /// <returns>true if the specified object is equal to the current object;
         /// otherwise, false.</returns>
         /// <param name="obj">The object to compare with the current
         /// object.</param>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -106,17 +105,16 @@ namespace Cadmus.Core.Layers
             return new TokenTextLocation
             {
                 _a = (TokenTextPoint)_a.Clone(),
-                _b = (TokenTextPoint)_b.Clone()
+                _b = (TokenTextPoint?)_b?.Clone()
             };
         }
 
         #region Comparison
         /// <summary>
-        /// Compares the current instance with another object of the same type 
+        /// Compares the current instance with another object of the same type
         /// and returns an integer that indicates whether the current instance
-        /// precedes, 
-        /// follows, or occurs in the same position in the sort order as the
-        /// other object.
+        /// precedes, follows, or occurs in the same position in the sort order
+        /// as the other object.
         /// </summary>
         /// <returns>A value that indicates the relative order of the objects
         /// being compared. The return value has these meanings: less than zero:
@@ -133,8 +131,8 @@ namespace Cadmus.Core.Layers
             int pt1Comparison = _a.CompareTo(other._a);
             if (pt1Comparison != 0) return pt1Comparison;
 
-            if (_b == null && other._b == null) return 0;
-            if (_b == null) return -1;
+            if (_b is null && other._b is null) return 0;
+            if (_b is null) return -1;
             return _b.CompareTo(other._b);
         }
 
@@ -158,7 +156,7 @@ namespace Cadmus.Core.Layers
             if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
 
-            if (!(obj is TokenTextLocation))
+            if (obj is not TokenTextLocation)
             {
                 throw new ArgumentException(
                     $"Object must be of type {nameof(TokenTextLocation)}");
@@ -191,7 +189,7 @@ namespace Cadmus.Core.Layers
             {
                 return !IsRange
                     ? _a.IntegralCompareTo(other.A) == 0
-                    : _a.CompareTo(other.A) <= 0 && B.CompareTo(other.A) >= 0;
+                    : _a.CompareTo(other.A) <= 0 && B?.CompareTo(other.A) >= 0;
             }
 
             // 2) if B is a range, cases are:
@@ -200,8 +198,8 @@ namespace Cadmus.Core.Layers
             //	2.2. A is a range: A (range) overlaps with B (range) 
             //       when B-right >= A-left and B-left <= A-right
             return !IsRange ?
-                other.A.CompareTo(_a) <= 0 && other.B.CompareTo(_a) >= 0 :
-                other.B.CompareTo(_a) >= 0 && other.A.CompareTo(B) <= 0;
+                other.A.CompareTo(_a) <= 0 && other.B?.CompareTo(_a) >= 0 :
+                other.B?.CompareTo(_a) >= 0 && other.A.CompareTo(B) <= 0;
         }
 
         /// <summary>
@@ -239,9 +237,9 @@ namespace Cadmus.Core.Layers
                 : new TokenTextLocation
                 {
                     _a = new TokenTextPoint(_a.Y + dy, _a.X + dx, _a.At, _a.Run),
-                    _b = _b != null
-                    ? new TokenTextPoint(_b.Y + dy, _b.X + dx, _b.At, _b.Run)
-                    : null
+                    _b = _b is not null
+                        ? new TokenTextPoint(_b.Y + dy, _b.X + dx, _b.At, _b.Run)
+                        : null
                 };
         }
 

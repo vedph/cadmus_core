@@ -10,17 +10,17 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Gets or sets the history part identifier.
         /// </summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the item the parts belongs to.
         /// </summary>
-        public string ItemId { get; set; }
+        public string? ItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the part's type identifier.
         /// </summary>
-        public string TypeId { get; set; }
+        public string? TypeId { get; set; }
 
         /// <summary>
         /// Gets or sets the role identifier.
@@ -29,7 +29,7 @@ namespace Cadmus.Core.Storage
         /// roles. For instance, two date parts may refer to the date of the
         /// original text and to that of its later copy. In this case, a role
         /// ID helps selecting the desired part from an item.</remarks>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Creation date and time (UTC).
@@ -60,6 +60,14 @@ namespace Cadmus.Core.Storage
         /// Gets or sets the status.
         /// </summary>
         public EditStatus Status { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HistoryPartInfo"/> class.
+        /// </summary>
+        public HistoryPartInfo()
+        {
+            CreatorId =  UserId = ReferenceId = "";
+        }
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.

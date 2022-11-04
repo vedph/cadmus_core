@@ -45,7 +45,7 @@ namespace Cadmus.Seed
     /// be retrieved with <see cref="GetImports"/>, and are used to import
     /// items and parts from JSON dumps.
     /// </remarks>
-    /// <seealso cref="Fusi.Tools.Config.ComponentFactoryBase" />
+    /// <seealso cref="ComponentFactoryBase" />
     public sealed class PartSeederFactory : ComponentFactoryBase
     {
         /// <summary>
@@ -108,7 +108,7 @@ namespace Cadmus.Seed
         /// <returns>The seed options</returns>
         public SeedOptions GetSeedOptions()
         {
-            IConfigurationSection section =
+            IConfigurationSection? section =
                 Configuration.GetSection("seed")?.GetSection("options");
             SeedOptions options = section?.Get<SeedOptions>()
                 ?? new SeedOptions();
@@ -125,7 +125,7 @@ namespace Cadmus.Seed
         /// <see cref="StandardItemSortKeyBuilder"/> will be used.
         /// </summary>
         /// <returns>Item sort key builder.</returns>
-        public IItemSortKeyBuilder GetItemSortKeyBuilder()
+        public IItemSortKeyBuilder? GetItemSortKeyBuilder()
         {
             IConfigurationSection section =
                 Configuration.GetSection("seed:itemSortKeyBuilder");
@@ -144,7 +144,7 @@ namespace Cadmus.Seed
         /// <param name="typeId">The fragment seeder type ID.</param>
         /// <returns>Seeder, or null if not found.</returns>
         /// <exception cref="ArgumentNullException">typeId</exception>
-        public IFragmentSeeder GetFragmentSeeder(string typeId)
+        public IFragmentSeeder? GetFragmentSeeder(string typeId)
         {
             if (typeId == null) throw new ArgumentNullException(nameof(typeId));
 
@@ -154,8 +154,8 @@ namespace Cadmus.Seed
 
             SeedOptions options = GetSeedOptions();
 
-            IFragmentSeeder seeder = GetComponent<IFragmentSeeder>(
-                typeId, entry.OptionsPath, false);
+            IFragmentSeeder? seeder = GetComponent<IFragmentSeeder>(
+                typeId, entry.OptionsPath!, false);
             if (seeder == null) return null;
 
             seeder.SetSeedOptions(options);
@@ -182,8 +182,8 @@ namespace Cadmus.Seed
 
             foreach (IPartSeeder seeder in seeders)
             {
-                string id = entries[i++].Id;
-                id = id.Substring("seed.".Length);
+                string id = entries[i++].Id!;
+                id = id["seed.".Length..];
 
                 seeder.SetSeedOptions(options);
                 result[id] = seeder;
@@ -200,7 +200,7 @@ namespace Cadmus.Seed
         /// an array property named <c>imports</c>.
         /// </summary>
         /// <returns>List of imports, or null.</returns>
-        public IList<string> GetImports()
+        public IList<string>? GetImports()
         {
             return Configuration.GetSection("imports")?.Get<List<string>>();
         }

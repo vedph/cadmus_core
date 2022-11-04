@@ -92,7 +92,7 @@ namespace Cadmus.Index.Sql
         /// of the result.</param>
         /// <returns>The wrapped token.</returns>
         protected string ETP(string prefix, string token,
-            string suffix = null) => _tokenHelper.ETP(prefix, token, suffix);
+            string? suffix = null) => _tokenHelper.ETP(prefix, token, suffix);
 
         /// <summary>
         /// Wraps the specified non-keyword tokens and their prefix according to
@@ -120,42 +120,22 @@ namespace Cadmus.Index.Sql
             bool wrapInQuotes = false, bool unicode = true) =>
             _tokenHelper.SQE(text, hasWildcards, wrapInQuotes, unicode);
 
-        private string GetFieldName(string name)
+        private string? GetFieldName(string name)
         {
-            switch (name.ToLowerInvariant())
+            return name.ToLowerInvariant() switch
             {
-                case "title":
-                case "t":
-                    return ETP("item", "title");
-                case "description":
-                case "dsc":
-                    return ETP("item", "description");
-                case "facet":
-                case "facetid":
-                    return ETP("item", "facetId");
-                case "group":
-                case "groupid":
-                    return ETP("item", "groupId");
-                case "sortkey":
-                    return ETP("item", "sortKey");
-                case "flags":
-                    return ETP("item", "flags");
-                case "parttypeid":
-                case "parttype":
-                case "type":
-                    return ETP("pin", "partTypeId");
-                case "roleid":
-                case "role":
-                    return ETP("pin", "roleId");
-                case "name":
-                case "n":
-                    return ETP("pin", "name");
-                case "value":
-                case "v":
-                    return ETP("pin", "value");
-                default:
-                    return null;
-            }
+                "title" or "t" => ETP("item", "title"),
+                "description" or "dsc" => ETP("item", "description"),
+                "facet" or "facetid" => ETP("item", "facetId"),
+                "group" or "groupid" => ETP("item", "groupId"),
+                "sortkey" => ETP("item", "sortKey"),
+                "flags" => ETP("item", "flags"),
+                "parttypeid" or "parttype" or "type" => ETP("pin", "partTypeId"),
+                "roleid" or "role" => ETP("pin", "roleId"),
+                "name" or "n" => ETP("pin", "name"),
+                "value" or "v" => ETP("pin", "value"),
+                _ => null,
+            };
         }
 
         private Tuple<double,string> ParseTresholdAndValue(string value)
@@ -169,7 +149,7 @@ namespace Cadmus.Index.Sql
             {
                 treshold = 0.9;
             }
-            if (m.Success) v = value.Substring(0, m.Index);
+            if (m.Success) v = value[..m.Index];
 
             return Tuple.Create(treshold, v);
         }
@@ -249,7 +229,7 @@ namespace Cadmus.Index.Sql
 
         private string UnescapeValue(string value)
         {
-            if (value.IndexOf('\\') == -1) return value;
+            if (!value.Contains('\\')) return value;
             return _escRegex.Replace(value, m =>
             {
                 return new string(
@@ -262,10 +242,10 @@ namespace Cadmus.Index.Sql
 
         private string BuildClause(Match m)
         {
-            string name = GetFieldName(m.Groups["n"].Value);
+            string name = GetFieldName(m.Groups["n"].Value)!;
             string value = UnescapeValue(m.Groups["v"].Value);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool bracket = false;
 
             // a null name means we are using a pin's name, so we must add
@@ -277,7 +257,7 @@ namespace Cadmus.Index.Sql
                   .Append('=')
                   .Append(SQE(m.Groups["n"].Value, false, true, false))
                   .AppendLine(" AND");
-                name = GetFieldName("value");
+                name = GetFieldName("value")!;
                 bracket = true;
             }
 
@@ -371,7 +351,7 @@ namespace Cadmus.Index.Sql
 
         private string BuildWhereSql(string query)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine("WHERE");
 
             // normalize whitespace
@@ -403,7 +383,7 @@ namespace Cadmus.Index.Sql
 
         private string BuildItemSqlFrom()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append("FROM ").AppendLine(ET("item"))
               .Append("INNER JOIN ").AppendLine(ET("pin"))
               .Append("ON ")
@@ -415,7 +395,7 @@ namespace Cadmus.Index.Sql
 
         private string BuildPinSqlFrom()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append("FROM ").AppendLine(ET("pin"))
               .Append("INNER JOIN ").AppendLine(ET("item"))
               .Append("ON ")
@@ -441,8 +421,8 @@ namespace Cadmus.Index.Sql
                 throw new ArgumentNullException(nameof(options));
             if (query == null) throw new ArgumentNullException(nameof(query));
 
-            StringBuilder sbPage = new StringBuilder();
-            StringBuilder sbTotal = new StringBuilder();
+            StringBuilder sbPage = new();
+            StringBuilder sbTotal = new();
 
             // select distinct item... inner join pin on item.id=pin.itemId
             sbPage.AppendLine("SELECT DISTINCT")
@@ -492,8 +472,8 @@ namespace Cadmus.Index.Sql
                 throw new ArgumentNullException(nameof(options));
             if (query == null) throw new ArgumentNullException(nameof(query));
 
-            StringBuilder sbPage = new StringBuilder();
-            StringBuilder sbTotal = new StringBuilder();
+            StringBuilder sbPage = new();
+            StringBuilder sbTotal = new();
 
             // select distinct item... inner join pin on item.id=pin.itemId
             sbPage.AppendLine("SELECT DISTINCT")

@@ -4,10 +4,10 @@ using System.Text.Json;
 
 namespace Cadmus.TestBase
 {
-    internal sealed class TestHelper
+    internal static class TestHelper
     {
         private static readonly JsonSerializerOptions _options =
-            new JsonSerializerOptions
+            new()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
@@ -20,7 +20,7 @@ namespace Cadmus.TestBase
             return JsonSerializer.Serialize(part, part.GetType(), _options);
         }
 
-        public static T DeserializePart<T>(string json)
+        public static T? DeserializePart<T>(string json)
             where T : class, IPart, new()
         {
             if (json == null)

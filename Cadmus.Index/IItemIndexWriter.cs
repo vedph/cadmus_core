@@ -19,7 +19,7 @@ namespace Cadmus.Index
         /// Gets the optional initialization context data, which can be used
         /// when the writer has to create its target store.
         /// </summary>
-        object InitContext { get; set; }
+        object? InitContext { get; set; }
 
         /// <summary>
         /// Writes the specified item and all its parts (if any) to the index.
@@ -36,7 +36,7 @@ namespace Cadmus.Index
         /// <param name="cancel">The cancellation token.</param>
         /// <param name="progress">The optional progress reporter.</param>
         Task WriteItems(IEnumerable<IItem> items,
-            CancellationToken cancel, IProgress<ProgressReport> progress = null);
+            CancellationToken cancel, IProgress<ProgressReport>? progress = null);
 
         /// <summary>
         /// Deletes the item with the specified identifier with all its pins

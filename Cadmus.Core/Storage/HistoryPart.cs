@@ -51,10 +51,11 @@ namespace Cadmus.Core.Storage
         {
             if (part == null) throw new ArgumentNullException(nameof(part));
 
-            Id = id ?? new Guid().ToString();
+            Id = id ?? Guid.NewGuid().ToString();
             ReferenceId = part.Id;
             Part = part;
             TimeModified = DateTime.UtcNow;
+            UserId = "";
         }
 
         /// <summary>

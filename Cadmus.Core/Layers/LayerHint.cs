@@ -10,21 +10,21 @@ namespace Cadmus.Core.Layers
         /// <summary>
         /// Gets or sets the fragment's location.
         /// </summary>
-        public string Location { get; set; }
+        public string? Location { get; set; }
 
         /// <summary>
         /// Gets or sets the edit operation, which summarizes the editing
         /// operation which happened in the base text and is related to the
         /// fragment targeted by this hint.
         /// </summary>
-        public string EditOperation { get; set; }
+        public string? EditOperation { get; set; }
 
         /// <summary>
         /// Gets or sets the optional patch operation, which defines an
         /// automatic patch operation which could be applied to reconcile
         /// the target fragment to the new base text.
         /// </summary>
-        public string PatchOperation { get; set; }
+        public string? PatchOperation { get; set; }
 
         /// <summary>
         /// Gets or sets the impact level. This is a numeric value representing
@@ -37,7 +37,7 @@ namespace Cadmus.Core.Layers
         /// <summary>
         /// Gets or sets the optional description connected to this hint.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Converts to string.
@@ -47,7 +47,7 @@ namespace Cadmus.Core.Layers
         /// </returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(Location).Append('=').Append(ImpactLevel)
               .Append(": ").Append(EditOperation);
 

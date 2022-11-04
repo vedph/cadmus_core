@@ -99,9 +99,9 @@ namespace Cadmus.Mongo
             EnsureClientCreated(source);
 
             // store facets, flags, and tag sets
-            IMongoDatabase db = Client.GetDatabase(GetDatabaseName(source));
+            IMongoDatabase db = Client!.GetDatabase(GetDatabaseName(source));
 
-            if (profile.Facets?.Length > 0)
+            if (profile.Facets?.Count > 0)
             {
                 var collFacets = db.GetCollection<MongoFacetDefinition>(
                     MongoFacetDefinition.COLLECTION);
@@ -109,7 +109,7 @@ namespace Cadmus.Mongo
                     f => new MongoFacetDefinition(f)));
             }
 
-            if (profile.Flags?.Length > 0)
+            if (profile.Flags?.Count > 0)
             {
                 var collFlags = db.GetCollection<MongoFlagDefinition>(
                     MongoFlagDefinition.COLLECTION);
@@ -117,7 +117,7 @@ namespace Cadmus.Mongo
                     .Select(f => new MongoFlagDefinition(f)));
             }
 
-            if (profile.Thesauri?.Length > 0)
+            if (profile.Thesauri?.Count > 0)
             {
                 var collSets = db.GetCollection<MongoThesaurus>(
                     MongoThesaurus.COLLECTION);
@@ -139,7 +139,7 @@ namespace Cadmus.Mongo
             if (source == null) throw new ArgumentNullException(nameof(source));
 
             EnsureClientCreated(source);
-            Client.DropDatabase(GetDatabaseName(source));
+            Client!.DropDatabase(GetDatabaseName(source));
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Cadmus.Mongo
             if (source == null) throw new ArgumentNullException(nameof(source));
 
             EnsureClientCreated(source);
-            IMongoDatabase db = Client.GetDatabase(GetDatabaseName(source));
+            IMongoDatabase db = Client!.GetDatabase(GetDatabaseName(source));
 
             // parts
             db.GetCollection<MongoPart>(MongoPart.COLLECTION)
@@ -201,7 +201,7 @@ namespace Cadmus.Mongo
             string databaseName = GetDatabaseName(source);
 
             // http://stackoverflow.com/questions/7049722/check-if-mongodb-database-exists
-            var dbList = Enumerate(Client.ListDatabases())
+            var dbList = Enumerate(Client!.ListDatabases())
                 .Select(db => db.GetValue("name").AsString);
             return dbList.Contains(databaseName);
         }

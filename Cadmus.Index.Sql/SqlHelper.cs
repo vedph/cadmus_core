@@ -40,7 +40,7 @@ namespace Cadmus.Index.Sql
         public static string SqlEncode(string text, bool hasWildcards = false,
             bool wrapInQuotes = false, bool unicode = true)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             foreach (char c in text)
             {
@@ -93,13 +93,11 @@ namespace Cadmus.Index.Sql
         {
             if (string.IsNullOrEmpty(keyword)) return "";
 
-            switch (databaseType?.ToLowerInvariant())
+            return (databaseType?.ToLowerInvariant()) switch
             {
-                case "mysql":
-                    return $"`{keyword}`";
-                default:
-                    return $"[{keyword}]";
-            }
+                "mysql" => $"`{keyword}`",
+                _ => $"[{keyword}]",
+            };
         }
     }
 }

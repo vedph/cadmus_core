@@ -37,7 +37,7 @@ namespace Cadmus.Core
         /// might have a set of items belonging to the same literary work,
         /// a set of lemmata belonging to the same dictionary letter, etc.
         /// </summary>
-        public string GroupId { get; set; }
+        public string? GroupId { get; set; }
 
         /// <summary>
         /// The sort key for the item. This is a value used to sort items in
@@ -81,15 +81,19 @@ namespace Cadmus.Core
         public Item()
         {
             Id = Guid.NewGuid().ToString();
+            FacetId = "default";
+            Title = Description = "";
+            SortKey = "";
+            CreatorId = UserId = "";
             TimeCreated = TimeModified = DateTime.UtcNow;
             Parts = new List<IPart>();
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {

@@ -15,7 +15,7 @@ namespace Cadmus.Index
         /// <param name="reader">The reader.</param>
         /// <param name="columnIndex">Index of the column.</param>
         /// <returns>Value.</returns>
-        public static T GetValue<T>(this DbDataReader reader, int columnIndex)
+        public static T? GetValue<T>(this DbDataReader reader, int columnIndex)
         {
             return reader.IsDBNull(columnIndex)
                 ? default : (T)reader.GetValue(columnIndex);
@@ -29,7 +29,7 @@ namespace Cadmus.Index
         /// <param name="columnName">Name of the column.</param>
         /// <returns>Value.</returns>
         /// <exception cref="ArgumentNullException">columnName</exception>
-        public static T GetValue<T>(this DbDataReader reader, string columnName)
+        public static T? GetValue<T>(this DbDataReader reader, string columnName)
         {
             if (columnName == null)
                 throw new ArgumentNullException(nameof(columnName));

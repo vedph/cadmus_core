@@ -95,7 +95,7 @@ namespace Cadmus.Mongo.Test
         private MongoItem[] SeedItems()
         {
             EnsureClientCreated(CONNECTION);
-            IMongoDatabase db = Client.GetDatabase(DB_NAME);
+            IMongoDatabase db = Client!.GetDatabase(DB_NAME);
             IMongoCollection<MongoItem> items =
                 db.GetCollection<MongoItem>(MongoItem.COLLECTION);
             IMongoCollection<MongoPart> parts =
@@ -173,7 +173,7 @@ namespace Cadmus.Mongo.Test
                     PageNumber = 1,
                     PageSize = 0    // = get all
                 },
-                new Dictionary<string, string>
+                new Dictionary<string, string?>
                 {
                     ["parentId"] = null
                 });
@@ -209,7 +209,7 @@ namespace Cadmus.Mongo.Test
                     PageNumber = 1,
                     PageSize = 0    // = get all
                 },
-                new Dictionary<string, string>
+                new Dictionary<string, string?>
                 {
                     ["parentId"] = items[0].Id
                 });

@@ -19,17 +19,16 @@ namespace Cadmus.Core.Layers
     /// from it (<see cref="Run"/>); for instance, when mapping a translation
 	/// we might require to map the token "and" in "and he" from "isque" to
     /// just the last 3 characters ("que") of the unique token "isque". In this
-    /// case we can set <c>At</c>=3 and <c>Run</c>=3.</para> 
+    /// case we can set <c>At</c>=3 and <c>Run</c>=3.</para>
 	/// </remarks>
     public sealed class TokenTextPoint : ITextPoint
     {
         // sample: 12.3@2x3
-        private static readonly Regex _pointRegex = new Regex(
+        private static readonly Regex _pointRegex = new(
             @"^(?<y>\d+)\.(?<x>\d+)" +
             @"(?:@(?<at>\d+)" +
             @"(?:[x×](?<run>\d+))?)?$", RegexOptions.IgnorePatternWhitespace);
 
-        #region Properties
         /// <summary>
         /// Y (=block) coordinate.
         /// </summary>
@@ -68,7 +67,6 @@ namespace Cadmus.Core.Layers
         /// <exception cref="ArgumentOutOfRangeException">attempt to set to
         /// value &lt; 0</exception>
         public short Run { get; set; }
-        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenTextPoint"/> class.
@@ -143,7 +141,7 @@ namespace Cadmus.Core.Layers
         /// <exception cref="ArgumentNullException">null source point</exception>
         public void CopyFrom(ITextPoint point)
         {
-            if (!(point is TokenTextPoint p))
+            if (point is not TokenTextPoint p)
                 throw new ArgumentNullException(nameof(point));
 
             Y = p.Y;
@@ -159,13 +157,13 @@ namespace Cadmus.Core.Layers
         /// <returns>string</returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.AppendFormat(CultureInfo.InvariantCulture, "{0}.{1}", Y, X);
             if (At > 0)
             {
                 sb.AppendFormat("@{0}", At);
-                if (Run > 1) sb.AppendFormat("x", Run);
+                if (Run > 1) sb.Append('x').Append(Run);
             }
 
             return sb.ToString();
@@ -184,7 +182,7 @@ namespace Cadmus.Core.Layers
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
 
-            TokenTextPoint point = new TokenTextPoint();
+            TokenTextPoint point = new();
             point.Read(text);
             return point;
         }
@@ -197,12 +195,12 @@ namespace Cadmus.Core.Layers
         /// <param name="other">coordinates to compare</param>
         /// <returns>comparison result</returns>
         /// <exception cref="ArgumentNullException">null coords</exception>
-        public int CompareTo(ITextPoint other)
+        public int CompareTo(ITextPoint? other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (other is null) return 1;
 
-            if (!(other is TokenTextPoint o))
+            if (other is not TokenTextPoint o)
                 throw new ArgumentNullException(nameof(other));
 
             if (Y != o.Y) return Y - o.Y;
@@ -210,23 +208,6 @@ namespace Cadmus.Core.Layers
 
             if (At != o.At) return At - o.At;
             return Run - o.Run;
-        }
-
-        /// <summary>
-        /// Compare this point to the specified one without taking into account
-        /// token portions (i.e. <see cref="At"/> and <see cref="Run"/>).
-        /// </summary>
-        /// <param name="other">the point to compare to this point</param>
-        /// <returns>comparison result</returns>
-        /// <exception cref="ArgumentNullException">null point</exception>
-        public int IntegralCompareTo(ITextPoint other)
-        {
-            if (!(other is TokenTextPoint o))
-                throw new ArgumentNullException(nameof(other));
-
-            if (Y != o.Y) return Y - o.Y;
-            if (X != o.X) return X - o.X;
-            return 0;
         }
 
         /// <summary>
@@ -243,12 +224,12 @@ namespace Cadmus.Core.Layers
         /// <param name="obj">An object to compare with this instance. </param>
         /// <exception cref="ArgumentException"><paramref name="obj" /> is not
         /// the same type as this instance.</exception>
-        public int CompareTo(object obj)
+        public int CompareTo(object? obj)
         {
             if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
 
-            if (!(obj is TokenTextPoint))
+            if (obj is not TokenTextPoint)
             {
                 throw new ArgumentException(
                     $"Object must be of type {nameof(TokenTextPoint)}");
@@ -256,17 +237,22 @@ namespace Cadmus.Core.Layers
 
             return CompareTo((TokenTextPoint)obj);
         }
-        #endregion
 
-        #region IEquatable<TokenPoint> Members
         /// <summary>
-        /// True if these coordinates are equal to the specified coordinates.
+        /// Compare this point to the specified one without taking into account
+        /// token portions (i.e. <see cref="At"/> and <see cref="Run"/>).
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns>True if equal.</returns>
-        public bool Equals(ITextPoint other)
+        /// <param name="other">the point to compare to this point</param>
+        /// <returns>comparison result</returns>
+        /// <exception cref="ArgumentNullException">null point</exception>
+        public int IntegralCompareTo(ITextPoint other)
         {
-            return CompareTo(other) == 0;
+            if (other is not TokenTextPoint o)
+                throw new ArgumentNullException(nameof(other));
+
+            if (Y != o.Y) return Y - o.Y;
+            if (X != o.X) return X - o.X;
+            return 0;
         }
         #endregion
 
@@ -279,17 +265,29 @@ namespace Cadmus.Core.Layers
             return new TokenTextPoint(Y, X, At, Run);
         }
 
+        #region IEquatable<TokenPoint> Members
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object" />, is
+        /// True if these coordinates are equal to the specified coordinates.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>True if equal.</returns>
+        public bool Equals(ITextPoint? other)
+        {
+            return CompareTo(other) == 0;
+        }
+        #endregion
+
+        /// <summary>
+        /// Determines whether the specified <see cref="object" />, is
         /// equal to this instance.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object" /> to compare with
+        /// <param name="obj">The <see cref="object" /> to compare with
         /// this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object" /> is equal
+        /// <c>true</c> if the specified <see cref="object" /> is equal
         /// to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
             {
@@ -301,8 +299,7 @@ namespace Cadmus.Core.Layers
                 return false;
             }
 
-            TokenTextPoint other = obj as TokenTextPoint;
-            if (obj == null) return false;
+            if (obj is not TokenTextPoint other) return false;
             return Y == other.Y
                 && X == other.X
                 && At == other.At
@@ -314,7 +311,7 @@ namespace Cadmus.Core.Layers
         /// </summary>
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing
-        /// algorithms and data structures like a hash table. 
+        /// algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -362,7 +359,7 @@ namespace Cadmus.Core.Layers
         /// </returns>
         public static bool operator <(TokenTextPoint left, TokenTextPoint right)
         {
-            return left is null ? right is object : left.CompareTo(right) < 0;
+            return left is null ? right is not null : left.CompareTo(right) < 0;
         }
 
         /// <summary>
@@ -388,7 +385,7 @@ namespace Cadmus.Core.Layers
         /// </returns>
         public static bool operator >(TokenTextPoint left, TokenTextPoint right)
         {
-            return left is object && left.CompareTo(right) > 0;
+            return left is not null && left.CompareTo(right) > 0;
         }
 
         /// <summary>

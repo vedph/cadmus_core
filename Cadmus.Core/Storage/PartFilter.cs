@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cadmus.Core.Storage
 {
@@ -10,22 +11,22 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Gets or sets the item(s) identifier(s).
         /// </summary>
-        public string[] ItemIds { get; set; }
+        public IList<string>? ItemIds { get; set; }
 
         /// <summary>
         /// Gets or sets the part type identifier filter.
         /// </summary>
-        public string TypeId { get; set; }
+        public string? TypeId { get; set; }
 
         /// <summary>
         /// Gets or sets the part's role identifier filter.
         /// </summary>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Gets or sets the part's thesaurus scope.
         /// </summary>
-        public string ThesaurusScope { get; set; }
+        public string? ThesaurusScope { get; set; }
 
         /// <summary>
         /// Gets or sets the optional custom sort expressions to be used to
@@ -35,6 +36,6 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <value>Tuples where 1=field name and 2=true for ascending,
         /// false for descending</value>
-        public Tuple<string,bool>[] SortExpressions { get; set; }
+        public IList<Tuple<string,bool>>? SortExpressions { get; set; }
     }
 }

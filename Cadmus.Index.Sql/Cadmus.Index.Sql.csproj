@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
+	<Nullable>enable</Nullable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<TargetFramework>net6.0</TargetFramework>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -9,12 +10,12 @@
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>4.1.1</Version>
+    <Version>4.2.0</Version>
     <Description>SQL implementation of Cadmus index.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;SQL index</PackageTags>
-    <FileVersion>4.1.1</FileVersion>
-    <AssemblyVersion>4.1.1</AssemblyVersion>
+    <FileVersion>4.2.0</FileVersion>
+    <AssemblyVersion>4.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

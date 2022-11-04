@@ -22,7 +22,7 @@ namespace Cadmus.Index.Sql
         /// is a string with SQL code to execute after the database gets
         /// created.
         /// </summary>
-        public object InitContext { get; set; }
+        public object? InitContext { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlItemIndexWriterBase" />
@@ -57,7 +57,7 @@ namespace Cadmus.Index.Sql
         /// <returns>SQL code.</returns>
         protected abstract string GetSchemaSql();
 
-        private DbCommand GetInsertItemCommand(bool upsert, DbTransaction tr = null)
+        private DbCommand GetInsertItemCommand(bool upsert, DbTransaction? tr = null)
         {
             DbCommand cmd = GetCommand();
             cmd.Transaction = tr;
@@ -103,7 +103,7 @@ namespace Cadmus.Index.Sql
             return cmd;
         }
 
-        private DbCommand GetDeleteItemCommand(DbTransaction tr = null)
+        private DbCommand GetDeleteItemCommand(DbTransaction? tr = null)
         {
             // delete item (and its pins by FK constraints)
             DbCommand cmd = GetCommand();
@@ -113,7 +113,7 @@ namespace Cadmus.Index.Sql
             return cmd;
         }
 
-        private DbCommand GetInsertPinCommand(DbTransaction tr = null)
+        private DbCommand GetInsertPinCommand(DbTransaction? tr = null)
         {
             DbCommand cmd = GetCommand();
             cmd.Transaction = tr;
@@ -139,7 +139,7 @@ namespace Cadmus.Index.Sql
             return cmd;
         }
 
-        private DbCommand GetDeletePartPinsCommand(DbTransaction tr = null)
+        private DbCommand GetDeletePartPinsCommand(DbTransaction? tr = null)
         {
             // delete part pins
             DbCommand cmd = GetCommand();
@@ -161,7 +161,12 @@ namespace Cadmus.Index.Sql
                 Connection = null;
 
                 IDbManager manager = GetDbManager();
-                string name = GetDbName();
+                string? name = GetDbName();
+                if (name == null)
+                {
+                    throw new InvalidOperationException(
+                        "Null database name in SQL item index writer");
+                }
                 if (!manager.Exists(name))
                 {
                     manager.CreateDatabase(name,
@@ -219,12 +224,12 @@ namespace Cadmus.Index.Sql
         {
             return new IndexPin
             {
-                ItemId = pin.ItemId,
-                PartId = pin.PartId,
+                ItemId = pin.ItemId!,
+                PartId = pin.PartId!,
                 RoleId = pin.RoleId,
                 PartTypeId = partTypeId,
-                Name = pin.Name,
-                Value = pin.Value,
+                Name = pin.Name!,
+                Value = pin.Value!,
                 TimeIndexed = now
             };
         }
@@ -238,12 +243,12 @@ namespace Cadmus.Index.Sql
         /// <param name="progress">The optional progress reporter.</param>
         /// <exception cref="ArgumentNullException">items</exception>
         public Task WriteItems(IEnumerable<IItem> items,
-            CancellationToken cancel, IProgress<ProgressReport> progress = null)
+            CancellationToken cancel, IProgress<ProgressReport>? progress = null)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
 
             EnsureConnected();
-            ProgressReport report = progress != null ? new ProgressReport() : null;
+            ProgressReport? report = progress != null ? new ProgressReport() : null;
             DbCommand cmd = GetInsertItemCommand(false);
 
             foreach (IItem item in items)
@@ -267,7 +272,7 @@ namespace Cadmus.Index.Sql
                 }
 
                 // progress
-                if (progress != null && ++report.Count % 10 == 0)
+                if (progress != null && ++report!.Count % 10 == 0)
                     progress.Report(report);
 
                 if (cancel.IsCancellationRequested) break;
@@ -288,7 +293,7 @@ namespace Cadmus.Index.Sql
 
             EnsureConnected();
 
-            using (DbTransaction tr = Connection.BeginTransaction())
+            using (DbTransaction tr = Connection!.BeginTransaction())
             {
                 try
                 {
@@ -358,7 +363,7 @@ namespace Cadmus.Index.Sql
 
             EnsureConnected();
 
-            using (DbTransaction tr = Connection.BeginTransaction())
+            using (DbTransaction tr = Connection!.BeginTransaction())
             {
                 try
                 {

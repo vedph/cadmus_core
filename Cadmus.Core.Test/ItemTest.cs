@@ -8,7 +8,7 @@ namespace Cadmus.Core.Test
         [Fact]
         public void Ctor_Id_Set()
         {
-            Item item = new Item();
+            Item item = new();
 
             Assert.Matches(
                 "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-" +
@@ -19,7 +19,7 @@ namespace Cadmus.Core.Test
         public void Ctor_Times_Set()
         {
             DateTime now = DateTime.UtcNow;
-            Item item = new Item();
+            Item item = new();
 
             Assert.True(item.TimeCreated >= now);
             Assert.True(item.TimeModified >= now);

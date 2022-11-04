@@ -284,7 +284,7 @@ namespace Cadmus.Mongo.Test
             IMongoDatabase db = _client.GetDatabase(DB_NAME);
             var collection = db.GetCollection<BsonDocument>(MongoItem.COLLECTION);
 
-            var page = MongoHelper.GetDocumentsPage(collection, 
+            var page = MongoHelper.GetDocumentsPage(collection,
                 "{}", "{\"sortKey\":1}", 1, 10);
 
             Assert.Equal(10, page.Items.Count);

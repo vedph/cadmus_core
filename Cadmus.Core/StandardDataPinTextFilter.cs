@@ -13,7 +13,7 @@ namespace Cadmus.Core
     /// </summary>
     public sealed class StandardDataPinTextFilter : IDataPinTextFilter
     {
-        private static UniData _ud;
+        private static readonly UniData _ud = new();
 
         /// <summary>
         /// Apply this filter to the specified text, by keeping only
@@ -25,14 +25,12 @@ namespace Cadmus.Core
         /// <returns>Filtered text.</returns>
         /// <param name="options">A boolean value, true to preserve digits;
         /// false to drop them (default).</param>
-        public string Apply(string text, object options = null)
+        public string? Apply(string? text, object? options = null)
         {
             if (string.IsNullOrEmpty(text)) return text;
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool prevWS = true;
-            if (_ud == null) _ud = new UniData();
-
             bool preserveDigits = options != null && Convert.ToBoolean(options);
 
             foreach (char c in text)
@@ -69,7 +67,7 @@ namespace Cadmus.Core
             }
 
             // right trim
-            if (sb.Length > 0 && sb[sb.Length - 1] == ' ')
+            if (sb.Length > 0 && sb[^1] == ' ')
                 sb.Remove(sb.Length - 1, 1);
 
             return sb.ToString();

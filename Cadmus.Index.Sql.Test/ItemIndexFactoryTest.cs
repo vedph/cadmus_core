@@ -34,7 +34,7 @@ namespace Cadmus.Index.Sql.Test
         public void GetWriter_MySql_NotNull()
         {
             ItemIndexFactory factory = _factoryProvider.GetFactory(MYSQL_PROFILE);
-            IItemIndexWriter writer = factory.GetItemIndexWriter();
+            IItemIndexWriter? writer = factory.GetItemIndexWriter();
             Assert.NotNull(writer);
         }
 
@@ -42,7 +42,7 @@ namespace Cadmus.Index.Sql.Test
         public void GetWriter_MsSql_NotNull()
         {
             ItemIndexFactory factory = _factoryProvider.GetFactory(MSSQL_PROFILE);
-            IItemIndexWriter writer = factory.GetItemIndexWriter();
+            IItemIndexWriter? writer = factory.GetItemIndexWriter();
             Assert.NotNull(writer);
         }
 
@@ -50,7 +50,7 @@ namespace Cadmus.Index.Sql.Test
         public void GetReader_MsSql_NotNull()
         {
             ItemIndexFactory factory = _factoryProvider.GetFactory(MSSQL_PROFILE);
-            IItemIndexReader writer = factory.GetItemIndexReader();
+            IItemIndexReader? writer = factory.GetItemIndexReader();
             Assert.NotNull(writer);
         }
     }

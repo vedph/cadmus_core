@@ -43,13 +43,13 @@ namespace Cadmus.Index.Config
                 throw new ArgumentNullException(nameof(connectionString));
         }
 
-        private static object SupplyProperty(Type optionType,
-            PropertyInfo property, object options, object defaultValue)
+        private static object? SupplyProperty(Type optionType,
+            PropertyInfo property, object? options, object defaultValue)
         {
             // if options have been loaded, supply if not specified
             if (options != null)
             {
-                string value = (string)property.GetValue(options);
+                string? value = (string?)property.GetValue(options);
                 if (string.IsNullOrEmpty(value))
                     property.SetValue(options, defaultValue);
             }
@@ -77,12 +77,12 @@ namespace Cadmus.Index.Config
             IConfigurationSection section, TypeInfo targetType, Type optionType)
         {
             // get the options if specified
-            object options = section?.Get(optionType);
+            object? options = section?.Get(optionType);
 
             // if we have a default connection AND the options type
             // has a ConnectionString property, see if we should supply a value
             // for it
-            PropertyInfo property;
+            PropertyInfo? property;
             if (_connectionString != null &&
                 (property = optionType.GetProperty(CONNECTION_STRING_NAME)) != null)
             {
@@ -93,7 +93,7 @@ namespace Cadmus.Index.Config
             // apply options if any
             if (options != null)
             {
-                targetType.GetMethod("Configure").Invoke(component,
+                targetType.GetMethod("Configure")?.Invoke(component,
                     new[] { options });
             }
 
@@ -136,14 +136,14 @@ namespace Cadmus.Index.Config
         /// <param name="graphSql">The optional SQL code to seed the index
         /// database with preset data for the graph.</param>
         /// <returns>Item index writer or null.</returns>
-        public IItemIndexWriter GetItemIndexWriter(string graphSql = null)
+        public IItemIndexWriter? GetItemIndexWriter(string? graphSql = null)
         {
-            IItemIndexWriter writer = GetComponent<IItemIndexWriter>(
+            IItemIndexWriter? writer = GetComponent<IItemIndexWriter>(
                 Configuration["index:writer:id"],
                 "index:writer:options",
                 false);
 
-            writer.InitContext = graphSql;
+            if (writer != null) writer.InitContext = graphSql;
             return writer;
         }
 
@@ -151,7 +151,7 @@ namespace Cadmus.Index.Config
         /// Gets the item index reader if any.
         /// </summary>
         /// <returns>Item index reader or null.</returns>
-        public IItemIndexReader GetItemIndexReader()
+        public IItemIndexReader? GetItemIndexReader()
         {
             return GetComponent<IItemIndexReader>(
                 Configuration["index:reader:id"],
@@ -163,7 +163,7 @@ namespace Cadmus.Index.Config
         /// Gets the graph repository if any.
         /// </summary>
         /// <returns>Graph repository or null.</returns>
-        public IGraphRepository GetGraphRepository()
+        public IGraphRepository? GetGraphRepository()
         {
             return GetComponent<IGraphRepository>(
                 Configuration["graph:repository:id"],

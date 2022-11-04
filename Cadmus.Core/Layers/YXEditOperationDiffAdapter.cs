@@ -35,21 +35,21 @@ namespace Cadmus.Core.Layers
             IsReplaceEnabled = true;
         }
 
-        private string GetEditOperation(Operation op)
+        private static string? GetEditOperation(Operation op)
         {
-            switch (op)
+            return op switch
             {
-                case Operation.EQUAL: return YXEditOperation.EQU;
-                case Operation.INSERT: return YXEditOperation.INS;
-                case Operation.DELETE: return YXEditOperation.DEL;
-                default: return null;
-            }
+                Operation.EQUAL => YXEditOperation.EQU,
+                Operation.INSERT => YXEditOperation.INS,
+                Operation.DELETE => YXEditOperation.DEL,
+                _ => null,
+            };
         }
 
         private static int LocateNextOperationWithValue(
             IList<YXEditOperation> operations,
             int start,
-            string value)
+            string? value)
         {
             int i = start;
             while (i < operations.Count && operations[i].Value != value)
@@ -60,7 +60,7 @@ namespace Cadmus.Core.Layers
         private static int LocatePrevOperationWithValue(
             IList<YXEditOperation> operations,
             int start,
-            string value)
+            string? value)
         {
             int i = start;
             while (i > -1 && operations[i].Value != value)
@@ -68,7 +68,7 @@ namespace Cadmus.Core.Layers
             return i;
         }
 
-        private void DetectForwardMoves(IList<YXEditOperation> operations)
+        private static void DetectForwardMoves(IList<YXEditOperation> operations)
         {
             if (operations.Count == 0) return;
             int maxGroupId = operations.Max(o => o.GroupId);
@@ -90,7 +90,7 @@ namespace Cadmus.Core.Layers
             }
         }
 
-        private void DetectBackwardMoves(IList<YXEditOperation> operations)
+        private static void DetectBackwardMoves(IList<YXEditOperation> operations)
         {
             if (operations.Count == 0) return;
             int maxGroupId = operations.Max(o => o.GroupId);
@@ -112,7 +112,7 @@ namespace Cadmus.Core.Layers
             }
         }
 
-        private void DetectReplacememts(IList<YXEditOperation> operations)
+        private static void DetectReplacememts(IList<YXEditOperation> operations)
         {
             for (int i = operations.Count - 1; i > 0; i--)
             {
@@ -131,14 +131,14 @@ namespace Cadmus.Core.Layers
         private static YXEditOperation JoinOperations(int first, int last,
             IList<YXEditOperation> operations)
         {
-            YXEditOperation joined = new YXEditOperation
+            YXEditOperation joined = new()
             {
                 Operator = YXEditOperation.REP,
                 Location = operations[first].Location,
                 OldLocation = operations[first].OldLocation
             };
-            StringBuilder value = new StringBuilder();
-            StringBuilder oldValue = new StringBuilder();
+            StringBuilder value = new();
+            StringBuilder oldValue = new();
 
             for (int i = first; i <= last; i++)
             {
@@ -171,8 +171,8 @@ namespace Cadmus.Core.Layers
                 if (operations[i].OldLocation == operations[i - 1].OldLocation
                     && operations[i].Location == operations[i - 1].Location)
                 {
-                    string loc = operations[i].Location;
-                    string oldLoc = operations[i].OldLocation;
+                    string? loc = operations[i].Location;
+                    string? oldLoc = operations[i].OldLocation;
                     int j = i - 1;
                     while (j > 0
                         && operations[j - 1].OldLocation == oldLoc
@@ -188,7 +188,10 @@ namespace Cadmus.Core.Layers
                         operations.Insert(j, joined);
                         i = j - 1;
                     }
-                    else i--;
+                    else
+                    {
+                        i--;
+                    }
                 }
                 else i--;
             }
@@ -202,10 +205,10 @@ namespace Cadmus.Core.Layers
         /// <returns>The edit operations.</returns>
         public IList<YXEditOperation> Adapt(IList<Diff> diffs)
         {
-            List<YXEditOperation> operations = new List<YXEditOperation>();
+            List<YXEditOperation> operations = new();
 
             int y = 1, x = 1, oy = 1, ox = 1;
-            StringBuilder token = new StringBuilder();
+            StringBuilder token = new();
 
             foreach (Diff diff in diffs)
             {
@@ -235,7 +238,7 @@ namespace Cadmus.Core.Layers
                         case '\r':
                             break;
                         case '\n':
-                            // CR+LF or just LF end the current line;
+                            // CR+LF or just LF end the current line:
                             // save a pending token
                             if (token.Length > 0)
                             {

@@ -24,7 +24,7 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets or sets the target identifier (for aliases).
         /// </summary>
-        public string TargetId { get; set; }
+        public string? TargetId { get; set; }
 
         /// <summary>
         /// Gets or sets the tags.
@@ -36,6 +36,7 @@ namespace Cadmus.Mongo
         /// </summary>
         public MongoThesaurus()
         {
+            Id = "";
             Entries = new List<MongoThesaurusEntry>();
         }
 
@@ -64,7 +65,7 @@ namespace Cadmus.Mongo
         /// <returns>Thesaurus.</returns>
         public Thesaurus ToThesaurus()
         {
-            Thesaurus thesaurus = new(Id)
+            Thesaurus thesaurus = new(Id!)
             {
                 TargetId = TargetId
             };

@@ -10,7 +10,7 @@ namespace Cadmus.Core.Test.Config
     {
         private static IPartTypeProvider GetProvider()
         {
-            TagAttributeToTypeMap map = new TagAttributeToTypeMap();
+            TagAttributeToTypeMap map = new();
             map.Add(new Assembly[] { typeof(NotePart).Assembly });
             return new StandardPartTypeProvider(map);
         }
@@ -18,7 +18,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void Get_NotExistingPart_Null()
         {
-            Type t = GetProvider().Get("not-existing");
+            Type? t = GetProvider().Get("not-existing");
 
             Assert.Null(t);
         }
@@ -26,7 +26,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void Get_NotePart_Ok()
         {
-            Type t = GetProvider().Get("it.vedph.note");
+            Type? t = GetProvider().Get("it.vedph.note");
 
             Assert.Equal(typeof(NotePart), t);
         }
@@ -34,7 +34,7 @@ namespace Cadmus.Core.Test.Config
         [Fact]
         public void Get_CommentLayerPart_Ok()
         {
-            Type t = GetProvider().Get(
+            Type? t = GetProvider().Get(
                 "it.vedph.token-text-layer:fr.it.vedph.comment");
 
             Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);

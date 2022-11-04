@@ -13,7 +13,7 @@ namespace Cadmus.Core
         /// <param name="item">The optional item. The item with its parts
         /// can optionally be passed to this method for those parts requiring
         /// to access further data.</param>
-        IEnumerable<DataPin> GetDataPins(IItem item = null);
+        IEnumerable<DataPin> GetDataPins(IItem? item = null);
 
         /// <summary>
         /// Gets the definitions of data pins used by the implementor.

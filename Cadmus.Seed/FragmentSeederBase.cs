@@ -7,13 +7,13 @@ namespace Cadmus.Seed
     /// <summary>
     /// Base class for <see cref="IFragmentSeeder"/>'s.
     /// </summary>
-    /// <seealso cref="Cadmus.Seed.IFragmentSeeder" />
+    /// <seealso cref="IFragmentSeeder" />
     public abstract class FragmentSeederBase : IFragmentSeeder
     {
         /// <summary>
         /// Gets the options.
         /// </summary>
-        protected SeedOptions Options { get; private set; }
+        protected SeedOptions? Options { get; private set; }
 
         /// <summary>
         /// Set the general seed options.

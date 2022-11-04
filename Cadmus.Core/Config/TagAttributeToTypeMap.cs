@@ -50,9 +50,9 @@ namespace Cadmus.Core.Config
             _frMap.Clear();
         }
 
-        private static string GetTag(Type t)
+        private static string? GetTag(Type t)
         {
-            TagAttribute attr = t.GetTypeInfo()
+            TagAttribute? attr = t.GetTypeInfo()
                 .GetCustomAttributes<TagAttribute>()
                 .FirstOrDefault();
             if (attr != null) return attr.Tag;
@@ -62,8 +62,8 @@ namespace Cadmus.Core.Config
             // same but is loaded from different sources, all the types will
             // be considered different; so that the preceding code will fail
             // finding the type TagAttribute, whence a null tag. The code
-            // below will just check for type names, so it will not fail;
-            // yet, other parts of the system will do, as soon as you are going
+            // below will just check for type names, so it will not fail.
+            // Yet, other parts of the system will do, as soon as you are going
             // to compare types.
             var tag = t.CustomAttributes.FirstOrDefault(
                 a => a.AttributeType.FullName == "Fusi.Tools.Config.TagAttribute")
@@ -80,7 +80,7 @@ namespace Cadmus.Core.Config
         {
             // first collect all the exported text layer part fragments types
             Dictionary<string, Type> dctFragmentTypes =
-                new Dictionary<string, Type>();
+                new();
             foreach (var p in _map)
             {
                 if (_frTypeInfo.IsAssignableFrom(p.Value))
@@ -99,15 +99,15 @@ namespace Cadmus.Core.Config
                 {
                     //TagAttribute attr = type.GetTypeInfo()
                     //    .GetCustomAttributes<TagAttribute>()
-                    //    .FirstOrDefault();
-                    string attrTag = GetTag(type);
+                    //    .FirstOrDefault()
+                    string? attrTag = GetTag(type);
 
                     foreach (Type fragmentType in dctFragmentTypes.Values)
                     {
                         //TagAttribute attrFr = fragmentType.GetTypeInfo()
                         //    .GetCustomAttributes<TagAttribute>()
-                        //    .FirstOrDefault();
-                        string attrFrTag = GetTag(fragmentType);
+                        //    .FirstOrDefault()
+                        string? attrFrTag = GetTag(fragmentType);
                         if (attrFrTag != null)
                         {
                             _frMap[$"{attrTag}:{attrFrTag}"] =
@@ -124,8 +124,8 @@ namespace Cadmus.Core.Config
             foreach (Type t in assembly.ExportedTypes)
             {
                 //string tag = t.GetTypeInfo()
-                //    .GetCustomAttribute<TagAttribute>()?.Tag;
-                string tag = GetTag(t);
+                //    .GetCustomAttribute<TagAttribute>()?.Tag
+                string? tag = GetTag(t);
                 if (tag != null) _map[tag] = t;
             }
         }
@@ -151,11 +151,11 @@ namespace Cadmus.Core.Config
         /// load context, and additionally in all the explicitly received
         /// <paramref name="assemblies"/>.
         /// </summary>
+        /// <param name="directory">The plugins directory.</param>
+        /// <param name="fileMask">The plugin file mask.</param>
         /// <param name="context">The assembly load context. See e.g.
         /// https://github.com/dotnet/samples/blob/master/core/extensions/AppWithPlugin/AppWithPlugin/Program.cs
         /// </param>
-        /// <param name="directory">The plugins directory.</param>
-        /// <param name="fileMask">The plugin file mask.</param>
         /// <param name="assemblies">The optional additional assemblies
         /// to be scanned.</param>
         /// <returns>map</returns>
@@ -175,8 +175,6 @@ namespace Cadmus.Core.Config
                 .GetFiles(fileMask))
             {
                 Assembly assembly = context.LoadFromAssemblyPath(file.FullName);
-                //Assembly assembly = Assembly.Load(
-                //    AssemblyName.GetAssemblyName(file.FullName));
                 ScanAssembly(assembly);
             }
             if (assemblies.Length > 0) Add(assemblies);
@@ -190,7 +188,7 @@ namespace Cadmus.Core.Config
         /// <c>token-text-layer:fr.comment</c>.</param>
         /// <returns>type or null</returns>
         /// <exception cref="ArgumentNullException">tag</exception>
-        public Type Get(string tag)
+        public Type? Get(string tag)
         {
             if (tag == null) throw new ArgumentNullException(nameof(tag));
 

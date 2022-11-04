@@ -1,15 +1,17 @@
-﻿namespace Cadmus.Core.Config
+﻿using System.Collections.Generic;
+
+namespace Cadmus.Core.Config
 {
     internal sealed class ThesaurusOptions
     {
-        public string Id { get; set; }
-        public string TargetId { get; set; }
-        public ThesaurusEntryOptions[] Entries { get; set; }
+        public string? Id { get; set; }
+        public string? TargetId { get; set; }
+        public IList<ThesaurusEntryOptions>? Entries { get; set; }
     }
 
     internal sealed class ThesaurusEntryOptions
     {
-        public string Id { get; set; }
-        public string Value { get; set; }
+        public string? Id { get; set; }
+        public string? Value { get; set; }
     }
 }

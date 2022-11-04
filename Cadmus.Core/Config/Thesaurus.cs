@@ -27,7 +27,7 @@ namespace Cadmus.Core.Config
     /// </remarks>
     public sealed class Thesaurus
     {
-        private static readonly Regex _idRegex = new Regex(@".+\@[a-z]{2,3}$");
+        private static readonly Regex _idRegex = new(@".+\@[a-z]{2,3}$");
         private string _id;
 
         /// <summary>
@@ -47,7 +47,10 @@ namespace Cadmus.Core.Config
                 if (value == null)
                     throw new ArgumentNullException(nameof(value));
                 if (!_idRegex.IsMatch(value))
-                    throw new ArgumentException(nameof(value));
+                {
+                    throw new ArgumentException("Invalid thesaurus ID",
+                        nameof(value));
+                }
                 _id = value;
             }
         }
@@ -58,7 +61,7 @@ namespace Cadmus.Core.Config
         /// When this property is not null, this is an alias and should have
         /// no entries. Otherwise, it is a regular thesaurus with entries.
         /// </summary>
-        public string TargetId { get; set; }
+        public string? TargetId { get; set; }
 
         /// <summary>
         /// Gets or sets the entries.
@@ -70,6 +73,7 @@ namespace Cadmus.Core.Config
         /// </summary>
         public Thesaurus()
         {
+            _id = "";
             Entries = new List<ThesaurusEntry>();
         }
 
@@ -81,9 +85,14 @@ namespace Cadmus.Core.Config
         /// <exception cref="ArgumentNullException">id</exception>
         public Thesaurus(string id)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
             if (!_idRegex.IsMatch(id))
-                throw new ArgumentException(nameof(id));
+            {
+                throw new ArgumentException("Invalid thesaurus ID",
+                    nameof(id));
+            }
+            _id = id;
 
             Entries = new List<ThesaurusEntry>();
         }
@@ -135,11 +144,11 @@ namespace Cadmus.Core.Config
         /// <param name="id">The tag's ID.</param>
         /// <returns>tag, or null if not found</returns>
         /// <exception cref="ArgumentNullException">null ID</exception>
-        public string GetEntryValue(string id)
+        public string? GetEntryValue(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            ThesaurusEntry entry = Entries?.FirstOrDefault(e => e.Id == id);
+            ThesaurusEntry? entry = Entries?.FirstOrDefault(e => e.Id == id);
             return entry?.Value;
         }
 
@@ -175,16 +184,16 @@ namespace Cadmus.Core.Config
                               Entries = g.ToList()
                           };
             Dictionary<string, ThesaurusTreeEntry> parents =
-                new Dictionary<string, ThesaurusTreeEntry>();
+                new();
 
             foreach (var group in groups)
             {
                 foreach (ThesaurusEntry entry in group.Entries)
                 {
                     int i = entry.Id.LastIndexOf('.');
-                    string parentId = i == -1? entry.Id : entry.Id.Substring(0, i);
+                    string parentId = i == -1? entry.Id : entry.Id[..i];
 
-                    ThesaurusTreeEntry treeEntry = new ThesaurusTreeEntry(entry)
+                    ThesaurusTreeEntry treeEntry = new(entry)
                     {
                         Parent = parents.ContainsKey(parentId)
                             ? parents[parentId] : null

@@ -30,7 +30,7 @@ namespace Cadmus.Mongo
         IItemBrowser,
         IConfigurable<ItemBrowserOptions>
     {
-        private string _connection;
+        private string? _connection;
         private readonly string _partTypeId;
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Cadmus.Mongo
             _connection = options.ConnectionString;
         }
 
-        private BsonDocument BuildMatchStage(string parentId, string tag)
+        private BsonDocument BuildMatchStage(string? parentId, string? tag)
         {
             BsonDocument tagFilter = tag != null
                 ? new BsonDocument().Add("content.tag", tag)
@@ -76,7 +76,7 @@ namespace Cadmus.Mongo
         }
 
         private async Task<int> GetTotalAsync(IMongoCollection<BsonDocument> parts,
-            string parentId, string tag)
+            string? parentId, string? tag)
         {
             #region MongoDB query
             // db.getCollection("parts").aggregate(
@@ -119,18 +119,16 @@ namespace Cadmus.Mongo
                 new BsonDocument("$count", "count")
             };
 
-            using (var cursor = await parts.AggregateAsync(pipeline, aggOptions))
-            {
-                await cursor.MoveNextAsync();
-                BsonDocument first = cursor.Current.FirstOrDefault();
-                return first?["count"].AsInt32 ?? 0;
-            }
+            using var cursor = await parts.AggregateAsync(pipeline, aggOptions);
+            await cursor.MoveNextAsync();
+            BsonDocument? first = cursor.Current.FirstOrDefault();
+            return first?["count"].AsInt32 ?? 0;
         }
 
-        private static string GetBsonString(BsonValue value) =>
+        private static string? GetBsonString(BsonValue value) =>
             value.BsonType != BsonType.Null ? value.AsString : null;
 
-        private ItemInfo BsonDocumentToItemInfo(BsonDocument doc)
+        private static ItemInfo BsonDocumentToItemInfo(BsonDocument doc)
         {
             return new ItemInfo
             {
@@ -142,9 +140,9 @@ namespace Cadmus.Mongo
                 SortKey = GetBsonString(doc["sortKey"]),
                 Flags = doc["flags"].AsInt32,
                 TimeCreated = doc["timeCreated"].ToUniversalTime(),
-                CreatorId = GetBsonString(doc["creatorId"]),
+                CreatorId = GetBsonString(doc["creatorId"]) ?? "",
                 TimeModified = doc["timeModified"].ToUniversalTime(),
-                UserId = GetBsonString(doc["userId"])
+                UserId = GetBsonString(doc["userId"]) ?? ""
             };
         }
 
@@ -167,7 +165,7 @@ namespace Cadmus.Mongo
         public async Task<DataPage<ItemInfo>> BrowseAsync(
             string database,
             IPagingOptions options,
-            IDictionary<string, string> filters)
+            IDictionary<string, string?> filters)
         {
             #region MongoDB query
             // db.getCollection("parts").aggregate(
@@ -227,13 +225,13 @@ namespace Cadmus.Mongo
                     $"{nameof(MongoHierarchyItemBrowser)} not configured");
             }
 
-            string parentId = filters.ContainsKey("parentId") ?
+            string? parentId = filters.ContainsKey("parentId") ?
                 filters["parentId"] : null;
-            string tag = filters.ContainsKey("tag") ? filters["tag"] : null;
+            string? tag = filters.ContainsKey("tag") ? filters["tag"] : null;
 
             EnsureClientCreated(string.Format(CultureInfo.InvariantCulture,
                 _connection, database));
-            IMongoDatabase db = Client.GetDatabase(database);
+            IMongoDatabase db = Client!.GetDatabase(database);
             IMongoCollection<BsonDocument> parts =
                 db.GetCollection<BsonDocument>(MongoPart.COLLECTION);
 

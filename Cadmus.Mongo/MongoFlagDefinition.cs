@@ -23,13 +23,13 @@ namespace Cadmus.Mongo
         /// <summary>
         /// Gets or sets the label.
         /// </summary>
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
         [BsonIgnoreIfNull]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the color key.
@@ -38,7 +38,7 @@ namespace Cadmus.Mongo
         /// The color key, with format RRGGBB.
         /// </value>
         [BsonIgnoreIfNull]
-        public string ColorKey { get; set; }
+        public string? ColorKey { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoFlagDefinition"/>
@@ -74,7 +74,7 @@ namespace Cadmus.Mongo
             return new FlagDefinition
             {
                 Id = Id,
-                Label = Label,
+                Label = Label ?? "",
                 Description = Description,
                 ColorKey = ColorKey
             };

@@ -79,7 +79,7 @@ namespace Cadmus.Mongo
             foreach (string prop in props)
             {
                 // use reflection (not ComponentModel) to mirror LINQ
-                PropertyInfo pi = type.GetProperty(prop);
+                PropertyInfo pi = type.GetProperty(prop)!;
                 expr = Expression.Property(expr, pi);
                 type = pi.PropertyType;
             }
@@ -92,8 +92,8 @@ namespace Cadmus.Mongo
                             && method.GetGenericArguments().Length == 2
                             && method.GetParameters().Length == 2)
                     .MakeGenericMethod(typeof(T), type)
-                    .Invoke(null, new object[] { source, lambda });
-            return (IOrderedQueryable<T>)result;
+                    .Invoke(null, new object[] { source, lambda })!;
+            return (IOrderedQueryable<T>)result!;
         }
     }
 }

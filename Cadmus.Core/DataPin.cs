@@ -29,28 +29,28 @@
         /// <summary>
         /// Gets or sets the item identifier.
         /// </summary>
-        public string ItemId { get; set; }
+        public string? ItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the part identifier.
         /// </summary>
-        public string PartId { get; set; }
+        public string? PartId { get; set; }
 
         /// <summary>
         /// Gets or sets the optional role identifier.
         /// </summary>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Gets or sets the pin name.
         /// </summary>
         /// <value>The name.</value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the value.
         /// </summary>
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.

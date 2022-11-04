@@ -12,7 +12,7 @@ namespace Cadmus.Core.Config
         /// Gets or sets the tag's ID filter. This matches all the thesauri
         /// whose ID contains the specified text.
         /// </summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the is-alias filter. This is null to match all the
@@ -26,6 +26,6 @@ namespace Cadmus.Core.Config
         /// Gets or sets the language filter. This matches all the thesauri
         /// with the specified language (ISO639-2/3).
         /// </summary>
-        public string Language { get; set; }
+        public string? Language { get; set; }
     }
 }

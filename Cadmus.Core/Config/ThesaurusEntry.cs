@@ -23,6 +23,7 @@ namespace Cadmus.Core.Config
         /// </summary>
         public ThesaurusEntry()
         {
+            Id = Value = "";
         }
 
         /// <summary>

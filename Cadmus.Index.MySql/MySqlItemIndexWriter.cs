@@ -51,8 +51,8 @@ namespace Cadmus.Index.MySql
                 ConnectionString, "Database=([^;]+)", "Database=sys");
             IDbManager manager = new MySqlDbManager(sysCS);
 
-            string db = GetDbName();
-            if (manager.Exists(db)) manager.ClearDatabase(db);
+            string? db = GetDbName();
+            if (db != null && manager.Exists(db)) manager.ClearDatabase(db);
 
             return Task.CompletedTask;
         }
@@ -63,7 +63,7 @@ namespace Cadmus.Index.MySql
         /// <returns>
         /// Database name or null.
         /// </returns>
-        protected override string GetDbName()
+        protected override string? GetDbName()
         {
             Match m = Regex.Match(ConnectionString, "Database=([^;]+)",
                 RegexOptions.IgnoreCase);
@@ -74,7 +74,7 @@ namespace Cadmus.Index.MySql
         {
             using StreamReader reader = new(
                 Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    $"Cadmus.Index.MySql.Assets.{name}"), Encoding.UTF8);
+                    $"Cadmus.Index.MySql.Assets.{name}")!, Encoding.UTF8);
             return reader.ReadToEnd();
         }
 
@@ -116,7 +116,7 @@ namespace Cadmus.Index.MySql
         /// <param name="connection">The connection to use, or null to use
         /// <see cref="SqlRepositoryBase.Connection" />.</param>
         /// <returns>Command.</returns>
-        protected override DbCommand GetCommand(DbConnection connection = null)
+        protected override DbCommand GetCommand(DbConnection? connection = null)
         {
             return new MySqlCommand
             {

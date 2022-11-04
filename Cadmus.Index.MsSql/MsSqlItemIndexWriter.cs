@@ -21,8 +21,11 @@ namespace Cadmus.Index.MsSql
     [Tag("item-index-writer.mssql")]
     public sealed class MsSqlItemIndexWriter : SqlItemIndexWriterBase,
         IItemIndexWriter,
-        IConfigurable<SqlOptions>
+        IConfigurable<SqlOptions>,
+        IDisposable
     {
+        private bool _disposed;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MsSqlItemIndexWriter"/>
         /// class.
@@ -39,7 +42,8 @@ namespace Cadmus.Index.MsSql
         public void Configure(SqlOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
-            ConnectionString = options.ConnectionString;
+            ConnectionString = options.ConnectionString
+                ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <summary>
@@ -51,8 +55,8 @@ namespace Cadmus.Index.MsSql
                 ConnectionString, "Database=([^;]+)", "Database=master");
             IDbManager manager = new MsSqlDbManager(sysCS);
 
-            string db = GetDbName();
-            if (manager.Exists(db)) manager.ClearDatabase(db);
+            string? db = GetDbName();
+            if (db != null && manager.Exists(db)) manager.ClearDatabase(db);
             return Task.CompletedTask;
         }
 
@@ -62,7 +66,7 @@ namespace Cadmus.Index.MsSql
         /// <returns>
         /// Database name or null.
         /// </returns>
-        protected override string GetDbName()
+        protected override string? GetDbName()
         {
             Match m = Regex.Match(ConnectionString, "Database=([^;]+)",
                 RegexOptions.IgnoreCase);
@@ -71,12 +75,10 @@ namespace Cadmus.Index.MsSql
 
         static private string LoadResource(string name)
         {
-            using (StreamReader reader = new StreamReader(
+            using StreamReader reader = new(
                 Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    $"Cadmus.Index.MsSql.Assets.{name}"), Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+                    $"Cadmus.Index.MsSql.Assets.{name}")!, Encoding.UTF8);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -107,27 +109,24 @@ namespace Cadmus.Index.MsSql
         /// Gets a new command object.
         /// </summary>
         /// <returns>Command.</returns>
-        protected override DbCommand GetCommand(DbConnection connection = null)
+        protected override DbCommand GetCommand(DbConnection? connection = null)
         {
             return new SqlCommand
             {
                 Connection = (SqlConnection)
-                    (connection as SqlConnection ?? Connection)
+                    (connection as SqlConnection ?? Connection!)
             };
         }
 
-        #region IDisposable Support
-        private bool _disposedValue; // to detect redundant calls
-
         private void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!_disposed)
             {
                 if (disposing)
                 {
                     Connection?.Close();
                 }
-                _disposedValue = true;
+                _disposed = true;
             }
         }
 
@@ -137,8 +136,9 @@ namespace Cadmus.Index.MsSql
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
-        #endregion
     }
 }

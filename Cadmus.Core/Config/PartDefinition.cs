@@ -13,7 +13,7 @@
         /// <summary>
         /// Gets or sets the part's role identifier.
         /// </summary>
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
 
         /// <summary>
         /// Human-readable name for part.
@@ -23,7 +23,7 @@
         /// <summary>
         /// Short description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this part is required
@@ -36,19 +36,28 @@
         /// parts when presenting them.
         /// </summary>
         /// <value>The color key, with format RRGGBB.</value>
-        public string ColorKey { get; set; }
+        public string? ColorKey { get; set; }
 
         /// <summary>
         /// Gets or sets the optional group key, which can be used to group
         /// parts when presenting them.
         /// </summary>
-        public string GroupKey { get; set; }
+        public string? GroupKey { get; set; }
 
         /// <summary>
         /// Gets or sets the sort key, which can be used to sort parts when
         /// presenting them.
         /// </summary>
-        public string SortKey { get; set; }
+        public string? SortKey { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PartDefinition"/> class.
+        /// </summary>
+        public PartDefinition()
+        {
+            TypeId = "";
+            Name = "";
+        }
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.

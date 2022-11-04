@@ -15,12 +15,12 @@ namespace Cadmus.Core.Storage
         /// <summary>
         /// Item title.
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Item short description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Item's facet ID.
@@ -28,7 +28,7 @@ namespace Cadmus.Core.Storage
         /// <value>The facet defines which parts can be stored in the item,
         /// and their order and other presentational attributes. It is a unique
         /// string defined in the corpus configuration.</value>
-        public string FacetId { get; set; }
+        public string? FacetId { get; set; }
 
         /// <summary>
         /// Gets or sets the group identifier. This is an arbitrary string
@@ -36,13 +36,13 @@ namespace Cadmus.Core.Storage
         /// might have a set of items belonging to the same literary work,
         /// a set of lemmata belonging to the same dictionary letter, etc.
         /// </summary>
-        public string GroupId { get; set; }
+        public string? GroupId { get; set; }
 
         /// <summary>
         /// The sort key for the item. This is a value used to sort items in
         /// a list.
         /// </summary>
-        public string SortKey { get; set; }
+        public string? SortKey { get; set; }
 
         /// <summary>
         /// Gets or sets generic flags for the item.
@@ -69,7 +69,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         public string UserId { get; set; }
 
-        /// <summary> Gets or sets the identifier of the data record this 
+        /// <summary> Gets or sets the identifier of the data record this
         /// history record refers to.
         /// </summary>
         public string ReferenceId { get; }
@@ -91,6 +91,7 @@ namespace Cadmus.Core.Storage
             ReferenceId = referenceId
                 ?? throw new ArgumentNullException(nameof(referenceId));
             TimeCreated = TimeModified = DateTime.UtcNow;
+            CreatorId = UserId = "";
         }
 
         /// <summary>

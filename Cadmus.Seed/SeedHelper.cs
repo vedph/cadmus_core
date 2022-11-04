@@ -20,7 +20,7 @@ namespace Cadmus.Seed
         /// giving up finding a distinct entry.</param>
         /// <returns>Entries (from 1 to <paramref name="count"/>; default(T)
         /// if no entries).</returns>
-        public static T[] RandomPickOf<T>(IList<T> entries,
+        public static T[]? RandomPickOf<T>(IList<T> entries,
             int count = 1,
             int maxAttempts = 10)
         {
@@ -54,7 +54,7 @@ namespace Cadmus.Seed
         /// <typeparam name="T">The type of entries.</typeparam>
         /// <param name="entries">The entries.</param>
         /// <returns>Entry, default(T) if no entries.</returns>
-        public static T RandomPickOneOf<T>(IList<T> entries)
+        public static T? RandomPickOneOf<T>(IList<T> entries)
         {
             if (entries == null || entries.Count == 0) return default;
             return entries[Randomizer.Seed.Next(0, entries.Count)];

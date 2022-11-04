@@ -24,7 +24,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The flag identifier.</param>
         /// <returns>definition or null if not found</returns>
-        FlagDefinition GetFlagDefinition(int id);
+        FlagDefinition? GetFlagDefinition(int id);
 
         /// <summary>
         /// Adds or updates the specified flag definition.
@@ -51,7 +51,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The facet identifier.</param>
         /// <returns>facet or null if not found</returns>
-        FacetDefinition GetFacetDefinition(string id);
+        FacetDefinition? GetFacetDefinition(string id);
 
         /// <summary>
         /// Adds or updates the specified facet.
@@ -73,7 +73,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="filter">The optional filter.</param>
         /// <returns>IDs</returns>
-        IList<string> GetThesaurusIds(ThesaurusFilter filter = null);
+        IList<string> GetThesaurusIds(ThesaurusFilter? filter = null);
 
         /// <summary>
         /// Gets the specified page of thesauri.
@@ -87,7 +87,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The tag set ID.</param>
         /// <returns>tag set, or null if not found</returns>
-        Thesaurus GetThesaurus(string id);
+        Thesaurus? GetThesaurus(string id);
 
         /// <summary>
         /// Adds or updates the specified tag set.
@@ -117,7 +117,7 @@ namespace Cadmus.Core.Storage
         /// <param name="includeParts">if set to <c>true</c>, include all the
         /// item's parts.</param>
         /// <returns>item or null if not found</returns>
-        IItem GetItem(string id, bool includeParts = true);
+        IItem? GetItem(string id, bool includeParts = true);
 
         /// <summary>
         /// Adds or updates the specified item.
@@ -180,7 +180,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The history item's identifier.</param>
         /// <returns>item or null if not found</returns>
-        HistoryItem GetHistoryItem(string id);
+        HistoryItem? GetHistoryItem(string id);
 
         /// <summary>
         /// Deletes the specified history item.
@@ -206,8 +206,8 @@ namespace Cadmus.Core.Storage
         /// <param name="typeId">The optional type identifier.</param>
         /// <param name="roleId">The optional role identifier.</param>
         /// <returns>parts</returns>
-        IList<IPart> GetItemParts(string[] itemIds, string typeId = null,
-            string roleId = null);
+        IList<IPart> GetItemParts(string[] itemIds, string? typeId = null,
+            string? roleId = null);
 
         /// <summary>
         /// Gets layer parts information about the item with the specified ID.
@@ -225,7 +225,7 @@ namespace Cadmus.Core.Storage
         /// <typeparam name="T">the type of the part to retrieve</typeparam>
         /// <param name="id">The part identifier.</param>
         /// <returns>part or null if not found</returns>
-        T GetPart<T>(string id) where T : class, IPart;
+        T? GetPart<T>(string id) where T : class, IPart;
 
         /// <summary>
         /// Gets the identifier of the item including the part with the
@@ -233,14 +233,14 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The part identifier.</param>
         /// <returns>The item identifier, or null if part not found</returns>
-        string GetPartItemId(string id);
+        string? GetPartItemId(string id);
 
         /// <summary>
         /// Gets the code representing the part with the specified ID.
         /// </summary>
         /// <param name="id">The part identifier.</param>
         /// <returns>JSON code or null if not found</returns>
-        string GetPartContent(string id);
+        string? GetPartContent(string id);
 
         /// <summary>
         /// Adds or updates the specified part.
@@ -282,7 +282,7 @@ namespace Cadmus.Core.Storage
         /// <typeparam name="T">The part type.</typeparam>
         /// <param name="id">The identifier.</param>
         /// <returns>part or null if not found</returns>
-        HistoryPart<T> GetHistoryPart<T>(string id) where T : class, IPart;
+        HistoryPart<T>? GetHistoryPart<T>(string id) where T : class, IPart;
 
         /// <summary>
         /// Deletes the specified history part.
@@ -295,7 +295,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="id">The part ID.</param>
         /// <returns>Creator ID, or null.</returns>
-        string GetPartCreatorId(string id);
+        string? GetPartCreatorId(string id);
 
         /// <summary>
         /// Determines whether the layer part with the specified ID might
@@ -342,8 +342,9 @@ namespace Cadmus.Core.Storage
         /// <param name="userId">The user identifier. This will be set as
         /// the author of the changes in the part.</param>
         /// <param name="patches">The patch instructions.</param>
-        /// <returns>The patched layer part content.</returns>
-        string ApplyLayerPartPatches(string id, string userId, IList<string> patches);
+        /// <returns>The patched layer part content or null if layer part
+        /// not found.</returns>
+        string? ApplyLayerPartPatches(string id, string userId, IList<string> patches);
 
         /// <summary>
         /// Set the <see cref="IPart.ThesaurusScope"/> property of all the

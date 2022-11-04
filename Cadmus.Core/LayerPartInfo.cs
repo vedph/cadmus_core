@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Cadmus.Core
+﻿namespace Cadmus.Core
 {
     /// <summary>
     /// Essential information about a layer part.
     /// </summary>
-    /// <seealso cref="Cadmus.Core.PartInfo" />
+    /// <seealso cref="PartInfo" />
     public class LayerPartInfo : PartInfo
     {
         /// <summary>

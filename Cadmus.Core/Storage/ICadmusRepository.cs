@@ -150,7 +150,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="ids">The items identifiers.</param>
         /// <param name="groupId">The group ID (can be null).</param>
-        void SetItemGroupId(IList<string> ids, string groupId);
+        void SetItemGroupId(IList<string> ids, string? groupId);
 
         /// <summary>
         /// Gets the requested page from a list of all the distinct, non-null
@@ -256,7 +256,6 @@ namespace Cadmus.Core.Storage
         /// <param name="content">The content.</param>
         /// <param name="history">if set to <c>true</c>, the history should be
         /// affected.</param>
-        /// <exception cref="ArgumentNullException">content</exception>
         void AddPartFromContent(string content, bool history = true);
 
         /// <summary>
@@ -353,7 +352,7 @@ namespace Cadmus.Core.Storage
         /// </summary>
         /// <param name="ids">The item identifier(s).</param>
         /// <param name="scope">The new scope (may be null).</param>
-        void SetPartThesaurusScope(IList<string> ids, string scope);
+        void SetPartThesaurusScope(IList<string> ids, string? scope);
         #endregion
     }
 }

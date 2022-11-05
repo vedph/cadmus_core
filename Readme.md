@@ -6,6 +6,8 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 4.2.3
+
 - 2022-11-04: part/fragment seeders can return null.
 
 ### 4.2.1

@@ -672,7 +672,7 @@ namespace Cadmus.Mongo
         /// </summary>
         /// <param name="ids">The items identifiers.</param>
         /// <param name="groupId">The group ID (can be null).</param>
-        public void SetItemGroupId(IList<string> ids, string groupId)
+        public void SetItemGroupId(IList<string> ids, string? groupId)
         {
             if (ids == null) throw new ArgumentNullException(nameof(ids));
 
@@ -2031,7 +2031,7 @@ namespace Cadmus.Mongo
         /// <param name="ids">The item identifier(s).</param>
         /// <param name="scope">The new scope (may be null).</param>
         /// <exception cref="ArgumentNullException">null ID(s)</exception>
-        public void SetPartThesaurusScope(IList<string> ids, string scope)
+        public void SetPartThesaurusScope(IList<string> ids, string? scope)
         {
             if (ids == null) throw new ArgumentNullException(nameof(ids));
 

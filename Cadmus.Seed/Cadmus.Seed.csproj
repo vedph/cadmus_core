@@ -4,18 +4,18 @@
     <IncludeSymbols>true</IncludeSymbols>
 	<Nullable>enable</Nullable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
     <Authors>Daniele Fusi</Authors>
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Description>Cadmus fake data seed core components.</Description>
     <Copyright>by Daniele Fusi</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>4.2.3</Version>
+    <Version>5.0.0</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;seed</PackageTags>
-    <FileVersion>4.2.3</FileVersion>
-    <AssemblyVersion>4.2.3</AssemblyVersion>
+    <FileVersion>5.0.0</FileVersion>
+    <AssemblyVersion>5.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Fusi.Tools.Config" Version="2.1.9" />
+    <PackageReference Include="Fusi.Tools.Config" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

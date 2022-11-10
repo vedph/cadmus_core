@@ -4,8 +4,8 @@
     <IncludeSymbols>true</IncludeSymbols>
 	<Nullable>enable</Nullable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<TargetFramework>net6.0</TargetFramework>
-    <Version>4.2.3</Version>
+	<TargetFramework>net7.0</TargetFramework>
+    <Version>5.0.0</Version>
     <Company>Fusi</Company>
     <Authors>Daniele Fusi</Authors>
     <Product>Cadmus</Product>
@@ -14,8 +14,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;MongoDB</PackageTags>
-    <FileVersion>4.2.3</FileVersion>
-    <AssemblyVersion>4.2.3</AssemblyVersion>
+    <FileVersion>5.0.0</FileVersion>
+    <AssemblyVersion>5.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

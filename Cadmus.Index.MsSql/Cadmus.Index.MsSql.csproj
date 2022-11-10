@@ -4,22 +4,22 @@
     <IncludeSymbols>true</IncludeSymbols>
 	<Nullable>enable</Nullable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Daniele Fusi</Authors>
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Copyright>by Daniele Fusi 2021</Copyright>
-    <Version>4.2.3</Version>
+    <Version>5.0.0</Version>
     <Description>MS SQLServer implementation of Cadmus index.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;SQL index</PackageTags>
-    <FileVersion>4.2.3</FileVersion>
-    <AssemblyVersion>4.2.3</AssemblyVersion>
+    <FileVersion>5.0.0</FileVersion>
+    <AssemblyVersion>5.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fusi.DbManager.MsSql" Version="2.0.1" />
+    <PackageReference Include="Fusi.DbManager.MsSql" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

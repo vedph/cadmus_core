@@ -31,7 +31,7 @@
     <PackageReference Include="Fusi.Text" Version="3.0.0" />
     <PackageReference Include="Fusi.Tools" Version="3.0.0" />
     <PackageReference Include="Fusi.Tools.Config" Version="3.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>

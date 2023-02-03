@@ -6,6 +6,14 @@ Please see the conceptual documentation under [cadmus_doc](https://github.com/ve
 
 ## History
 
+### 6.0.2
+
+- 2023-02-01: migrated to new components factory. This is a breaking change for backend components, please see [this page](https://myrmex.github.io/overview/cadmus/dev/history/#2023-02-01---backend-infrastructure-upgrade). Anyway, in the end you just have to update your libraries and a single namespace reference. Benefits include:
+  - more streamlined component instantiation.
+  - more functionality in components factory, including DI.
+  - dropped third party dependencies.
+  - adopted standard MS technologies for DI.
+
 ### 5.0.0
 
 - 2022-11-10: upgraded to NET 7.

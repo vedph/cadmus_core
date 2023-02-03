@@ -14,10 +14,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B5ECE5C-C394-4FE1-B8E6-C941A3F7C3BA}"
 	ProjectSection(SolutionItems) = preProject
 		Cadmus.shfbproj = Cadmus.shfbproj
-		InstallToFeed.bat = InstallToFeed.bat
 		Pack.bat = Pack.bat
 		Push.bat = Push.bat
 		Readme.md = Readme.md
+		PushLocal.bat = PushLocal.bat
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Seed", "Cadmus.Seed\Cadmus.Seed.csproj", "{2C1931B1-B5E8-434C-9BC5-46AB47B068D5}"

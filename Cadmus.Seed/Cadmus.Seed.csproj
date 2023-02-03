@@ -11,11 +11,11 @@
     <Description>Cadmus fake data seed core components.</Description>
     <Copyright>by Daniele Fusi</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>5.0.0</Version>
+    <Version>6.0.2</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;seed</PackageTags>
-    <FileVersion>5.0.0</FileVersion>
-    <AssemblyVersion>5.0.0</AssemblyVersion>
+    <FileVersion>6.0.2</FileVersion>
+    <AssemblyVersion>6.0.2</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Fusi.Tools.Config" Version="3.0.0" />
+    <PackageReference Include="Fusi.Tools.Configuration" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>

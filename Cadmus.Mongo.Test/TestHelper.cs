@@ -2,31 +2,30 @@
 using System;
 using System.Text.Json;
 
-namespace Cadmus.TestBase
+namespace Cadmus.TestBase;
+
+internal static class TestHelper
 {
-    internal static class TestHelper
+    private static readonly JsonSerializerOptions _options =
+        new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+    public static string SerializePart(IPart part)
     {
-        private static readonly JsonSerializerOptions _options =
-            new()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
+        if (part == null)
+            throw new ArgumentNullException(nameof(part));
 
-        public static string SerializePart(IPart part)
-        {
-            if (part == null)
-                throw new ArgumentNullException(nameof(part));
+        return JsonSerializer.Serialize(part, part.GetType(), _options);
+    }
 
-            return JsonSerializer.Serialize(part, part.GetType(), _options);
-        }
+    public static T? DeserializePart<T>(string json)
+        where T : class, IPart, new()
+    {
+        if (json == null)
+            throw new ArgumentNullException(nameof(json));
 
-        public static T? DeserializePart<T>(string json)
-            where T : class, IPart, new()
-        {
-            if (json == null)
-                throw new ArgumentNullException(nameof(json));
-
-            return JsonSerializer.Deserialize<T>(json, _options);
-        }
+        return JsonSerializer.Deserialize<T>(json, _options);
     }
 }

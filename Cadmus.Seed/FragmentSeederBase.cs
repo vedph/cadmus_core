@@ -2,44 +2,43 @@
 using Cadmus.Core.Layers;
 using System;
 
-namespace Cadmus.Seed
+namespace Cadmus.Seed;
+
+/// <summary>
+/// Base class for <see cref="IFragmentSeeder"/>'s.
+/// </summary>
+/// <seealso cref="IFragmentSeeder" />
+public abstract class FragmentSeederBase : IFragmentSeeder
 {
     /// <summary>
-    /// Base class for <see cref="IFragmentSeeder"/>'s.
+    /// Gets the options.
     /// </summary>
-    /// <seealso cref="IFragmentSeeder" />
-    public abstract class FragmentSeederBase : IFragmentSeeder
+    protected SeedOptions? Options { get; private set; }
+
+    /// <summary>
+    /// Set the general seed options.
+    /// </summary>
+    /// <param name="options">The options.</param>
+    /// <exception cref="ArgumentNullException">options</exception>
+    public void SetSeedOptions(SeedOptions options)
     {
-        /// <summary>
-        /// Gets the options.
-        /// </summary>
-        protected SeedOptions? Options { get; private set; }
-
-        /// <summary>
-        /// Set the general seed options.
-        /// </summary>
-        /// <param name="options">The options.</param>
-        /// <exception cref="ArgumentNullException">options</exception>
-        public void SetSeedOptions(SeedOptions options)
-        {
-            Options = options ??
-                throw new ArgumentNullException(nameof(options));
-        }
-
-        /// <summary>
-        /// Gets the type of the fragment.
-        /// </summary>
-        /// <returns>Type.</returns>
-        public abstract Type GetFragmentType();
-
-        /// <summary>
-        /// Creates and seeds a new fragment.
-        /// </summary>
-        /// <param name="item">The item this part should belong to.</param>
-        /// <param name="location">The location.</param>
-        /// <param name="baseText">The base text.</param>
-        /// <returns>A new fragment.</returns>
-        public abstract ITextLayerFragment? GetFragment(
-            IItem item, string location, string baseText);
+        Options = options ??
+            throw new ArgumentNullException(nameof(options));
     }
+
+    /// <summary>
+    /// Gets the type of the fragment.
+    /// </summary>
+    /// <returns>Type.</returns>
+    public abstract Type GetFragmentType();
+
+    /// <summary>
+    /// Creates and seeds a new fragment.
+    /// </summary>
+    /// <param name="item">The item this part should belong to.</param>
+    /// <param name="location">The location.</param>
+    /// <param name="baseText">The base text.</param>
+    /// <returns>A new fragment.</returns>
+    public abstract ITextLayerFragment? GetFragment(
+        IItem item, string location, string baseText);
 }

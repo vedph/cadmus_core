@@ -4,40 +4,39 @@ using System;
 using System.Reflection;
 using Xunit;
 
-namespace Cadmus.Core.Test.Config
+namespace Cadmus.Core.Test.Config;
+
+public sealed class StandardPartTypeProviderTest
 {
-    public sealed class StandardPartTypeProviderTest
+    private static IPartTypeProvider GetProvider()
     {
-        private static IPartTypeProvider GetProvider()
-        {
-            TagAttributeToTypeMap map = new();
-            map.Add(new Assembly[] { typeof(NotePart).Assembly });
-            return new StandardPartTypeProvider(map);
-        }
+        TagAttributeToTypeMap map = new();
+        map.Add(new Assembly[] { typeof(NotePart).Assembly });
+        return new StandardPartTypeProvider(map);
+    }
 
-        [Fact]
-        public void Get_NotExistingPart_Null()
-        {
-            Type? t = GetProvider().Get("not-existing");
+    [Fact]
+    public void Get_NotExistingPart_Null()
+    {
+        Type? t = GetProvider().Get("not-existing");
 
-            Assert.Null(t);
-        }
+        Assert.Null(t);
+    }
 
-        [Fact]
-        public void Get_NotePart_Ok()
-        {
-            Type? t = GetProvider().Get("it.vedph.note");
+    [Fact]
+    public void Get_NotePart_Ok()
+    {
+        Type? t = GetProvider().Get("it.vedph.note");
 
-            Assert.Equal(typeof(NotePart), t);
-        }
+        Assert.Equal(typeof(NotePart), t);
+    }
 
-        [Fact]
-        public void Get_CommentLayerPart_Ok()
-        {
-            Type? t = GetProvider().Get(
-                "it.vedph.token-text-layer:fr.it.vedph.comment");
+    [Fact]
+    public void Get_CommentLayerPart_Ok()
+    {
+        Type? t = GetProvider().Get(
+            "it.vedph.token-text-layer:fr.it.vedph.comment");
 
-            Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);
-        }
+        Assert.Equal(typeof(TokenTextLayerPart<CommentLayerFragment>), t);
     }
 }

@@ -1,53 +1,47 @@
 ﻿using Cadmus.Index.Config;
 using Cadmus.Index.MySql;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
-using Microsoft.Extensions.Configuration;
-using SimpleInjector;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Reflection;
 
-namespace Cadmus.Index.Sql.Test
+namespace Cadmus.Index.Sql.Test;
+
+public sealed class StaticItemIndexFactoryProvider :
+    IItemIndexFactoryProvider
 {
-    public sealed class StaticItemIndexFactoryProvider :
-        IItemIndexFactoryProvider
+    private readonly string _connectionString;
+
+    public StaticItemIndexFactoryProvider(string connectionString)
     {
-        private readonly string _connectionString;
+        _connectionString = connectionString ??
+            throw new ArgumentNullException(nameof(connectionString));
+    }
 
-        public StaticItemIndexFactoryProvider(string connectionString)
+    private static IHost GetHost(string config)
+    {
+        // build the container for seeders
+        Assembly[] indexAssemblies = new[]
         {
-            _connectionString = connectionString ??
-                throw new ArgumentNullException(nameof(connectionString));
-        }
+            // Cadmus.Index.MySql
+            typeof(MySqlItemIndexWriter).Assembly,
+        };
 
-        public ItemIndexFactory GetFactory(string profile)
-        {
-            if (profile == null)
-                throw new ArgumentNullException(nameof(profile));
-
-            // build the container for seeders
-            Assembly[] indexAssemblies = new[]
+        return new HostBuilder()
+            .ConfigureServices((hostContext, services) =>
             {
-                // Cadmus.Index.MySql
-                typeof(MySqlItemIndexWriter).Assembly,
-            };
+                ItemIndexFactory.ConfigureServices(
+                    services,
+                    indexAssemblies);
+            })
+            .AddInMemoryJson(config)
+            .Build();
+    }
 
-            Container container = new();
+    public ItemIndexFactory GetFactory(string profile)
+    {
+        if (profile == null) throw new ArgumentNullException(nameof(profile));
 
-            ItemIndexFactory.ConfigureServices(
-                container,
-                indexAssemblies);
-
-            container.Verify();
-
-            // load seed configuration
-            IConfigurationBuilder builder = new ConfigurationBuilder()
-                .AddInMemoryJson(profile);
-            var configuration = builder.Build();
-
-            return new ItemIndexFactory(
-                container,
-                configuration,
-                _connectionString);
-        }
+        return new ItemIndexFactory(GetHost(profile), _connectionString);
     }
 }

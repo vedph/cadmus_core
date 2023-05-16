@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.0.5
+
+- 2023-05-16: added `CreateIndex` method to `IItemIndexWriter`. This allows forcing the creation of an empty index by the writer, which otherwise lazily creates the index when something is to be written only. This can be useful e.g. when you want to import some preset data into the index graph, before starting to write items to it. To do this you can use the Cadmus CLI tool.
+
 ### 6.0.4
 
 - 2023-05-16: updated Graph packages for index packages.

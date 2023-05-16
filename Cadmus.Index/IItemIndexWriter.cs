@@ -22,6 +22,11 @@ public interface IItemIndexWriter
     object? InitContext { get; set; }
 
     /// <summary>
+    /// Creates the index. If the index already exists, nothing is done.
+    /// </summary>
+    Task CreateIndex();
+
+    /// <summary>
     /// Writes the specified item and all its parts (if any) to the index.
     /// If the index does not exist, it is created.
     /// </summary>

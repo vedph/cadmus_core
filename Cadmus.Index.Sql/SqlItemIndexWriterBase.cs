@@ -150,6 +150,33 @@ public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     }
 
     /// <summary>
+    /// Creates the index if not exists.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Null database name in SQL
+    /// item index writer</exception>
+    public Task CreateIndex()
+    {
+        // ensure the database exists
+        if (!_exists)
+        {
+            Connection?.Close();
+            Connection = null;
+
+            IDbManager manager = GetDbManager();
+            string? name = GetDbName() ?? throw new InvalidOperationException(
+                "Null database name in SQL item index writer");
+            if (!manager.Exists(name))
+            {
+                manager.CreateDatabase(name,
+                    GetSchemaSql(),
+                    InitContext as string);
+                _exists = true;
+            }
+        }
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Ensures that the database exists and the connection is open.
     /// </summary>
     protected override void EnsureConnected()

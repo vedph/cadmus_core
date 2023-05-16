@@ -10,12 +10,12 @@
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
     <Copyright>by Daniele Fusi 2021</Copyright>
-    <Version>6.0.4</Version>
+    <Version>6.0.5</Version>
     <Description>MS SQLServer implementation of Cadmus index.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;SQL index</PackageTags>
-    <FileVersion>6.0.4</FileVersion>
-    <AssemblyVersion>6.0.4</AssemblyVersion>
+    <FileVersion>6.0.5</FileVersion>
+    <AssemblyVersion>6.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

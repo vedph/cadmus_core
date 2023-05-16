@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.Graph.MySql" Version="2.2.2" />
+    <PackageReference Include="Cadmus.Graph.MySql" Version="2.2.3" />
     <PackageReference Include="Fusi.DbManager.MySql" Version="3.0.0" />
   </ItemGroup>
 

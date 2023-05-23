@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.0
+
+- 2023-05-23: updated packages (general parts have been updated for the new [AssertedCompositeId](https://github.com/vedph/cadmus-bricks-shell/blob/master/projects/myrmidon/cadmus-refs-asserted-ids/README.md#asserted-composite-id)).
+
 ### 6.0.5
 
 - 2023-05-16: added `CreateIndex` method to `IItemIndexWriter`. This allows forcing the creation of an empty index by the writer, which otherwise lazily creates the index when something is to be written only. This can be useful e.g. when you want to import some preset data into the index graph, before starting to write items to it. To do this you can use the Cadmus CLI tool.

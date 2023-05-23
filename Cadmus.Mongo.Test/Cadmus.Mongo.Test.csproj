@@ -4,14 +4,14 @@
     <TargetFramework>net7.0</TargetFramework>
 	<Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <Version>6.0.3</Version>
-    <FileVersion>6.0.3</FileVersion>
-    <AssemblyVersion>6.0.3</AssemblyVersion>
+    <Version>6.1.0</Version>
+    <FileVersion>6.1.0</FileVersion>
+    <AssemblyVersion>6.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.General.Parts" Version="4.2.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Cadmus.General.Parts" Version="5.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <PrivateAssets>all</PrivateAssets>

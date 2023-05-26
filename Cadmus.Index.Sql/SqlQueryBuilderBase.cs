@@ -125,16 +125,21 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
     {
         return name.ToLowerInvariant() switch
         {
+            // from pin
+            "itemid" => ETP("pin", "itemId"),
+            "partid" => ETP("pin", "partId"),
+            "parttypeid" or "parttype" or "type" => ETP("pin", "partTypeId"),
+            "roleid" or "role" => ETP("pin", "roleId"),
+            "name" or "n" => ETP("pin", "name"),
+            "value" or "v" => ETP("pin", "value"),
+            "time" or "timeindexed" => ETP("pin", "timeIndexed"),
+            // from item
             "title" or "t" => ETP("item", "title"),
             "description" or "dsc" => ETP("item", "description"),
             "facet" or "facetid" => ETP("item", "facetId"),
             "group" or "groupid" => ETP("item", "groupId"),
             "sortkey" => ETP("item", "sortKey"),
             "flags" => ETP("item", "flags"),
-            "parttypeid" or "parttype" or "type" => ETP("pin", "partTypeId"),
-            "roleid" or "role" => ETP("pin", "roleId"),
-            "name" or "n" => ETP("pin", "name"),
-            "value" or "v" => ETP("pin", "value"),
             _ => null,
         };
     }
@@ -243,7 +248,7 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
 
     private string BuildClause(Match m)
     {
-        string name = GetFieldName(m.Groups["n"].Value)!;
+        string? name = GetFieldName(m.Groups["n"].Value);
         string value = UnescapeValue(m.Groups["v"].Value);
 
         StringBuilder sb = new();

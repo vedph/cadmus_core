@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.1
+
+- 2023-05-26: added more pin fields to `SqlQueryBuilderBase`.
+
 ### 6.1.0
 
 - 2023-05-23: updated packages (general parts have been updated for the new [AssertedCompositeId](https://github.com/vedph/cadmus-bricks-shell/blob/master/projects/myrmidon/cadmus-refs-asserted-ids/README.md#asserted-composite-id)).

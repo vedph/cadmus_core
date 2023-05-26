@@ -1,38 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <IncludeSymbols>true</IncludeSymbols>
-	<Nullable>enable</Nullable>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<TargetFramework>net7.0</TargetFramework>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <Authors>Daniele Fusi</Authors>
-    <Company>Fusi</Company>
-    <Product>Cadmus</Product>
-    <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>6.1.0</Version>
-    <Description>SQL implementation of Cadmus index.</Description>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <PackageTags>Cadmus;SQL index</PackageTags>
-    <FileVersion>6.1.0</FileVersion>
-    <AssemblyVersion>6.1.0</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<Nullable>enable</Nullable>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<TargetFramework>net7.0</TargetFramework>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<Authors>Daniele Fusi</Authors>
+		<Company>Fusi</Company>
+		<Product>Cadmus</Product>
+		<Copyright>by Daniele Fusi 2020</Copyright>
+		<Description>SQL implementation of Cadmus index.</Description>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageTags>Cadmus;SQL index</PackageTags>
+		<Version>6.1.1</Version>
+		<FileVersion>6.1.1</FileVersion>
+		<AssemblyVersion>6.1.1</AssemblyVersion>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>.\bin\Debug\netstandard2.0\Cadmus.Index.Sql.xml</DocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile>.\bin\Debug\netstandard2.0\Cadmus.Index.Sql.xml</DocumentationFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Fusi.DbManager" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.33" />
-    <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Fusi.DbManager" Version="3.0.0" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="MySql.Data" Version="8.0.33" />
+		<PackageReference Include="SqlKata.Execution" Version="2.4.0" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Cadmus.Index\Cadmus.Index.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Index\Cadmus.Index.csproj" />
+	</ItemGroup>
 
 </Project>

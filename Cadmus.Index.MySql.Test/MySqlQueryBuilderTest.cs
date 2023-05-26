@@ -43,9 +43,9 @@ public sealed class MySqlQueryBuilderTest
     private const string SQL_PIN_ORDER =
         "ORDER BY `pin`.`name`,`pin`.`value`,`pin`.`id`";
 
-    private MySqlQueryBuilder GetBuilder()
+    private static MySqlQueryBuilder GetBuilder()
     {
-        MySqlQueryBuilder builder = new MySqlQueryBuilder();
+        MySqlQueryBuilder builder = new();
         builder.SetFlagDefinitions(new[]
         {
             new FlagDefinition

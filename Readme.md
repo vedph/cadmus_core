@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.2
+
+- 2023-05-29: updated packages.
+
 ### 6.1.1
 
 - 2023-05-26: added more pin fields to `SqlQueryBuilderBase`.

@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<TargetFramework>net7.0</TargetFramework>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<Authors>Daniele Fusi</Authors>
+		<Company>Fusi</Company>
+		<Product>Cadmus</Product>
+		<Copyright>by Daniele Fusi 2023</Copyright>
+		<Description>PostgreSQL implementation of Cadmus index.</Description>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageTags>Cadmus;SQL index</PackageTags>
+		<Version>0.0.1</Version>
+		<FileVersion>0.0.1</FileVersion>
+		<AssemblyVersion>0.0.1</AssemblyVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Assets\Schema.pgsql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Assets\Schema.pgsql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fusi.DbManager.PgSql" Version="3.0.0" />
+		<PackageReference Include="Npgsql" Version="7.0.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Index.Sql\Cadmus.Index.Sql.csproj" />
+		<ProjectReference Include="..\Cadmus.Index\Cadmus.Index.csproj" />
+	</ItemGroup>
+
+</Project>

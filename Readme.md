@@ -6,6 +6,8 @@ Cadmus data layer and business layer.
 
 ## History
 
+- 2023-06-07: adding PostgreSql support.
+
 ### 6.1.3
 
 - 2023-05-31: updated packages.

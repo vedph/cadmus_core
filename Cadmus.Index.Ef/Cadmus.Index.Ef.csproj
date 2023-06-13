@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Cadmus.Index.Sql\Cadmus.Index.Sql.csproj" />
 	  <ProjectReference Include="..\Cadmus.Index\Cadmus.Index.csproj" />
 	</ItemGroup>
 

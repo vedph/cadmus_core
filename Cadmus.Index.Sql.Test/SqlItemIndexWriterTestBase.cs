@@ -1,6 +1,5 @@
-using Cadmus.Core;
+﻿using Cadmus.Core;
 using Cadmus.General.Parts;
-using Cadmus.Index.Sql.Test;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -9,30 +8,25 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Xunit;
+using static Google.Protobuf.Reflection.UninterpretedOption.Types;
 
-namespace Cadmus.Index.MySql.Test;
+namespace Cadmus.Index.Sql.Test;
 
-[Collection(nameof(NonParallelResourceCollection))]
-public sealed class MySqlItemIndexWriterTest
+public abstract class SqlItemIndexWriterTestBase
 {
-    private const string CST = "Server=localhost;Database={0};Uid=root;Pwd=mysql;";
-    private const string DB_NAME = "cadmus-index-test";
-    static private readonly string CS = string.Format(CST, DB_NAME);
+    protected string ConnectionString { get; }
 
-    #region Helpers
-    private static IDbConnection GetConnection() => new MySqlConnection(CS);
-
-    private static IItemIndexWriter GetWriter()
+    protected SqlItemIndexWriterTestBase(string connectionString)
     {
-        MySqlItemIndexWriter writer = new();
-        writer.Configure(new Sql.SqlOptions
-        {
-            ConnectionString = CS
-        });
-        return writer;
+        ConnectionString = connectionString
+            ?? throw new ArgumentNullException(nameof(connectionString));
     }
 
-    private static IItem GetItem(int n)
+    protected abstract IDbConnection GetConnection();
+
+    protected abstract IItemIndexWriter GetWriter();
+
+    protected static IItem GetItem(int n)
     {
         return new Item
         {
@@ -40,13 +34,13 @@ public sealed class MySqlItemIndexWriterTest
             Description = "Dsc for item " + n,
             FacetId = "default",
             SortKey = $"{n:000}",
-            Flags = ((n & 1) == 1)? 1 : 0,
+            Flags = ((n & 1) == 1) ? 1 : 0,
             CreatorId = "creator",
             UserId = "user"
         };
     }
 
-    private static void AssertItemsEqual(IItem expected, IItem actual)
+    protected static void AssertItemsEqual(IItem expected, IItem actual)
     {
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.Title, actual.Title);
@@ -86,8 +80,8 @@ public sealed class MySqlItemIndexWriterTest
     {
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
-        cmd.CommandText = "SELECT title,description,facetId,groupId,\n" +
-            "sortKey,flags,timeCreated,creatorId,timeModified\n" +
+        cmd.CommandText = "SELECT title,description,facet_id,group_id,\n" +
+            "sort_key,flags,time_created,creator_id,time_modified\n" +
             "FROM item WHERE id=@id;";
         cmd.Parameters.Add(new MySqlParameter
         {
@@ -104,7 +98,7 @@ public sealed class MySqlItemIndexWriterTest
             Title = reader.GetString(0),
             Description = reader.GetString(1),
             FacetId = reader.GetString(2),
-            GroupId = reader.IsDBNull(3)? null : reader.GetString(3),
+            GroupId = reader.IsDBNull(3) ? null : reader.GetString(3),
             SortKey = reader.GetString(4),
             Flags = reader.GetInt32(5),
             TimeCreated = reader.GetDateTime(6),
@@ -120,10 +114,10 @@ public sealed class MySqlItemIndexWriterTest
     {
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
-        cmd.CommandText = "SELECT COUNT(id) FROM pin WHERE itemId=@itemId;";
+        cmd.CommandText = "SELECT COUNT(id) FROM pin WHERE item_id=@item_id;";
         cmd.Parameters.Add(new MySqlParameter
         {
-            ParameterName = "@itemId",
+            ParameterName = "@item_id",
             Value = itemId,
             DbType = DbType.String,
         });
@@ -148,10 +142,10 @@ public sealed class MySqlItemIndexWriterTest
 
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
-        cmd.CommandText = "SELECT name,value FROM pin WHERE itemId=@itemId;";
+        cmd.CommandText = "SELECT name,value FROM pin WHERE item_id=@item_id;";
         cmd.Parameters.Add(new MySqlParameter
         {
-            ParameterName = "@itemId",
+            ParameterName = "@item_id",
             Value = itemId,
             DbType = DbType.String,
         });
@@ -176,11 +170,9 @@ public sealed class MySqlItemIndexWriterTest
             }
         }
     }
-    #endregion
 
     #region WriteItem
-    [Fact]
-    public void WriteItem_NoParts_Ok()
+    protected void DoWriteItem_NoParts_Ok()
     {
         // an item without parts get written in item, nothing in pin
         IItemIndexWriter writer = GetWriter();

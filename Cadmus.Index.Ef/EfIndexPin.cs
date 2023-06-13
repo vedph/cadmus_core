@@ -2,6 +2,9 @@
 
 namespace Cadmus.Index.Ef;
 
+/// <summary>
+/// Index pin entity.
+/// </summary>
 public class EfIndexPin
 {
     public int Id { get; set; }

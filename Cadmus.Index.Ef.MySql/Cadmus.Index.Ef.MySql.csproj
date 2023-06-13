@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\Schema.mysql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Assets\Schema.mysql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
+		<PackageReference Include="Fusi.DbManager.MySql" Version="3.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Index.Ef\Cadmus.Index.Ef.csproj" />
+	</ItemGroup>
+
+</Project>

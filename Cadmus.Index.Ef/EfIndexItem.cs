@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Cadmus.Index.Ef;
 
+/// <summary>
+/// Index item entity.
+/// </summary>
 public class EfIndexItem
 {
     public string Id { get; set; }

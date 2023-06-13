@@ -1,0 +1,96 @@
+﻿-- --------------------------------------------------------
+-- index 
+-- --------------------------------------------------------
+
+-- item
+CREATE TABLE `item` (
+  `id` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `description` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `facet_id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `group_id` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `sort_key` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `flags` int NOT NULL,
+  `time_created` datetime NOT NULL,
+  `creator_id` varchar(100),
+  `time_modified` datetime NOT NULL,
+  `user_id` varchar(100),
+  PRIMARY KEY (`id`),
+  KEY `title_ix` (`title`) /*!80000 INVISIBLE */,
+  KEY `facet_id_ix` (`facet_id`) /*!80000 INVISIBLE */,
+  KEY `group_id_ix` (`group_id`) /*!80000 INVISIBLE */,
+  KEY `sort_key-ix` (`sort_key`) /*!80000 INVISIBLE */,
+  KEY `flags-ix` (`flags`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- pin
+CREATE TABLE `pin` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `item_id` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `part_id` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `part_type_id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `part_role_id` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `value` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `timeIndexed` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `part_type_id_ix` (`part_type_id`) /*!80000 INVISIBLE */,
+  KEY `part_role_id_ix` (`part_role_id`) /*!80000 INVISIBLE */,
+  KEY `name_ix` (`name`) /*!80000 INVISIBLE */,
+  KEY `value_ix` (`value`),
+  KEY `pin_item_id_fk` (`item_id`),
+  CONSTRAINT `pin_item_id_fk` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+-- index functions 
+-- --------------------------------------------------------
+
+DELIMITER ;;
+CREATE FUNCTION `COMPARE_STRING`( s1 text, s2 text) RETURNS int
+    DETERMINISTIC
+BEGIN 
+    DECLARE s1_len, s2_len, i, j, c, c_temp, cost INT; 
+    DECLARE s1_char CHAR; 
+    DECLARE cv0, cv1 text; 
+    SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), cv1 = 0x00, j = 1, i = 1, c = 0; 
+    IF s1 = s2 THEN 
+      RETURN 0; 	
+    ELSEIF s1_len = 0 THEN 
+      RETURN s2_len; 
+    ELSEIF s2_len = 0 THEN 
+      RETURN s1_len; 
+    ELSE 
+      WHILE j <= s2_len DO 
+        SET cv1 = CONCAT(cv1, UNHEX(HEX(j))), j = j + 1; 
+      END WHILE; 
+      WHILE i <= s1_len DO 
+        SET s1_char = SUBSTRING(s1, i, 1), c = i, cv0 = UNHEX(HEX(i)), j = 1; 
+        WHILE j <= s2_len DO 
+          SET c = c + 1; 
+          IF s1_char = SUBSTRING(s2, j, 1) THEN  
+            SET cost = 0; ELSE SET cost = 1; 
+          END IF; 
+          SET c_temp = CONV(HEX(SUBSTRING(cv1, j, 1)), 16, 10) + cost; 
+          IF c > c_temp THEN SET c = c_temp; END IF; 
+            SET c_temp = CONV(HEX(SUBSTRING(cv1, j+1, 1)), 16, 10) + 1; 
+            IF c > c_temp THEN  
+              SET c = c_temp;  
+            END IF; 
+            SET cv0 = CONCAT(cv0, UNHEX(HEX(c))), j = j + 1; 
+        END WHILE; 
+        SET cv1 = cv0, i = i + 1; 
+      END WHILE; 
+    END IF; 
+    RETURN c; 
+  END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE FUNCTION `SIMILARITY_STRING`(a text, b text) RETURNS double
+    DETERMINISTIC
+BEGIN
+RETURN ABS(((COMPARE_STRING(a, b) / length(b)) * 100) - 100);
+END ;;
+DELIMITER ;

@@ -32,7 +32,7 @@ CREATE TABLE `pin` (
   `part_role_id` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `value` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `timeIndexed` datetime NOT NULL,
+  `time_indexed` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `part_type_id_ix` (`part_type_id`) /*!80000 INVISIBLE */,
   KEY `part_role_id_ix` (`part_role_id`) /*!80000 INVISIBLE */,

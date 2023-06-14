@@ -3,17 +3,17 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using Xunit;
 
-namespace Cadmus.Index.MySql.Test;
+namespace Cadmus.Index.Ef.MySql.Test;
 
 [Collection(nameof(NonParallelResourceCollection))]
-public sealed class MySqlItemIndexWriterTest : SqlItemIndexWriterTestBase,
+public class EfMySqlItemIndexWriterTest : SqlItemIndexWriterTestBase,
     IClassFixture<MySqlFixture>
 {
     private const string CST = "Server=localhost;Database={0};Uid=root;Pwd=mysql;";
     private const string DB_NAME = "cadmus-index-test";
     static private readonly string CS = string.Format(CST, DB_NAME);
 
-    public MySqlItemIndexWriterTest(MySqlFixture fixture) : base(CS, true)
+    public EfMySqlItemIndexWriterTest(MySqlFixture fixture) : base(CS, false)
     {
         fixture.DropDatabase();
     }
@@ -23,8 +23,8 @@ public sealed class MySqlItemIndexWriterTest : SqlItemIndexWriterTestBase,
 
     protected override IItemIndexWriter GetWriter()
     {
-        MySqlItemIndexWriter writer = new();
-        writer.Configure(new Sql.SqlOptions
+        EfMySqlItemIndexWriter writer = new();
+        writer.Configure(new EfIndexRepositoryOptions
         {
             ConnectionString = CS
         });

@@ -1,27 +1,27 @@
 ﻿using Fusi.DbManager;
-using Fusi.DbManager.MySql;
-using Fusi.Tools.Configuration;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Text;
+using System;
+using Fusi.Tools.Configuration;
+using Fusi.DbManager.PgSql;
 
-namespace Cadmus.Index.Ef.MySql;
+namespace Cadmus.Index.Ef.PgSql;
 
 /// <summary>
-/// MySql implementation of <see cref="EfItemIndexWriter"/>.
+/// PostgreSQl implementation of <see cref="EfItemIndexWriter"/>.
 /// </summary>
 /// <seealso cref="EfItemIndexWriter" />
-[Tag("item-index-writer.ef-my")]
-public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
+[Tag("item-index-writer.ef-pg")]
+public sealed class EfPgSqlItemIndexWriter : EfItemIndexWriter
 {
     private static string LoadResource(string name)
     {
         // load resource text from assembly manifest resource
         using StreamReader reader = new(Assembly.GetExecutingAssembly()
-            .GetManifestResourceStream($"Cadmus.Index.Ef.MySql.Assets.{name}")!,
+            .GetManifestResourceStream($"Cadmus.Index.Ef.PgSql.Assets.{name}")!,
             Encoding.UTF8);
         return reader.ReadToEnd();
     }
@@ -30,7 +30,7 @@ public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
     /// Gets the MySql schema used to populate a created database.
     /// </summary>
     /// <returns>SQL code.</returns>
-    public static string GetMySqlSchema() => LoadResource("Schema.mysql");
+    public static string GetPgSqlSchema() => LoadResource("Schema.mysql");
 
     /// <summary>
     /// Gets a new DB context configured for <see cref="ConnectionString" />.
@@ -47,7 +47,7 @@ public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
         }
 
         DbContextOptionsBuilder<CadmusIndexDbContext> optionsBuilder = new();
-        optionsBuilder.UseMySQL(ConnectionString);
+        optionsBuilder.UseNpgsql(ConnectionString);
         optionsBuilder.EnableDetailedErrors();
         optionsBuilder.EnableSensitiveDataLogging();
         return new CadmusIndexDbContext(optionsBuilder.Options);
@@ -59,7 +59,7 @@ public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
     /// <returns>Database manager.</returns>
     protected override IDbManager GetDbManager()
     {
-        return new MySqlDbManager(ConnectionString);
+        return new PgSqlDbManager(ConnectionString);
     }
 
     /// <summary>
@@ -77,5 +77,6 @@ public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
     /// Gets the schema SQL used to populate a created database.
     /// </summary>
     /// <returns>SQL code.</returns>
-    protected override string GetSchemaSql() => GetMySqlSchema();
+    protected override string GetSchemaSql() => GetPgSqlSchema();
+
 }

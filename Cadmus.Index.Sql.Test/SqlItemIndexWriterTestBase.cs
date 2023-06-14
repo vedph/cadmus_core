@@ -8,18 +8,20 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Xunit;
-using static Google.Protobuf.Reflection.UninterpretedOption.Types;
 
 namespace Cadmus.Index.Sql.Test;
 
 public abstract class SqlItemIndexWriterTestBase
 {
+    private readonly bool _legacy;
+
     protected string ConnectionString { get; }
 
-    protected SqlItemIndexWriterTestBase(string connectionString)
+    protected SqlItemIndexWriterTestBase(string connectionString, bool legacy)
     {
         ConnectionString = connectionString
             ?? throw new ArgumentNullException(nameof(connectionString));
+        _legacy = legacy;
     }
 
     protected abstract IDbConnection GetConnection();
@@ -76,13 +78,14 @@ public abstract class SqlItemIndexWriterTestBase
         return result != null;
     }
 
-    private static void ExpectItemInIndex(IItem item, IDbConnection connection)
+    private void ExpectItemInIndex(IItem item, IDbConnection connection)
     {
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
         cmd.CommandText = "SELECT title,description,facet_id,group_id,\n" +
             "sort_key,flags,time_created,creator_id,time_modified\n" +
             "FROM item WHERE id=@id;";
+        if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
         cmd.Parameters.Add(new MySqlParameter
         {
             ParameterName = "@id",
@@ -109,15 +112,16 @@ public abstract class SqlItemIndexWriterTestBase
         AssertItemsEqual(item, actual);
     }
 
-    private static void ExpectItemPinCount(string itemId, int count,
+    private void ExpectItemPinCount(string itemId, int count,
         IDbConnection connection)
     {
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
         cmd.CommandText = "SELECT COUNT(id) FROM pin WHERE item_id=@item_id;";
+        if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
         cmd.Parameters.Add(new MySqlParameter
         {
-            ParameterName = "@item_id",
+            ParameterName = _legacy? "@itemid" : "@item_id",
             Value = itemId,
             DbType = DbType.String,
         });
@@ -127,8 +131,8 @@ public abstract class SqlItemIndexWriterTestBase
         Assert.Equal(count, actual!.Value);
     }
 
-    private static void ExpectItemPins(string itemId,
-        IList<string> pins, IDbConnection connection)
+    private void ExpectItemPins(string itemId, IList<string> pins,
+        IDbConnection connection)
     {
         List<Tuple<string, string>> expectedPins = new(pins.Count);
         foreach (string pin in pins)
@@ -143,9 +147,10 @@ public abstract class SqlItemIndexWriterTestBase
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
         cmd.CommandText = "SELECT name,value FROM pin WHERE item_id=@item_id;";
+        if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
         cmd.Parameters.Add(new MySqlParameter
         {
-            ParameterName = "@item_id",
+            ParameterName = _legacy? "@itemid" : "@item_id",
             Value = itemId,
             DbType = DbType.String,
         });
@@ -188,8 +193,7 @@ public abstract class SqlItemIndexWriterTestBase
         ExpectItemPinCount(item.Id, 0, connection);
     }
 
-    [Fact]
-    public void WriteItem_Parts_Ok()
+    protected void DoWriteItem_Parts_Ok()
     {
         // an item with parts get written in item, its part's pins in pin
         IItemIndexWriter writer = GetWriter();
@@ -216,8 +220,7 @@ public abstract class SqlItemIndexWriterTestBase
         ExpectItemPins(item.Id, new[] { "tag=tag" }, connection);
     }
 
-    [Fact]
-    public void WriteItem_ExistingWithoutParts_Ok()
+    protected void DoWriteItem_ExistingWithoutParts_Ok()
     {
         // an item with parts is written; then, the item without parts
         // gets written again to update its metadata only; pin unchanged.
@@ -254,8 +257,7 @@ public abstract class SqlItemIndexWriterTestBase
         }, connection);
     }
 
-    [Fact]
-    public void WriteItem_ExistingWithParts_Ok()
+    protected void DoWriteItem_ExistingWithParts_Ok()
     {
         // an item with a part gets written; then, it is written with
         // another part added. The item is just updated, each part's pins
@@ -312,8 +314,7 @@ public abstract class SqlItemIndexWriterTestBase
     #endregion
 
     #region WriteItems
-    [Fact]
-    public void WriteItems_Ok()
+    protected void DoWriteItems_Ok()
     {
         // 2 items get written with their parts.
         IItemIndexWriter writer = GetWriter();
@@ -360,8 +361,7 @@ public abstract class SqlItemIndexWriterTestBase
     #endregion
 
     #region DeleteItem
-    [Fact]
-    public void DeleteItem_NotExisting_Nope()
+    protected void DoDeleteItem_NotExisting_Nope()
     {
         // a non-existing item is deleted: nothing happens
         IItemIndexWriter writer = GetWriter();
@@ -374,8 +374,7 @@ public abstract class SqlItemIndexWriterTestBase
         Assert.Equal(0, GetItemCount(connection));
     }
 
-    [Fact]
-    public void DeleteItem_Existing_Ok()
+    protected void DoDeleteItem_Existing_Ok()
     {
         // an existing item with its pins is deleted,
         // all other data are unchanged.
@@ -424,8 +423,7 @@ public abstract class SqlItemIndexWriterTestBase
     #endregion
 
     #region DeletePart
-    [Fact]
-    public void DeletePart_NotExisting_Nope()
+    protected void DoDeletePart_NotExisting_Nope()
     {
         // a non-existing part is deleted: nothing happens
         IItemIndexWriter writer = GetWriter();
@@ -438,8 +436,7 @@ public abstract class SqlItemIndexWriterTestBase
         Assert.Equal(0, GetItemCount(connection));
     }
 
-    [Fact]
-    public void DeletePart_Existing_Ok()
+    protected void DoDeletePart_Existing_Ok()
     {
         // an existing item with 2 parts has 1 of its part deleted,
         // the other part's pins are unchanged.

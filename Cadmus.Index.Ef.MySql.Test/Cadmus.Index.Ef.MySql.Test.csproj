@@ -2,23 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-	<Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <Version>6.1.4</Version>
     <FileVersion>6.1.4</FileVersion>
     <AssemblyVersion>6.1.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Thesauri.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\Thesauri.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Cadmus.General.Parts" Version="5.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -32,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cadmus.Index.MySql\Cadmus.Index.MySql.csproj" />
+    <ProjectReference Include="..\Cadmus.Index.Ef.MySql\Cadmus.Index.Ef.MySql.csproj" />
     <ProjectReference Include="..\Cadmus.Index.Sql.Test\Cadmus.Index.Sql.Test.csproj" />
   </ItemGroup>
 

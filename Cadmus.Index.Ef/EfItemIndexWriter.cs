@@ -1,6 +1,8 @@
 ﻿using Cadmus.Core;
 using Fusi.DbManager;
 using Fusi.Tools;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,54 +106,8 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
         return Task.CompletedTask;
     }
 
-    /// <summary>
-    /// Bulk-writes the specified items, assuming that they do not exist.
-    /// This can be used to populate an empty index with higher performance.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    /// <param name="cancel">The cancellation token.</param>
-    /// <param name="progress">The optional progress reporter.</param>
-    /// <exception cref="ArgumentNullException">items</exception>
-    public Task WriteItems(IEnumerable<IItem> items, CancellationToken cancel,
-        IProgress<ProgressReport>? progress = null)
+    private static void WriteItem(IItem item, CadmusIndexDbContext context)
     {
-        if (items == null) throw new ArgumentNullException(nameof(items));
-
-        CreateIndex();
-
-        using CadmusIndexDbContext context = GetContext();
-        context.AddRange(items);
-        context.SaveChanges();
-
-        return Task.CompletedTask;
-    }
-
-    private static EfIndexPin GetIndexPin(DataPin pin, string partTypeId,
-        DateTime now) => new()
-        {
-            ItemId = pin.ItemId!,
-            PartId = pin.PartId!,
-            PartRoleId = pin.RoleId,
-            PartTypeId = partTypeId,
-            Name = pin.Name!,
-            Value = pin.Value!,
-            TimeIndexed = now
-        };
-
-    /// <summary>
-    /// Writes the specified item to the index.
-    /// If the index does not exist, it is created.
-    /// </summary>
-    /// <param name="item">The item.</param>
-    /// <exception cref="ArgumentNullException">item</exception>
-    public Task WriteItem(IItem item)
-    {
-        if (item == null) throw new ArgumentNullException(nameof(item));
-
-        CreateIndex();
-
-        using CadmusIndexDbContext context = GetContext();
-
         EfIndexItem? old = context.Items.Find(item.Id);
         if (old != null)
         {
@@ -176,18 +132,104 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
             foreach (IPart part in item.Parts)
             {
                 // delete all the part's pins
-                context.Pins.RemoveRange(
-                    context.Pins.Where(p => p.PartTypeId == part.Id));
+                context.Pins.Where(p => p.PartId == part.Id).ExecuteDelete();
 
                 // insert all the new part's pins
                 context.Pins.AddRange(part.GetDataPins(item)
                     .Select(p => GetIndexPin(p, part.TypeId, now)));
             }
         }
+    }
 
-        context.SaveChanges();
+    /// <summary>
+    /// Writes the specified item to the index.
+    /// If the index does not exist, it is created.
+    /// </summary>
+    /// <param name="item">The item.</param>
+    /// <exception cref="ArgumentNullException">item</exception>
+    public Task WriteItem(IItem item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+
+        CreateIndex();
+
+        using CadmusIndexDbContext context = GetContext();
+        using IDbContextTransaction trans = context.Database.BeginTransaction();
+
+        try
+        {
+            WriteItem(item, context);
+            context.SaveChanges();
+            trans.Commit();
+        }
+        catch (Exception)
+        {
+            trans.Rollback();
+            throw;
+        }
         return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// Bulk-writes the specified items, assuming that they do not exist.
+    /// This can be used to populate an empty index with higher performance.
+    /// </summary>
+    /// <param name="items">The items.</param>
+    /// <param name="cancel">The cancellation token.</param>
+    /// <param name="progress">The optional progress reporter.</param>
+    /// <exception cref="ArgumentNullException">items</exception>
+    public Task WriteItems(IEnumerable<IItem> items, CancellationToken cancel,
+        IProgress<ProgressReport>? progress = null)
+    {
+        if (items == null) throw new ArgumentNullException(nameof(items));
+
+        CreateIndex();
+
+        using CadmusIndexDbContext context = GetContext();
+        using IDbContextTransaction trans = context.Database.BeginTransaction();
+        try
+        {
+            ProgressReport? report = progress != null ? new ProgressReport() : null;
+            items = items.ToList();
+            int n = 0;
+            foreach (IItem item in items)
+            {
+                WriteItem(item, context);
+                if (progress != null && ++n % 10 == 0)
+                {
+                    report!.Percent = n * 100 / items.Count();
+                    progress.Report(report);
+                }
+            }
+            context.SaveChanges();
+            trans.Commit();
+
+            if (progress != null)
+            {
+                report!.Percent = 100;
+                progress.Report(report);
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception)
+        {
+            trans.Rollback();
+            throw;
+        }
+    }
+
+    private static EfIndexPin GetIndexPin(DataPin pin, string partTypeId,
+        DateTime now) => new()
+        {
+            ItemId = pin.ItemId!,
+            PartId = pin.PartId!,
+            PartRoleId = pin.RoleId,
+            PartTypeId = partTypeId,
+            Name = pin.Name!,
+            Value = pin.Value!,
+            TimeIndexed = now
+        };
 
     /// <summary>
     /// Deletes the item with the specified identifier with all its pins.
@@ -200,13 +242,25 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
 
         CreateIndex();
         using CadmusIndexDbContext context = GetContext();
-        EfIndexItem? item = context.Items.Find(itemId);
-        if (item != null)
+        using IDbContextTransaction trans = context.Database.BeginTransaction();
+
+        try
         {
+            EfIndexItem? item = context.Items.Find(itemId);
+            if (item == null) return Task.CompletedTask;
+
+            context.Pins.Where(p => p.ItemId == itemId).ExecuteDelete();
             context.Items.Remove(item);
+
             context.SaveChanges();
+            trans.Commit();
+            return Task.CompletedTask;
         }
-        return Task.CompletedTask;
+        catch (Exception)
+        {
+            trans.Rollback();
+            throw;
+        }
     }
 
     /// <summary>
@@ -222,17 +276,26 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
 
         CreateIndex();
         using CadmusIndexDbContext context = GetContext();
+        using IDbContextTransaction trans = context.Database.BeginTransaction();
 
-        // delete all the part's pins
-        context.Pins.RemoveRange(
-            context.Pins.Where(p => p.PartTypeId == part.Id));
+        try
+        {
+            // delete all the part's pins
+            context.Pins.Where(p => p.PartId == part.Id).ExecuteDelete();
 
-        // insert all the new part's pins
-        DateTime now = DateTime.UtcNow;
-        context.Pins.AddRange(part.GetDataPins(item)
-            .Select(p => GetIndexPin(p, part.TypeId, now)));
+            // insert all the new part's pins
+            DateTime now = DateTime.UtcNow;
+            context.Pins.AddRange(part.GetDataPins(item)
+                .Select(p => GetIndexPin(p, part.TypeId, now)));
 
-        context.SaveChanges();
+            context.SaveChanges();
+            trans.Commit();
+        }
+        catch (Exception)
+        {
+            trans.Rollback();
+            throw;
+        }
         return Task.CompletedTask;
     }
 
@@ -246,10 +309,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
         CreateIndex();
 
         using CadmusIndexDbContext context = GetContext();
-        context.Pins.RemoveRange(
-            context.Pins.Where(p => p.PartTypeId == partId));
-        context.SaveChanges();
-
+        context.Pins.Where(p => p.PartId == partId).ExecuteDelete();
         return Task.CompletedTask;
     }
 
@@ -260,9 +320,10 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// item index writer</exception>
     public Task Clear()
     {
+        string name = GetDbName() ?? throw new InvalidOperationException(
+                           "Null database name in SQL item index writer");
         IDbManager manager = GetDbManager();
-        manager.ClearDatabase(GetDbName() ?? throw new InvalidOperationException(
-                       "Null database name in SQL item index writer"));
+        if (manager.Exists(name)) manager.ClearDatabase(name);
         return Task.CompletedTask;
     }
 

@@ -38,7 +38,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.PgSql", "Cadmu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Ef", "Cadmus.Index.Ef\Cadmus.Index.Ef.csproj", "{13A42095-E62C-476F-88F8-54381C4BE045}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.Ef.MySql", "Cadmus.Index.Ef.MySql\Cadmus.Index.Ef.MySql.csproj", "{ECD02248-6152-415F-8863-DDBE30D68DF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Ef.MySql", "Cadmus.Index.Ef.MySql\Cadmus.Index.Ef.MySql.csproj", "{ECD02248-6152-415F-8863-DDBE30D68DF5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cadmus.Index.Ef.MySql.Test", "Cadmus.Index.Ef.MySql.Test\Cadmus.Index.Ef.MySql.Test.csproj", "{F70CA2FC-A498-413F-BDE0-C878550E15F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Index.Ef.PgSql", "Cadmus.Index.Ef.PgSql\Cadmus.Index.Ef.PgSql.csproj", "{CA0803A2-A768-4240-968E-DD30F766D550}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +106,14 @@ Global
 		{ECD02248-6152-415F-8863-DDBE30D68DF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECD02248-6152-415F-8863-DDBE30D68DF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECD02248-6152-415F-8863-DDBE30D68DF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F70CA2FC-A498-413F-BDE0-C878550E15F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F70CA2FC-A498-413F-BDE0-C878550E15F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F70CA2FC-A498-413F-BDE0-C878550E15F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F70CA2FC-A498-413F-BDE0-C878550E15F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA0803A2-A768-4240-968E-DD30F766D550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA0803A2-A768-4240-968E-DD30F766D550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA0803A2-A768-4240-968E-DD30F766D550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA0803A2-A768-4240-968E-DD30F766D550}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

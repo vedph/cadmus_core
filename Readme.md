@@ -6,7 +6,9 @@ Cadmus data layer and business layer.
 
 ## History
 
-- 2023-06-13: adding EF-based index writer/reader.
+- 2023-06-13:
+  - adding EF-based index writer/reader.
+  - updated packages and version numbers (packages push still to be done).
 - 2023-06-07: adding PostgreSql support.
 
 ### 6.1.3

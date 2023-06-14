@@ -1,6 +1,5 @@
 ﻿using Cadmus.Core;
 using Cadmus.General.Parts;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -59,8 +58,7 @@ public abstract class SqlItemIndexWriterTestBase
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
         cmd.CommandText = "SELECT COUNT(id) FROM item;";
-        int? result = cmd.ExecuteScalar() as int?;
-        return result ?? 0;
+        return Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
     }
 
     private static bool ItemExists(string itemId, IDbConnection connection)
@@ -68,14 +66,13 @@ public abstract class SqlItemIndexWriterTestBase
         IDbCommand cmd = connection.CreateCommand();
         cmd.Connection = connection;
         cmd.CommandText = "SELECT 1 FROM item WHERE id=@id;";
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@id",
-            Value = itemId,
-            DbType = DbType.String,
-        });
-        long? result = cmd.ExecuteScalar() as long?;
-        return result != null;
+        IDbDataParameter p = cmd.CreateParameter();
+        p.ParameterName = "@id";
+        p.Value = itemId;
+        p.DbType = DbType.String;
+        cmd.Parameters.Add(p);
+        int result = Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
+        return result > 0;
     }
 
     private void ExpectItemInIndex(IItem item, IDbConnection connection)
@@ -86,12 +83,11 @@ public abstract class SqlItemIndexWriterTestBase
             "sort_key,flags,time_created,creator_id,time_modified\n" +
             "FROM item WHERE id=@id;";
         if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@id",
-            Value = item.Id,
-            DbType = DbType.String,
-        });
+        IDbDataParameter p = cmd.CreateParameter();
+        p.ParameterName = _legacy? "@itemid" : "@id";
+        p.Value = item.Id;
+        p.DbType = DbType.String;
+        cmd.Parameters.Add(p);
         using IDataReader reader = cmd.ExecuteReader();
         Assert.True(reader.Read());
 
@@ -119,16 +115,14 @@ public abstract class SqlItemIndexWriterTestBase
         cmd.Connection = connection;
         cmd.CommandText = "SELECT COUNT(id) FROM pin WHERE item_id=@item_id;";
         if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = _legacy? "@itemid" : "@item_id",
-            Value = itemId,
-            DbType = DbType.String,
-        });
+        var p = cmd.CreateParameter();
+        p.ParameterName = _legacy? "@itemid" : "@item_id";
+        p.Value = itemId;
+        p.DbType = DbType.String;
+        cmd.Parameters.Add(p);
 
-        int? actual = cmd.ExecuteScalar() as int?;
-        if (count == 0 && actual == null) return;
-        Assert.Equal(count, actual!.Value);
+        int actual = Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
+        Assert.Equal(count, actual);
     }
 
     private void ExpectItemPins(string itemId, IList<string> pins,
@@ -148,12 +142,11 @@ public abstract class SqlItemIndexWriterTestBase
         cmd.Connection = connection;
         cmd.CommandText = "SELECT name,value FROM pin WHERE item_id=@item_id;";
         if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = _legacy? "@itemid" : "@item_id",
-            Value = itemId,
-            DbType = DbType.String,
-        });
+        var p = cmd.CreateParameter();
+        p.ParameterName = _legacy? "@itemid" : "@item_id";
+        p.Value = itemId;
+        p.DbType = DbType.String;
+        cmd.Parameters.Add(p);
         using IDataReader reader = cmd.ExecuteReader();
         List<Tuple<string, string?>> actualPins = new();
         while (reader.Read())

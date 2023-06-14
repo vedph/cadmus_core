@@ -33,6 +33,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Cadmus.Index.Ef\Cadmus.Index.Ef.csproj" />
+		<ProjectReference Include="..\Cadmus.Index.PgSql\Cadmus.Index.PgSql.csproj" />
 	</ItemGroup>
 
 </Project>

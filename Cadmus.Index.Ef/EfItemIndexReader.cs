@@ -14,8 +14,12 @@ namespace Cadmus.Index.Ef;
 /// <seealso cref="IItemIndexReader" />
 public abstract class EfItemIndexReader : IItemIndexReader
 {
-    public string ConnectionString { get; private set; }
     private ISqlQueryBuilder? _queryBuilder;
+
+    /// <summary>
+    /// Gets the connection string.
+    /// </summary>
+    public string ConnectionString { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EfItemIndexReader"/> class.

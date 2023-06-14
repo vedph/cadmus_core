@@ -32,6 +32,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Cadmus.Index.Ef\Cadmus.Index.Ef.csproj" />
+		<ProjectReference Include="..\Cadmus.Index.MySql\Cadmus.Index.MySql.csproj" />
 	</ItemGroup>
 
 </Project>

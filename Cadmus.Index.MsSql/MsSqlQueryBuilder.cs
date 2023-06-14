@@ -16,7 +16,7 @@ public sealed class MsSqlQueryBuilder : SqlQueryBuilderBase
     /// Initializes a new instance of the <see cref="MsSqlQueryBuilder"/>
     /// class.
     /// </summary>
-    public MsSqlQueryBuilder(): base(new MsSqlTokenHelper())
+    public MsSqlQueryBuilder(): base(new MsSqlTokenHelper(), true)
     {
     }
 

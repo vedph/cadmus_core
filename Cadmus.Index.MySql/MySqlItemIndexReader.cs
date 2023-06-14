@@ -49,5 +49,5 @@ public sealed class MySqlItemIndexReader : SqlItemIndexReaderBase,
     /// SQL query builder.
     /// </returns>
     protected override ISqlQueryBuilder GetQueryBuilder() =>
-        new MySqlQueryBuilder();
+        new MySqlQueryBuilder(true);
 }

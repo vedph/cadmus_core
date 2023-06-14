@@ -28,7 +28,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
-		<PackageReference Include="Fusi.DbManager.MySql" Version="3.0.2" />
+		<PackageReference Include="Fusi.DbManager.MySql" Version="3.0.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Cadmus.Index.Ef\Cadmus.Index.Ef.csproj" />

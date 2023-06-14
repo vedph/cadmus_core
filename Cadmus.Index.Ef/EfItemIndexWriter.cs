@@ -82,7 +82,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// <returns>DB context.</returns>
     protected abstract CadmusIndexDbContext GetContext();
 
-        /// <summary>
+    /// <summary>
     /// Creates the index. If the index already exists, nothing is done.
     /// </summary>
     /// <exception cref="InvalidOperationException">Null database name in SQL

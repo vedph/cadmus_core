@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.Graph" Version="2.2.9" />
+    <PackageReference Include="Cadmus.Graph" Version="2.2.10" />
   </ItemGroup>
 
   <ItemGroup>

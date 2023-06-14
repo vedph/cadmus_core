@@ -59,7 +59,9 @@ public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
     /// <returns>Database manager.</returns>
     protected override IDbManager GetDbManager()
     {
-        return new MySqlDbManager(ConnectionString);
+        string cst = Regex.Replace(
+            ConnectionString, "Database=([^;]+)", "Database={0}");
+        return new MySqlDbManager(cst);
     }
 
     /// <summary>

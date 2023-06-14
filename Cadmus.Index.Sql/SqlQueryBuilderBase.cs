@@ -15,6 +15,7 @@ namespace Cadmus.Index.Sql;
 /// </summary>
 public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
 {
+    private readonly bool _legacy;
     private readonly ISqlTokenHelper _tokenHelper;
     private readonly Regex _wsRegex;
     private readonly Regex _clauseRegex;
@@ -29,8 +30,11 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
     /// Initializes a new instance of the <see cref="SqlQueryBuilderBase" /> class.
     /// </summary>
     /// <param name="tokenHelper">The SQL token helper to be used.</param>
-    protected SqlQueryBuilderBase(ISqlTokenHelper tokenHelper)
+    /// <param name="legacy">True to use legacy field names like <c>itemId</c>
+    /// instead of <c>item_id</c>.</param>
+    protected SqlQueryBuilderBase(ISqlTokenHelper tokenHelper, bool legacy)
     {
+        _legacy = legacy;
         _tokenHelper = tokenHelper
             ?? throw new ArgumentNullException(nameof(tokenHelper));
 
@@ -126,19 +130,22 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
         return name.ToLowerInvariant() switch
         {
             // from pin
-            "itemid" => ETP("pin", "itemId"),
-            "partid" => ETP("pin", "partId"),
-            "parttypeid" or "parttype" or "type" => ETP("pin", "partTypeId"),
-            "roleid" or "role" => ETP("pin", "roleId"),
+            "itemid" => ETP("pin", _legacy? "itemId" : "item_id"),
+            "partid" => ETP("pin", _legacy? "partId" : "part_id"),
+            "parttypeid" or "parttype" or "type"
+                => ETP("pin", _legacy? "partTypeId" : "part_type_id"),
+            "roleid" or "role"
+                => ETP("pin", _legacy? "roleId" : "part_role_id"),
             "name" or "n" => ETP("pin", "name"),
             "value" or "v" => ETP("pin", "value"),
-            "time" or "timeindexed" => ETP("pin", "timeIndexed"),
+            "time" or "timeindexed"
+                => ETP("pin", _legacy? "timeIndexed" : "time_indexed"),
             // from item
             "title" or "t" => ETP("item", "title"),
             "description" or "dsc" => ETP("item", "description"),
-            "facet" or "facetid" => ETP("item", "facetId"),
-            "group" or "groupid" => ETP("item", "groupId"),
-            "sortkey" => ETP("item", "sortKey"),
+            "facet" or "facetid" => ETP("item", _legacy? "facetId" : "facet_id"),
+            "group" or "groupid" => ETP("item", _legacy? "groupId" : "group_id"),
+            "sortkey" => ETP("item", _legacy? "sortKey" : "sort_key"),
             "flags" => ETP("item", "flags"),
             _ => null,
         };
@@ -395,7 +402,7 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
           .Append("ON ")
           .Append(ETP("item", "id"))
           .Append('=')
-          .AppendLine(ETP("pin", "itemId"));
+          .AppendLine(ETP("pin", _legacy? "itemId" : "item_id"));
         return sb.ToString();
     }
 
@@ -405,7 +412,7 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
         sb.Append("FROM ").AppendLine(ET("pin"))
           .Append("INNER JOIN ").AppendLine(ET("item"))
           .Append("ON ")
-          .Append(ETP("pin", "itemId"))
+          .Append(ETP("pin", _legacy? "itemId" : "item_id"))
           .Append('=')
           .AppendLine(ETP("item", "id"));
         return sb.ToString();
@@ -433,9 +440,13 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
         // select distinct item... inner join pin on item.id=pin.itemId
         sbPage.AppendLine("SELECT DISTINCT")
           .AppendLine(ETPS("item",
-            "id", "title", "description", "facetId",
-            "groupId", "sortKey", "flags",
-            "timeCreated", "creatorId", "timeModified", "userId"));
+            "id", "title", "description", _legacy? "facetId" : "facet_id",
+            _legacy? "groupId" : "group_id",
+            _legacy? "sortKey" : "sort_key", "flags",
+            _legacy? "timeCreated" : "time_created",
+            _legacy? "creatorId" : "creator_id",
+            _legacy? "timeModified" : "time_modified",
+            _legacy? "userId" : "user_id"));
 
         sbTotal.Append("SELECT COUNT(DISTINCT ")
                .Append(ETP("item", "id"))
@@ -452,7 +463,7 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
 
         // order by (for page only)
         sbPage.Append("ORDER BY ")
-          .Append(ETP("item", "sortKey"))
+          .Append(ETP("item", _legacy? "sortKey" : "sort_key"))
           .Append(',')
           .AppendLine(ETP("item", "id"));
 
@@ -483,12 +494,18 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
 
         // select distinct item... inner join pin on item.id=pin.itemId
         sbPage.AppendLine("SELECT DISTINCT")
-          .AppendLine(ETPS("pin",
-            "id", "itemId", "partId", "partTypeId", "roleId", "name", "value"));
+          .AppendLine(ETPS("pin", "id",
+            _legacy? "itemId" : "item_id",
+            _legacy? "partId" : "part_id",
+            _legacy? "partTypeId" : "part_type_id",
+            _legacy? "roleId" : "part_role_id", "name", "value"));
 
         sbTotal.AppendLine("SELECT COUNT(*) FROM (SELECT DISTINCT")
-               .AppendLine(ETPS("pin",
-                   "id", "itemId", "partId", "partTypeId", "roleId", "name", "value"));
+               .AppendLine(ETPS("pin", "id",
+                _legacy ? "itemId" : "item_id",
+                _legacy ? "partId" : "part_id",
+                _legacy ? "partTypeId" : "part_type_id",
+                _legacy ? "roleId" : "part_role_id", "name", "value"));
 
         string fromSql = BuildPinSqlFrom();
         sbPage.Append(fromSql);

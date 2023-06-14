@@ -30,7 +30,7 @@ public sealed class EfPgSqlItemIndexWriter : EfItemIndexWriter
     /// Gets the MySql schema used to populate a created database.
     /// </summary>
     /// <returns>SQL code.</returns>
-    public static string GetPgSqlSchema() => LoadResource("Schema.mysql");
+    public static string GetPgSqlSchema() => LoadResource("Schema.pgsql");
 
     /// <summary>
     /// Gets a new DB context configured for <see cref="ConnectionString" />.
@@ -59,7 +59,9 @@ public sealed class EfPgSqlItemIndexWriter : EfItemIndexWriter
     /// <returns>Database manager.</returns>
     protected override IDbManager GetDbManager()
     {
-        return new PgSqlDbManager(ConnectionString);
+        string cst = Regex.Replace(
+            ConnectionString, "Database=([^;]+)", "Database={0}");
+        return new PgSqlDbManager(cst);
     }
 
     /// <summary>

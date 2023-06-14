@@ -45,7 +45,7 @@ public sealed class MySqlQueryBuilderTest
 
     private static MySqlQueryBuilder GetBuilder()
     {
-        MySqlQueryBuilder builder = new();
+        MySqlQueryBuilder builder = new(true);
         builder.SetFlagDefinitions(new[]
         {
             new FlagDefinition

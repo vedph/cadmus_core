@@ -16,7 +16,7 @@ public sealed class PgSqlQueryBuilder : SqlQueryBuilderBase
     /// Initializes a new instance of the <see cref="PgSqlQueryBuilder"/>
     /// class.
     /// </summary>
-    public PgSqlQueryBuilder() : base(new PgSqlTokenHelper())
+    public PgSqlQueryBuilder() : base(new PgSqlTokenHelper(), false)
     {
     }
 

@@ -84,7 +84,7 @@ public abstract class SqlItemIndexWriterTestBase
             "FROM item WHERE id=@id;";
         if (_legacy) cmd.CommandText = cmd.CommandText.Replace("_", "");
         IDbDataParameter p = cmd.CreateParameter();
-        p.ParameterName = _legacy? "@itemid" : "@id";
+        p.ParameterName = "@id";
         p.Value = item.Id;
         p.DbType = DbType.String;
         cmd.Parameters.Add(p);

@@ -10,17 +10,17 @@ public class ItemInfo : IHasVersion
     /// <summary>
     /// Gets or sets the identifier.
     /// </summary>
-    public string? Id { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// Item title.
     /// </summary>
-    public string? Title { get; set; }
+    public string Title { get; set; }
 
     /// <summary>
     /// Item short description.
     /// </summary>
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
     /// <summary>
     /// Item's facet.
@@ -28,7 +28,7 @@ public class ItemInfo : IHasVersion
     /// <value>The facet defines which parts can be stored in the item,
     /// and their order and other presentational attributes. It is a unique
     /// string defined in the corpus configuration.</value>
-    public string? FacetId { get; set; }
+    public string FacetId { get; set; }
 
     /// <summary>
     /// Gets or sets the group identifier. This is an arbitrary string
@@ -42,7 +42,7 @@ public class ItemInfo : IHasVersion
     /// The sort key for the item. This is a value used to sort items
     /// in a list.
     /// </summary>
-    public string? SortKey { get; set; }
+    public string SortKey { get; set; }
 
     /// <summary>
     /// Gets or sets generic flags for the item.
@@ -80,6 +80,11 @@ public class ItemInfo : IHasVersion
     /// </summary>
     public ItemInfo()
     {
+        Id = "";
+        Title = "";
+        Description = "";
+        FacetId = "";
+        SortKey = "";
         CreatorId = UserId = "";
     }
 

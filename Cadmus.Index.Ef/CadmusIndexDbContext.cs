@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Cadmus.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cadmus.Index.Ef;
 
@@ -101,5 +102,37 @@ public class CadmusIndexDbContext : DbContext
             .WithOne(x => x.Item)
             .HasForeignKey(x => x.ItemId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // query-only
+        modelBuilder.Entity<ItemInfo>().HasNoKey().Ignore(x => x.Payload);
+        modelBuilder.Entity<ItemInfo>().Property(x => x.Id)
+            .HasColumnName("id");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.Title)
+            .HasColumnName("title");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.Description)
+            .HasColumnName("description");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.FacetId)
+            .HasColumnName("facet_id");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.GroupId)
+            .HasColumnName("group_id");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.SortKey)
+            .HasColumnName("sort_key");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.Flags)
+            .HasColumnName("flags");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.TimeCreated)
+            .HasColumnName("time_created");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.TimeModified)
+            .HasColumnName("time_modified");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.CreatorId)
+            .HasColumnName("creator_id");
+        modelBuilder.Entity<ItemInfo>().Property(x => x.UserId)
+            .HasColumnName("user_id");
+
+        modelBuilder.Entity<EfIntWrapper>().HasNoKey();
     }
+}
+
+public class EfIntWrapper
+{
+    public int Value { get; set; }
 }

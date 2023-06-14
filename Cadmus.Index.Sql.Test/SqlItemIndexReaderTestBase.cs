@@ -40,7 +40,8 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         }
         IItemIndexReader reader = GetReader();
 
-        DataPage<ItemInfo> page = reader.SearchItems("#1", new PagingOptions());
+        DataPage<ItemInfo> page = reader.SearchItems("Item #1", new PagingOptions());
+
         Assert.Equal(1, page.Total);
         Assert.Single(page.Items);
         Assert.Equal(items[0].Id, page.Items[0].Id);

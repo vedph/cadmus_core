@@ -75,7 +75,11 @@ public abstract class EfItemIndexReader : IItemIndexReader
 
         using CadmusIndexDbContext context = GetContext();
 
-        int total = context.Database.ExecuteSqlRaw(pageAndTot.Item1);
+        int total = context.Set<EfIntWrapper>()
+            .FromSqlRaw(pageAndTot.Item2)
+            .AsEnumerable()
+            .First()
+            .Value;
         if (total == 0)
         {
             return new DataPage<ItemInfo>(options.PageNumber, options.PageSize,
@@ -83,7 +87,7 @@ public abstract class EfItemIndexReader : IItemIndexReader
         }
 
         List<ItemInfo> items = context.Set<ItemInfo>()
-            .FromSqlRaw(pageAndTot.Item2).ToList();
+            .FromSqlRaw(pageAndTot.Item1).ToList();
 
         return new DataPage<ItemInfo>(options.PageNumber, options.PageSize,
             total, items);
@@ -112,7 +116,11 @@ public abstract class EfItemIndexReader : IItemIndexReader
 
         using CadmusIndexDbContext context = GetContext();
 
-        int total = context.Database.ExecuteSqlRaw(pageAndTot.Item1);
+        int total = context.Set<EfIntWrapper>()
+            .FromSqlRaw(pageAndTot.Item2)
+            .AsEnumerable()
+            .First()
+            .Value;
         if (total == 0)
         {
             return new DataPage<DataPinInfo>(options.PageNumber, options.PageSize,
@@ -120,7 +128,7 @@ public abstract class EfItemIndexReader : IItemIndexReader
         }
 
         List<DataPinInfo> pins = context.Set<DataPinInfo>()
-            .FromSqlRaw(pageAndTot.Item2).ToList();
+            .FromSqlRaw(pageAndTot.Item1).ToList();
 
         return new DataPage<DataPinInfo>(options.PageNumber, options.PageSize,
             total, pins);

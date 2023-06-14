@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+- 2023-06-14: fixes to EF index reader.
+
+### 6.1.4
+
 - 2023-06-13:
   - adding EF-based index writer/reader.
   - updated packages and version numbers (packages push still to be done).

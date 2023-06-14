@@ -14,6 +14,15 @@ cd..
 cd .\Cadmus.Index
 dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
 cd..
+cd .\Cadmus.Index.Ef
+dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+cd..
+cd .\Cadmus.Index.Ef.MySql
+dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+cd..
+cd .\Cadmus.Index.Ef.PgSql
+dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+cd..
 cd .\Cadmus.Index.Sql
 dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
 cd..

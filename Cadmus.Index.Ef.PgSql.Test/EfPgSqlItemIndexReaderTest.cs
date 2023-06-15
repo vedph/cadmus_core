@@ -41,6 +41,22 @@ public sealed class EfPgSqlItemIndexReaderTest : SqlItemIndexReaderTestBase
 
 #pragma warning disable S2699 // Tests should include assertions
     [Fact]
-    public void SearchItems_ByTitle_Ok() => DoSearchItems_ByTitle_Ok();
+    public void SearchItems_ByTitleNoOp_Ok() => DoSearchItems_ByTitleNoOp_Ok();
+
+    [Fact]
+    public void SearchItems_ByTitleContains_Ok()
+        => DoSearchItems_ByTitleContains_Ok();
+
+    [Fact]
+    public void SearchItems_ByTitleRegex_Ok()
+        => DoSearchItems_ByTitleRegex_Ok();
+
+    [Fact]
+    public void SearchItems_ByTitleFuzzy_Ok()
+    => DoSearchItems_ByTitleFuzzy_Ok();
+
+    [Fact]
+    public void SearchItems_ByDscContains_Ok()
+        => DoSearchItems_ByDscContains_Ok();
 #pragma warning restore  // Tests should include assertions
 }

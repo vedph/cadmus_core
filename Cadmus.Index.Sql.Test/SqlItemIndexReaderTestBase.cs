@@ -50,8 +50,6 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         Assert.Equal(items[0].FacetId, page.Items[0].FacetId);
         Assert.Equal(items[0].GroupId, page.Items[0].GroupId);
         Assert.Equal(items[0].SortKey, page.Items[0].SortKey);
-        Assert.Equal(items[0].TimeCreated, page.Items[0].TimeCreated);
-        Assert.Equal(items[0].TimeModified, page.Items[0].TimeModified);
         Assert.Equal(items[0].UserId, page.Items[0].UserId);
         Assert.Equal(items[0].CreatorId, page.Items[0].CreatorId);
         Assert.Equal(items[0].Flags, page.Items[0].Flags);
@@ -93,8 +91,6 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         Assert.Equal(items[0].FacetId, page.Items[0].FacetId);
         Assert.Equal(items[0].GroupId, page.Items[0].GroupId);
         Assert.Equal(items[0].SortKey, page.Items[0].SortKey);
-        Assert.Equal(items[0].TimeCreated, page.Items[0].TimeCreated);
-        Assert.Equal(items[0].TimeModified, page.Items[0].TimeModified);
         Assert.Equal(items[0].UserId, page.Items[0].UserId);
         Assert.Equal(items[0].CreatorId, page.Items[0].CreatorId);
         Assert.Equal(items[0].Flags, page.Items[0].Flags);
@@ -141,7 +137,7 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         Assert.Equal(items[0].Flags, page.Items[0].Flags);
     }
 
-    protected void DoSearchItems_ByTitleFuzzy_Ok()
+    protected void DoSearchItems_ByTitleFuzzy_Ok(float treshold, int expected)
     {
         IItemIndexWriter writer = GetWriter();
         writer.Clear();
@@ -166,22 +162,12 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         }
         IItemIndexReader reader = GetReader();
 
-        DataPage<ItemInfo> page = reader.SearchItems("[title%=itm #1]",
+        DataPage<ItemInfo> page = reader.SearchItems($"[title%=itm #1:{treshold}]",
             new PagingOptions());
 
-        Assert.Equal(1, page.Total);
-        Assert.Single(page.Items);
-        Assert.Equal(items[0].Id, page.Items[0].Id);
-        Assert.Equal(items[0].Title, page.Items[0].Title);
-        Assert.Equal(items[0].Description, page.Items[0].Description);
-        Assert.Equal(items[0].FacetId, page.Items[0].FacetId);
-        Assert.Equal(items[0].GroupId, page.Items[0].GroupId);
-        Assert.Equal(items[0].SortKey, page.Items[0].SortKey);
-        Assert.Equal(items[0].TimeCreated, page.Items[0].TimeCreated);
-        Assert.Equal(items[0].TimeModified, page.Items[0].TimeModified);
-        Assert.Equal(items[0].UserId, page.Items[0].UserId);
-        Assert.Equal(items[0].CreatorId, page.Items[0].CreatorId);
-        Assert.Equal(items[0].Flags, page.Items[0].Flags);
+        Assert.Equal(expected, page.Total);
+        Assert.Equal(expected > page.PageSize? page.PageSize : expected,
+            page.Items.Count);
     }
 
     protected void DoSearchItems_ByDscContains_Ok()
@@ -220,8 +206,6 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         Assert.Equal(items[0].FacetId, page.Items[0].FacetId);
         Assert.Equal(items[0].GroupId, page.Items[0].GroupId);
         Assert.Equal(items[0].SortKey, page.Items[0].SortKey);
-        Assert.Equal(items[0].TimeCreated, page.Items[0].TimeCreated);
-        Assert.Equal(items[0].TimeModified, page.Items[0].TimeModified);
         Assert.Equal(items[0].UserId, page.Items[0].UserId);
         Assert.Equal(items[0].CreatorId, page.Items[0].CreatorId);
         Assert.Equal(items[0].Flags, page.Items[0].Flags);

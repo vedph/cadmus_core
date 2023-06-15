@@ -51,7 +51,7 @@ public sealed class MySqlQueryBuilder : SqlQueryBuilderBase
           .Append(", ")
           .Append(SQE(value, false, true, false))
           .Append(")>=")
-          .Append(treshold)
+          .Append(treshold.ToString(CultureInfo.InvariantCulture))
           .AppendLine(")");
     }
 

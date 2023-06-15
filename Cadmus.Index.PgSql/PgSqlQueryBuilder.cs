@@ -45,13 +45,13 @@ public sealed class PgSqlQueryBuilder : SqlQueryBuilderBase
         double treshold, string value, StringBuilder sb)
     {
         // https://www.freecodecamp.org/news/fuzzy-string-matching-with-postgresql
-        sb.Append("(SELECT SIMILARITY(")
+        // requires CREATE EXTENSION pg_trgm on the database
+        sb.Append("SIMILARITY(")
           .Append(fieldName)
           .Append(", ")
           .Append(SQE(value, false, true, false))
-          .Append(")>=")
-          .Append(treshold)
-          .AppendLine(")");
+          .Append(") >= ")
+          .AppendLine(treshold.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>

@@ -1,28 +1,26 @@
 ﻿using Cadmus.Index.Sql.Test;
-using Npgsql;
+using MySql.Data.MySqlClient;
 using System.Data;
 using Xunit;
 
-namespace Cadmus.Index.Ef.PgSql.Test;
+namespace Cadmus.Index.Ef.MySql.Test;
 
 [Collection(nameof(NonParallelResourceCollection))]
-public sealed class EfPgSqlItemIndexReaderTest : SqlItemIndexReaderTestBase
+public sealed class EfMySqlItemIndexReaderTest : SqlItemIndexReaderTestBase
 {
-    private const string CST =
-        "Server=localhost;Database={0};User Id=postgres;Password=postgres;" +
-        "Include Error Detail=True";
+    private const string CST = "Server=localhost;Database={0};Uid=root;Pwd=mysql;";
     private const string DB_NAME = "cadmus-index-test";
     static private readonly string CS = string.Format(CST, DB_NAME);
 
-    public EfPgSqlItemIndexReaderTest() : base(CS, false)
+    public EfMySqlItemIndexReaderTest() : base(CS, false)
     {
     }
 
-    protected override IDbConnection GetConnection() => new NpgsqlConnection(CS);
+    protected override IDbConnection GetConnection() => new MySqlConnection(CS);
 
     protected override IItemIndexWriter GetWriter()
     {
-        EfPgSqlItemIndexWriter writer = new();
+        EfMySqlItemIndexWriter writer = new();
         writer.Configure(new EfIndexRepositoryOptions
         {
             ConnectionString = CS
@@ -32,7 +30,7 @@ public sealed class EfPgSqlItemIndexReaderTest : SqlItemIndexReaderTestBase
 
     protected override IItemIndexReader GetReader()
     {
-        EfPgSqlItemIndexReader reader = new();
+        EfMySqlItemIndexReader reader = new();
         reader.Configure(new EfIndexRepositoryOptions
         {
             ConnectionString = CS
@@ -54,7 +52,7 @@ public sealed class EfPgSqlItemIndexReaderTest : SqlItemIndexReaderTestBase
 
     [Fact]
     public void SearchItems_ByTitleFuzzy_Ok()
-        => DoSearchItems_ByTitleFuzzy_Ok(0.3f, 1);
+        => DoSearchItems_ByTitleFuzzy_Ok(0.9f, 3);
 
     [Fact]
     public void SearchItems_ByDscContains_Ok()

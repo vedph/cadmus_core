@@ -6,6 +6,14 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.7
+
+- 2023-06-15: fixes to EF components.
+
+### 6.1.6
+
+- 2023-06-15: public setter for EF index reader/writer connection strings.
+
 ### 6.1.5
 
 - 2023-06-15: fixes to EF index reader.

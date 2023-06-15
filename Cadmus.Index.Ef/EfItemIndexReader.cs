@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core;
 using Cadmus.Index.Sql;
+using Fusi.Tools.Configuration;
 using Fusi.Tools.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,14 +13,15 @@ namespace Cadmus.Index.Ef;
 /// Base class for Entity Framework-based item index readers.
 /// </summary>
 /// <seealso cref="IItemIndexReader" />
-public abstract class EfItemIndexReader : IItemIndexReader
+public abstract class EfItemIndexReader : IItemIndexReader,
+    IConfigurable<EfIndexRepositoryOptions>
 {
     private ISqlQueryBuilder? _queryBuilder;
 
     /// <summary>
-    /// Gets the connection string.
+    /// Gets or sets the connection string.
     /// </summary>
-    public string ConnectionString { get; private set; }
+    public string ConnectionString { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EfItemIndexReader"/> class.

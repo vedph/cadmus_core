@@ -12,6 +12,7 @@ set src=-Source https://api.nuget.org/v3/index.json
 %nu% push .\Cadmus.Index.Sql\bin\Debug\*.nupkg %src% -SkipDuplicate
 %nu% push .\Cadmus.Index.MsSql\bin\Debug\*.nupkg %src% -SkipDuplicate
 %nu% push .\Cadmus.Index.MySql\bin\Debug\*.nupkg %src% -SkipDuplicate
+%nu% push .\Cadmus.Index.PgSql\bin\Debug\*.nupkg %src% -SkipDuplicate
 %nu% push .\Cadmus.Mongo\bin\Debug\*.nupkg %src% -SkipDuplicate
 %nu% push .\Cadmus.Seed\bin\Debug\*.nupkg %src% -SkipDuplicate
 echo COMPLETED

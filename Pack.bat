@@ -32,6 +32,9 @@ cd..
 cd .\Cadmus.Index.MySql
 dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
 cd..
+cd .\Cadmus.Index.PgSql
+dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+cd..
 cd .\Cadmus.Mongo
 dotnet pack -c Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
 cd..

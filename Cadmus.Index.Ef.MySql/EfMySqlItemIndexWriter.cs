@@ -15,7 +15,8 @@ namespace Cadmus.Index.Ef.MySql;
 /// </summary>
 /// <seealso cref="EfItemIndexWriter" />
 [Tag("item-index-writer.ef-my")]
-public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter
+public sealed class EfMySqlItemIndexWriter : EfItemIndexWriter,
+    IConfigurable<EfIndexRepositoryOptions>
 {
     private static string LoadResource(string name)
     {

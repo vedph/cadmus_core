@@ -25,9 +25,10 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// </summary>
     public string ConnectionString
     {
-        get => _cs; private set
+        get => _cs;
+        set
         {
-            _cs = value;
+            _cs = value ?? throw new ArgumentNullException(nameof(value));
             _exists = false;
         }
     }

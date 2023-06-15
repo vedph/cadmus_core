@@ -16,6 +16,20 @@ public abstract class SqlRepositoryBase
     private bool _autoConnected;
 
     /// <summary>
+    /// Gets or sets the connection string.
+    /// </summary>
+    public string ConnectionString
+    {
+        get { return _connectionString ?? ""; }
+        set
+        {
+            if (_connectionString == value) return;
+            _connectionString = value;
+            OnConnectionStringChanged(value);
+        }
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SqlRepositoryBase"/>
     /// class.
     /// </summary>
@@ -45,20 +59,6 @@ public abstract class SqlRepositoryBase
     /// <returns>The wrapped tokens separated by comma.</returns>
     protected string ETS(params string[] tokens) =>
         string.Join(",", from k in tokens select ET(k));
-
-    /// <summary>
-    /// Gets or sets the connection string.
-    /// </summary>
-    protected string ConnectionString
-    {
-        get { return _connectionString ?? ""; }
-        set
-        {
-            if (_connectionString == value) return;
-            _connectionString = value;
-            OnConnectionStringChanged(value);
-        }
-    }
 
     /// <summary>
     /// Called when <see cref="ConnectionString"/> has changed.

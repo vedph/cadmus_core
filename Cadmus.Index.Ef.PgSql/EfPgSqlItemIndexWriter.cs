@@ -15,7 +15,8 @@ namespace Cadmus.Index.Ef.PgSql;
 /// </summary>
 /// <seealso cref="EfItemIndexWriter" />
 [Tag("item-index-writer.ef-pg")]
-public sealed class EfPgSqlItemIndexWriter : EfItemIndexWriter
+public sealed class EfPgSqlItemIndexWriter : EfItemIndexWriter,
+    IConfigurable<EfIndexRepositoryOptions>
 {
     private static string LoadResource(string name)
     {

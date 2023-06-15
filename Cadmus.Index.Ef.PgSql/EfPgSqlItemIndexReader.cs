@@ -8,9 +8,10 @@ namespace Cadmus.Index.Ef.PgSql;
 
 /// <summary>
 /// Entity Framework-based item index reader for PostgreSQL.
+/// <para>Tag: <c>item-index-reader.ef-pg</c></para>
 /// </summary>
 /// <seealso cref="EfItemIndexReader" />
-[Tag("item-index-reader.pg")]
+[Tag("item-index-reader.ef-pg")]
 public sealed class EfPgSqlItemIndexReader : EfItemIndexReader
 {
     /// <summary>

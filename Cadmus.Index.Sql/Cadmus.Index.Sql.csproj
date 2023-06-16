@@ -13,9 +13,9 @@
 		<Description>SQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>6.1.5</Version>
-		<FileVersion>6.1.5</FileVersion>
-		<AssemblyVersion>6.1.5</AssemblyVersion>
+		<Version>6.1.8</Version>
+		<FileVersion>6.1.8</FileVersion>
+		<AssemblyVersion>6.1.8</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

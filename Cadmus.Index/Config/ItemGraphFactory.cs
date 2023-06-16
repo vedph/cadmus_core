@@ -9,13 +9,10 @@ using System.Reflection;
 namespace Cadmus.Index.Config;
 
 /// <summary>
-/// A factory for <see cref="IItemIndexWriter"/>'s and
-/// <see cref="IItemIndexReader"/>'s. This factory relies on
-/// a configuration rooted at the <c>index</c> section, with
-/// properties <c>writer</c> and <c>reader</c>, both including an
-/// objects with an <c>id</c> and an eventual <c>options</c> object.
+/// Item graph factory.
 /// </summary>
-public sealed class ItemIndexFactory : ComponentFactory
+/// <seealso cref="ComponentFactory" />
+public sealed class ItemGraphFactory : ComponentFactory
 {
     private readonly string _connectionString;
 
@@ -34,7 +31,7 @@ public sealed class ItemIndexFactory : ComponentFactory
     /// supply to any component requiring an option named
     /// <see cref="CONNECTION_STRING_NAME"/> (=<c>ConnectionString</c>),
     /// when this option is not specified in its configuration.</param>
-    public ItemIndexFactory(IHost host, string connectionString) : base(host)
+    public ItemGraphFactory(IHost host, string connectionString) : base(host)
     {
         _connectionString = connectionString ??
             throw new ArgumentNullException(nameof(connectionString));
@@ -75,17 +72,12 @@ public sealed class ItemIndexFactory : ComponentFactory
     public static void ConfigureServices(IServiceCollection services,
         params Assembly[] additionalAssemblies)
     {
-        if (services is null)
-            throw new ArgumentNullException(nameof(services));
+        if (services is null) throw new ArgumentNullException(nameof(services));
 
-        // https://simpleinjector.readthedocs.io/en/latest/advanced.html?highlight=batch#batch-registration
         Assembly[] assemblies = additionalAssemblies ?? Array.Empty<Assembly>();
 
         foreach (Type it in new[]
         {
-            typeof(IItemIndexWriter),
-            typeof(IItemIndexReader),
-            // TODO: remove with GetGraphRepository
             typeof(IGraphRepository),
         })
         {
@@ -97,32 +89,9 @@ public sealed class ItemIndexFactory : ComponentFactory
     }
 
     /// <summary>
-    /// Gets the item index writer if any.
+    /// Gets the graph repository from <c>graph:repository</c> if any.
     /// </summary>
-    /// <param name="graphSql">The optional SQL code to seed the index
-    /// database with preset data for the graph.</param>
-    /// <returns>Item index writer or null.</returns>
-    public IItemIndexWriter? GetItemIndexWriter(string? graphSql = null)
-    {
-        IItemIndexWriter? writer = GetComponent<IItemIndexWriter>(
-            "index:writer", false);
-
-        if (writer != null) writer.InitContext = graphSql;
-        return writer;
-    }
-
-    /// <summary>
-    /// Gets the item index reader if any.
-    /// </summary>
-    /// <returns>Item index reader or null.</returns>
-    public IItemIndexReader? GetItemIndexReader() =>
-        GetComponent<IItemIndexReader>("index:reader", false);
-
-    /// <summary>
-    /// Gets the graph repository if any.
-    /// </summary>
-    /// <returns>Graph repository or null.</returns>
-    [Obsolete("Use ItemGraphFactory for GetGraphRepository")]
+    /// <returns>Graph repository.</returns>
     public IGraphRepository? GetGraphRepository() =>
         GetComponent<IGraphRepository>("graph:repository", false);
 }

@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.8
+
+- 2023-06-16: added `ItemGraphFactory`. You should change your code to use this factory (usually via `IItemGraphFactoryProvider`) rather than using the same factory used for item indexes. The graph methods in the `ItemIndexFactory` dealing with graph have been marked as obsolete, and will be removed in future versions.
+
 ### 6.1.7
 
 - 2023-06-15: fixes to EF components.

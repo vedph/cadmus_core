@@ -129,11 +129,11 @@ public abstract class EfItemIndexReader : IItemIndexReader,
                 0, Array.Empty<DataPinInfo>());
         }
 
-        List<DataPinInfo> pins = context.Set<DataPinInfo>()
+        List<EfIndexPin> pins = context.Set<EfIndexPin>()
             .FromSqlRaw(pageAndTot.Item1).ToList();
 
         return new DataPage<DataPinInfo>(options.PageNumber, options.PageSize,
-            total, pins);
+            total, pins.ConvertAll(e => e.ToDataPinInfo()));
     }
 
     /// <summary>

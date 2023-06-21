@@ -38,7 +38,7 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
         _tokenHelper = tokenHelper
             ?? throw new ArgumentNullException(nameof(tokenHelper));
 
-        _wsRegex = new Regex(@"\s+");
+        _wsRegex = new Regex(@"\s+", RegexOptions.Compiled);
         // [nameOPvalue]
         // n=name, o=operator, v=value
         _clauseRegex = new Regex(

@@ -2,6 +2,7 @@
 using Cadmus.General.Parts;
 using Fusi.Tools.Data;
 using System.Collections.Generic;
+using System.Globalization;
 using Xunit;
 
 namespace Cadmus.Index.Sql.Test;
@@ -162,7 +163,8 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         }
         IItemIndexReader reader = GetReader();
 
-        DataPage<ItemInfo> page = reader.SearchItems($"[title%=itm #1:{treshold}]",
+        DataPage<ItemInfo> page = reader.SearchItems(
+            $"[title%=itm #1:{treshold.ToString(CultureInfo.InvariantCulture)}]",
             new PagingOptions());
 
         Assert.Equal(expected, page.Total);

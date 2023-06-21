@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cadmus.Core;
+using System;
 
 namespace Cadmus.Index.Ef;
 
@@ -25,6 +26,19 @@ public class EfIndexPin
         PartTypeId = "";
         Name = "";
         Value = "";
+    }
+
+    public DataPinInfo ToDataPinInfo()
+    {
+        return new DataPinInfo
+        {
+            ItemId = ItemId,
+            PartId = PartId,
+            RoleId = PartRoleId,
+            Name = Name,
+            Value = Value,
+            PartTypeId = PartTypeId,
+        };
     }
 
     public override string ToString()

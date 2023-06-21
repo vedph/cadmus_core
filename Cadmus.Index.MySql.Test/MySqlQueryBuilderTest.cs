@@ -27,7 +27,7 @@ public sealed class MySqlQueryBuilderTest
     private const string SQL_PIN_PAG_HEAD =
         "SELECT DISTINCT\r\n" +
         "`pin`.`id`,`pin`.`itemId`,`pin`.`partId`,`pin`.`partTypeId`,`pin`.`roleId`," +
-        "`pin`.`name`,`pin`.`value`\r\n" +
+        "`pin`.`name`,`pin`.`value`,`pin`.`timeIndexed`\r\n" +
         "FROM `pin`\r\n" +
         "INNER JOIN `item`\r\n" +
         "ON `pin`.`itemId`=`item`.`id`\r\n" +

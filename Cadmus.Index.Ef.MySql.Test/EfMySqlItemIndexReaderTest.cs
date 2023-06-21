@@ -47,6 +47,10 @@ public sealed class EfMySqlItemIndexReaderTest : SqlItemIndexReaderTestBase
         => DoSearchItems_ByTitleContains_Ok();
 
     [Fact]
+    public void SearchItems_ByTagStarts_Ok()
+        => DoSearchItems_ByTagStarts_Ok();
+
+    [Fact]
     public void SearchItems_ByTitleRegex_Ok()
         => DoSearchItems_ByTitleRegex_Ok();
 
@@ -57,5 +61,8 @@ public sealed class EfMySqlItemIndexReaderTest : SqlItemIndexReaderTestBase
     [Fact]
     public void SearchItems_ByDscContains_Ok()
         => DoSearchItems_ByDscContains_Ok();
+
+    [Fact]
+    public void SearchPins_Equals_Ok() => DoSearchPins_Equals_Ok();
 #pragma warning restore  // Tests should include assertions
 }

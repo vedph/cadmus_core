@@ -97,6 +97,47 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         Assert.Equal(items[0].Flags, page.Items[0].Flags);
     }
 
+    protected void DoSearchItems_ByTagStarts_Ok()
+    {
+        IItemIndexWriter writer = GetWriter();
+        writer.Clear();
+
+        List<IItem> items = new();
+        for (int n = 1; n <= 3; n++)
+        {
+            IItem item = GetItem(n);
+            IPart part = new NotePart
+            {
+                ItemId = item.Id,
+                CreatorId = "creator",
+                RoleId = null,
+                Tag = (n & 1) == 1 ? "odd" : "even",
+                Text = $"A note for item {n}.",
+                UserId = "user"
+            };
+            item.Parts.Add(part);
+
+            writer.WriteItem(item);
+            items.Add(item);
+        }
+        IItemIndexReader reader = GetReader();
+
+        DataPage<ItemInfo> page = reader.SearchItems("[tag^=e]",
+            new PagingOptions());
+
+        Assert.Equal(1, page.Total);
+        Assert.Single(page.Items);
+        Assert.Equal(items[1].Id, page.Items[0].Id);
+        Assert.Equal(items[1].Title, page.Items[0].Title);
+        Assert.Equal(items[1].Description, page.Items[0].Description);
+        Assert.Equal(items[1].FacetId, page.Items[0].FacetId);
+        Assert.Equal(items[1].GroupId, page.Items[0].GroupId);
+        Assert.Equal(items[1].SortKey, page.Items[0].SortKey);
+        Assert.Equal(items[1].UserId, page.Items[0].UserId);
+        Assert.Equal(items[1].CreatorId, page.Items[0].CreatorId);
+        Assert.Equal(items[1].Flags, page.Items[0].Flags);
+    }
+
     protected void DoSearchItems_ByTitleRegex_Ok()
     {
         IItemIndexWriter writer = GetWriter();
@@ -213,5 +254,36 @@ public abstract class SqlItemIndexReaderTestBase : SqlItemIndexWriterTestBase
         Assert.Equal(items[0].Flags, page.Items[0].Flags);
     }
 
+    protected void DoSearchPins_Equals_Ok()
+    {
+        IItemIndexWriter writer = GetWriter();
+        writer.Clear();
+
+        List<IItem> items = new();
+        for (int n = 1; n <= 3; n++)
+        {
+            IItem item = GetItem(n);
+            IPart part = new NotePart
+            {
+                ItemId = item.Id,
+                CreatorId = "creator",
+                RoleId = null,
+                Tag = (n & 1) == 1 ? "odd" : "even",
+                Text = $"A note for item {n}.",
+                UserId = "user"
+            };
+            item.Parts.Add(part);
+
+            writer.WriteItem(item);
+            items.Add(item);
+        }
+        IItemIndexReader reader = GetReader();
+
+        DataPage<DataPinInfo> page = reader.SearchPins("[tag=odd]",
+            new PagingOptions());
+
+        Assert.Equal(2, page.Total);
+        Assert.Equal(2, page.Items.Count);
+    }
     // TODO other tests
 }

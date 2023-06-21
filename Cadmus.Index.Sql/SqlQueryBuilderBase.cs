@@ -498,7 +498,8 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
             _legacy? "itemId" : "item_id",
             _legacy? "partId" : "part_id",
             _legacy? "partTypeId" : "part_type_id",
-            _legacy? "roleId" : "part_role_id", "name", "value"));
+            _legacy? "roleId" : "part_role_id", "name", "value",
+            _legacy? "timeIndexed" : "time_indexed"));
 
         sbTotal.AppendLine("SELECT COUNT(*) FROM (SELECT DISTINCT")
                .AppendLine(ETPS("pin", "id",

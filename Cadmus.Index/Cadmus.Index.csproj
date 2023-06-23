@@ -11,11 +11,11 @@
     <Product>Cadmus</Product>
     <Description>Cadmus items index.</Description>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>6.1.8</Version>
+    <Version>6.1.11</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;index</PackageTags>
-    <FileVersion>6.1.8</FileVersion>
-    <AssemblyVersion>6.1.8</AssemblyVersion>
+    <FileVersion>6.1.11</FileVersion>
+    <AssemblyVersion>6.1.11</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.Graph" Version="2.2.10" />
+    <PackageReference Include="Cadmus.Graph" Version="2.2.12" />
   </ItemGroup>
 
   <ItemGroup>

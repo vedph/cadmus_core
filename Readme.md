@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.11
+
+- 2023-06-23: updated packages.
+
 ### 6.1.10
 
 - 2023-06-21: fixed missing `time_indexed` field in EF pin search.

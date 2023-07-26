@@ -4,9 +4,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>6.1.13</Version>
-		<FileVersion>6.1.13</FileVersion>
-		<AssemblyVersion>6.1.13</AssemblyVersion>
+		<Version>6.1.15</Version>
+		<FileVersion>6.1.15</FileVersion>
+		<AssemblyVersion>6.1.15</AssemblyVersion>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5" />
 		<PackageReference Include="Fusi.DbManager.MySql" Version="3.0.3" />
 	</ItemGroup>
 	<ItemGroup>

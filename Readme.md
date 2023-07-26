@@ -6,6 +6,13 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.15
+
+- 2023-07-26:
+  - updated packages.
+  - more logging in `ItemIndexer`.
+  - in `EfItemIndexWriter` truncate pin value if length is greater than 500.
+
 ### 6.1.13
 
 - 2023-07-01: updated packages.

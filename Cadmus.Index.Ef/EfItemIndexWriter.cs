@@ -228,7 +228,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
             PartRoleId = pin.RoleId,
             PartTypeId = partTypeId,
             Name = pin.Name!,
-            Value = pin.Value!,
+            Value = pin.Value!.Length > 500? pin.Value[..500] : pin.Value!,
             TimeIndexed = now
         };
 

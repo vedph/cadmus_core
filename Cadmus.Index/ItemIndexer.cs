@@ -72,7 +72,7 @@ public sealed class ItemIndexer
         CancellationToken cancel,
         IProgress<ProgressReport>? progress = null)
     {
-        if (filter == null) filter = new ItemFilter();
+        filter ??= new ItemFilter();
         filter.PageNumber = 1;
         filter.PageSize = 100;
 
@@ -84,24 +84,35 @@ public sealed class ItemIndexer
             ? new ProgressReport()
             : null;
         ItemInfo? currentInfo = null;
+        int n = 0;
 
         do
         {
+            Logger?.LogInformation("Indexing page {PageNumber}/{PageCount}",
+                page.PageNumber, page.PageCount);
             try
             {
                 // index all the items in page
                 foreach (ItemInfo info in page.Items)
                 {
                     currentInfo = info;
+                    Logger?.LogInformation(
+                        "Indexing {Number}/{Total} {ItemId}: {Title}",
+                        ++n, page.Total, info.Id, info.Title);
                     IItem? item = repository.GetItem(info.Id!);
-                    if (item == null) continue;
+                    if (item == null)
+                    {
+                        Logger?.LogWarning("Item {ItemId} not found!", info.Id);
+                        continue;
+                    }
                     _writer.WriteItem(item);
                 }
             }
             catch (Exception ex)
             {
                 Logger?.LogError(
-                    $"Error indexing {currentInfo}: {ex.Message}: {ex}");
+                    "Error indexing {Info}: {Message}: {Exception}",
+                        currentInfo, ex.Message, ex);
             }
             // handle cancel and progress
             if (cancel.IsCancellationRequested) break;
@@ -116,6 +127,6 @@ public sealed class ItemIndexer
             // next page
             if (++filter.PageNumber > page.PageCount) break;
             page = repository.GetItems(filter);
-        } while (page.Items.Count != 0);
+        } while (page.Items.Count > 0);
     }
 }

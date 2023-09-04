@@ -10,7 +10,7 @@ namespace Cadmus.Index;
 /// <summary>
 /// Items index writer. The item index writer is used to add an item with
 /// all its parts to the index, but also has the ability of creating its
-/// target database if not present on he first write, and to remove all
+/// target database if not present on the first write, and to remove all
 /// data from it on demand.
 /// </summary>
 public interface IItemIndexWriter

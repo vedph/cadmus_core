@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <Version>6.1.14</Version>
-    <FileVersion>6.1.14</FileVersion>
-    <AssemblyVersion>6.1.14</AssemblyVersion>
+    <Version>6.1.16</Version>
+    <FileVersion>6.1.16</FileVersion>
+    <AssemblyVersion>6.1.16</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
     <PackageReference Include="xunit" Version="2.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

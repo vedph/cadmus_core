@@ -4,17 +4,17 @@
     <TargetFramework>net7.0</TargetFramework>
 	<Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <Version>6.1.16</Version>
-    <FileVersion>6.1.16</FileVersion>
-    <AssemblyVersion>6.1.16</AssemblyVersion>
+    <Version>6.1.17</Version>
+    <FileVersion>6.1.17</FileVersion>
+    <AssemblyVersion>6.1.17</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.General.Parts" Version="5.0.4" />
+    <PackageReference Include="Cadmus.General.Parts" Version="5.0.5" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageReference Include="xunit" Version="2.5.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
+    <PackageReference Include="xunit" Version="2.5.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -6,6 +6,12 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.17
+
+- 2023-09-22:
+  - updated packages.
+  - in `EfItemIndexWriter.WritePart`, ensure that the item exists before saving part's pins. This makes indexing more robust, in the event that someone deleted the item while the indexer was working on it.
+
 ### 6.1.16
 
 - 2023-09-04: updated packages.

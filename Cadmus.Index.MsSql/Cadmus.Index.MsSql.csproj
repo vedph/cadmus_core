@@ -13,9 +13,9 @@
 		<Description>MS SQLServer implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>6.1.16</Version>
-		<FileVersion>6.1.16</FileVersion>
-		<AssemblyVersion>6.1.16</AssemblyVersion>
+		<Version>6.1.17</Version>
+		<FileVersion>6.1.17</FileVersion>
+		<AssemblyVersion>6.1.17</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

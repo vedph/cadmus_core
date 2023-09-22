@@ -107,7 +107,8 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
         return Task.CompletedTask;
     }
 
-    private static void WriteItem(IItem item, CadmusIndexDbContext context)
+    private static void WriteItem(IItem item, CadmusIndexDbContext context,
+        bool includeParts)
     {
         EfIndexItem? old = context.Items.Find(item.Id);
         if (old != null)
@@ -124,9 +125,12 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
             old.TimeModified = item.TimeModified;
             old.UserId = item.UserId;
         }
-        else context.Items.Add(new EfIndexItem(item));
+        else
+        {
+            context.Items.Add(new EfIndexItem(item));
+        }
 
-        if (item.Parts?.Count > 0)
+        if (includeParts && item.Parts?.Count > 0)
         {
             DateTime now = DateTime.UtcNow;
 
@@ -159,7 +163,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
 
         try
         {
-            WriteItem(item, context);
+            WriteItem(item, context, true);
             context.SaveChanges();
             trans.Commit();
         }
@@ -195,7 +199,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
             int n = 0;
             foreach (IItem item in items)
             {
-                WriteItem(item, context);
+                WriteItem(item, context, true);
                 if (progress != null && ++n % 10 == 0)
                 {
                     report!.Percent = n * 100 / items.Count();
@@ -281,6 +285,10 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
 
         try
         {
+            // ensure that the parent item exists
+            EfIndexItem? parent = context.Items.Find(item.Id);
+            if (parent == null) WriteItem(item, context, false);
+
             // delete all the part's pins
             context.Pins.Where(p => p.PartId == part.Id).ExecuteDelete();
 

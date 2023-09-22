@@ -128,7 +128,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
 
         flags.ReplaceOne(f => f.Id.Equals(definition.Id),
             new MongoFlagDefinition(definition),
-            new ReplaceOptions {IsUpsert = true});
+            new ReplaceOptions { IsUpsert = true });
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
 
         return (from f in facets.Find(_ => true)
                 .SortBy(f => f.Label).ToList()
-            select f.ToFacetDefinition()).ToList();
+                select f.ToFacetDefinition()).ToList();
     }
 
     /// <summary>
@@ -621,8 +621,8 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         // into history, too)
         var partsCollection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
         var parts = (from p in partsCollection.AsQueryable()
-            where p.ItemId.Equals(id)
-            select p).ToList();
+                     where p.ItemId.Equals(id)
+                     select p).ToList();
         foreach (var p in parts) DeletePart(p.Id, userId, history);
 
         // store the item being deleted into history, as deleted now by 
@@ -687,7 +687,8 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     }
 
     private static async Task<int> GetDistinctGroupIdsCountAsync(
-        IMongoCollection<BsonDocument> items, AggregateOptions options)
+        IMongoCollection<BsonDocument> items, AggregateOptions options,
+        string? filter = null)
     {
         #region Mongo query
         // use cadmus;
@@ -729,32 +730,73 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         // );
         #endregion
 
+        BsonDocument matchStage = new("$match", new BsonDocument()
+            .Add("$and", new BsonArray()
+                .Add(new BsonDocument()
+                    .Add("groupId", new BsonDocument()
+                        .Add("$exists", new BsonBoolean(true))
+                    )
+                )
+                .Add(new BsonDocument()
+                    .Add("groupId", new BsonDocument()
+                        .Add("$ne", BsonNull.Value)
+                    )
+                )
+            ));
+
+        // add filter to match stage if provided
+        if (!string.IsNullOrEmpty(filter))
+        {
+            matchStage["$match"]["$and"].AsBsonArray.Add(
+                new BsonDocument("groupId",
+                    new BsonDocument("$regex", $"{Regex.Escape(filter)}")
+                        .Add("$options", "i")
+                )
+            );
+        }
+
         PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
         {
-            new BsonDocument("$project", new BsonDocument()
-                    .Add("groupId", new BsonBoolean(true))),
-            new BsonDocument("$match", new BsonDocument()
-                    .Add("$and", new BsonArray()
-                            .Add(new BsonDocument()
-                                    .Add("groupId", new BsonDocument()
-                                            .Add("$exists", new BsonBoolean(true))
-                                    )
-                            )
-                            .Add(new BsonDocument()
-                                    .Add("groupId", new BsonDocument()
-                                            .Add("$ne", BsonNull.Value)
-                                    )
-                            )
-                    )),
-            new BsonDocument("$group", new BsonDocument()
-                    .Add("_id", "$groupId")),
-            new BsonDocument("$count", "count")
+            new BsonDocument("$project",
+                new BsonDocument().Add("groupId", new BsonBoolean(true))),
+                matchStage,
+                new BsonDocument("$group",
+                    new BsonDocument().Add("_id", "$groupId")),
+                new BsonDocument("$count", "count")
         };
 
-        using var cursor = await items.AggregateAsync(pipeline, options);
+        using IAsyncCursor<BsonDocument> cursor =
+            await items.AggregateAsync(pipeline, options);
         await cursor.MoveNextAsync();
         BsonDocument? first = cursor.Current.FirstOrDefault();
         return first?["count"].AsInt32 ?? 0;
+
+        //PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
+        //{
+        //    new BsonDocument("$project", new BsonDocument()
+        //            .Add("groupId", new BsonBoolean(true))),
+        //    new BsonDocument("$match", new BsonDocument()
+        //            .Add("$and", new BsonArray()
+        //                    .Add(new BsonDocument()
+        //                            .Add("groupId", new BsonDocument()
+        //                                    .Add("$exists", new BsonBoolean(true))
+        //                            )
+        //                    )
+        //                    .Add(new BsonDocument()
+        //                            .Add("groupId", new BsonDocument()
+        //                                    .Add("$ne", BsonNull.Value)
+        //                            )
+        //                    )
+        //            )),
+        //    new BsonDocument("$group", new BsonDocument()
+        //            .Add("_id", "$groupId")),
+        //    new BsonDocument("$count", "count")
+        //};
+
+        //using var cursor = await items.AggregateAsync(pipeline, options);
+        //await cursor.MoveNextAsync();
+        //BsonDocument? first = cursor.Current.FirstOrDefault();
+        //return first?["count"].AsInt32 ?? 0;
     }
 
     /// <summary>
@@ -762,10 +804,12 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// group IDs found in the items.
     /// </summary>
     /// <param name="options">The paging options.</param>
+    /// <param name="filter">The optional filter to be found inside any group
+    /// ID (case insensitive).</param>
     /// <returns>The page.</returns>
     /// <exception cref="ArgumentNullException">options</exception>
     public async Task<DataPage<string>> GetDistinctGroupIdsAsync(
-        PagingOptions options)
+        PagingOptions options, string? filter = null)
     {
         #region Mongo query
         // use cadmus;
@@ -815,8 +859,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         // );
         #endregion
 
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
+        if (options == null) throw new ArgumentNullException(nameof(options));
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -828,34 +871,48 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
             AllowDiskUse = false
         };
 
-        int total = await GetDistinctGroupIdsCountAsync(items, aggOptions);
+        int total = await GetDistinctGroupIdsCountAsync(items, aggOptions, filter);
         List<string> ids = new();
 
         if (total > 0)
         {
-            PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[]
+            BsonDocument matchStage = new("$match", new BsonDocument()
+                .Add("$and", new BsonArray()
+                    .Add(new BsonDocument()
+                        .Add("groupId", new BsonDocument()
+                            .Add("$exists", new BsonBoolean(true))
+                        )
+                    )
+                    .Add(new BsonDocument()
+                        .Add("groupId", new BsonDocument()
+                            .Add("$ne", BsonNull.Value)
+                        )
+                    )
+                ));
+
+            // Add filter to match stage if provided
+            if (!string.IsNullOrEmpty(filter))
             {
-            new BsonDocument("$project", new BsonDocument()
-                    .Add("groupId", new BsonBoolean(true))),
-            new BsonDocument("$match", new BsonDocument()
-                    .Add("$and", new BsonArray()
-                            .Add(new BsonDocument()
-                                    .Add("groupId", new BsonDocument()
-                                            .Add("$exists", new BsonBoolean(true))
-                                    )
-                            )
-                            .Add(new BsonDocument()
-                                    .Add("groupId", new BsonDocument()
-                                            .Add("$ne", BsonNull.Value)
-                                    )
-                            )
-                    )),
-            new BsonDocument("$group", new BsonDocument()
-                    .Add("_id", "$groupId")),
-            new BsonDocument("$sort", new BsonDocument()
-                    .Add("_id", 1)),
-            new BsonDocument("$skip", options.GetSkipCount()),
-            new BsonDocument("$limit", options.PageSize)
+                matchStage["$match"]["$and"].AsBsonArray.Add(
+                    new BsonDocument("groupId",
+                        new BsonDocument("$regex", $"{Regex.Escape(filter)}")
+                            .Add("$options", "i")
+                    )
+                );
+            }
+
+            PipelineDefinition<BsonDocument, BsonDocument> pipeline =
+                new BsonDocument[]
+            {
+                new BsonDocument("$project",
+                    new BsonDocument().Add("groupId", new BsonBoolean(true))),
+                    matchStage,
+                    new BsonDocument("$group", new BsonDocument()
+                        .Add("_id", "$groupId")),
+                    new BsonDocument("$sort", new BsonDocument()
+                        .Add("_id", 1)),
+                    new BsonDocument("$skip", options.GetSkipCount()),
+                    new BsonDocument("$limit", options.PageSize)
             };
 
             using var cursor = await items.AggregateAsync(pipeline, aggOptions);

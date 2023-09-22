@@ -156,8 +156,11 @@ public interface ICadmusRepository
     /// group IDs found in the items.
     /// </summary>
     /// <param name="options">The paging options.</param>
+    /// <param name="filter">The optional filter to be found inside any group
+    /// ID (case insensitive).</param>
     /// <returns>The page.</returns>
-    Task<DataPage<string>> GetDistinctGroupIdsAsync(PagingOptions options);
+    Task<DataPage<string>> GetDistinctGroupIdsAsync(PagingOptions options,
+        string? filter = null);
 
     /// <summary>
     /// Get the count of all the non-empty layers in the specified items

@@ -556,6 +556,12 @@ public class MongoCadmusRepositoryTest : CadmusRepositoryTestBase
     }
 
     [Fact]
+    public async Task GetDistinctGroupIdsAsync_Filtered_1()
+    {
+        await DoGetDistinctGroupIdsAsync_Filtered_1();
+    }
+
+    [Fact]
     public async Task GetDistinctGroupIdsAsync_Page1_5()
     {
         await DoGetDistinctGroupIdsAsync_Page1_5();

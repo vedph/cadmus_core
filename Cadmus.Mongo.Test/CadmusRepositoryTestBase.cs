@@ -813,6 +813,23 @@ public abstract class CadmusRepositoryTestBase
             Assert.Equal($"g{i:00}", page.Items[i]);
     }
 
+    protected async Task DoGetDistinctGroupIdsAsync_Filtered_1()
+    {
+        PrepareDatabase();
+        ICadmusRepository repository = GetRepository();
+
+        var page = await repository.GetDistinctGroupIdsAsync(
+            new PagingOptions
+            {
+                PageNumber = 1,
+                PageSize = 20
+            }, "03");
+
+        Assert.Equal(1, page.Total);
+        Assert.Single(page.Items);
+        Assert.Equal("g03", page.Items[0]);
+    }
+
     protected async Task DoGetDistinctGroupIdsAsync_Page1_5()
     {
         PrepareDatabase();

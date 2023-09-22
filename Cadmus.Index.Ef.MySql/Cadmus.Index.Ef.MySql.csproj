@@ -4,9 +4,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>6.1.17</Version>
-		<FileVersion>6.1.17</FileVersion>
-		<AssemblyVersion>6.1.17</AssemblyVersion>
+		<Version>6.1.18</Version>
+		<FileVersion>6.1.18</FileVersion>
+		<AssemblyVersion>6.1.18</AssemblyVersion>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>

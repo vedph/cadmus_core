@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 6.1.18
+
+- 2023-09-22: added optional filter to Cadmus repository `GetDistinctGroupIdsAsync`.
+
 ### 6.1.17
 
 - 2023-09-22:

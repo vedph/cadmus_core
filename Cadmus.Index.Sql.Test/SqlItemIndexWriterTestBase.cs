@@ -164,7 +164,7 @@ public abstract class SqlItemIndexWriterTestBase
             if (actualPins.All(p => p.Item1 != expected.Item1
                 && p.Item2 != expected.Item2))
             {
-                Assert.True(false, $"{expected.Item1}={expected.Item2}");
+                Assert.Fail($"{expected.Item1}={expected.Item2}");
             }
         }
     }

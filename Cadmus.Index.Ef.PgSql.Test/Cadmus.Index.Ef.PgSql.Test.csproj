@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <Version>6.1.18</Version>
-    <FileVersion>6.1.18</FileVersion>
-    <AssemblyVersion>6.1.18</AssemblyVersion>
+    <Version>6.1.19</Version>
+    <FileVersion>6.1.19</FileVersion>
+    <AssemblyVersion>6.1.19</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

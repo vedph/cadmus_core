@@ -109,7 +109,7 @@ public abstract class SqlItemIndexReaderBase
                 ItemInfo item = new()
                 {
                     // for some reason, the type from MySql is GUID here
-                    Id = reader.GetValue(reader.GetOrdinal("id")).ToString(),
+                    Id = reader.GetValue(reader.GetOrdinal("id")).ToString()!,
                     //Id = reader.GetFieldValue<string>(
                     //    reader.GetOrdinal("id")),
                     Title = reader.GetFieldValue<string>(

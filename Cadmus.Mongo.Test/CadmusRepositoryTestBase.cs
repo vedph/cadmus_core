@@ -301,7 +301,7 @@ public abstract class CadmusRepositoryTestBase
 
         repository.DeleteFacetDefinition("beta");
 
-        Assert.Equal(1, repository.GetFacetDefinitions().Count);
+        Assert.Single(repository.GetFacetDefinitions());
     }
     #endregion
 
@@ -605,7 +605,7 @@ public abstract class CadmusRepositoryTestBase
             PageSize = 10
         });
 
-        Assert.Equal(0, result.Items.Count);
+        Assert.Empty(result.Items);
         Assert.Equal(20, result.Total);
     }
 
@@ -622,7 +622,7 @@ public abstract class CadmusRepositoryTestBase
             UserId = "Even"
         });
 
-        Assert.Equal(0, result.Items.Count);
+        Assert.Empty(result.Items);
         Assert.Equal(0, result.Total);
 
         result = repository.GetItems(new ItemFilter
@@ -1190,7 +1190,7 @@ public abstract class CadmusRepositoryTestBase
 
         var page = repository.GetParts(new PartFilter {TypeId = "it.vedph.note" });
 
-        Assert.Equal(1, page.Items.Count);
+        Assert.Single(page.Items);
         Assert.Equal(1, page.Total);
 
         // note
@@ -1207,7 +1207,7 @@ public abstract class CadmusRepositoryTestBase
 
         var page = repository.GetParts(new PartFilter { RoleId = "note" });
 
-        Assert.Equal(1, page.Items.Count);
+        Assert.Single(page.Items);
         Assert.Equal(1, page.Total);
 
         // note
@@ -1291,7 +1291,7 @@ public abstract class CadmusRepositoryTestBase
         });
 
         // assert
-        Assert.Equal(1, page.Items.Count);
+        Assert.Single(page.Items);
         Assert.Equal("item-001", page.Items[0].ItemId);
     }
 

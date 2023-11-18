@@ -6,6 +6,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 7.0.0
+
+- 2023-11-18: ⚠️ Upgraded to .NET 8. Please notice that currently this breaks MySql-related components, which anyway are legacy. As soon as an up to date MySql package will be available, this will be fixed.
+
 ### 6.1.19
 
 - 2023-10-05: updated graph-related packages.

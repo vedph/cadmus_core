@@ -4,8 +4,8 @@
     <IncludeSymbols>true</IncludeSymbols>
 	<Nullable>enable</Nullable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<TargetFramework>net7.0</TargetFramework>
-    <Version>6.1.18</Version>
+	<TargetFramework>net8.0</TargetFramework>
+    <Version>7.0.0</Version>
     <Company>Fusi</Company>
     <Authors>Daniele Fusi</Authors>
     <Product>Cadmus</Product>
@@ -14,8 +14,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;MongoDB</PackageTags>
-    <FileVersion>6.1.18</FileVersion>
-    <AssemblyVersion>6.1.18</AssemblyVersion>
+    <FileVersion>7.0.0</FileVersion>
+    <AssemblyVersion>7.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,9 +23,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.21.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.21.0" />
+    <PackageReference Include="MongoDB.Bson" Version="2.22.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.22.0" />
   </ItemGroup>
 
   <ItemGroup>

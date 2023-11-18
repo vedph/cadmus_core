@@ -4,7 +4,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<Nullable>enable</Nullable>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
 		<Company>Fusi</Company>
@@ -32,7 +32,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Cadmus.Graph.MySql" Version="3.0.7" />
-		<PackageReference Include="Fusi.DbManager.MySql" Version="3.0.3" />
+		<PackageReference Include="Fusi.DbManager.MySql" Version="4.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

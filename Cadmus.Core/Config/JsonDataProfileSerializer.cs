@@ -17,7 +17,7 @@ public sealed class JsonDataProfileSerializer : IDataProfileSerializer
     /// <exception cref="ArgumentNullException">text</exception>
     public DataProfile Read(string text)
     {
-        if (text == null) throw new ArgumentNullException(nameof(text));
+        ArgumentNullException.ThrowIfNull(text);
 
         DataProfileOptions options = JsonSerializer.Deserialize
             <DataProfileOptions>(text, new JsonSerializerOptions

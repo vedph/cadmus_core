@@ -49,7 +49,7 @@ public class HistoryPart<T> where T : class, IPart
     /// <exception cref="ArgumentNullException"></exception>
     public HistoryPart(string id, T part)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(part);
 
         Id = id ?? Guid.NewGuid().ToString();
         ReferenceId = part.Id;

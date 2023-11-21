@@ -430,9 +430,8 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
     /// <exception cref="CadmusQueryException">invalid query</exception>
     public Tuple<string, string> BuildForItem(string query, PagingOptions options)
     {
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
-        if (query == null) throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(query);
 
         StringBuilder sbPage = new();
         StringBuilder sbTotal = new();
@@ -485,9 +484,8 @@ public abstract class SqlQueryBuilderBase : ISqlQueryBuilder
     /// <exception cref="CadmusQueryException">invalid query</exception>
     public Tuple<string, string> BuildForPin(string query, PagingOptions options)
     {
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
-        if (query == null) throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(query);
 
         StringBuilder sbPage = new();
         StringBuilder sbTotal = new();

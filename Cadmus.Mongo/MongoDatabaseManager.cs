@@ -15,7 +15,7 @@ public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
 {
     private void CreateIndexes(IMongoDatabase database)
     {
-        if (database == null) throw new ArgumentNullException(nameof(database));
+        ArgumentNullException.ThrowIfNull(database);
 
         // items
         var itemCollection = database.GetCollection<MongoItem>
@@ -93,8 +93,8 @@ public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
     /// </exception>
     public void CreateDatabase(string source, DataProfile profile)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
-        if (profile == null) throw new ArgumentNullException(nameof(profile));
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(profile);
 
         EnsureClientCreated(source);
 
@@ -136,7 +136,7 @@ public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
     /// <exception cref="ArgumentNullException">null source</exception>
     public void DeleteDatabase(string source)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
         EnsureClientCreated(source);
         Client!.DropDatabase(GetDatabaseName(source));
@@ -148,7 +148,7 @@ public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
     /// <param name="source">The database source.</param>
     public void ClearDatabase(string source)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
         EnsureClientCreated(source);
         IMongoDatabase db = Client!.GetDatabase(GetDatabaseName(source));
@@ -195,7 +195,7 @@ public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
     /// <returns>true if the database exists</returns>
     public bool DatabaseExists(string source)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
         EnsureClientCreated(source);
         string databaseName = GetDatabaseName(source);

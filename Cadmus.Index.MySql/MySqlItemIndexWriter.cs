@@ -38,7 +38,7 @@ public sealed class MySqlItemIndexWriter : SqlItemIndexWriterBase,
     /// <exception cref="ArgumentNullException">options</exception>
     public void Configure(SqlOptions options)
     {
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
         ConnectionString = options.ConnectionString!;
     }
 

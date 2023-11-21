@@ -56,8 +56,7 @@ public sealed class MongoFlagDefinition
     /// <exception cref="ArgumentNullException">null definition</exception>
     public MongoFlagDefinition(FlagDefinition definition)
     {
-        if (definition == null)
-            throw new ArgumentNullException(nameof(definition));
+        ArgumentNullException.ThrowIfNull(definition);
 
         Id = definition.Id;
         Label = definition.Label;

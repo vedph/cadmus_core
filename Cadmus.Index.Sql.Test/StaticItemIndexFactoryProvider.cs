@@ -40,7 +40,7 @@ public sealed class StaticItemIndexFactoryProvider :
 
     public ItemIndexFactory GetFactory(string profile)
     {
-        if (profile == null) throw new ArgumentNullException(nameof(profile));
+        ArgumentNullException.ThrowIfNull(profile);
 
         return new ItemIndexFactory(GetHost(profile), _connectionString);
     }

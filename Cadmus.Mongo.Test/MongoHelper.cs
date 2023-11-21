@@ -28,9 +28,9 @@ public static class MongoHelper
     public static DataPage<T> GetDocumentsPage<T>(IMongoCollection<T> collection,
         string query, string sort, int number, int size) where T : class
     {
-        if (collection == null) throw new ArgumentNullException(nameof(collection));
-        if (query == null) throw new ArgumentNullException(nameof(query));
-        if (sort == null) throw new ArgumentNullException(nameof(sort));
+        ArgumentNullException.ThrowIfNull(collection);
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(sort);
         if (number < 1) throw new ArgumentOutOfRangeException(nameof(number));
         if (size < 1) throw new ArgumentOutOfRangeException(nameof(size));
 

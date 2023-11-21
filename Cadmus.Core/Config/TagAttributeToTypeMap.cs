@@ -138,8 +138,7 @@ public sealed class TagAttributeToTypeMap
     /// <exception cref="ArgumentNullException">assemblies</exception>
     public void Add(Assembly[] assemblies)
     {
-        if (assemblies == null)
-            throw new ArgumentNullException(nameof(assemblies));
+        ArgumentNullException.ThrowIfNull(assemblies);
 
         foreach (Assembly assembly in assemblies) ScanAssembly(assembly);
         _frDirty = true;
@@ -164,12 +163,9 @@ public sealed class TagAttributeToTypeMap
     public void Add(string directory, string fileMask,
         AssemblyLoadContext context, params Assembly[] assemblies)
     {
-        if (directory == null)
-            throw new ArgumentNullException(nameof(directory));
-        if (fileMask == null)
-            throw new ArgumentNullException(nameof(fileMask));
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(directory);
+        ArgumentNullException.ThrowIfNull(fileMask);
+        ArgumentNullException.ThrowIfNull(context);
 
         foreach (FileInfo file in new DirectoryInfo(directory)
             .GetFiles(fileMask))
@@ -190,7 +186,7 @@ public sealed class TagAttributeToTypeMap
     /// <exception cref="ArgumentNullException">tag</exception>
     public Type? Get(string tag)
     {
-        if (tag == null) throw new ArgumentNullException(nameof(tag));
+        ArgumentNullException.ThrowIfNull(tag);
 
         if (_frDirty) SupplyFragments();
 

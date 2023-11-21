@@ -38,7 +38,7 @@ public abstract class EfItemIndexReader : IItemIndexReader,
     /// <exception cref="ArgumentNullException">options</exception>
     public void Configure(EfIndexRepositoryOptions options)
     {
-        if (options is null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
         ConnectionString = options.ConnectionString;
     }
 
@@ -63,8 +63,8 @@ public abstract class EfItemIndexReader : IItemIndexReader,
     /// <exception cref="ArgumentNullException">query or options</exception>
     public DataPage<ItemInfo> SearchItems(string query, PagingOptions options)
     {
-        if (query == null) throw new ArgumentNullException(nameof(query));
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(options);
 
         _queryBuilder ??= GetQueryBuilder();
         if (_queryBuilder == null)
@@ -104,8 +104,8 @@ public abstract class EfItemIndexReader : IItemIndexReader,
     /// <exception cref="ArgumentNullException">query or options</exception>
     public DataPage<DataPinInfo> SearchPins(string query, PagingOptions options)
     {
-        if (query == null) throw new ArgumentNullException(nameof(query));
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(options);
 
         _queryBuilder ??= GetQueryBuilder();
         if (_queryBuilder == null)

@@ -208,7 +208,7 @@ public sealed class DataPinBuilder
     public void Increase(IEnumerable<string?> keys, bool includeTotal = true,
         string? prefix = null)
     {
-        if (keys == null) throw new ArgumentNullException(nameof(keys));
+        ArgumentNullException.ThrowIfNull(keys);
 
         int total = 0;
         foreach (string? key in keys)
@@ -342,7 +342,7 @@ public sealed class DataPinBuilder
 
     private static DataPin CreateDataPin(IPart? part, string name, string value)
     {
-        if (name == null) throw new ArgumentNullException(nameof(name));
+        ArgumentNullException.ThrowIfNull(name);
 
         return new DataPin
         {

@@ -72,11 +72,9 @@ public sealed class PartSeederFactory : ComponentFactory
         IPartTypeProvider partTypeProvider,
         params Assembly[] additionalAssemblies)
     {
-        if (services is null)
-            throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
 
-        if (partTypeProvider is null)
-            throw new ArgumentNullException(nameof(partTypeProvider));
+        ArgumentNullException.ThrowIfNull(partTypeProvider);
 
         services.AddSingleton(partTypeProvider);
 
@@ -140,7 +138,7 @@ public sealed class PartSeederFactory : ComponentFactory
     /// <exception cref="ArgumentNullException">typeId</exception>
     public IFragmentSeeder? GetFragmentSeeder(string typeId)
     {
-        if (typeId == null) throw new ArgumentNullException(nameof(typeId));
+        ArgumentNullException.ThrowIfNull(typeId);
 
         var entry = ComponentFactoryConfigEntry.ReadComponentEntry(
             Configuration, "Seed:FragmentSeeders", typeId);

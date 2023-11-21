@@ -73,7 +73,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// <exception cref="ArgumentNullException">options</exception>
     public void Configure(EfIndexRepositoryOptions options)
     {
-        if (options is null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
         ConnectionString = options.ConnectionString;
     }
 
@@ -154,7 +154,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// <exception cref="ArgumentNullException">item</exception>
     public Task WriteItem(IItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         CreateIndex();
 
@@ -186,7 +186,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     public Task WriteItems(IEnumerable<IItem> items, CancellationToken cancel,
         IProgress<ProgressReport>? progress = null)
     {
-        if (items == null) throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         CreateIndex();
 
@@ -243,7 +243,7 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// <exception cref="ArgumentNullException">itemId</exception>
     public Task DeleteItem(string itemId)
     {
-        if (itemId is null) throw new ArgumentNullException(nameof(itemId));
+        ArgumentNullException.ThrowIfNull(itemId);
 
         CreateIndex();
         using CadmusIndexDbContext context = GetContext();
@@ -276,8 +276,8 @@ public abstract class EfItemIndexWriter : IItemIndexWriter
     /// <exception cref="ArgumentNullException">Item or part.</exception>
     public Task WritePart(IItem item, IPart part)
     {
-        if (item is null) throw new ArgumentNullException(nameof(item));
-        if (part is null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(item);
+        ArgumentNullException.ThrowIfNull(part);
 
         CreateIndex();
         using CadmusIndexDbContext context = GetContext();

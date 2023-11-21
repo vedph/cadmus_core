@@ -72,7 +72,7 @@ public sealed class ItemGraphFactory : ComponentFactory
     public static void ConfigureServices(IServiceCollection services,
         params Assembly[] additionalAssemblies)
     {
-        if (services is null) throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
 
         Assembly[] assemblies = additionalAssemblies ?? Array.Empty<Assembly>();
 

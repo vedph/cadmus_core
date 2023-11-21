@@ -30,7 +30,7 @@ public class ThesaurusTreeEntry : ThesaurusEntry
     /// <exception cref="ArgumentNullException">entry</exception>
     public ThesaurusTreeEntry(ThesaurusEntry entry)
     {
-        if (entry is null) throw new ArgumentNullException(nameof(entry));
+        ArgumentNullException.ThrowIfNull(entry);
 
         Id = entry.Id;
         Value = entry.Value;

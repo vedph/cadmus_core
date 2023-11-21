@@ -50,7 +50,7 @@ public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">options</exception>
     public void Configure(ItemBrowserOptions options)
     {
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
         _connection = options.ConnectionString;
     }
 
@@ -214,10 +214,9 @@ public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
         // );
         #endregion
 
-        if (database == null) throw new ArgumentNullException(nameof(database));
-        if (options == null) throw new ArgumentNullException(nameof(options));
-        if (filters == null)
-            throw new ArgumentNullException(nameof(filters));
+        ArgumentNullException.ThrowIfNull(database);
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(filters);
 
         if (_connection == null)
         {

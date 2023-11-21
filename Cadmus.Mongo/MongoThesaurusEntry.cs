@@ -33,7 +33,7 @@ public class MongoThesaurusEntry
     /// <exception cref="ArgumentNullException">entry</exception>
     public MongoThesaurusEntry(ThesaurusEntry entry)
     {
-        if (entry == null) throw new ArgumentNullException(nameof(entry));
+        ArgumentNullException.ThrowIfNull(entry);
 
         Id = entry.Id;
         Value = entry.Value;

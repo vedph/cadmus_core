@@ -112,7 +112,7 @@ public sealed class MongoHistoryItem : IHasHistory, IHasFlags
     /// <exception cref="ArgumentNullException">null item</exception>
     public MongoHistoryItem(IItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         Id = Guid.NewGuid().ToString();
         ReferenceId = item.Id;
@@ -136,7 +136,7 @@ public sealed class MongoHistoryItem : IHasHistory, IHasFlags
     /// <exception cref="ArgumentNullException">null item</exception>
     public MongoHistoryItem(MongoItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         Id = Guid.NewGuid().ToString();
         ReferenceId = item.Id;
@@ -159,7 +159,7 @@ public sealed class MongoHistoryItem : IHasHistory, IHasFlags
     /// <exception cref="ArgumentNullException">null item</exception>
     public MongoHistoryItem(HistoryItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         Id = Guid.NewGuid().ToString();
         Title = item.Title;

@@ -75,8 +75,7 @@ public sealed class ItemIndexFactory : ComponentFactory
     public static void ConfigureServices(IServiceCollection services,
         params Assembly[] additionalAssemblies)
     {
-        if (services is null)
-            throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
 
         // https://simpleinjector.readthedocs.io/en/latest/advanced.html?highlight=batch#batch-registration
         Assembly[] assemblies = additionalAssemblies ?? Array.Empty<Assembly>();

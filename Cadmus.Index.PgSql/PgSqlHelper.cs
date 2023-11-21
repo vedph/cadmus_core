@@ -67,8 +67,8 @@ public sealed class PgSqlHelper : ISqlHelper
     /// <exception cref="ArgumentNullException">name or pattern</exception>
     public string BuildRegexMatch(string name, string pattern)
     {
-        if (name is null) throw new ArgumentNullException(nameof(name));
-        if (pattern is null) throw new ArgumentNullException(nameof(pattern));
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(pattern);
 
         return $"{name} ~ {pattern}";
     }

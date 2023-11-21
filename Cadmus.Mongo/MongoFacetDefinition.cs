@@ -61,7 +61,7 @@ public sealed class MongoFacetDefinition
     /// <exception cref="ArgumentNullException">null facet</exception>
     public MongoFacetDefinition(FacetDefinition facet)
     {
-        if (facet == null) throw new ArgumentNullException(nameof(facet));
+        ArgumentNullException.ThrowIfNull(facet);
 
         Id = facet.Id;
         Label = facet.Label;

@@ -6,6 +6,12 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 7.0.1
+
+- 2023-11-21:
+  - updated packages (no more RC2 for PostgreSql).
+  - added optional `Settings` to `PartDefinition`.
+
 ### 7.0.0
 
 - 2023-11-18: ⚠️ Upgraded to .NET 8. Please notice that currently this breaks MySql-related components, which anyway are legacy. As soon as an up to date MySql package will be available, this will be fixed.

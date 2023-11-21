@@ -47,7 +47,7 @@ public sealed class ItemIndexer
     /// <exception cref="ArgumentNullException">item</exception>
     public void AddItem(IItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         _writer.WriteItem(item);
     }

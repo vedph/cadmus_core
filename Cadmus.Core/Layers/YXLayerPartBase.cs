@@ -76,8 +76,7 @@ public abstract class YXLayerPartBase<TFragment> : PartBase,
     /// <exception cref="ArgumentNullException">null location</exception>
     public void DeleteFragmentsAtIntegral(string location)
     {
-        if (location is null)
-            throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
         if (Fragments == null) return;
         TokenTextLocation refLoc = TokenTextLocation.Parse(location);
@@ -102,8 +101,7 @@ public abstract class YXLayerPartBase<TFragment> : PartBase,
     /// <returns>Fragments list, empty if none matches.</returns>
     public IList<TFragment> GetFragmentsAtIntegral(string location)
     {
-        if (location is null)
-            throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
         List<TFragment> frr = new();
         TokenTextLocation refLoc = TokenTextLocation.Parse(location);
@@ -130,7 +128,7 @@ public abstract class YXLayerPartBase<TFragment> : PartBase,
     /// <exception cref="ArgumentNullException">location</exception>
     public IList<TFragment> GetFragmentsAt(string location)
     {
-        if (location == null) throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
         if (Fragments == null) return new List<TFragment>();
 

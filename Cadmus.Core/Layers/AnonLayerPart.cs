@@ -69,10 +69,8 @@ public sealed class AnonLayerPart : PartBase
     /// <exception cref="ArgumentNullException">json or location</exception>
     public string DeleteFragmentsAtIntegral(string json, string location)
     {
-        if (json == null)
-            throw new ArgumentNullException(nameof(json));
-        if (location is null)
-            throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(json);
+        ArgumentNullException.ThrowIfNull(location);
 
         if (Fragments == null) return json;
 
@@ -105,10 +103,8 @@ public sealed class AnonLayerPart : PartBase
     /// <exception cref="ArgumentNullException">json or patches</exception>
     public string ApplyPatches(string json, IList<string> patches)
     {
-        if (json == null)
-            throw new ArgumentNullException(nameof(json));
-        if (patches == null)
-            throw new ArgumentNullException(nameof(patches));
+        ArgumentNullException.ThrowIfNull(json);
+        ArgumentNullException.ThrowIfNull(patches);
 
         if (Fragments == null) return json;
 
@@ -165,8 +161,7 @@ public sealed class AnonLayerPart : PartBase
     /// <returns>Fragments list, empty if none matches.</returns>
     public IList<AnonFragment> GetFragmentsAtIntegral(string location)
     {
-        if (location is null)
-            throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
         List<AnonFragment> frr = new();
         TokenTextLocation refLoc = TokenTextLocation.Parse(location);
@@ -193,7 +188,7 @@ public sealed class AnonLayerPart : PartBase
     /// <exception cref="ArgumentNullException">location</exception>
     public IList<AnonFragment> GetFragmentsAt(string location)
     {
-        if (location == null) throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
         if (Fragments == null) return new List<AnonFragment>();
 
@@ -214,8 +209,7 @@ public sealed class AnonLayerPart : PartBase
     public IList<LayerHint> GetFragmentHints(
         IList<YXEditOperation> operations)
     {
-        if (operations == null)
-            throw new ArgumentNullException(nameof(operations));
+        ArgumentNullException.ThrowIfNull(operations);
 
         List<LayerHint> hints = new();
 

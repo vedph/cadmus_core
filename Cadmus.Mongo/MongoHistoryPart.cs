@@ -116,7 +116,7 @@ public class MongoHistoryPart : IHasHistory
     /// <exception cref="ArgumentNullException">part</exception>
     public MongoHistoryPart(IPart part)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(part);
 
         Id = Guid.NewGuid().ToString();
         ItemId = part.ItemId;
@@ -140,7 +140,7 @@ public class MongoHistoryPart : IHasHistory
     /// <exception cref="ArgumentNullException">part</exception>
     public MongoHistoryPart(MongoPart part)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(part);
 
         Id = Guid.NewGuid().ToString();
         ItemId = part.ItemId;

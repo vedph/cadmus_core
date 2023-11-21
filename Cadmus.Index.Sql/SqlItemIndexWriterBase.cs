@@ -272,7 +272,7 @@ public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     public Task WriteItems(IEnumerable<IItem> items,
         CancellationToken cancel, IProgress<ProgressReport>? progress = null)
     {
-        if (items == null) throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         EnsureConnected();
         ProgressReport? report = progress != null ? new ProgressReport() : null;
@@ -316,7 +316,7 @@ public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     /// <exception cref="ArgumentNullException">item</exception>
     public Task WriteItem(IItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         EnsureConnected();
 
@@ -368,7 +368,7 @@ public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     /// <exception cref="ArgumentNullException">itemId</exception>
     public Task DeleteItem(string itemId)
     {
-        if (itemId == null) throw new ArgumentNullException(nameof(itemId));
+        ArgumentNullException.ThrowIfNull(itemId);
 
         EnsureConnected();
 
@@ -386,7 +386,7 @@ public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     /// <exception cref="ArgumentNullException">Null part.</exception>
     public Task WritePart(IItem item, IPart part)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(part);
 
         EnsureConnected();
 
@@ -424,8 +424,7 @@ public abstract class SqlItemIndexWriterBase : SqlRepositoryBase
     /// <exception cref="ArgumentNullException">partId</exception>
     public Task DeletePart(string partId)
     {
-        if (partId == null)
-            throw new ArgumentNullException(nameof(partId));
+        ArgumentNullException.ThrowIfNull(partId);
 
         EnsureConnected();
         DbCommand cmd = GetDeletePartPinsCommand();

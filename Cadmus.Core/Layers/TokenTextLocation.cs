@@ -26,7 +26,7 @@ public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>,
         get => _a;
         set
         {
-            if (value is null) throw new ArgumentNullException(nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
             _a = (TokenTextPoint)value.Clone();
         }
     }
@@ -175,7 +175,7 @@ public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>,
     /// <exception cref="ArgumentNullException">null location</exception>
     public bool Overlaps(ITextLocation<TokenTextPoint> other)
     {
-        if (other == null) throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         // empty coords never overlaps
         if (other.A.Y == 0) return false;
@@ -253,7 +253,7 @@ public sealed class TokenTextLocation : ITextLocation<TokenTextPoint>,
     /// <exception cref="ArgumentNullException">null text</exception>
     public static TokenTextLocation Parse(string text)
     {
-        if (text == null) throw new ArgumentNullException(nameof(text));
+        ArgumentNullException.ThrowIfNull(text);
 
         string[] a = text.Split('-');
         if (a.Length == 0) return new TokenTextLocation();

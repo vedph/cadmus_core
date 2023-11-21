@@ -85,9 +85,8 @@ public sealed class ItemBrowserFactory : ComponentFactory
         IPartTypeProvider partTypeProvider,
         params Assembly[] additionalAssemblies)
     {
-        if (services == null) throw new ArgumentNullException(nameof(services));
-        if (partTypeProvider is null)
-            throw new ArgumentNullException(nameof(partTypeProvider));
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(partTypeProvider);
 
         // https://simpleinjector.readthedocs.io/en/latest/advanced.html?highlight=batch#batch-registration
         Assembly[] assemblies = additionalAssemblies ?? Array.Empty<Assembly>();

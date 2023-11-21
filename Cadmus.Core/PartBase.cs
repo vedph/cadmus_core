@@ -116,7 +116,7 @@ public abstract class PartBase : IPart
     /// <exception cref="ArgumentNullException">null name</exception>
     protected DataPin CreateDataPin(string name, string? value)
     {
-        if (name == null) throw new ArgumentNullException(nameof(name));
+        ArgumentNullException.ThrowIfNull(name);
 
         return new DataPin
         {
@@ -172,7 +172,7 @@ public abstract class PartBase : IPart
     /// <exception cref="ArgumentNullException">typeId</exception>
     public static string BuildProviderId(string typeId, string? roleId)
     {
-        if (typeId == null) throw new ArgumentNullException(nameof(typeId));
+        ArgumentNullException.ThrowIfNull(typeId);
 
         string result = typeId;
 

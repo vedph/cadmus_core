@@ -38,8 +38,8 @@ public abstract class PartSeederBase : IPartSeeder
     /// <exception cref="ArgumentNullException">part or item</exception>
     protected void SetPartMetadata(IPart part, string? roleId, IItem item)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(part);
+        ArgumentNullException.ThrowIfNull(item);
 
         part.ItemId = item.Id;
         part.CreatorId = item.CreatorId;

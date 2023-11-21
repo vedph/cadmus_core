@@ -31,8 +31,7 @@ public static class DbDataReaderExtensions
     /// <exception cref="ArgumentNullException">columnName</exception>
     public static T? GetValue<T>(this DbDataReader reader, string columnName)
     {
-        if (columnName == null)
-            throw new ArgumentNullException(nameof(columnName));
+        ArgumentNullException.ThrowIfNull(columnName);
 
         int index = reader.GetOrdinal(columnName);
         return reader.IsDBNull(index) ? default : (T)reader.GetValue(index);

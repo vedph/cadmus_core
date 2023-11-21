@@ -118,8 +118,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null definition</exception>
     public void AddFlagDefinition(FlagDefinition definition)
     {
-        if (definition == null)
-            throw new ArgumentNullException(nameof(definition));
+        ArgumentNullException.ThrowIfNull(definition);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -171,7 +170,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public FacetDefinition? GetFacetDefinition(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -189,7 +188,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null facet</exception>
     public void AddFacetDefinition(FacetDefinition facet)
     {
-        if (facet == null) throw new ArgumentNullException(nameof(facet));
+        ArgumentNullException.ThrowIfNull(facet);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -208,7 +207,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public void DeleteFacetDefinition(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -282,7 +281,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">filter</exception>
     public DataPage<Thesaurus> GetThesauri(ThesaurusFilter filter)
     {
-        if (filter == null) throw new ArgumentNullException(nameof(filter));
+        ArgumentNullException.ThrowIfNull(filter);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -330,7 +329,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public Thesaurus? GetThesaurus(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -372,7 +371,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null thesaurus</exception>
     public void AddThesaurus(Thesaurus thesaurus)
     {
-        if (thesaurus == null) throw new ArgumentNullException(nameof(thesaurus));
+        ArgumentNullException.ThrowIfNull(thesaurus);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -391,7 +390,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public void DeleteThesaurus(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -431,7 +430,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null filter</exception>
     public DataPage<ItemInfo> GetItems(ItemFilter filter)
     {
-        if (filter == null) throw new ArgumentNullException(nameof(filter));
+        ArgumentNullException.ThrowIfNull(filter);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -520,7 +519,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// </exception>
     public IItem? GetItem(string id, bool includeParts = true)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -554,7 +553,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null item or user ID</exception>
     public void AddItem(IItem item, bool history = true)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -605,8 +604,8 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID or user ID</exception>
     public void DeleteItem(string id, string userId, bool history = true)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
-        if (userId == null) throw new ArgumentNullException(nameof(userId));
+        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(userId);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -654,7 +653,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID(s)</exception>
     public void SetItemFlags(IList<string> ids, int flags)
     {
-        if (ids == null) throw new ArgumentNullException(nameof(ids));
+        ArgumentNullException.ThrowIfNull(ids);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -674,7 +673,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <param name="groupId">The group ID (can be null).</param>
     public void SetItemGroupId(IList<string> ids, string? groupId)
     {
-        if (ids == null) throw new ArgumentNullException(nameof(ids));
+        ArgumentNullException.ThrowIfNull(ids);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -859,7 +858,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         // );
         #endregion
 
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -982,8 +981,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         // );
         #endregion
 
-        if (groupId is null)
-            throw new ArgumentNullException(nameof(groupId));
+        ArgumentNullException.ThrowIfNull(groupId);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1034,7 +1032,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null filter</exception>
     public DataPage<HistoryItemInfo> GetHistoryItems(HistoryItemFilter filter)
     {
-        if (filter == null) throw new ArgumentNullException(nameof(filter));
+        ArgumentNullException.ThrowIfNull(filter);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1133,7 +1131,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public HistoryItem? GetHistoryItem(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1152,7 +1150,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null item</exception>
     public void AddHistoryItem(HistoryItem item)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1170,7 +1168,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public void DeleteHistoryItem(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1252,7 +1250,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null filter</exception>
     public DataPage<PartInfo> GetParts(PartFilter filter)
     {
-        if (filter == null) throw new ArgumentNullException(nameof(filter));
+        ArgumentNullException.ThrowIfNull(filter);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1324,8 +1322,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     public IList<IPart> GetItemParts(string[] itemIds, string? typeId = null,
         string? roleId = null)
     {
-        if (itemIds == null)
-            throw new ArgumentNullException(nameof(itemIds));
+        ArgumentNullException.ThrowIfNull(itemIds);
         if (itemIds.Length == 0)
             throw new ArgumentOutOfRangeException(nameof(itemIds));
 
@@ -1355,8 +1352,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">itemId</exception>
     public IList<LayerPartInfo> GetItemLayerInfo(string itemId, bool absent)
     {
-        if (itemId == null)
-            throw new ArgumentNullException(nameof(itemId));
+        ArgumentNullException.ThrowIfNull(itemId);
 
         // get all the layer parts for the specified item
         EnsureClientCreated(_options!.ConnectionString!);
@@ -1431,7 +1427,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public T? GetPart<T>(string id) where T : class, IPart
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1461,7 +1457,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">id</exception>
     public string? GetPartItemId(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1481,7 +1477,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public string? GetPartContent(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1503,7 +1499,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// </exception>
     public void AddPart(IPart part, bool history = true)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(part);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1555,7 +1551,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">content</exception>
     public void AddPartFromContent(string content, bool history = true)
     {
-        if (content == null) throw new ArgumentNullException(nameof(content));
+        ArgumentNullException.ThrowIfNull(content);
 
         JsonDocument doc = JsonDocument.Parse(content);
         string typeId = doc.RootElement.GetProperty("typeId").GetString()!;
@@ -1586,8 +1582,8 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// </exception>
     public void DeletePart(string id, string userId, bool history = true)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
-        if (userId == null) throw new ArgumentNullException(nameof(userId));
+        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(userId);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1688,7 +1684,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <returns>history items page</returns>
     public DataPage<HistoryPartInfo> GetHistoryParts(HistoryPartFilter filter)
     {
-        if (filter == null) throw new ArgumentNullException(nameof(filter));
+        ArgumentNullException.ThrowIfNull(filter);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1706,7 +1702,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     public HistoryPart<T>? GetHistoryPart<T>(string id)
         where T : class, IPart
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1735,7 +1731,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null part ID</exception>
     public void DeleteHistoryPart(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
 
@@ -1853,7 +1849,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">id</exception>
     public int GetLayerPartBreakChance(string id, int toleranceSeconds)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -1933,7 +1929,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID</exception>
     public IList<LayerHint> GetLayerPartHints(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -2034,12 +2030,9 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     public string? ApplyLayerPartPatches(string id, string userId,
         IList<string> patches)
     {
-        if (id == null)
-            throw new ArgumentNullException(nameof(id));
-        if (userId == null)
-            throw new ArgumentNullException(nameof(userId));
-        if (patches == null)
-            throw new ArgumentNullException(nameof(patches));
+        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(userId);
+        ArgumentNullException.ThrowIfNull(patches);
 
         EnsureClientCreated(_options!.ConnectionString!);
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
@@ -2090,7 +2083,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
     /// <exception cref="ArgumentNullException">null ID(s)</exception>
     public void SetPartThesaurusScope(IList<string> ids, string? scope)
     {
-        if (ids == null) throw new ArgumentNullException(nameof(ids));
+        ArgumentNullException.ThrowIfNull(ids);
 
         EnsureClientCreated(_options!.ConnectionString!);
 

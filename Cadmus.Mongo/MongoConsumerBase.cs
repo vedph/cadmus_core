@@ -39,7 +39,7 @@ public abstract class MongoConsumerBase
     /// <exception cref="ArgumentNullException">source</exception>
     protected static string GetDatabaseName(string source)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
         return new MongoUrl(source).DatabaseName;
     }
@@ -52,7 +52,7 @@ public abstract class MongoConsumerBase
     /// <exception cref="ArgumentNullException">source</exception>
     protected void EnsureClientCreated(string source)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
         if (Client != null && _currentConnString == source) return;
 

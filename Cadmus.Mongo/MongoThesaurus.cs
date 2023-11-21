@@ -47,7 +47,7 @@ public class MongoThesaurus
     /// <exception cref="ArgumentNullException">null set</exception>
     public MongoThesaurus(Thesaurus thesaurus)
     {
-        if (thesaurus == null) throw new ArgumentNullException(nameof(thesaurus));
+        ArgumentNullException.ThrowIfNull(thesaurus);
 
         Id = thesaurus.Id;
         TargetId = thesaurus.TargetId;

@@ -51,6 +51,12 @@ public class PartDefinition
     public string? SortKey { get; set; }
 
     /// <summary>
+    /// Gets or sets the optional settings for the corresponding part editor.
+    /// Usually this is a JSON object.
+    /// </summary>
+    public string? Settings { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="PartDefinition"/> class.
     /// </summary>
     public PartDefinition()

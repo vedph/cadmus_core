@@ -90,8 +90,7 @@ public sealed class IndexItem
     /// <exception cref="ArgumentNullException">item</exception>
     public IndexItem(IItem item)
     {
-        if (item == null)
-            throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         Id = item.Id;
         Title = item.Title;

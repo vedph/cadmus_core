@@ -30,7 +30,7 @@ public sealed class StandardItemSortKeyBuilder : IItemSortKeyBuilder
     /// <exception cref="ArgumentNullException">item</exception>
     public string BuildKey(IItem item, ICadmusRepository? repository)
     {
-        if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         StringBuilder sb = new();
         foreach (char c in item.Title ?? "")

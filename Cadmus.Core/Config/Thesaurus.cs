@@ -45,8 +45,7 @@ public sealed class Thesaurus
         get { return _id; }
         set
         {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
             if (!_idRegex.IsMatch(value))
             {
                 throw new ArgumentException("Invalid thesaurus ID",
@@ -86,8 +85,7 @@ public sealed class Thesaurus
     /// <exception cref="ArgumentNullException">id</exception>
     public Thesaurus(string id)
     {
-        if (id == null)
-            throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
         if (!_idRegex.IsMatch(id))
         {
             throw new ArgumentException("Invalid thesaurus ID",
@@ -118,7 +116,7 @@ public sealed class Thesaurus
     /// <exception cref="ArgumentNullException">entry</exception>
     public void AddEntry(ThesaurusEntry entry)
     {
-        if (entry == null) throw new ArgumentNullException(nameof(entry));
+        ArgumentNullException.ThrowIfNull(entry);
 
         if (Entries == null)
         {
@@ -147,7 +145,7 @@ public sealed class Thesaurus
     /// <exception cref="ArgumentNullException">null ID</exception>
     public string? GetEntryValue(string id)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
+        ArgumentNullException.ThrowIfNull(id);
 
         ThesaurusEntry? entry = Entries?.FirstOrDefault(e => e.Id == id);
         return entry?.Value;
@@ -173,8 +171,7 @@ public sealed class Thesaurus
     /// <exception cref="ArgumentNullException">visitor</exception>
     public void VisitByLevel(Func<ThesaurusTreeEntry, bool> visitor)
     {
-        if (visitor is null)
-            throw new ArgumentNullException(nameof(visitor));
+        ArgumentNullException.ThrowIfNull(visitor);
         if (Entries == null || Entries.Count == 0) return;
 
         var groups = from e in Entries

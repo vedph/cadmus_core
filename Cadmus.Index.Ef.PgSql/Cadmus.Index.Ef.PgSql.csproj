@@ -4,9 +4,9 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>7.0.0</Version>
-		<FileVersion>7.0.0</FileVersion>
-		<AssemblyVersion>7.0.0</AssemblyVersion>
+		<Version>7.0.1</Version>
+		<FileVersion>7.0.1</FileVersion>
+		<AssemblyVersion>7.0.1</AssemblyVersion>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
@@ -20,7 +20,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Fusi.DbManager.PgSql" Version="4.0.1" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0-rc.2" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

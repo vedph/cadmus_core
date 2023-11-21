@@ -104,7 +104,7 @@ public class MongoPart : IHasVersion
     /// <exception cref="ArgumentNullException">part</exception>
     public MongoPart(IPart part)
     {
-        if (part == null) throw new ArgumentNullException(nameof(part));
+        ArgumentNullException.ThrowIfNull(part);
 
         Id = part.Id;
         ItemId = part.ItemId;

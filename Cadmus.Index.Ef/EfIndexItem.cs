@@ -34,7 +34,7 @@ public class EfIndexItem
 
     public EfIndexItem(IItem item)
     {
-        if (item is null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
         Id = item.Id;
         Title = item.Title;

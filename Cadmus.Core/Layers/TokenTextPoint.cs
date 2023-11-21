@@ -109,7 +109,7 @@ public sealed class TokenTextPoint : ITextPoint
     /// <exception cref="ArgumentNullException">null text</exception>
     public void Read(string text)
     {
-        if (text == null) throw new ArgumentNullException(nameof(text));
+        ArgumentNullException.ThrowIfNull(text);
 
         Match m = _pointRegex.Match(text);
         if (!m.Success)
@@ -181,7 +181,7 @@ public sealed class TokenTextPoint : ITextPoint
     /// <exception cref="ArgumentException">invalid text</exception>
     public static TokenTextPoint Parse(string text)
     {
-        if (text == null) throw new ArgumentNullException(nameof(text));
+        ArgumentNullException.ThrowIfNull(text);
 
         TokenTextPoint point = new();
         point.Read(text);

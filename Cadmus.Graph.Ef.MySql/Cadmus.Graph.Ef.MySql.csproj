@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>7.0.2</Version>
+		<FileVersion>7.0.2</FileVersion>
+		<AssemblyVersion>7.0.2</AssemblyVersion>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Authors>Daniele Fusi</Authors>
+		<Company>Fusi</Company>
+		<Product>Cadmus</Product>
+		<Description>Cadmus graph Entity Framework Core components for MySql.</Description>
+		<Copyright>by Daniele Fusi 2023</Copyright>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageTags>Cadmus</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Assets\Schema.mysql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Assets\Schema.mysql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fusi.DbManager.MySql" Version="4.0.0" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Graph.Ef\Cadmus.Graph.Ef.csproj" />
+	</ItemGroup>
+
+</Project>

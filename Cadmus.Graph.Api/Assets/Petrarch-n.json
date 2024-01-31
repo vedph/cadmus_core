@@ -1,0 +1,80 @@
+﻿[
+  {
+    "Uri": "foaf:Person",
+    "Label": "Person class",
+    "IsClass": true,
+    "SourceType": 0
+  },
+  {
+    "Uri": "x:guys/francesco_petrarca",
+    "Label": "Petrarca",
+    "SourceType": 2,
+    "Sid": "aa756eab-58f6-4edf-af38-3ab8f7e62277"
+  },
+  {
+    "Uri": "x:events/birth",
+    "Label": "birth",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth"
+  },
+  {
+    "Uri": "x:places/arezzo",
+    "Label": "Arezzo",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "Uri": "x:timespans/ts",
+    "Label": "timespan",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "Uri": "x:guys/eletta_cangiani",
+    "Label": "Eletta Cangiani",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/related"
+  },
+  {
+    "Uri": "x:guys/ser_petracco",
+    "Label": "Ser Petracco",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/related"
+  },
+  {
+    "Uri": "x:events/death",
+    "Label": "death",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death"
+  },
+  {
+    "Uri": "x:places/arqua",
+    "Label": "Arquà",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  },
+  {
+    "Uri": "x:timespans/ts#1",
+    "Label": "timespan",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  },
+  {
+    "Uri": "x:events/meeting-petrarca-barbato-dangio",
+    "Label": "meeting",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/meeting-petrarca-barbato-dangio"
+  },
+  {
+    "Uri": "x:places/napoli",
+    "Label": "Napoli",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/meeting-petrarca-barbato-dangio/chronotope"
+  },
+  {
+    "Uri": "x:timespans/ts#2",
+    "Label": "timespan",
+    "SourceType": 2,
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/meeting-petrarca-barbato-dangio/chronotope"
+  }
+]

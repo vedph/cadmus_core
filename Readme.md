@@ -4,11 +4,53 @@ Cadmus data layer and business layer.
 
 👀 [Cadmus Page](https://myrmex.github.io/overview/cadmus/)
 
+## Projects
+
+**Core**:
+
+- Cadmus.Core
+- Cadmus.Core.Test
+- Cadmus.Seed
+- Cadmus.Mongo
+- Cadmus.Mongo.Test
+
+**Index**:
+
+- Cadmus.Index
+- Cadmus.Index.Sql
+- Cadmus.Index.Sql.Test
+- Cadmus.Index.MySql
+- Cadmus.Index.MySql.Test
+- Cadmus.Index.PgSql
+
+**Graph**:
+
+- Cadmus.Graph
+- Cadmus.Graph.Test
+- Cadmus.Graph.Extras
+- Cadmus.Graph.Ef
+- Cadmus.Graph.Ef.Test
+- Cadmus.Graph.Ef.PgSql
+- Cadmus.Graph.Ef.PgSql.Test
+- Cadmus.Graph.Ef.MySql
+- Cadmus.Graph.Ef.MySql.Test
+- Cadmus.Graph.Api: for testing purposes only.
+
+**Obsolete**: these are old projects preserved here because they can be used as the basis for refactoring current Index data layer to use EF:
+
+- Cadmus.Index.Ef
+- Cadmus.Index.Ef.MySql
+- Cadmus.Index.Ef.MySql.Test
+- Cadmus.Index.Ef.PgSql
+- Cadmus.Index.Ef.PgSql.Test
+
 ## History
 
 ### 7.0.2
 
-- 2024-01-31: updated packages.
+- 2024-01-31:
+  - updated packages.
+  - ⚠️ moved projects from `Cadmus.Graph` solution into this solution, as the graph components are now integral part of Cadmus and their dependencies are easier to handle from a unique solution. This implied aligning the version numbers to 7.0.2 (from Graph 5.0.2).
 
 ### 7.0.1
 

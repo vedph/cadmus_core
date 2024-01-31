@@ -23,11 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.Graph" Version="5.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Cadmus.Core\Cadmus.Core.csproj" />
+    <ProjectReference Include="..\Cadmus.Graph\Cadmus.Graph.csproj" />
   </ItemGroup>
 
 </Project>

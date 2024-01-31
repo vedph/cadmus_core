@@ -1,0 +1,390 @@
+{
+  "namedMappings": {
+    "event_note": {
+      "name": "event_note",
+      "description": "Map the note of an event to EVENT crm:P3_has_note LITERAL.",
+      "source": "note",
+      "sid": "{$id}/note",
+      "output": {
+        "triples": [ "{?event} crm:P3_has_note \"{$.}\"" ]
+      }
+    },
+    "event_chronotopes": {
+      "name": "event_chronotopes",
+      "description": "For each chronotope, map the place/date of an event to triples which create a place node for the place and link it to the event via a triple using crm:P7_took_place_at for places; and to triples using crm:P4_has_time_span which in turn has a new timespan node has object.",
+      "source": "chronotopes",
+      "sid": "{$id}/chronotopes",
+      "children": [
+        {
+          "name": "event_chronotopes/place",
+          "source": "place",
+          "output": {
+            "nodes": {
+              "place": "itn:places/{@value}"
+            },
+            "triples": [
+              "{?place} a crm:E53_Place",
+              "{?event} crm:P7_took_place_at {?place}"
+            ]
+          }
+        },
+        {
+          "name": "event_chronotopes/date",
+          "source": "date",
+          "output": {
+            "metadata": {
+              "date_value": "{!_hdate({@.} & value)}",
+              "date_text": "{!_hdate({@.} & text)}"
+            },
+            "nodes": {
+              "timespan": "itn:timespans/ts##"
+            },
+            "triples": [
+              "{?event} crm:P4_has_time-span {?timespan}",
+              "{?timespan} crm:P82_at_some_time_within \"{$date_value}\"^^xs:float",
+              "{?timespan} crm:P87_is_identified_by \"{$date_text}\"@en"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "documentMappings": [
+    {
+      "name": "person",
+      "sourceType": 2,
+      "facetFilter": "person",
+      "partTypeFilter": "it.vedph.metadata",
+      "description": "Map a person item to a node via the item's EID extracted from its MetadataPart.",
+      "source": "metadata[?name=='eid']",
+      "sid": "{$part-id}/{@value}",
+      "output": {
+        "nodes": {
+          "person": "itn:persons/{$part-id}/{@value} [itn:persons/{@value}]"
+        },
+        "triples": [ "{?person} a crm:E21_person" ]
+      }
+    },
+    {
+      "name": "work",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.metadata",
+      "description": "Map a work item to a node via the item's EID extracted from its MetadataPart.",
+      "source": "metadata[?name=='eid']",
+      "sid": "{$part-id}/{@value}",
+      "output": {
+        "nodes": {
+          "work": "itn:works/{$part-id}/{@value} [itn:works/{@value}]"
+        },
+        "triples": [ "{?work} a crm:E90_symbolic_object" ]
+      }
+    },
+    {
+      "name": "text_sent_event",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map text sent event",
+      "source": "events[?type=='text.send']",
+      "sid": "{$part-id}/{@eid}",
+      "output": {
+        "metadata": {
+          "id": "{$part-id}/{@eid}",
+          "work": "itn:works/{$metadata-pid}/{$item-eid}"
+        },
+        "nodes": {
+          "event": "itn:events/{$id} [itn:events/{@eid}]"
+        },
+        "triples": [
+          "{?event} a crm:E7_Activity",
+          "{?event} crm:P2_has_type itn:event-types/text.send",
+          "{?event} crm:P16_used_specific_object {$work}"
+        ]
+      },
+      "children": [
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotopes"
+        },
+        {
+          "name": "text_sent_event/related/carried_out_by",
+          "source": "relatedEntities[?relation=='text:send:sender']",
+          "output": {
+            "nodes": {
+              "sender": "{@id}"
+            },
+            "triples": [ "{?event} crm:P14_carried_out_by {?sender}" ]
+          }
+        },
+        {
+          "name": "text_sent_event/related/has_participant",
+          "source": "relatedEntities[?relation=='text:send:recipient']",
+          "output": {
+            "nodes": {
+              "recipient": "{@id}"
+            },
+            "triples": [ "{?event} crm:P11_has_participant {?recipient}" ]
+          }
+        },
+        {
+          "name": "text_sent_event/related/carrier",
+          "source": "relatedEntities[?relation=='text:send:carrier']",
+          "output": {
+            "nodes": {
+              "carrier": "{@id}"
+            },
+            "triples": [ "{?event} crm:P11_has_participant {?carrier}" ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "text_reception_event",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map text reception event",
+      "source": "events[?type=='text.reception']",
+      "sid": "{$part-id}/{@eid}",
+      "output": {
+        "nodes": {
+          "event": "itn:events/{$id} [itn:events/{@eid}]"
+        },
+        "triples": [
+          "{?event} a crm:E7_Activity",
+          "{?event} crm:P2_has_type itn:event-types/text.reception",
+          "{?event} crm:P16_used_specific_object {$work}"
+        ],
+        "metadata": {
+          "id": "{$part-id}/{@eid}",
+          "work": "itn:works/{$metadata-pid}/{$item-eid}"
+        }
+      },
+      "children": [
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotopes"
+        },
+        {
+          "name": "text_reception_event/related/carried_out_by",
+          "source": "relatedEntities[?relation=='text:reception:recipient']",
+          "output": {
+            "nodes": {
+              "recipient": "{@id}"
+            },
+            "triples": [ "{?event} crm:P14_carried_out_by {?recipient}" ]
+          }
+        },
+        {
+          "name": "text_reception_event/related/has_participant",
+          "source": "relatedEntities[?relation=='text:reception:sender']",
+          "output": {
+            "nodes": {
+              "sender": "{@id}"
+            },
+            "triples": [ "{?event} crm:P11_has_participant {?sender}" ]
+          }
+        },
+        {
+          "name": "text sent event/related/carrier",
+          "source": "relatedEntities[?relation=='text:reception:carrier']",
+          "output": {
+            "nodes": {
+              "carrier": "{@id}"
+            },
+            "triples": [ "{?event} crm:P11_has_participant {?carrier}" ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "text_transcription_event",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map text transcription event",
+      "source": "events[?type=='text.transcription']",
+      "sid": "{$part-id}/{@eid}",
+      "output": {
+        "nodes": {
+          "event": "itn:events/{$id} [itn:events/{@eid}]"
+        },
+        "triples": [
+          "{?event} a crm:E7_Activity",
+          "{?event} crm:P2_has_type itn:event-types/text.transcription",
+          "{?event} crm:P16_used_specific_object {$work}"
+        ],
+        "metadata": {
+          "id": "{$part-id}/{@eid}",
+          "work": "itn:works/{$metadata-pid}/{$item-eid}"
+        }
+      },
+      "children": [
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotopes"
+        },
+        {
+          "name": "text_transcription_event/related/carried_out_by",
+          "source": "relatedEntities[?relation=='text:transcription:transcriber']",
+          "output": {
+            "nodes": {
+              "transcriber": "{@id}"
+            },
+            "triples": [ "{?event} crm:P14_carried_out_by {?transcriber}" ]
+          }
+        },
+        {
+          "name": "text_transcription_event/related/has_produced",
+          "source": "relatedEntities[?relation=='text:transcription:copy']",
+          "output": {
+            "nodes": {
+              "copy": "{@id}"
+            },
+            "triples": [ "{?event} crm:P108_has_produced {?copy}" ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "text_collection_event",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map text collection event",
+      "source": "events[?type=='text.collection']",
+      "sid": "{$part-id}/{@eid}",
+      "output": {
+        "nodes": {
+          "event": "itn:events/{$id} [itn:events/{@eid}]"
+        },
+        "triples": [
+          "{?event} a crm:E89_propositional_object",
+          "{?event} crm:P2_has_type itn:event-types/text.collection",
+          "{?event} crm:P148i_is_component_of {$work}"
+        ],
+        "metadata": {
+          "id": "{$part-id}/{@eid}",
+          "work": "itn:works/{$metadata-pid}/{$item-eid}"
+        }
+      },
+      "children": [
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotopes"
+        },
+        {
+          "name": "text_collection_event/related/has_component",
+          "source": "relatedEntities[?relation=='text:collection:collector']",
+          "output": {
+            "nodes": {
+              "collector": "{@id}"
+            },
+            "triples": [ "{?event} crm:P148_has_component {?collector}" ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "text_version_event",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map text version event",
+      "source": "events[?type=='text.version']",
+      "sid": "{$part-id}/{@eid}",
+      "output": {
+        "nodes": {
+          "event": "itn:events/{$id} [itn:events/{@eid}]"
+        },
+        "triples": [
+          "{?event} a crm:E7_activity",
+          "{?event} crm:P2_has_type itn:event-types/text.version",
+          "{?event} crm:P67_refers_to {$work}"
+        ],
+        "metadata": {
+          "id": "{$part-id}/{@eid}",
+          "work": "itn:works/{$metadata-pid}/{$item-eid}"
+        }
+      },
+      "children": [
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotopes"
+        },
+        {
+          "name": "text_version_event/related/refers_to",
+          "source": "relatedEntities[?relation=='text:version:previous']",
+          "output": {
+            "nodes": {
+              "previous": "itn:works/{@id.target.partId}/{@id.target.value} [itn:works/{@id.target.value}]"
+            },
+            "triples": [ "{?event} crm:P67_refers_to {?previous}" ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "work_info",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.itinera.literary-work-info",
+      "description": "Map work info",
+      "source": ".",
+      "sid": "{$part-id}",
+      "output": {
+        "nodes": {
+          "creation": "itn:events/creation## [itn:events/creation]",
+          "work": "itn:works/{$metadata-pid}/{$item-eid} [itn:works/{$item-eid}]"
+        },
+        "triples": [
+          "{?creation} a crm:E65_Creation",
+          "{?creation} crm:P94_has_created {?work}"
+        ]
+      },
+      "children": [
+        {
+          "name": "work_info/author-ids@eg",
+          "source": "authorIds[?!target.name && starts_with(target.gid, '@')]",
+          "output": {
+            "nodes": {
+              "author": "{!_substring({@target.gid} & 1)}"
+            },
+            "triples": [ "{?creation} crm:P14_carried_out_by {?author}" ]
+          }
+        },
+        {
+          "name": "work_info/author-ids@el",
+          "source": "authorIds[?!target.name && !(starts_with(target.gid, '@'))]",
+          "output": {
+            "nodes": {
+              "author": "{@target.gid}"
+            },
+            "triples": [ "{?creation} crm:P14_carried_out_by {?author}" ]
+          }
+        },
+        {
+          "name": "work_info/author-ids@i",
+          "source": "authorIds[?target.name]",
+          "output": {
+            "nodes": {
+              "author": "itn:persons/{@target.partId}/{@target.value} [itn:persons/{@target.value}]"
+            },
+            "triples": [ "{?creation} crm:P14_carried_out_by {?author}" ]
+          }
+        }
+      ]
+    }
+  ]
+}

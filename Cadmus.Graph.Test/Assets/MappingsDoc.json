@@ -1,0 +1,183 @@
+{
+  "NamedMappings": {
+    "event_note": {
+      "name": "event - note",
+      "description": "Map the note of an event to EVENT crm:P3_has_note LITERAL.",
+      "source": "note",
+      "sid": "{$id}/note",
+      "output": {
+        "nodes": {
+          "note": "x:notes/n"
+        },
+        "triples": [ "{?event} crm:P3_has_note \"{$.}\"" ]
+      }
+    },
+    "event_chronotope": {
+      "name": "event - chronotope",
+      "description": "Map the place/date of an event to triples which create a place node for the place and link it to the event via a triple using crm:P7_took_place_at for places; and to triples using crm:P4_has_time_span which in turn has a new timespan node has object.",
+      "source": "chronotope",
+      "sid": "{$id}/chronotope",
+      "children": [
+        {
+          "source": "place",
+          "output": {
+            "nodes": {
+              "place": "x:places/{@value}"
+            },
+            "triples": [
+              "{?place} a crm:E53_Place",
+              "{?event} crm:P7_took_place_at {?place}"
+            ]
+          }
+        },
+        {
+          "name": "event - chronotope - date",
+          "source": "date",
+          "output": {
+            "metadata": {
+              "date_value": "{!_hdate({@.} & value)}",
+              "date_text": "{!_hdate({@.} & text)}"
+            },
+            "nodes": {
+              "timespan": "x:timespans/ts"
+            },
+            "triples": [
+              "{?event} crm:P4_has_time_span {?timespan}",
+              "{?timespan} crm:P82_at_some_time_within \"{$date_value}\"^^xs:float",
+              "{?timespan} crm:P87_is_identified_by \"{$date_text}\"@en"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "DocumentMappings": [
+    {
+      "name": "work",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.metadata",
+      "description": "Map work to node via its EID from MetadataPart",
+      "source": "metadata[?name='eid']",
+      "output": {
+        "nodes": {
+          "work": "itn:works/{$item-id}/{@value}"
+        },
+        "triples": [ "{?work} a E90_symbolic_object" ]
+      }
+    },
+    {
+      "name": "text sent event",
+      "sourceType": 2,
+      "facetFilter": "work",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map text sent event",
+      "source": "events[?type=='text.send']",
+      "output": {
+        "metadata": {
+          "id": "{$part-id}/{@eid}"
+        },
+        "nodes": {
+          "event": "itn:events/{$id}"
+        },
+        "triples": [
+          "{?event} a crm:E7_Activity",
+          "{?event} crm:P2_has_type itn:event-types/text.send",
+          "{?event} crm:P16_used_specific_object itn:works/{$item-id}/{$item-eid}"
+        ]
+      }
+    },
+    {
+      "name": "birth event",
+      "sourceType": 2,
+      "facetFilter": "person",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map birth event",
+      "source": "events[?type=='person.birth']",
+      "output": {
+        "metadata": {
+          "id": "{$part-id}/{@eid}"
+        }
+      },
+      "children": [
+        {
+          "name": "birth event - eid",
+          "source": "eid",
+          "sid": "{$id}",
+          "output": {
+            "nodes": {
+              "event": "itn:events/{$.}"
+            },
+            "triples": [
+              "{?event} a crm:E67_Birth",
+              "{?event} crm:P98_brought_into_life {$item-uri}"
+            ]
+          }
+        },
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotope"
+        },
+        {
+          "name": "birth event - related - mother",
+          "sid": "{$id}/related",
+          "source": "relatedEntities[?relation=='mother']",
+          "output": {
+            "nodes": {
+              "mother": "itn:persons/{@id}"
+            },
+            "triples": [ "{?event} crm:P96_by_mother {?mother}" ]
+          }
+        },
+        {
+          "name": "birth event - related - father",
+          "sid": "{$id}/related",
+          "source": "relatedEntities[?relation=='father']",
+          "output": {
+            "nodes": {
+              "father": "itn:persons/{@id}"
+            },
+            "triples": [ "{?event} crm:P97_by_father {?father}" ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "death event",
+      "sourceType": 2,
+      "facetFilter": "person",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map death event",
+      "source": "events[?type=='person.death']",
+      "output": {
+        "metadata": {
+          "id": "{$part-id}/{@eid}"
+        }
+      },
+      "children": [
+        {
+          "name": "death event - eid",
+          "source": "eid",
+          "sid": "{$id}",
+          "output": {
+            "nodes": {
+              "event": "itn:events/{$.}"
+            },
+            "triples": [
+              "{?event} a crm:E69_Death",
+              "{?event} crm:P93_took_out_of_existence {$item-uri}"
+            ]
+          }
+        },
+        {
+          "name": "event_note"
+        },
+        {
+          "name": "event_chronotope"
+        }
+      ]
+    }
+  ]
+}

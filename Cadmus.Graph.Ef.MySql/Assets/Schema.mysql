@@ -1,0 +1,228 @@
+﻿-- namespace_lookup
+CREATE TABLE `namespace_lookup` (
+  `id` varchar(50) NOT NULL,
+  `uri` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `namespace_lookup_uri_IDX` (`uri`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- uri_lookup
+CREATE TABLE `uri_lookup` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uri` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uri_lookup_uri_IDX` (`uri`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- uid_lookup
+CREATE TABLE `uid_lookup` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sid` varchar(500) NOT NULL,
+  `unsuffixed` varchar(500) NOT NULL,
+  `has_suffix` bit(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uid_lookup_unsuffixed_IDX` (`unsuffixed`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- node
+CREATE TABLE `node` (
+  `id` int NOT NULL,
+  `is_class` bit(1) NOT NULL,
+  `tag` varchar(50) DEFAULT NULL,
+  `label` varchar(500) DEFAULT NULL,
+  `source_type` int NOT NULL,
+  `sid` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `node_FK` FOREIGN KEY (`id`) REFERENCES `uri_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- node_class
+CREATE TABLE `node_class` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `node_id` int NOT NULL,
+  `class_id` int NOT NULL,
+  `level` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `node_class_FK` (`node_id`),
+  KEY `node_class_FK_1` (`class_id`),
+  CONSTRAINT `node_class_FK` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `node_class_FK_1` FOREIGN KEY (`class_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- property
+CREATE TABLE `property` (
+  `id` int NOT NULL,
+  `data_type` varchar(100) DEFAULT NULL,
+  `lit_editor` varchar(100) DEFAULT NULL,
+  `description` varchar(5000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `property_FK` FOREIGN KEY (`id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- triple
+CREATE TABLE `triple` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `s_id` int NOT NULL,
+  `p_id` int NOT NULL,
+  `o_id` int DEFAULT NULL,
+  `o_lit` TEXT DEFAULT NULL,
+  `o_lit_type` varchar(100) DEFAULT NULL,
+  `o_lit_lang` varchar(10) DEFAULT NULL,
+  `o_lit_ix` varchar(15000) DEFAULT NULL,
+  `o_lit_n` double DEFAULT NULL,
+  `sid` varchar(500) DEFAULT NULL,
+  `tag` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `triple_fk_s` (`s_id`),
+  KEY `triple_fk_o` (`o_id`),
+  KEY `triple_sid_IDX` (`sid`) USING BTREE,
+  KEY `triple_fk_p` (`p_id`),
+  CONSTRAINT `triple_fk_s` FOREIGN KEY (`s_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `triple_fk_p` FOREIGN KEY (`p_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `triple_fk_o` FOREIGN KEY (`o_id`) REFERENCES `node` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- mapping
+CREATE TABLE mapping (
+	id int auto_increment NOT NULL,
+	parent_id int NULL,
+	ordinal int NOT NULL,
+	name varchar(100) NOT NULL,
+	source_type int NOT NULL,
+	facet_filter varchar(100) NULL,
+	group_filter varchar(100) NULL,
+	title_filter varchar(100) NULL,
+	flags_filter int NULL,
+	part_type_filter varchar(100) NULL,
+	part_role_filter varchar(100) NULL,
+	description varchar(1000) NULL,
+	source varchar(500) NOT NULL,
+	sid varchar(500) NULL,
+	scalar_pattern varchar(500) NULL,
+	CONSTRAINT mapping_PK PRIMARY KEY (id),
+	CONSTRAINT mapping_FK FOREIGN KEY (parent_id) REFERENCES mapping(id) ON DELETE SET NULL ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;
+
+-- mapping_out_node
+CREATE TABLE mapping_out_node (
+	id int auto_increment NOT NULL,
+	mapping_id int NOT NULL,
+	ordinal int NOT NULL,
+	name varchar(100) NOT NULL,
+	uid varchar(1000) NOT NULL,
+	label varchar(1000) NULL,
+	tag varchar(100) NULL,
+	CONSTRAINT mapping_out_node_PK PRIMARY KEY (id),
+	CONSTRAINT mapping_out_node_FK FOREIGN KEY (mapping_id) REFERENCES mapping(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;
+
+-- mapping_out_triple
+CREATE TABLE mapping_out_triple (
+	id int auto_increment NOT NULL,
+	mapping_id int NOT NULL,
+	ordinal int NOT NULL,
+	s varchar(1000) NOT NULL,
+	p varchar(1000) NOT NULL,
+	o varchar(1000) NULL,
+	ol varchar(10000) NULL,
+	CONSTRAINT mapping_out_triple_PK PRIMARY KEY (id),
+	CONSTRAINT mapping_out_triple_FK FOREIGN KEY (mapping_id) REFERENCES mapping(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;
+
+-- mapping_out_meta
+CREATE TABLE mapping_out_meta (
+	id int auto_increment NOT NULL,
+	mapping_id int NOT NULL,
+	ordinal int NOT NULL,
+	name varchar(100) NOT NULL,
+	value varchar(10000) NOT NULL,
+	CONSTRAINT mapping_out_meta_PK PRIMARY KEY (id),
+	CONSTRAINT mapping_out_meta_FK FOREIGN KEY (mapping_id) REFERENCES mapping(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+-- graph preset data
+-- --------------------------------------------------------
+
+-- core namespaces
+INSERT INTO namespace_lookup(id, uri) VALUES('owl', 'http://www.w3.org/2002/07/owl#');
+INSERT INTO namespace_lookup(id, uri) VALUES('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+INSERT INTO namespace_lookup(id, uri) VALUES('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
+INSERT INTO namespace_lookup(id, uri) VALUES('xml', 'http://www.w3.org/XML/1998/namespace');
+INSERT INTO namespace_lookup(id, uri) VALUES('xsd', 'http://www.w3.org/2001/XMLSchema#');
+
+-- core classes URIs
+-- NOTE: if you modify any of the following, update the IDs for the nodes below
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Resource');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Literal');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:XMLLiteral');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Class');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:Property');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:DataType');
+-- core classes nodes
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(1, 1, 'rdfs:Resource', NULL, 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(2, 1, 'rdfs:Literal', NULL, 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(3, 1, 'rdfs:XMLLiteral', NULL, 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(4, 1, 'rdfs:Class', NULL, 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(5, 1, 'rdfs:Property', NULL, 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(6, 1, 'rdfs:DataType', NULL, 0, NULL);
+
+-- core properties URIs
+INSERT INTO uri_lookup(uri) VALUES('rdf:type');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:subClassOf');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:subPropertyOf');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:domain');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:range');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:label');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:comment');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:seeAlso');
+INSERT INTO uri_lookup(uri) VALUES('rdfs:isDefinedBy');
+-- core properties nodes
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(7, 0, 'is-a', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(8, 0, 'rdfs:subClassOf', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(9, 0, 'rdfs:subPropertyOf', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(10, 0, 'rdfs:domain', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(11, 0, 'rdfs:range', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(12, 0, 'rdfs:label', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(13, 0, 'rdfs:comment', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(14, 0, 'rdfs:seeAlso', 'property', 0, NULL);
+INSERT INTO node(id, is_class, label, tag, source_type, sid) VALUES(15, 0, 'rdfs:isDefinedBy', 'property', 0, NULL);
+
+-- --------------------------------------------------------
+-- graph stored procedures
+-- --------------------------------------------------------
+
+DELIMITER $$
+CREATE PROCEDURE `populate_node_class`(IN instance_id INT, IN a_id INT, IN sub_id INT)
+BEGIN
+INSERT INTO node_class(node_id, class_id, level)
+WITH RECURSIVE cn AS (
+	-- ANCHOR
+	-- get object class node
+	SELECT t.o_id AS id, 1 AS level FROM node n
+	-- of a triple having S=start node P=a O=class node
+	INNER JOIN triple t ON t.s_id=n.id AND t.p_id=a_id
+	LEFT JOIN node n2 ON t.o_id=n2.id AND n2.is_class=true
+	WHERE n.id=instance_id
+	UNION DISTINCT
+	-- RECURSIVE
+	SELECT t.o_id AS id, level+1 AS level FROM cn
+    -- sub_id is the ID of rdfs:subClassOf
+	INNER JOIN triple t ON t.s_id=cn.id AND t.p_id=sub_id
+	LEFT JOIN node n2 ON t.o_id=n2.id AND n2.is_class=true
+)
+SELECT instance_id, cn.id, cn.level FROM cn WHERE cn.id IS NOT NULL;
+END$$
+DELIMITER ;

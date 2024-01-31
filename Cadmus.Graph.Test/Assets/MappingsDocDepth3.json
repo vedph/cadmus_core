@@ -1,0 +1,235 @@
+﻿{
+    "namedMappings": {
+        "event_description": {
+            "name": "event/description",
+            "description": "Map the description of an event to EVENT crm:P3_has_note LITERAL.",
+            "source": "description",
+            "sid": "{$sid}/description",
+            "output": {
+                "triples": [ "{?event} crm:P3_has_note \"{$.}\"" ]
+            }
+        },
+        "event_note": {
+            "name": "event/note",
+            "description": "Map the note of an event to EVENT crm:P3_has_note LITERAL.",
+            "source": "note",
+            "sid": "{$sid}/note",
+            "output": {
+                "triples": [ "{?event} crm:P3_has_note \"{$.}\"" ]
+            }
+        },
+        "event_chronotopes": {
+            "name": "event/chronotopes",
+            "description": "For each chronotope, map the place/date of an event to triples which create a place node for the place and link it to the event via a triple using crm:P7_took_place_at for places; and to triples using crm:P4_has_time_span which in turn has a new timespan node has object.",
+            "source": "chronotopes",
+            "sid": "{$sid}/chronotope",
+            "children": [
+                {
+                    "name": "event/chronotopes/place",
+                    "source": "place",
+                    "output": {
+                        "nodes": {
+                            "place": "itn:places/{@value}"
+                        },
+                        "triples": [
+                            "{?place} a crm:E53_Place",
+                            "{?event} crm:P7_took_place_at {?place}"
+                        ]
+                    }
+                },
+                {
+                    "name": "event/chronotopes/date",
+                    "source": "date",
+                    "output": {
+                        "metadata": {
+                            "date_value": "{!_hdate({@.} & value)}",
+                            "date_text": "{!_hdate({@.} & text)}"
+                        },
+                        "nodes": {
+                            "timespan": "itn:timespans/ts##"
+                        },
+                        "triples": [
+                            "{?event} crm:P4_has_time-span {?timespan}",
+                            "{?timespan} crm:P82_at_some_time_within \"{$date_value}\"^^xs:float",
+                            "{?timespan} crm:P87_is_identified_by \"{$date_text}\"@en"
+                        ]
+                    }
+                }
+            ]
+        },
+        "event_assertion": {
+            "name": "event/assertion",
+            "description": "Map the assertion of an event to EVENT itn:has_probability RANK^^xsd:float.",
+            "source": "assertion",
+            "sid": "{$sid}/assertion",
+            "output": {
+                "nodes": {
+                    "assertion": "itn:assertions/as##"
+                },
+                "triples": [
+                    "{?event} itn:has_probability \"{@rank}\"^^xsd:float",
+                    "{?assertion} a crm:E13_attribute_assignment",
+                    "{?assertion} crm:P140_assigned_attribute_to {?event}",
+                    "{?assertion} crm:P141_assigned itn:has_probability",
+                    "{?assertion} crm:P177_assigned_property_of_type crm:E55_type"
+                ]
+            },
+            "children": [
+                {
+                    "name": "event/assertion/references",
+                    "source": "references",
+                    "sid": "{$sid}/assertion/reference",
+                    "children": [
+                        {
+                            "name": "event/references/citation",
+                            "source": "citation",
+                            "output": {
+                                "nodes": {
+                                    "citation": "itn:citations/cit##"
+                                },
+                                "triples": [
+                                    "{?citation} a crm:E31_Document",
+                                    "{?citation} rdfs:label \"{@.}\"",
+                                    "{?assertion} crm:P70i_is_documented_in {?citation}"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "work_assertion": {
+            "name": "work/assertion",
+            "description": "Map the assertion of an event to EVENT itn:has_probability RANK^^xsd:float.",
+            "source": "assertion",
+            "sid": "{$sid}/assertion",
+            "output": {
+                "nodes": {
+                    "assertion": "itn:assertions/as##"
+                },
+                "triples": [
+                    "{$event} itn:has_probability \"{@rank}\"^^xsd:float",
+                    "{?assertion} a crm:E13_attribute_assignment",
+                    "{?assertion} crm:P140_assigned_attribute_to {$event}",
+                    "{?assertion} crm:P141_assigned itn:has_probability",
+                    "{?assertion} crm:P177_assigned_property_of_type crm:E55_type"
+                ]
+            },
+            "children": [
+                {
+                    "name": "event/assertion/references",
+                    "source": "references",
+                    "sid": "{$sid}/assertion/reference",
+                    "children": [
+                        {
+                            "name": "event/references/citation",
+                            "source": "citation",
+                            "output": {
+                                "nodes": {
+                                    "citation": "itn:citations/cit##"
+                                },
+                                "triples": [
+                                    "{?citation} a crm:E31_Document",
+                                    "{?citation} rdfs:label \"{@.}\"",
+                                    "{?assertion} crm:P70i_is_documented_in {?citation}"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "event_period": {
+            "name": "event/tag",
+            "description": "Map the tag of an event to EVENT P9i_forms_part_of GROUP.",
+            "source": "tag",
+            "sid": "{$sid}/tag",
+            "output": {
+                "nodes": {
+                    "period": "itn:periods/{$part-id}/{@value}"
+                },
+                "triples": [ "{?event} P9i_forms_part_of {?period}" ]
+            }
+        }
+    },
+    "documentMappings": [
+        {
+            "name": "work",
+            "sourceType": 2,
+            "facetFilter": "work",
+            "partTypeFilter": "it.vedph.metadata",
+            "description": "Map a work item to a node via the item's EID extracted from its MetadataPart.",
+            "source": "metadata[?name=='eid']",
+            "sid": "{$part-id}/{@value}",
+            "output": {
+                "nodes": {
+                    "work": "itn:works/{$part-id}/{@value} [itn:works/{@value}]",
+                    "creation": "itn:events/{$part-id}/{@value} [itn:events/{@value}]"
+                },
+                "triples": [
+                    "{?work} a crm:E90_symbolic_object",
+                    "{?creation} a crm:E65_creation",
+                    "{?creation} crm:P94_has_created {?work}"
+                ]
+            }
+        },
+        {
+            "name": "work chronotopes",
+            "sourceType": 2,
+            "facetFilter": "work",
+            "partTypeFilter": "it.vedph.chronotopes",
+            "description": "Map each chronotope of a work item",
+            "source": ".",
+            "sid": "{$part-id}/chronotopes",
+            "output": {
+                "metadata": {
+                    "event": "itn:events/{$metadata-pid}/{$item-eid}",
+                    "sid": "{$part-id}/chronotopes"
+                }
+            },
+            "children": [
+                {
+                    "name": "work chronotopes/chronotopes",
+                    "description": "For each chronotope, map the place/date of an event to triples which create a place node for the place and link it to the event via a triple using crm:P7_took_place_at for places; and to triples using crm:P4_has_time_span which in turn has a new timespan node has object.",
+                    "source": "chronotopes",
+                    "children": [
+                        {
+                            "name": "work chronotopes/chronotopes/place",
+                            "source": "place",
+                            "output": {
+                                "nodes": {
+                                    "place": "itn:places/{@value}"
+                                },
+                                "triples": [
+                                    "{?place} a crm:E53_Place",
+                                    "{$event} crm:P7_took_place_at {?place}"
+                                ]
+                            }
+                        },
+                        {
+                            "name": "work chronotopes/chronotopes/date",
+                            "source": "date",
+                            "output": {
+                                "metadata": {
+                                    "date_value": "{!_hdate({@.} & value)}",
+                                    "date_text": "{!_hdate({@.} & text)}"
+                                },
+                                "nodes": {
+                                    "timespan": "itn:timespans/ts##"
+                                },
+                                "triples": [
+                                    "{$event} crm:P4_has_time-span {?timespan}",
+                                    "{?timespan} crm:P82_at_some_time_within \"{$date_value}\"^^xs:float",
+                                    "{?timespan} crm:P87_is_identified_by \"{$date_text}\"@en"
+                                ]
+                            }
+                        },
+                        {
+                            "name": "work_assertion"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

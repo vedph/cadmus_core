@@ -36,3 +36,4 @@ packages/
 *.csdat
 *.scgdat
 .vs/
+**/log-*.txt

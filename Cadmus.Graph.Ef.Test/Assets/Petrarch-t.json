@@ -1,0 +1,114 @@
+﻿[
+  {
+    "SubjectUri": "x:guys/francesco_petrarca",
+    "PredicateUri": "rdf:type",
+    "ObjectUri": "foaf:Person"
+  },
+  {
+    "SubjectUri": "x:guys/francesco_petrarca",
+    "PredicateUri": "rdfs:label",
+    "ObjectLiteral": "Francesco Petrarca",
+    "LiteralLanguage": "it"
+  },
+  {
+    "SubjectUri": "x:events/birth",
+    "PredicateUri": "rdf:type",
+    "ObjectUri": "crm:e67_birth",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth"
+  },
+  {
+    "SubjectUri": "x:events/birth",
+    "PredicateUri": "crm:p98_brought_into_life",
+    "ObjectUri": "x:guys/francesco_petrarca",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth"
+  },
+  {
+    "SubjectUri": "x:places/arezzo",
+    "PredicateUri": "rdf:type",
+    "ObjectUri": "crm:e53_place",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "SubjectUri": "x:events/birth",
+    "PredicateUri": "crm:p7_took_place_at",
+    "ObjectUri": "x:places/arezzo",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "SubjectUri": "x:events/birth",
+    "PredicateUri": "crm:p4_has_time_span",
+    "ObjectUri": "x:timespans/ts",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "SubjectUri": "x:timespans/ts",
+    "PredicateUri": "crm:p82_at_some_time_within",
+    "ObjectLiteral": "1304",
+    "LiteralType": "xs:float",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "SubjectUri": "x:timespans/ts",
+    "PredicateUri": "crm:p87_is_identified_by",
+    "ObjectLiteral": "1304 AD",
+    "LiteralType": "xs:string",
+    "LiteralLanguage": "en",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/chronotope"
+  },
+  {
+    "SubjectUri": "x:events/birth",
+    "PredicateUri": "crm:p96_by_mother",
+    "ObjectUri": "x:guys/eletta_cangiani",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/related"
+  },
+  {
+    "SubjectUri": "x:events/birth",
+    "PredicateUri": "crm:p97_by_father",
+    "ObjectUri": "x:guys/ser_petracco",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/birth/related"
+  },
+  {
+    "SubjectUri": "x:events/death",
+    "PredicateUri": "rdf:type",
+    "ObjectUri": "crm:e69_death",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death"
+  },
+  {
+    "SubjectUri": "x:events/death",
+    "PredicateUri": "crm:p93_took_out_of_existence",
+    "ObjectUri": "x:guys/francesco_petrarca",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death"
+  },
+  {
+    "SubjectUri": "x:places/arqua",
+    "PredicateUri": "rdf:type",
+    "ObjectUri": "crm:e53_place",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  },
+  {
+    "SubjectUri": "x:events/death",
+    "PredicateUri": "crm:p7_took_place_at",
+    "ObjectUri": "x:places/arqua",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  },
+  {
+    "SubjectUri": "x:events/death",
+    "PredicateUri": "crm:p4_has_time_span",
+    "ObjectUri": "x:timespans/ts#1",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  },
+  {
+    "SubjectUri": "x:timespans/ts#1",
+    "PredicateUri": "crm:p82_at_some_time_within",
+    "ObjectLiteral": "1374",
+    "LiteralType": "xs:float",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  },
+  {
+    "SubjectUri": "x:timespans/ts#1",
+    "PredicateUri": "crm:p87_is_identified_by",
+    "ObjectLiteral": "1374 AD",
+    "ObjectLanguage": "en",
+    "Sid": "bdd152f1-2ae2-4189-8a4a-e3d68c6a9d7e/death/chronotope"
+  }
+]

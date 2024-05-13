@@ -5,7 +5,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TargetFramework>net8.0</TargetFramework>
 	<Nullable>enable</Nullable>
-    <Version>7.0.2</Version>
+    <Version>7.0.3</Version>
     <Authors>Daniele Fusi</Authors>
     <Company>Fusi</Company>
     <Product>Cadmus</Product>
@@ -14,8 +14,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus</PackageTags>
-    <FileVersion>7.0.2</FileVersion>
-    <AssemblyVersion>7.0.2</AssemblyVersion>
+    <FileVersion>7.0.3</FileVersion>
+    <AssemblyVersion>7.0.3</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,11 +29,11 @@
   <ItemGroup>
     <PackageReference Include="DiffMatchPatch" Version="3.0.0" />
     <PackageReference Include="Fusi.Text" Version="4.0.1" />
-    <PackageReference Include="Fusi.Tools" Version="4.0.0" />
-    <PackageReference Include="Fusi.Tools.Configuration" Version="4.0.0" />
+    <PackageReference Include="Fusi.Tools" Version="5.0.0" />
+    <PackageReference Include="Fusi.Tools.Configuration" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
   </ItemGroup>
 
   <ItemGroup>

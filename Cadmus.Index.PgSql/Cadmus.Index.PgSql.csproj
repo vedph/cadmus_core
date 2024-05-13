@@ -15,9 +15,9 @@
 		<Description>PostgreSQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>7.0.2</Version>
-		<FileVersion>7.0.2</FileVersion>
-		<AssemblyVersion>7.0.2</AssemblyVersion>
+		<Version>7.0.3</Version>
+		<FileVersion>7.0.3</FileVersion>
+		<AssemblyVersion>7.0.3</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -29,8 +29,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fusi.DbManager.PgSql" Version="4.0.1" />
-		<PackageReference Include="Npgsql" Version="8.0.1" />
+		<PackageReference Include="Fusi.DbManager.PgSql" Version="4.0.2" />
+		<PackageReference Include="Npgsql" Version="8.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

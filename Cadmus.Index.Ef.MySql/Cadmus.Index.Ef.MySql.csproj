@@ -4,9 +4,9 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>7.0.3</Version>
-		<FileVersion>7.0.3</FileVersion>
-		<AssemblyVersion>7.0.3</AssemblyVersion>
+		<Version>7.0.4</Version>
+		<FileVersion>7.0.4</FileVersion>
+		<AssemblyVersion>7.0.4</AssemblyVersion>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fusi.DbManager.MySql" Version="4.0.2" />
+		<PackageReference Include="Fusi.DbManager.MySql" Version="4.0.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Cadmus.Index.Ef\Cadmus.Index.Ef.csproj" />

@@ -251,8 +251,8 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         }
     }
 
-    private static IMongoQueryable<MongoThesaurus> ApplyThesaurusFilters(
-        IMongoQueryable<MongoThesaurus> thesauri, ThesaurusFilter filter)
+    private static IQueryable<MongoThesaurus> ApplyThesaurusFilters(
+        IQueryable<MongoThesaurus> thesauri, ThesaurusFilter filter)
     {
         if (!string.IsNullOrEmpty(filter.Id))
             thesauri = thesauri.Where(t => t.Id.Contains(filter.Id));
@@ -1214,8 +1214,8 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         return results;
     }
 
-    private static IMongoQueryable<MongoPart> ApplyPartFilters(
-        IMongoQueryable<MongoPart> parts, IList<string>? itemIds,
+    private static IQueryable<MongoPart> ApplyPartFilters(
+        IQueryable<MongoPart> parts, IList<string>? itemIds,
         string? typeId, string? roleId, string? thesaurusScope)
     {
         if (itemIds?.Count > 0)
@@ -1256,7 +1256,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
 
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
         var partCollection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
-        IMongoQueryable<MongoPart> parts = partCollection.AsQueryable();
+        IQueryable<MongoPart> parts = partCollection.AsQueryable();
 
         parts = ApplyPartFilters(parts, filter.ItemIds, filter.TypeId,
             filter.RoleId, filter.ThesaurusScope);
@@ -1294,7 +1294,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
         {
             foreach (Tuple<string, bool> t in filter.SortExpressions)
             {
-                parts = (IMongoQueryable<MongoPart>)(t.Item2
+                parts = (IQueryable<MongoPart>)(t.Item2
                     ? parts.OrderBy(t.Item1)
                     : parts.OrderByDescending(t.Item1));
             }
@@ -1330,7 +1330,7 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
 
         IMongoDatabase db = Client!.GetDatabase(_databaseName);
         var collection = db.GetCollection<MongoPart>(MongoPart.COLLECTION);
-        IMongoQueryable<MongoPart> parts = collection.AsQueryable();
+        IQueryable<MongoPart> parts = collection.AsQueryable();
 
         parts = ApplyPartFilters(parts, itemIds, typeId, roleId, null);
 

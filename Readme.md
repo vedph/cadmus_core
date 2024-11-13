@@ -46,6 +46,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 8.0.0
+
+- 2024-11-13: ⚠️ upgraded to .NET 9. This also implied removing legacy MongoDB.Driver version 2 which still coexisted next to version 3, thus replacing `IMongoQueryable` with `IQueryable`.
+
 ### 7.0.4
 
 - 2024-09-27: updated packages.

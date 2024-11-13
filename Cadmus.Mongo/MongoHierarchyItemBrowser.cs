@@ -133,11 +133,11 @@ public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
         return new ItemInfo
         {
             Id = doc["_id"].AsString,
-            Title = GetBsonString(doc["title"]),
-            Description = GetBsonString(doc["description"]),
-            FacetId = GetBsonString(doc["facetId"]),
-            GroupId = GetBsonString(doc["groupId"]),
-            SortKey = GetBsonString(doc["sortKey"]),
+            Title = GetBsonString(doc["title"])!,
+            Description = GetBsonString(doc["description"])!,
+            FacetId = GetBsonString(doc["facetId"])!,
+            GroupId = GetBsonString(doc["groupId"])!,
+            SortKey = GetBsonString(doc["sortKey"])!,
             Flags = doc["flags"].AsInt32,
             TimeCreated = doc["timeCreated"].ToUniversalTime(),
             CreatorId = GetBsonString(doc["creatorId"]) ?? "",
@@ -224,9 +224,10 @@ public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
                 $"{nameof(MongoHierarchyItemBrowser)} not configured");
         }
 
-        string? parentId = filters.ContainsKey("parentId") ?
-            filters["parentId"] : null;
-        string? tag = filters.ContainsKey("tag") ? filters["tag"] : null;
+        string? parentId = filters.TryGetValue("parentId", out string? p)
+            ? p : null;
+        string? tag = filters.TryGetValue("tag", out string? t)
+            ? t : null;
 
         EnsureClientCreated(string.Format(CultureInfo.InvariantCulture,
             _connection, database));
@@ -251,8 +252,8 @@ public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
             AllowDiskUse = false
         };
 
-        List<BsonDocument> stages = new(new BsonDocument[]
-        {
+        List<BsonDocument> stages = new(
+        [
             BuildMatchStage(parentId, tag),
             new BsonDocument("$lookup", new BsonDocument()
                     .Add("from", "items")
@@ -263,7 +264,7 @@ public sealed class MongoHierarchyItemBrowser : MongoConsumerBase,
                     .Add("content.x", 1)
                     .Add("items[0].sortKey", 1)),
             new BsonDocument("$skip", (options.PageNumber - 1) * options.PageSize)
-        });
+        ]);
 
         if (options.PageSize > 0)
             stages.Add(new BsonDocument("$limit", options.PageSize));

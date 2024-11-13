@@ -1,4 +1,4 @@
-﻿using Cadmus.Graph.MySql;
+﻿using Cadmus.Graph.Ef.MySql;
 using Cadmus.Index.Sql;
 using Fusi.DbManager;
 using Fusi.DbManager.MySql;
@@ -84,7 +84,7 @@ public sealed class MySqlItemIndexWriter : SqlItemIndexWriterBase,
     /// <returns>SQL code.</returns>
     public static string GetMySqlSchema() =>
         LoadResource("Schema.mysql")
-        + "\n" + MySqlGraphRepository.GetSchema();
+        + "\n" + EfMySqlGraphRepository.GetSchema();
 
     /// <summary>
     /// Gets the schema SQL used to populate a created database.

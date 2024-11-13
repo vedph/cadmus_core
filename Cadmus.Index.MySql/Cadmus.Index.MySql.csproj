@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<IncludeSymbols>true</IncludeSymbols>
 		<Nullable>enable</Nullable>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
 		<Company>Fusi</Company>
@@ -13,9 +13,9 @@
 		<Description>MySQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>7.0.4</Version>
-		<FileVersion>7.0.4</FileVersion>
-		<AssemblyVersion>7.0.4</AssemblyVersion>
+		<Version>8.0.0</Version>
+		<FileVersion>8.0.0</FileVersion>
+		<AssemblyVersion>8.0.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,11 +31,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Cadmus.Graph.MySql" Version="3.0.7" />
-		<PackageReference Include="Fusi.DbManager.MySql" Version="4.0.3" />
+		<!-- <PackageReference Include="Cadmus.Graph.MySql" Version="3.0.7" /> -->
+		<PackageReference Include="Fusi.DbManager.MySql" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Graph.Ef.MySql\Cadmus.Graph.Ef.MySql.csproj" />
 		<ProjectReference Include="..\Cadmus.Index.Sql\Cadmus.Index.Sql.csproj" />
 	</ItemGroup>
 

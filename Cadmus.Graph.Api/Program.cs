@@ -2,15 +2,14 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Hosting;
 using Serilog;
-using Microsoft.Extensions.Hosting;
 using Cadmus.Graph.Api.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Cadmus.Graph.Ef.PgSql;
 using Cadmus.Graph.Ef;
+using Scalar.AspNetCore;
 
 namespace Cadmus.Graph.Api;
 
@@ -68,9 +67,8 @@ public static class Program
 
             builder.Services.AddControllers();
 
-            // more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddOpenApi();
 
             // setup log (config is read from appsettings.json under Serilog)
             builder.Host.UseSerilog((ctx, lc) => lc
@@ -99,14 +97,10 @@ public static class Program
             app.UseSerilogRequestLogging();
 
             // configure the HTTP request pipeline
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
             app.UseAuthorization();
             app.MapControllers();
+            app.MapOpenApi();
+            app.MapScalarApiReference();
 
             app.Run();
         }

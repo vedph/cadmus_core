@@ -41,7 +41,7 @@ public class FacetDefinition
     public FacetDefinition()
     {
         Id = Label = "";
-        PartDefinitions = new List<PartDefinition>();
+        PartDefinitions = [];
     }
 
     /// <summary>

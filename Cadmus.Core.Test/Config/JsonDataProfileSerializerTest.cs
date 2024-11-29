@@ -23,7 +23,7 @@ public sealed class JsonDataProfileSerializerTest
     public void Read_Profile_Ok()
     {
         string json = LoadProfile("SampleProfile.json");
-        IDataProfileSerializer serializer = new JsonDataProfileSerializer();
+        JsonDataProfileSerializer serializer = new();
 
         DataProfile profile = serializer.Read(json);
 

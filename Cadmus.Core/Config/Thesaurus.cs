@@ -74,7 +74,7 @@ public sealed class Thesaurus
     public Thesaurus()
     {
         _id = "";
-        Entries = new List<ThesaurusEntry>();
+        Entries = [];
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public sealed class Thesaurus
         }
         _id = id;
 
-        Entries = new List<ThesaurusEntry>();
+        Entries = [];
     }
 
     /// <summary>

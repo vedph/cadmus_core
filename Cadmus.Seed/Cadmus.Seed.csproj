@@ -11,11 +11,11 @@
     <Description>Cadmus fake data seed core components.</Description>
     <Copyright>by Daniele Fusi</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>8.0.0</Version>
+    <Version>8.0.2</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;seed</PackageTags>
-    <FileVersion>8.0.0</FileVersion>
-    <AssemblyVersion>8.0.0</AssemblyVersion>
+    <FileVersion>8.0.2</FileVersion>
+    <AssemblyVersion>8.0.2</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

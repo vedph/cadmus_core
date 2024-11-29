@@ -89,7 +89,7 @@ public sealed class ItemBrowserFactory : ComponentFactory
         ArgumentNullException.ThrowIfNull(partTypeProvider);
 
         // https://simpleinjector.readthedocs.io/en/latest/advanced.html?highlight=batch#batch-registration
-        Assembly[] assemblies = additionalAssemblies ?? Array.Empty<Assembly>();
+        Assembly[] assemblies = additionalAssemblies ?? [];
 
         services.AddSingleton(partTypeProvider);
 

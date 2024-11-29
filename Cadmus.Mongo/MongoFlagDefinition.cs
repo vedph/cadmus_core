@@ -41,6 +41,12 @@ public sealed class MongoFlagDefinition
     public string? ColorKey { get; set; }
 
     /// <summary>
+    /// Gets or sets whether this is an admin flag.
+    /// </summary>
+    [BsonIgnoreIfNull]
+    public bool? IsAdmin { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MongoFlagDefinition"/>
     /// class.
     /// </summary>
@@ -62,6 +68,7 @@ public sealed class MongoFlagDefinition
         Label = definition.Label;
         Description = definition.Description;
         ColorKey = definition.ColorKey;
+        IsAdmin = definition.IsAdmin;
     }
 
     /// <summary>
@@ -75,7 +82,8 @@ public sealed class MongoFlagDefinition
             Id = Id,
             Label = Label ?? "",
             Description = Description,
-            ColorKey = ColorKey
+            ColorKey = ColorKey,
+            IsAdmin = IsAdmin ?? false
         };
     }
 
@@ -85,6 +93,6 @@ public sealed class MongoFlagDefinition
     /// <returns>A string that represents the current object.</returns>
     public override string ToString()
     {
-        return $"{Id:X4} {Label}";
+        return $"{Id:X4} {Label}" + (IsAdmin == true ? "*" : "");
     }
 }

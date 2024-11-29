@@ -13,7 +13,7 @@ namespace Cadmus.Mongo;
 /// </summary>
 public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
 {
-    private void CreateIndexes(IMongoDatabase database)
+    private static void CreateIndexes(IMongoDatabase database)
     {
         ArgumentNullException.ThrowIfNull(database);
 

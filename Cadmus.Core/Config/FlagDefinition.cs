@@ -33,6 +33,12 @@ public class FlagDefinition
     public string? ColorKey { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether this flag is an admin flag,
+    /// i.e. it can be toggled only by administrators.
+    /// </summary>
+    public bool IsAdmin { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="FlagDefinition"/> class.
     /// </summary>
     public FlagDefinition()

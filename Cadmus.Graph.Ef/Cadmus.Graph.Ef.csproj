@@ -4,9 +4,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>8.0.0</Version>
-		<FileVersion>8.0.0</FileVersion>
-		<AssemblyVersion>8.0.0</AssemblyVersion>
+		<Version>8.0.2</Version>
+		<FileVersion>8.0.2</FileVersion>
+		<AssemblyVersion>8.0.2</AssemblyVersion>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Authors>Daniele Fusi</Authors>

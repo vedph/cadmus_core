@@ -11,11 +11,11 @@
     <Product>Cadmus</Product>
     <Description>Cadmus items index.</Description>
     <Copyright>by Daniele Fusi 2020</Copyright>
-    <Version>8.0.2</Version>
+    <Version>8.0.4</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>Cadmus;index</PackageTags>
-    <FileVersion>8.0.2</FileVersion>
-    <AssemblyVersion>8.0.2</AssemblyVersion>
+    <FileVersion>8.0.4</FileVersion>
+    <AssemblyVersion>8.0.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

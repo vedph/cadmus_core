@@ -46,6 +46,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 8.0.4
+
+- 2025-01-28: updated packages.
+
 ### 8.0.2
 
 - 2024-11-29: added `isAdmin` to `FlagDefinition`.

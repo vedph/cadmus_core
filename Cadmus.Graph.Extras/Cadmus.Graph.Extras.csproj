@@ -4,9 +4,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>8.0.2</Version>
-		<FileVersion>8.0.2</FileVersion>
-		<AssemblyVersion>8.0.2</AssemblyVersion>
+		<Version>8.0.4</Version>
+		<FileVersion>8.0.4</FileVersion>
+		<AssemblyVersion>8.0.4</AssemblyVersion>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Authors>Daniele Fusi</Authors>
@@ -20,7 +20,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Cadmus.General.Parts" Version="7.0.0" />
+		<PackageReference Include="Cadmus.General.Parts" Version="7.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

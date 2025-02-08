@@ -46,6 +46,12 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 8.0.5
+
+- 2025-02-08:
+  - added settings methods to Cadmus repository.
+  - updated packages.
+
 ### 8.0.4
 
 - 2025-01-28: updated packages.

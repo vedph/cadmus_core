@@ -356,4 +356,27 @@ public interface ICadmusRepository
     /// <param name="scope">The new scope (may be null).</param>
     void SetPartThesaurusScope(IList<string> ids, string? scope);
     #endregion
+
+    #region Settings    
+    /// <summary>
+    /// Adds or updates the settings with the specified key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <param name="json">The JSON code representing the settings value.</param>
+    void AddSetting(string key, string json);
+
+    /// <summary>
+    /// Gets the setting with the specified key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <returns>The JSON code representing the settings value, or null
+    /// if not found.</returns>
+    string? GetSetting(string key);
+
+    /// <summary>
+    /// Deletes the setting with the specified key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    void DeleteSetting(string key);
+    #endregion
 }

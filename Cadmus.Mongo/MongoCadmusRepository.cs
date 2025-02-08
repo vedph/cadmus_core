@@ -2109,6 +2109,76 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
                 new ReplaceOptions { IsUpsert = true });
         }
     }
+
+    /// <summary>
+    /// Adds or updates the settings with the specified key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <param name="json">The JSON code representing the settings value.</param>
+    /// <exception cref="ArgumentNullException">null or empty key or json</exception>
+    public void AddSetting(string key, string json)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(key);
+        ArgumentNullException.ThrowIfNullOrEmpty(json);
+
+        EnsureClientCreated(_options!.ConnectionString!);
+
+        IMongoDatabase db = Client!.GetDatabase(_databaseName);
+        var settings = db.GetCollection<BsonDocument>("settings");
+
+        // parse the JSON content into a BsonDocument
+        BsonDocument document = BsonDocument.Parse(json);
+
+        // add or update the document with the specified key
+        settings.ReplaceOne(
+            new BsonDocument("_id", key),
+            document,
+            new ReplaceOptions { IsUpsert = true });
+    }
+
+    /// <summary>
+    /// Gets the setting with the specified key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <returns>The JSON code representing the settings value, or null
+    /// if not found.</returns>
+    /// <exception cref="ArgumentNullException">null or empty key</exception>
+    public string? GetSetting(string key)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(key);
+
+        EnsureClientCreated(_options!.ConnectionString!);
+
+        IMongoDatabase db = Client!.GetDatabase(_databaseName);
+        var settings = db.GetCollection<BsonDocument>("settings");
+
+        // get JSON code from BsonDocument having _id=key
+        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>
+            .Filter.Eq("_id", key);
+        BsonDocument? document = settings.Find(filter).FirstOrDefault();
+
+        return document?.ToJson(_jsonSettings);
+    }
+
+    /// <summary>
+    /// Deletes the setting with the specified key.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <exception cref="ArgumentNullException">null or empty key</exception>
+    public void DeleteSetting(string key)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(key);
+
+        EnsureClientCreated(_options!.ConnectionString!);
+
+        IMongoDatabase db = Client!.GetDatabase(_databaseName);
+        var settings = db.GetCollection<BsonDocument>("settings");
+
+        // delete the document with the specified key
+        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>
+            .Filter.Eq("_id", key);
+        settings.DeleteOne(filter);
+    }
     #endregion
 }
 

@@ -854,4 +854,84 @@ public class MongoCadmusRepositoryTest : CadmusRepositoryTestBase
         DoSetPartThesaurusScope_Match_Updated();
     }
     #endregion
+
+    #region Settings
+    [Fact]
+    public void AddSetting_ShouldAddOrUpdateSetting()
+    {
+        ICadmusRepository repository = GetRepository();
+        const string key = "testKey";
+        const string json = "{ \"name\": \"test\" }";
+
+        repository.AddSetting(key, json);
+
+        string? result = repository.GetSetting(key);
+
+        // parse the JSON string
+        Assert.NotNull(result);
+        JsonElement root = JsonDocument.Parse(result).RootElement;
+
+        // check for the presence and value of the "name" property
+        Assert.True(root.TryGetProperty("name", out var nameProperty));
+        Assert.Equal("test", nameProperty.GetString());
+    }
+
+    [Fact]
+    public void GetSetting_ShouldReturnSetting_WhenFound()
+    {
+        ICadmusRepository repository = GetRepository();
+        const string key = "testKey";
+        const string json = "{ \"name\": \"test\", \"year\": 2025 }";
+        repository.AddSetting(key, json);
+
+        string? result = repository.GetSetting(key);
+
+        // parse the JSON string
+        Assert.NotNull(result);
+        JsonElement root = JsonDocument.Parse(result).RootElement;
+
+        // check for the presence and values of the "name" and "year" properties
+        Assert.True(root.TryGetProperty("name", out var nameProperty));
+        Assert.Equal("test", nameProperty.GetString());
+
+        Assert.True(root.TryGetProperty("year", out var yearProperty));
+        Assert.Equal(2025, yearProperty.GetInt32());
+    }
+
+    [Fact]
+    public void GetSetting_ShouldReturnNull_WhenNotFound()
+    {
+        ICadmusRepository repository = GetRepository();
+        const string key = "nonExistingKey";
+
+        string? result = repository.GetSetting(key);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void DeleteSetting_ShouldDeleteSetting()
+    {
+        ICadmusRepository repository = GetRepository();
+        const string key = "testKey";
+        const string json = "{ \"name\": \"test\" }";
+        repository.AddSetting(key, json);
+
+        repository.DeleteSetting(key);
+
+        string? result = repository.GetSetting(key);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void DeleteSetting_ShouldNotThrowWhenNotFound()
+    {
+        ICadmusRepository repository = GetRepository();
+
+        Exception? exception = Record.Exception(() =>
+            repository.DeleteSetting("nonExistingKey"));
+
+        Assert.Null(exception);
+    }
+    #endregion
 }

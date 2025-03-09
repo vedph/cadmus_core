@@ -7,39 +7,39 @@ CREATE TABLE `item` (
   `id` char(36) COLLATE utf8_unicode_ci NOT NULL,
   `title` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `description` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `facetId` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `groupId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sortKey` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `facet_id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `group_id` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `sort_key` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `flags` int NOT NULL,
-  `timeCreated` datetime NOT NULL,
-  `creatorId` varchar(100),
-  `timeModified` datetime NOT NULL,
-  `userId` varchar(100),
+  `time_created` datetime NOT NULL,
+  `creator_id` varchar(100),
+  `time_modified` datetime NOT NULL,
+  `user_id` varchar(100),
   PRIMARY KEY (`id`),
   KEY `title_ix` (`title`) /*!80000 INVISIBLE */,
-  KEY `facetid_ix` (`facetId`) /*!80000 INVISIBLE */,
-  KEY `groupid_ix` (`groupId`) /*!80000 INVISIBLE */,
-  KEY `sortkey-ix` (`sortKey`) /*!80000 INVISIBLE */,
+  KEY `facet_id_ix` (`facet_id`) /*!80000 INVISIBLE */,
+  KEY `group_id_ix` (`group_id`) /*!80000 INVISIBLE */,
+  KEY `sort_key-ix` (`sort_key`) /*!80000 INVISIBLE */,
   KEY `flags-ix` (`flags`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- pin
 CREATE TABLE `pin` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `itemId` char(36) COLLATE utf8_unicode_ci NOT NULL,
-  `partId` char(36) COLLATE utf8_unicode_ci NOT NULL,
-  `partTypeId` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `roleId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `item_id` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `part_id` char(36) COLLATE utf8_unicode_ci NOT NULL,
+  `part_type_id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `role_id` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `value` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `timeIndexed` datetime NOT NULL,
+  `time_indexed` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `parttypeid_ix` (`partTypeId`) /*!80000 INVISIBLE */,
-  KEY `roleid_ix` (`roleId`) /*!80000 INVISIBLE */,
+  KEY `part_type_id_ix` (`part_type_id`) /*!80000 INVISIBLE */,
+  KEY `role_id_ix` (`role_id`) /*!80000 INVISIBLE */,
   KEY `name_ix` (`name`) /*!80000 INVISIBLE */,
   KEY `value_ix` (`value`),
-  KEY `pin_itemid_fk` (`itemId`),
-  CONSTRAINT `pin_itemid_fk` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`)
+  KEY `pin_item_id_fk` (`item_id`),
+  CONSTRAINT `pin_item_id_fk` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`)
   ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

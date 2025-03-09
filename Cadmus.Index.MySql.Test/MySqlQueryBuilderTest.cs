@@ -45,9 +45,9 @@ public sealed class MySqlQueryBuilderTest
 
     private static MySqlQueryBuilder GetBuilder()
     {
-        MySqlQueryBuilder builder = new(true);
-        builder.SetFlagDefinitions(new[]
-        {
+        MySqlQueryBuilder builder = new();
+        builder.SetFlagDefinitions(
+        [
             new FlagDefinition
             {
                 Id = 1,
@@ -58,7 +58,7 @@ public sealed class MySqlQueryBuilderTest
                 Id = 2,
                 Label = "todo"
             }
-        });
+        ]);
         return builder;
     }
 

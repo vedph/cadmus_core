@@ -16,9 +16,7 @@ public sealed class MySqlQueryBuilder : SqlQueryBuilderBase
     /// Initializes a new instance of the <see cref="MySqlQueryBuilder"/>
     /// class.
     /// </summary>
-    /// <param name="legacy">True to use legacy field names like <c>itemId</c>
-    /// instead of <c>item_id</c>.</param>
-    public MySqlQueryBuilder(bool legacy) : base(new MySqlTokenHelper(), legacy)
+    public MySqlQueryBuilder() : base(new MySqlTokenHelper())
     {
     }
 

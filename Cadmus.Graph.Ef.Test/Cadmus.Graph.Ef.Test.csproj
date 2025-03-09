@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <Version>8.0.6</Version>
-    <FileVersion>8.0.6</FileVersion>
-    <AssemblyVersion>8.0.6</AssemblyVersion>
+    <Version>8.0.7</Version>
+    <FileVersion>8.0.7</FileVersion>
+    <AssemblyVersion>8.0.7</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Cadmus.General.Parts" Version="7.0.2" />
-	<PackageReference Include="Fusi.DbManager" Version="5.0.0" />
+	<PackageReference Include="Cadmus.General.Parts" Version="7.0.3" />
+	<PackageReference Include="Fusi.DbManager" Version="5.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">

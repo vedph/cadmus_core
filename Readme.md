@@ -46,6 +46,14 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 9.0.0
+
+- 2025-03-09:
+  - fix to query builder for search (allow non alpha characters in pins names except for those characters starting any of the operators).
+  - ⚠️ removed legacy field names support from query builder.
+  - renamed fields in MySql index scripts (e.g. `itemId` becomes `item_id`).
+  - updated packages.
+
 ### 8.0.6
 
 - 2025-02-14: updated packages.

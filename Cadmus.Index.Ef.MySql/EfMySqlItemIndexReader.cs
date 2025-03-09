@@ -42,5 +42,5 @@ public sealed class EfMySqlItemIndexReader : EfItemIndexReader
     /// SQL query builder.
     /// </returns>
     protected override ISqlQueryBuilder GetQueryBuilder()
-        => new MySqlQueryBuilder(false);
+        => new MySqlQueryBuilder();
 }

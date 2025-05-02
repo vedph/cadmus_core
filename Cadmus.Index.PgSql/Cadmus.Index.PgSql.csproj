@@ -14,9 +14,9 @@
 		<Description>PostgreSQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>9.0.0</Version>
-		<FileVersion>9.0.0</FileVersion>
-		<AssemblyVersion>9.0.0</AssemblyVersion>
+		<Version>9.0.1</Version>
+		<FileVersion>9.0.1</FileVersion>
+		<AssemblyVersion>9.0.1</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

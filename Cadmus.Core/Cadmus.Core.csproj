@@ -1,53 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <TargetFramework>net9.0</TargetFramework>
-	<Nullable>enable</Nullable>
-    <Version>8.0.7</Version>
-    <Authors>Daniele Fusi</Authors>
-    <Company>Fusi</Company>
-    <Product>Cadmus</Product>
-    <Description>Cadmus core components.</Description>
-    <Copyright>by Daniele Fusi 2018</Copyright>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <PackageTags>Cadmus</PackageTags>
-    <FileVersion>8.0.7</FileVersion>
-    <AssemblyVersion>8.0.7</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<Authors>Daniele Fusi</Authors>
+		<Company>Fusi</Company>
+		<Product>Cadmus</Product>
+		<Description>Cadmus core components.</Description>
+		<Copyright>by Daniele Fusi 2018</Copyright>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageTags>Cadmus</PackageTags>
+		<Version>8.0.8</Version>
+		<FileVersion>8.0.8</FileVersion>
+		<AssemblyVersion>8.0.8</AssemblyVersion>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>.\bin\Debug\netstandard2.0\Cadmus.Core.xml</DocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile>.\bin\Debug\netstandard2.0\Cadmus.Core.xml</DocumentationFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Config\TagToTypeMap.cs~RF1e336415.TMP" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Config\TagToTypeMap.cs~RF1e336415.TMP" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="DiffMatchPatch" Version="4.0.0" />
-    <PackageReference Include="Fusi.Text" Version="5.0.1" />
-    <PackageReference Include="Fusi.Tools" Version="7.0.0" />
-    <PackageReference Include="Fusi.Tools.Configuration" Version="7.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Text.Json" Version="9.0.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="DiffMatchPatch" Version="4.0.0" />
+		<PackageReference Include="Fusi.Text" Version="5.0.1" />
+		<PackageReference Include="Fusi.Tools" Version="7.0.5" />
+		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.5" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Text.Json" Version="9.0.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>

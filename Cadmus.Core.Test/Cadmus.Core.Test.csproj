@@ -1,35 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-	<Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <Version>8.0.7</Version>
-    <FileVersion>8.0.7</FileVersion>
-    <AssemblyVersion>8.0.7</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<Version>9.0.1</Version>
+		<FileVersion>9.0.1</FileVersion>
+		<AssemblyVersion>9.0.1</AssemblyVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Assets\SampleProfile.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Assets\SampleProfile.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\SampleProfile.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Assets\SampleProfile.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Cadmus.General.Parts" Version="7.0.3" />
-    <PackageReference Include="DiffMatchPatch" Version="4.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Cadmus.General.Parts" Version="7.0.4" />
+		<PackageReference Include="DiffMatchPatch" Version="4.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Cadmus.Core\Cadmus.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Core\Cadmus.Core.csproj" />
+	</ItemGroup>
 
 </Project>

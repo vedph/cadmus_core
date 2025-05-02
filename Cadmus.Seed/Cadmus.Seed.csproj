@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <IncludeSymbols>true</IncludeSymbols>
-	<Nullable>enable</Nullable>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<TargetFramework>net9.0</TargetFramework>
-    <Authors>Daniele Fusi</Authors>
-    <Company>Fusi</Company>
-    <Product>Cadmus</Product>
-    <Description>Cadmus fake data seed core components.</Description>
-    <Copyright>by Daniele Fusi</Copyright>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>8.0.7</Version>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <PackageTags>Cadmus;seed</PackageTags>
-    <FileVersion>8.0.7</FileVersion>
-    <AssemblyVersion>8.0.7</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<Nullable>enable</Nullable>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<TargetFramework>net9.0</TargetFramework>
+		<Authors>Daniele Fusi</Authors>
+		<Company>Fusi</Company>
+		<Product>Cadmus</Product>
+		<Description>Cadmus fake data seed core components.</Description>
+		<Copyright>by Daniele Fusi</Copyright>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageTags>Cadmus;seed</PackageTags>
+		<Version>8.0.8</Version>
+		<FileVersion>8.0.8</FileVersion>
+		<AssemblyVersion>8.0.8</AssemblyVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Bogus" Version="35.6.2" />
-    <PackageReference Include="Fusi.Tools.Configuration" Version="7.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="35.6.3" />
+		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.5" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Cadmus.Core\Cadmus.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Cadmus.Core\Cadmus.Core.csproj" />
+	</ItemGroup>
 
 </Project>

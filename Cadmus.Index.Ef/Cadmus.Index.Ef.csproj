@@ -4,9 +4,6 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>8.0.7</Version>
-		<FileVersion>8.0.7</FileVersion>
-		<AssemblyVersion>8.0.7</AssemblyVersion>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
@@ -16,16 +13,19 @@
 		<Description>Entity Framework Core implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
+		<Version>8.0.8</Version>
+		<FileVersion>8.0.8</FileVersion>
+		<AssemblyVersion>8.0.8</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Fusi.DbManager" Version="5.0.3" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

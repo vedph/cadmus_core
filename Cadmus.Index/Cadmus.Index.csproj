@@ -13,9 +13,9 @@
 		<Copyright>by Daniele Fusi 2020</Copyright>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;index</PackageTags>
-		<Version>8.0.8</Version>
-		<FileVersion>8.0.8</FileVersion>
-		<AssemblyVersion>8.0.8</AssemblyVersion>
+		<Version>8.0.9</Version>
+		<FileVersion>8.0.9</FileVersion>
+		<AssemblyVersion>8.0.9</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

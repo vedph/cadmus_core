@@ -230,9 +230,9 @@ public sealed class JsonNodeMapper : NodeMapper, INodeMapper
             // an array does not trigger output, but applies its mapping
             // to each of its items
             case JsonValueKind.Array:
+                // for each array's item, apply mapping and its children
                 int index = 0;
-                foreach (JsonElement item in
-                    _doc.RootElement.EnumerateArray())
+                foreach (JsonElement item in _doc.RootElement.EnumerateArray())
                 {
                     Data["index"] = index;
                     ApplyMapping(sid, item.GetRawText(),

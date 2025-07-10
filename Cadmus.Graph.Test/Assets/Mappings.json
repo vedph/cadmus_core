@@ -31,18 +31,16 @@
         "source": "note",
         "sid": "{$eid-sid}/note",
         "output": {
-          "nodes": {
-            "note": "x:notes/n"
-          },
           "triples": [ "{?event} crm:P3_has_note \"{$.}\"" ]
         }
       },
       {
-        "name": "birth event - chronotope",
-        "source": "chronotope",
-        "sid": "{$eid-sid}/chronotope",
+        "name": "birth event - chronotopes",
+        "source": "chronotopes",
+        "sid": "{$eid-sid}/chronotopes",
         "children": [
           {
+            "name": "birth event - chronotopes - place",
             "source": "place",
             "output": {
               "nodes": {
@@ -55,7 +53,7 @@
             }
           },
           {
-            "name": "birth event - chronotope - date",
+            "name": "birth event - chronotopes - date",
             "source": "date",
             "output": {
               "metadata": {

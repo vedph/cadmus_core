@@ -29,10 +29,10 @@
 	<ItemGroup>
 		<PackageReference Include="DiffMatchPatch" Version="4.0.0" />
 		<PackageReference Include="Fusi.Text" Version="5.0.1" />
-		<PackageReference Include="Fusi.Tools" Version="7.0.5" />
-		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.5" />
+		<PackageReference Include="Fusi.Tools" Version="7.0.6" />
+		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.6" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="System.Text.Json" Version="9.0.4" />
+		<PackageReference Include="System.Text.Json" Version="9.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

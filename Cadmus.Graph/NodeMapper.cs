@@ -70,7 +70,7 @@ public abstract class NodeMapper : DataDictionary
     /// </summary>
     protected NodeMapper()
     {
-        _macros = new Dictionary<string, INodeMappingMacro>();
+        _macros = [];
         ContextNodes = new Dictionary<string, UriNode>();
         // by default use a RAM-based builder
         UidBuilder = new RamUidBuilder();

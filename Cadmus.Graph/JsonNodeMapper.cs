@@ -149,7 +149,7 @@ public sealed class JsonNodeMapper : NodeMapper, INodeMapper
                 traced = mappings as IList<NodeMapping>;
             if (traced == null)
             {
-                traced = new List<NodeMapping>();
+                traced = [];
                 Data[APPLIED_MAPPING_LIST] = traced;
             }
             // avoid sequences of duplicates (which happen in arrays)

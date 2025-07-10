@@ -22,10 +22,10 @@
 	<ItemGroup>
 		<PackageReference Include="Fusi.Antiquity" Version="5.0.1" />
 		<PackageReference Include="Fusi.Text" Version="5.0.1" />
-		<PackageReference Include="Fusi.Tools" Version="7.0.5" />
-		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.5" />
+		<PackageReference Include="Fusi.Tools" Version="7.0.6" />
+		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.6" />
 		<PackageReference Include="JmesPath.Net" Version="1.0.330" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

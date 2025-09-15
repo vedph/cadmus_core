@@ -13,15 +13,15 @@
 		<Description>Entity Framework Core implementation of Cadmus index for PostgreSQl.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>9.0.2</Version>
-		<FileVersion>9.0.2</FileVersion>
-		<AssemblyVersion>9.0.2</AssemblyVersion>
+		<Version>9.0.3</Version>
+		<FileVersion>9.0.3</FileVersion>
+		<AssemblyVersion>9.0.3</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Fusi.DbManager.PgSql" Version="5.0.3" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.9" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 	</ItemGroup>
 

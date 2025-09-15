@@ -14,9 +14,9 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus</PackageTags>
-		<Version>8.0.9</Version>
-		<FileVersion>8.0.9</FileVersion>
-		<AssemblyVersion>8.0.9</AssemblyVersion>
+		<Version>8.0.10</Version>
+		<FileVersion>8.0.10</FileVersion>
+		<AssemblyVersion>8.0.10</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,7 +25,7 @@
 		<PackageReference Include="Fusi.Tools" Version="7.0.6" />
 		<PackageReference Include="Fusi.Tools.Configuration" Version="7.0.7" />
 		<PackageReference Include="JmesPath.Net" Version="1.0.330" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>

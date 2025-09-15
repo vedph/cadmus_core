@@ -5,6 +5,7 @@ using Cadmus.Core.Storage;
 using Cadmus.Core.Config;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Threading;
 
 namespace Cadmus.Mongo;
 
@@ -201,7 +202,7 @@ public sealed class MongoDatabaseManager : MongoConsumerBase, IDatabaseManager
         string databaseName = GetDatabaseName(source);
 
         // http://stackoverflow.com/questions/7049722/check-if-mongodb-database-exists
-        var dbList = Enumerate(Client!.ListDatabases())
+        var dbList = Enumerate(Client!.ListDatabases(CancellationToken.None))
             .Select(db => db.GetValue("name").AsString);
         return dbList.Contains(databaseName);
     }

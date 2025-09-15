@@ -13,14 +13,14 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;MongoDB</PackageTags>
-		<Version>8.0.9</Version>
-		<FileVersion>8.0.9</FileVersion>
-		<AssemblyVersion>8.0.9</AssemblyVersion>
+		<Version>8.0.10</Version>
+		<FileVersion>8.0.10</FileVersion>
+		<AssemblyVersion>8.0.10</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MongoDB.Bson" Version="3.4.0" />
-		<PackageReference Include="MongoDB.Driver" Version="3.4.0" />
+		<PackageReference Include="MongoDB.Bson" Version="3.5.0" />
+		<PackageReference Include="MongoDB.Driver" Version="3.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>

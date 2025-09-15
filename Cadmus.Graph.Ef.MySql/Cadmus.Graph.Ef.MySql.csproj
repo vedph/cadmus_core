@@ -14,9 +14,9 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus</PackageTags>
-		<Version>9.0.2</Version>
-		<FileVersion>9.0.2</FileVersion>
-		<AssemblyVersion>9.0.2</AssemblyVersion>
+		<Version>9.0.3</Version>
+		<FileVersion>9.0.3</FileVersion>
+		<AssemblyVersion>9.0.3</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -29,7 +29,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Fusi.DbManager.MySql" Version="5.0.3" />
-		<PackageReference Include="MySql.EntityFrameworkCore" Version="9.0.3" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="9.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>

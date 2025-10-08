@@ -14,9 +14,9 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus</PackageTags>
-		<Version>9.0.3</Version>
-		<FileVersion>9.0.3</FileVersion>
-		<AssemblyVersion>9.0.3</AssemblyVersion>
+		<Version>9.0.4</Version>
+		<FileVersion>9.0.4</FileVersion>
+		<AssemblyVersion>9.0.4</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,7 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fusi.DbManager.PgSql" Version="5.0.3" />
+		<PackageReference Include="Fusi.DbManager.PgSql" Version="5.0.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.9" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />

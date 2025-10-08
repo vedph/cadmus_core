@@ -13,13 +13,13 @@
 		<Description>Entity Framework Core implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>8.0.10</Version>
-		<FileVersion>8.0.10</FileVersion>
-		<AssemblyVersion>8.0.10</AssemblyVersion>
+		<Version>8.0.11</Version>
+		<FileVersion>8.0.11</FileVersion>
+		<AssemblyVersion>8.0.11</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fusi.DbManager" Version="5.0.3" />
+		<PackageReference Include="Fusi.DbManager" Version="5.0.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
 			<PrivateAssets>all</PrivateAssets>

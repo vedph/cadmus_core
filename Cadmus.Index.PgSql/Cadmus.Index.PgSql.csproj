@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fusi.DbManager.PgSql" Version="6.0.0" />
+		<PackageReference Include="Fusi.DbManager.PgSql" Version="6.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -46,6 +46,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 10.0.0
+
+- 2025-11-23: ⚠️ upgraded to NET 10.
+
 ### 9.0.4
 
 - 2025-10-08: updated packages.

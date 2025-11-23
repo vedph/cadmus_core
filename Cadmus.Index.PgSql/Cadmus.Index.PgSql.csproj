@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -14,9 +14,9 @@
 		<Description>PostgreSQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>9.0.4</Version>
-		<FileVersion>9.0.4</FileVersion>
-		<AssemblyVersion>9.0.4</AssemblyVersion>
+		<Version>10.0.0</Version>
+		<FileVersion>10.0.0</FileVersion>
+		<AssemblyVersion>10.0.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fusi.DbManager.PgSql" Version="5.0.4" />
+		<PackageReference Include="Fusi.DbManager.PgSql" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

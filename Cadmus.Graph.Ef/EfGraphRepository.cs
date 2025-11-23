@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Cadmus.Graph.Ef;
 
@@ -577,7 +576,7 @@ public abstract class EfGraphRepository : IUidBuilder,
     private static void UpdateNodeClasses(int nodeId, int aId, int subId,
         CadmusGraphDbContext context)
     {
-        context.Database.ExecuteSqlRaw(
+        context.Database.ExecuteSql(
             $"CALL populate_node_class({nodeId},{aId},{subId})");
     }
 
@@ -741,7 +740,7 @@ public abstract class EfGraphRepository : IUidBuilder,
         if (total == 0)
         {
             return new DataPage<UriNode>(
-                filter.PageNumber, filter.PageSize, 0, Array.Empty<UriNode>());
+                filter.PageNumber, filter.PageSize, 0, []);
         }
 
         nodes = nodes.OrderBy(n => n.Label!.ToLower())
@@ -776,11 +775,9 @@ public abstract class EfGraphRepository : IUidBuilder,
     {
         IQueryable<EfTriple> triples = !string.IsNullOrEmpty(filter.LiteralPattern)
             ? context.Triples
-                .FromSqlRaw("SELECT * FROM triple WHERE " +
-                BuildRawRegexSql(new[]
-                {
-                    Tuple.Create("o_lit", (string?)filter.LiteralPattern)
-                }))
+                .FromSqlRaw(
+                ("SELECT * FROM triple WHERE " + BuildRawRegexSql(
+                    [ Tuple.Create("o_lit", (string?)filter.LiteralPattern) ])))
             : context.Triples;
 
         // literal pattern
@@ -1053,11 +1050,11 @@ public abstract class EfGraphRepository : IUidBuilder,
         {
             mappings = context.Mappings
                 .FromSqlRaw("SELECT * FROM mapping WHERE " +
-                BuildRawRegexSql(new[]
-                {
+                BuildRawRegexSql(
+                [
                     Tuple.Create("group_filter", filter.Group),
                     Tuple.Create("title_filter", filter.Title)
-                }))
+                ]))
                 .Include(m => m.MetaOutputs)
                 .Include(m => m.NodeOutputs)
                 .Include(m => m.TripleOutputs)
@@ -1080,18 +1077,11 @@ public abstract class EfGraphRepository : IUidBuilder,
         {
             mappings = mappings.Where(m => m.ParentLinks != null &&
                 m.ParentLinks.Any(l => l.ParentId == filter.ParentId));
-            //mappings = from m in mappings
-            //           join ml in context.MappingLinks on m.Id equals ml.ChildId
-            //           where ml.ParentId == filter.ParentId
-            //           select m;
         }
         else
         {
             mappings = mappings.Where(m => m.ParentLinks == null ||
                 m.ParentLinks.Count == 0);
-            //mappings = from m in mappings
-            //           where !context.MappingLinks.Any(ml => ml.ChildId == m.Id)
-            //           select m;
         }
 
         if (filter.SourceType != null)

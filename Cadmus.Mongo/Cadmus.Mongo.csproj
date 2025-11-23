@@ -4,7 +4,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<Nullable>enable</Nullable>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<Company>Fusi</Company>
 		<Authors>Daniele Fusi</Authors>
 		<Product>Cadmus</Product>
@@ -13,14 +13,14 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;MongoDB</PackageTags>
-		<Version>8.0.11</Version>
-		<FileVersion>8.0.11</FileVersion>
-		<AssemblyVersion>8.0.11</AssemblyVersion>
+		<Version>10.0.0</Version>
+		<FileVersion>10.0.0</FileVersion>
+		<AssemblyVersion>10.0.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MongoDB.Bson" Version="3.5.0" />
-		<PackageReference Include="MongoDB.Driver" Version="3.5.0" />
+		<PackageReference Include="MongoDB.Bson" Version="3.5.1" />
+		<PackageReference Include="MongoDB.Driver" Version="3.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>

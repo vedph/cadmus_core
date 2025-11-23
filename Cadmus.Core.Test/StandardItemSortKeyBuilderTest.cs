@@ -16,13 +16,13 @@ public sealed class StandardItemSortKeyBuilderTest
     [InlineData("aéÀ", "aea")]
     [InlineData("D'Annunzio", "d'annunzio")]
     [InlineData("μῆνιν ἄειδε, θεά", "μηνιν αειδε θεα")]
-    public void BuildKey_Filtering_Ok(string title, string expected)
+    public void BuildKey_Filtering_Ok(string? title, string expected)
     {
-        IItemSortKeyBuilder builder = new StandardItemSortKeyBuilder();
+        StandardItemSortKeyBuilder builder = new();
 
         string key = builder.BuildKey(new Item
         {
-            Title = title
+            Title = title ?? ""
         }, null);
 
         Assert.Equal(expected, key);

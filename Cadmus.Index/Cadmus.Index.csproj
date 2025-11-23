@@ -4,7 +4,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Nullable>enable</Nullable>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<Authors>Daniele Fusi</Authors>
 		<Company>Fusi</Company>
@@ -13,9 +13,9 @@
 		<Copyright>by Daniele Fusi 2020</Copyright>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;index</PackageTags>
-		<Version>8.0.11</Version>
-		<FileVersion>8.0.11</FileVersion>
-		<AssemblyVersion>8.0.11</AssemblyVersion>
+		<Version>10.0.0</Version>
+		<FileVersion>10.0.0</FileVersion>
+		<AssemblyVersion>10.0.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

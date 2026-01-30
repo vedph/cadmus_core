@@ -5,12 +5,12 @@ using System;
 namespace Cadmus.Seed;
 
 /// <summary>
-/// Cadmus item seeder.
+/// Cadmus item seeder. This creates and seeds Cadmus items with mock data.
 /// </summary>
 public sealed class ItemSeeder
 {
     private readonly SeedOptions _options;
-    private readonly IItemSortKeyBuilder _sortKeyBuilder;
+    private readonly StandardItemSortKeyBuilder _sortKeyBuilder;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ItemSeeder"/> class.

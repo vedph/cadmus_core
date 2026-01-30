@@ -26,7 +26,7 @@ static public class SeedHelper
     {
         if (entries == null || entries.Count == 0) return default;
 
-        HashSet<int> pickedIndexes = new();
+        HashSet<int> pickedIndexes = [];
 
         while (pickedIndexes.Count < count)
         {

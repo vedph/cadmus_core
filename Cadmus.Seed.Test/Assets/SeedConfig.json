@@ -1,0 +1,116 @@
+{
+  "facets": [
+    {
+      "id": "default",
+      "label": "Default",
+      "description": "Default facet for testing",
+      "partDefinitions": [
+        {
+          "typeId": "it.vedph.categories",
+          "roleId": "function",
+          "name": "function categories",
+          "description": "Item's function categories.",
+          "isRequired": true,
+          "colorKey": "98F8F8",
+          "groupKey": "general",
+          "sortKey": "categories-function"
+        },
+        {
+          "typeId": "it.vedph.categories",
+          "roleId": "material",
+          "name": "material categories",
+          "description": "Item's material categories.",
+          "isRequired": false,
+          "colorKey": "88E8E8",
+          "groupKey": "general",
+          "sortKey": "categories-material"
+        }
+      ]
+    },
+    {
+      "id": "text",
+      "label": "Text",
+      "description": "Text facet with categories only",
+      "partDefinitions": [
+        {
+          "typeId": "it.vedph.categories",
+          "name": "categories",
+          "description": "Item's categories.",
+          "isRequired": false,
+          "colorKey": "98F8F8",
+          "groupKey": "general",
+          "sortKey": "categories"
+        }
+      ]
+    }
+  ],
+  "seed": {
+    "options": {
+      "seed": 1,
+      "users": [ "zeus", "hera" ],
+      "partRoles": [
+        "seed.it.vedph.categories:function",
+        "seed.it.vedph.categories:material"
+      ],
+      "fragmentRoles": [
+        "seed.fr.it.vedph.apparatus:scholarly"
+      ]
+    },
+    "partSeeders": [
+      {
+        "id": "seed.it.vedph.categories",
+        "options": {
+          "maxCategoriesPerItem": 3,
+          "categories": [
+            "language.phonology",
+            "language.morphology",
+            "language.syntax",
+            "literature",
+            "geography"
+          ]
+        }
+      },
+      {
+        "id": "seed.it.vedph.categories:function",
+        "options": {
+          "maxCategoriesPerItem": 2,
+          "categories": [
+            "funerary",
+            "votive",
+            "honorary",
+            "legal"
+          ]
+        }
+      },
+      {
+        "id": "seed.it.vedph.categories:material",
+        "options": {
+          "maxCategoriesPerItem": 2,
+          "categories": [
+            "limestone",
+            "marble",
+            "granite",
+            "bronze"
+          ]
+        }
+      },
+      {
+        "id": "seed.it.vedph.note"
+      }
+    ],
+    "fragmentSeeders": [
+      {
+        "id": "seed.fr.it.vedph.apparatus",
+        "options": {
+          "authors": [ "Cobet", "Wilamowitz", "Zuntz" ]
+        }
+      },
+      {
+        "id": "seed.fr.it.vedph.apparatus:scholarly",
+        "options": {
+          "authors": [ "Lachmann", "Maas", "West" ]
+        }
+      }
+    ]
+  }
+}

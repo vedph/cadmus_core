@@ -3,7 +3,7 @@
 namespace Cadmus.Seed;
 
 /// <summary>
-/// Cadmus part seeder. This is used to seed a part with random data.
+/// Cadmus part seeder interface. Implementors seed a part with random data.
 /// </summary>
 public interface IPartSeeder
 {

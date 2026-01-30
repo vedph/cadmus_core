@@ -44,17 +44,17 @@ public static class NumberToWords
         {
             if (words.Length > 0) words += "and ";
 
-            string[] unitsMap = new[]
-            {
+            string[] unitsMap =
+            [
                 "zero", "one", "two", "three", "four", "five", "six",
                 "seven", "eight", "nine", "ten", "eleven", "twelve",
                 "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
-                "eighteen", "nineteen" };
-            string[] tensMap = new[]
-            {
+                "eighteen", "nineteen" ];
+            string[] tensMap =
+            [
                 "zero", "ten", "twenty", "thirty", "forty", "fifty",
                 "sixty", "seventy", "eighty", "ninety"
-            };
+            ];
 
             if (number < 20)
             {

@@ -7,7 +7,7 @@ using System;
 namespace Cadmus.Seed;
 
 /// <summary>
-/// Cadmus fragment seeder. This is used to seed a fragment with
+/// Cadmus fragment seeder interface. This is used to seed a fragment with
 /// random data. Each implementor should get injected in its constructor
 /// an instance of <see cref="IPartTypeProvider"/>, which allows it
 /// to instantiate the part, and get a <see cref="TagAttribute"/> with

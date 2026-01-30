@@ -46,6 +46,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 10.1.0
+
+- 2026-01-30: improved seeder to be role-aware.
+
 ### 10.0.1
 
 - 2026-01-17: updated packages.

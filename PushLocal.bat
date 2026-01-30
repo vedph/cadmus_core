@@ -11,7 +11,7 @@ rem c:\exe\nuget add .\Cadmus.Index.MySql\bin\Debug\Cadmus.Index.MySql.9.0.1.nup
 c:\exe\nuget add .\Cadmus.Index.PgSql\bin\Debug\Cadmus.Index.PgSql.10.0.1.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Index.Sql\bin\Debug\Cadmus.Index.Sql.10.0.1.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Mongo\bin\Debug\Cadmus.Mongo.10.0.1.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Seed\bin\Debug\Cadmus.Seed.10.0.1.nupkg -source C:\Projects\_NuGet
+c:\exe\nuget add .\Cadmus.Seed\bin\Debug\Cadmus.Seed.10.1.0.nupkg -source C:\Projects\_NuGet
 
 c:\exe\nuget add .\Cadmus.Graph\bin\Debug\Cadmus.Graph.10.0.1.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Graph.Ef\bin\Debug\Cadmus.Graph.Ef.10.0.1.nupkg -source C:\Projects\_NuGet

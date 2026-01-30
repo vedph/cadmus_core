@@ -30,12 +30,36 @@ public sealed class CadmusSeeder
         _options = _factory.GetSeedOptions();
     }
 
+    /// <summary>
+    /// Gets the part seeder for the specified part definition.
+    /// </summary>
+    /// <remarks>
+    /// <para>This method first tries to find a role-specific seeder
+    /// using the key <c>{typeId}:{roleId}</c>, then falls back to
+    /// the type-only key <c>{typeId}</c>.</para>
+    /// <para>This allows having different seeding options for the same
+    /// part type with different roles (e.g., categories:function vs
+    /// categories:material).</para>
+    /// </remarks>
+    private IPartSeeder? GetSeeder(PartDefinition definition)
+    {
+        // try role-specific seeder first: typeId:roleId
+        if (!string.IsNullOrEmpty(definition.RoleId))
+        {
+            string keyWithRole = SeederTypeRoleId.BuildKey(
+                definition.TypeId, definition.RoleId);
+            if (_partSeeders!.TryGetValue(keyWithRole, out IPartSeeder? seeder))
+                return seeder;
+        }
+
+        // fall back to type-only seeder
+        return _partSeeders!.GetValueOrDefault(definition.TypeId);
+    }
+
     private IPart? GetPart(IItem item, PartDefinition definition)
     {
-        if (!_partSeeders!.ContainsKey(definition.TypeId)) return null;
-
-        return _partSeeders[definition.TypeId]
-            ?.GetPart(item, definition.RoleId, _factory);
+        IPartSeeder? seeder = GetSeeder(definition);
+        return seeder?.GetPart(item, definition.RoleId, _factory);
     }
 
     private static bool IsLayerPart(PartDefinition def) =>
@@ -89,9 +113,9 @@ public sealed class CadmusSeeder
             // get item
             IItem item = itemSeeder.GetItem(n, facet.Id);
 
-            // add parts: first non layer parts, then the others.
+            // add parts: first non-layer parts, then the others.
             // This ensures that the item already has the base text part
-            // before adding the layer parts, which refer to it.
+            // before adding the layer parts, which depend on it.
 
             // 1) non-layer parts, required
             AddParts(facet.PartDefinitions
@@ -110,7 +134,18 @@ public sealed class CadmusSeeder
             PartDefinition? baseTextDef = facet.PartDefinitions.Find(
                 def => def.RoleId == PartBase.BASE_TEXT_ROLE_ID);
 
-            if (baseTextDef != null && Randomizer.Seed.Next(0, 2) == 1)
+            // check if there are any layer parts defined
+            bool hasRequiredLayers = facet.PartDefinitions
+                .Any(def => IsLayerPart(def) && def.IsRequired);
+            bool hasOptionalLayers = facet.PartDefinitions
+                .Any(def => IsLayerPart(def) && !def.IsRequired);
+
+            // process layers if we have a base text definition and either:
+            // - there are required layer parts, or
+            // - there are optional layer parts and random chance passes
+            if (baseTextDef != null &&
+                (hasRequiredLayers ||
+                 (hasOptionalLayers && Randomizer.Seed.Next(0, 2) == 1)))
             {
                 // ensure there is a base text. This is required for
                 // the text layer part seeder, which must rely on a base text.
@@ -124,16 +159,16 @@ public sealed class CadmusSeeder
                     if (baseTextPart != null) item.Parts.Add(baseTextPart);
                 }
 
-                // once we have one, eventually add layer(s)
+                // once we have one, add layer(s)
                 if (baseTextPart != null)
                 {
-                    // 3) layer parts, required
+                    // 3) layer parts, required - always seed
                     AddParts(facet.PartDefinitions
                         .Where(def => IsLayerPart(def) && def.IsRequired),
                         item,
                         false);
 
-                    // 4) layer parts, optional
+                    // 4) layer parts, optional - random chance to include
                     AddParts(facet.PartDefinitions
                         .Where(def => IsLayerPart(def) && !def.IsRequired),
                         item,

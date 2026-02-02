@@ -399,6 +399,29 @@ public sealed class MongoCadmusRepository : MongoConsumerBase,
 
         thesauri.DeleteOne(t => t.Id!.Equals(id));
     }
+
+    /// <summary>
+    /// Gets all the thesauri IDs which are aliases directly pointing to the
+    /// thesaurus with the specified ID.
+    /// </summary>
+    /// <param name="targetId">The target thesaurus identifier.</param>
+    /// <returns>List of alias IDs in alphabetical order.</returns>
+    /// <exception cref="ArgumentNullException">null target ID</exception>
+    public IList<string> GetThesaurusAliases(string targetId)
+    {
+        ArgumentNullException.ThrowIfNull(targetId);
+
+        EnsureClientCreated(_options!.ConnectionString!);
+
+        IMongoDatabase db = Client!.GetDatabase(_databaseName);
+        var thesauri = db.GetCollection<MongoThesaurus>(MongoThesaurus.COLLECTION)
+            .AsQueryable();
+
+        return (from t in thesauri
+                where t.TargetId == targetId
+                orderby t.Id
+                select t.Id).ToList();
+    }
     #endregion
 
     #region Items

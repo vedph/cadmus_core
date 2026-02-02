@@ -99,6 +99,14 @@ public interface ICadmusRepository
     /// </summary>
     /// <param name="id">The tag set ID.</param>
     void DeleteThesaurus(string id);
+
+    /// <summary>
+    /// Gets all the thesauri IDs which are aliases directly pointing to the
+    /// thesaurus with the specified ID.
+    /// </summary>
+    /// <param name="targetId">The target thesaurus identifier.</param>
+    /// <returns>List of alias IDs in alphabetical order.</returns>
+    IList<string> GetThesaurusAliases(string targetId);
     #endregion
 
     #region Items

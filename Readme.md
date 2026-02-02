@@ -46,6 +46,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 10.1.1
+
+- 2026-02-02: added method `GetThesaurusAliases` to `ICadmusRepository`.
+
 ### 10.1.0
 
 - 2026-01-30: improved seeder to be role-aware.

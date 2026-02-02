@@ -424,6 +424,24 @@ public class MongoCadmusRepositoryTest : CadmusRepositoryTestBase
     {
         DoDeleteThesaurus_Existing_Deleted();
     }
+
+    [Fact]
+    public void GetThesaurusAliases_NoAliases_Empty()
+    {
+        DoGetThesaurusAliases_NoAliases_Empty();
+    }
+
+    [Fact]
+    public void GetThesaurusAliases_WithAliases_Ok()
+    {
+        DoGetThesaurusAliases_WithAliases_Ok();
+    }
+
+    [Fact]
+    public void GetThesaurusAliases_NoTarget_Empty()
+    {
+        DoGetThesaurusAliases_NoTarget_Empty();
+    }
     #endregion
 
     #region Facets

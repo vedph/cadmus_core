@@ -557,6 +557,63 @@ public abstract class CadmusRepositoryTestBase
 
         Assert.Empty(repository.GetThesaurusIds());
     }
+
+    protected void DoGetThesaurusAliases_NoAliases_Empty()
+    {
+        PrepareDatabase();
+        ICadmusRepository repository = GetRepository();
+        SeedThesauri(repository, 3);
+
+        IList<string> aliases = repository.GetThesaurusAliases("t01@en");
+
+        Assert.Empty(aliases);
+    }
+
+    protected void DoGetThesaurusAliases_WithAliases_Ok()
+    {
+        PrepareDatabase();
+        ICadmusRepository repository = GetRepository();
+
+        // add a target thesaurus
+        Thesaurus target = new("colors@en");
+        target.AddEntry(new ThesaurusEntry("r", "red"));
+        target.AddEntry(new ThesaurusEntry("g", "green"));
+        repository.AddThesaurus(target);
+
+        // add alias thesauri pointing to target (add in non-alphabetical order)
+        Thesaurus alias2 = new("palette@en") { TargetId = "colors@en" };
+        repository.AddThesaurus(alias2);
+
+        Thesaurus alias1 = new("hues@en") { TargetId = "colors@en" };
+        repository.AddThesaurus(alias1);
+
+        Thesaurus alias3 = new("tones@en") { TargetId = "colors@en" };
+        repository.AddThesaurus(alias3);
+
+        // add another thesaurus that is NOT an alias
+        Thesaurus other = new("sizes@en");
+        other.AddEntry(new ThesaurusEntry("s", "small"));
+        repository.AddThesaurus(other);
+
+        IList<string> aliases = repository.GetThesaurusAliases("colors@en");
+
+        Assert.Equal(3, aliases.Count);
+        // verify alphabetical order
+        Assert.Equal("hues@en", aliases[0]);
+        Assert.Equal("palette@en", aliases[1]);
+        Assert.Equal("tones@en", aliases[2]);
+    }
+
+    protected void DoGetThesaurusAliases_NoTarget_Empty()
+    {
+        PrepareDatabase();
+        ICadmusRepository repository = GetRepository();
+        SeedThesauri(repository, 3);
+
+        IList<string> aliases = repository.GetThesaurusAliases("notexisting@en");
+
+        Assert.Empty(aliases);
+    }
     #endregion
 
     #region Items

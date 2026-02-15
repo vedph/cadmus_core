@@ -46,6 +46,10 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 10.1.2
+
+- 2026-02-15: updated packages.
+
 ### 10.1.1
 
 - 2026-02-02: added method `GetThesaurusAliases` to `ICadmusRepository`.

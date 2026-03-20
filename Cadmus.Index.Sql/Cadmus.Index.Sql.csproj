@@ -13,16 +13,16 @@
 		<Description>SQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>10.0.3</Version>
-		<FileVersion>10.0.3</FileVersion>
-		<AssemblyVersion>10.0.3</AssemblyVersion>
+		<Version>10.0.4</Version>
+		<FileVersion>10.0.4</FileVersion>
+		<AssemblyVersion>10.0.4</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Fusi.DbManager" Version="6.0.0" />
 		<PackageReference Include="MySql.Data" Version="9.6.0" />
 		<PackageReference Include="SqlKata.Execution" Version="4.0.1" />
-		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
 	</ItemGroup>
 
 	<ItemGroup>

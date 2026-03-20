@@ -13,13 +13,9 @@
 		<Description>MySQL implementation of Cadmus index.</Description>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus;SQL index</PackageTags>
-		<Version>10.0.3</Version>
-		<FileVersion>10.0.3</FileVersion>
-		<AssemblyVersion>10.0.3</AssemblyVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\netstandard2.0\Cadmus.Index.MySql.xml</DocumentationFile>
+		<Version>10.0.4</Version>
+		<FileVersion>10.0.4</FileVersion>
+		<AssemblyVersion>10.0.4</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,7 +27,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- <PackageReference Include="Cadmus.Graph.MySql" Version="3.0.7" /> -->
 		<PackageReference Include="Fusi.DbManager.MySql" Version="6.0.0" />
 	</ItemGroup>
 

@@ -604,11 +604,11 @@ public abstract class EfGraphRepositoryTest
 
         DataPage<UriNode> nodePage = repository.GetLinkedNodes(
             new LinkedNodeFilter
-        {
-            PredicateId = a!.Id,
-            OtherNodeId = petrarch!.Id,
-            IsObject = true
-        });
+            {
+                PredicateId = a!.Id,
+                OtherNodeId = petrarch!.Id,
+                IsObject = true
+            });
         Assert.Equal(1, nodePage.Total);
         Assert.Equal("foaf:Person", nodePage.Items[0].Uri);
 
@@ -620,10 +620,10 @@ public abstract class EfGraphRepositoryTest
 
         DataPage<UriTriple> triplePage = repository.GetLinkedLiterals(
             new LinkedLiteralFilter
-        {
-            PredicateId = label!.Id,
-            SubjectId = petrarch.Id
-        });
+            {
+                PredicateId = label!.Id,
+                SubjectId = petrarch.Id
+            });
         Assert.Equal(1, triplePage.Total);
         Assert.Equal("Francesco Petrarca", triplePage.Items[0].ObjectLiteral);
 
@@ -1450,7 +1450,7 @@ public abstract class EfGraphRepositoryTest
                         {
                             Label = "Node " + n,
                             Uid = "x:nodes/n" + n,
-                            Tag = n == 1? "one" : null
+                            Tag = n == 1 ? "one" : null
                         }
                     },
                     Triples = new List<MappedTriple>()
@@ -1507,7 +1507,7 @@ public abstract class EfGraphRepositoryTest
         repository.AddMapping(mapping);
 
         NodeMapping? mapping2 = repository.GetMapping(mapping.Id);
-        Assert.NotNull (mapping2);
+        Assert.NotNull(mapping2);
         Assert.Equal(mapping.SourceType, mapping2!.SourceType);
         Assert.Equal(mapping.Name, mapping2!.Name);
         Assert.Equal(mapping.FacetFilter, mapping2.FacetFilter);
@@ -1706,11 +1706,11 @@ public abstract class EfGraphRepositoryTest
             Eid = "alpha-send",
             Type = "text.send",
             Description = "The alpha work is sent to Petrarch.",
-            Chronotopes = new List<AssertedChronotope>(new[]
-            {
+            Chronotopes = new List<AssertedChronotope>(
+            [
                 new AssertedChronotope
                 {
-                    Date = new AssertedDate
+                    Date = new AssertedHistoricalDate
                     {
                         A = Datation.Parse("1250 AD")!
                     },
@@ -1719,10 +1719,10 @@ public abstract class EfGraphRepositoryTest
                         Value = "Arezzo"
                     }
                 }
-            }),
-            RelatedEntities = new List<RelatedEntity>
-            {
-                new RelatedEntity
+            ]),
+            RelatedEntities =
+            [
+                new()
                 {
                     // dbr = http://dbpedia.org/resource/
                     Id = new AssertedCompositeId
@@ -1735,7 +1735,7 @@ public abstract class EfGraphRepositoryTest
                     },
                     Relation = "text:reception:recipient"
                 }
-            },
+            ],
             Note = "An editorial note about this event."
         });
         // setup updater
@@ -2504,11 +2504,11 @@ public abstract class EfGraphRepositoryTest
         // work info nodes were deleted
         // (we filter by null tag because some properties get added by mappings)
         Assert.Equal(2, repository.GetNodes(new NodeFilter
-            { Sid = PERSON_METADATA_ID + "/petrarch", Tag = "" }).Total);
+        { Sid = PERSON_METADATA_ID + "/petrarch", Tag = "" }).Total);
         Assert.Equal(2, repository.GetNodes(new NodeFilter
-            { Sid = WORK_METADATA_ID + "/alpha", Tag = "" }).Total);
+        { Sid = WORK_METADATA_ID + "/alpha", Tag = "" }).Total);
         Assert.Equal(0, repository.GetNodes(new NodeFilter
-            { Sid = WORK_INFO_ID, Tag = "" }).Total);
+        { Sid = WORK_INFO_ID, Tag = "" }).Total);
 
         // add work info back
         updater.Update(work, workInfo);

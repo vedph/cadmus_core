@@ -4,9 +4,9 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<Version>10.0.3</Version>
-		<FileVersion>10.0.3</FileVersion>
-		<AssemblyVersion>10.0.3</AssemblyVersion>
+		<Version>10.0.4</Version>
+		<FileVersion>10.0.4</FileVersion>
+		<AssemblyVersion>10.0.4</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,10 +21,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Fusi.DbManager.PgSql" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
-		<PackageReference Include="Polly" Version="8.6.5" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+		<PackageReference Include="Polly" Version="8.6.6" />
 		<PackageReference Include="Serilog" Version="4.3.1" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.12.40" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.13.13" />
 		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
 		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />

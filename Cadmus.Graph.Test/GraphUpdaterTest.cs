@@ -54,7 +54,7 @@ public sealed class GraphUpdaterTest
             {
                 new AssertedChronotope
                 {
-                    Date = new AssertedDate
+                    Date = new AssertedHistoricalDate
                     {
                         A = Datation.Parse("1250 AD")!
                     },
@@ -65,9 +65,9 @@ public sealed class GraphUpdaterTest
                     }
                 }
             }),
-            RelatedEntities = new List<RelatedEntity>
-            {
-                new RelatedEntity
+            RelatedEntities =
+            [
+                new()
                 {
                     // dbr = http://dbpedia.org/resource/
                     Id = new AssertedCompositeId
@@ -80,7 +80,7 @@ public sealed class GraphUpdaterTest
                     },
                     Relation = "text:reception:recipient"
                 }
-            },
+            ],
             Note = "An editorial note about this event."
         });
         item.Parts.Add(part);

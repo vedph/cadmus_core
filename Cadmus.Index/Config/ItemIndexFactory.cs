@@ -106,7 +106,7 @@ public sealed class ItemIndexFactory : ComponentFactory
         IItemIndexWriter? writer = GetComponent<IItemIndexWriter>(
             "index:writer", false);
 
-        if (writer != null) writer.InitContext = graphSql;
+        writer?.InitContext = graphSql;
         return writer;
     }
 

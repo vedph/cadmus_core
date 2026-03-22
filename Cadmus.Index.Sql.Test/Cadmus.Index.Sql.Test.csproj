@@ -25,7 +25,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Cadmus.Index.MySql\Cadmus.Index.MySql.csproj" />
+		<ProjectReference Include="..\Cadmus.Index.Ef.PgSql\Cadmus.Index.Ef.PgSql.csproj" />
+		<ProjectReference Include="..\Cadmus.Index.PgSql\Cadmus.Index.PgSql.csproj" />
 		<ProjectReference Include="..\Cadmus.Index.Sql\Cadmus.Index.Sql.csproj" />
 	</ItemGroup>
 

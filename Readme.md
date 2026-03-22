@@ -46,6 +46,12 @@ Cadmus data layer and business layer.
 
 ## History
 
+### 10.1.4
+
+- 2026-03-22:
+  - removed the nullable `Settings` property from `PartDefinition`. This was not used and has been superseded by profile settings.
+  - ⚠️ removed MySql legacy projects from solution.
+
 ### 10.1.3
 
 - 2026-03-20: updated packages.

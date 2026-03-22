@@ -9,8 +9,6 @@
   <Project Path="Cadmus.Core.Test/Cadmus.Core.Test.csproj" />
   <Project Path="Cadmus.Core/Cadmus.Core.csproj" />
   <Project Path="Cadmus.Graph.Api/Cadmus.Graph.Api.csproj" />
-  <Project Path="Cadmus.Graph.Ef.MySql.Test/Cadmus.Graph.Ef.MySql.Test.csproj" />
-  <Project Path="Cadmus.Graph.Ef.MySql/Cadmus.Graph.Ef.MySql.csproj" />
   <Project Path="Cadmus.Graph.Ef.PgSql.Test/Cadmus.Graph.Ef.PgSql.Test.csproj" />
   <Project Path="Cadmus.Graph.Ef.PgSql/Cadmus.Graph.Ef.PgSql.csproj" />
   <Project Path="Cadmus.Graph.Ef.Test/Cadmus.Graph.Ef.Test.csproj" />
@@ -18,13 +16,9 @@
   <Project Path="Cadmus.Graph.Extras/Cadmus.Graph.Extras.csproj" />
   <Project Path="Cadmus.Graph.Test/Cadmus.Graph.Test.csproj" />
   <Project Path="Cadmus.Graph/Cadmus.Graph.csproj" />
-  <Project Path="Cadmus.Index.Ef.MySql.Test/Cadmus.Index.Ef.MySql.Test.csproj" />
-  <Project Path="Cadmus.Index.Ef.MySql/Cadmus.Index.Ef.MySql.csproj" />
   <Project Path="Cadmus.Index.Ef.PgSql.Test/Cadmus.Index.Ef.PgSql.Test.csproj" />
   <Project Path="Cadmus.Index.Ef.PgSql/Cadmus.Index.Ef.PgSql.csproj" />
   <Project Path="Cadmus.Index.Ef/Cadmus.Index.Ef.csproj" />
-  <Project Path="Cadmus.Index.MySql.Test/Cadmus.Index.MySql.Test.csproj" />
-  <Project Path="Cadmus.Index.MySql/Cadmus.Index.MySql.csproj" />
   <Project Path="Cadmus.Index.PgSql/Cadmus.Index.PgSql.csproj" />
   <Project Path="Cadmus.Index.Sql.Test/Cadmus.Index.Sql.Test.csproj" />
   <Project Path="Cadmus.Index.Sql/Cadmus.Index.Sql.csproj" />

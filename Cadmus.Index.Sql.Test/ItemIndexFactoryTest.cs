@@ -5,24 +5,16 @@ namespace Cadmus.Index.Sql.Test;
 
 public sealed class ItemIndexFactoryTest
 {
-    private const string MYSQL_PROFILE =
+    private const string PGSQL_PROFILE =
         "{ " +
         "\"index\": " +
         "{ " +
-        "\"reader\": {\"id\": \"item-index-reader.mysql\"}, " +
-        "\"writer\": {\"id\": \"item-index-writer.mysql\"}" +
-        "}" +
-        "}";
-    private const string MSSQL_PROFILE =
-        "{ " +
-        "\"index\": " +
-        "{ " +
-        "\"reader\": {\"id\": \"item-index-reader.mysql\"}, " +
-        "\"writer\": {\"id\": \"item-index-writer.mysql\"}" +
+        "\"reader\": {\"id\": \"item-index-reader.ef-pg\"}, " +
+        "\"writer\": {\"id\": \"item-index-writer.ef-pg\"}" +
         "}" +
         "}";
 
-    private readonly IItemIndexFactoryProvider _factoryProvider;
+    private readonly StaticItemIndexFactoryProvider _factoryProvider;
 
     public ItemIndexFactoryTest()
     {
@@ -31,25 +23,17 @@ public sealed class ItemIndexFactoryTest
     }
 
     [Fact]
-    public void GetWriter_MySql_NotNull()
+    public void GetWriter_PgSql_NotNull()
     {
-        ItemIndexFactory factory = _factoryProvider.GetFactory(MYSQL_PROFILE);
+        ItemIndexFactory factory = _factoryProvider.GetFactory(PGSQL_PROFILE);
         IItemIndexWriter? writer = factory.GetItemIndexWriter();
         Assert.NotNull(writer);
     }
 
     [Fact]
-    public void GetWriter_MsSql_NotNull()
+    public void GetReader_PgSql_NotNull()
     {
-        ItemIndexFactory factory = _factoryProvider.GetFactory(MSSQL_PROFILE);
-        IItemIndexWriter? writer = factory.GetItemIndexWriter();
-        Assert.NotNull(writer);
-    }
-
-    [Fact]
-    public void GetReader_MsSql_NotNull()
-    {
-        ItemIndexFactory factory = _factoryProvider.GetFactory(MSSQL_PROFILE);
+        ItemIndexFactory factory = _factoryProvider.GetFactory(PGSQL_PROFILE);
         IItemIndexReader? writer = factory.GetItemIndexReader();
         Assert.NotNull(writer);
     }

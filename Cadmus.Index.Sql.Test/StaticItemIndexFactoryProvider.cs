@@ -1,5 +1,6 @@
 ﻿using Cadmus.Index.Config;
-using Cadmus.Index.MySql;
+using Cadmus.Index.Ef.PgSql;
+using Cadmus.Index.PgSql;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -21,11 +22,11 @@ public sealed class StaticItemIndexFactoryProvider :
     private static IHost GetHost(string config)
     {
         // build the container for seeders
-        Assembly[] indexAssemblies = new[]
-        {
-            // Cadmus.Index.MySql
-            typeof(MySqlItemIndexWriter).Assembly,
-        };
+        Assembly[] indexAssemblies =
+        [
+            // Cadmus.Index.Ef.PgSql
+            typeof(EfPgSqlItemIndexReader).Assembly,
+        ];
 
         return new HostBuilder()
             .ConfigureServices((hostContext, services) =>

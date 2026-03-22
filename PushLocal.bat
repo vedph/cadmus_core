@@ -14,7 +14,6 @@ c:\exe\nuget add .\Cadmus.Seed\bin\Debug\Cadmus.Seed.10.1.4.nupkg -source C:\Pro
 c:\exe\nuget add .\Cadmus.Graph\bin\Debug\Cadmus.Graph.10.0.5.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Graph.Ef\bin\Debug\Cadmus.Graph.Ef.10.0.5.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Graph.Ef.PgSql\bin\Debug\Cadmus.Graph.Ef.PgSql.10.0.5.nupkg -source C:\Projects\_NuGet
-c:\exe\nuget add .\Cadmus.Graph.Ef.PgSql\bin\Debug\Cadmus.Graph.Api.10.0.5.nupkg -source C:\Projects\_NuGet
 c:\exe\nuget add .\Cadmus.Graph.Extras\bin\Debug\Cadmus.Graph.Extras.10.0.5.nupkg -source C:\Projects\_NuGet
 
 pause

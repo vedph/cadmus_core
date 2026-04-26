@@ -14,18 +14,18 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageTags>Cadmus</PackageTags>
-		<Version>10.0.5</Version>
-		<FileVersion>10.0.5</FileVersion>
-		<AssemblyVersion>10.0.5</AssemblyVersion>
+		<Version>10.0.6</Version>
+		<FileVersion>10.0.6</FileVersion>
+		<AssemblyVersion>10.0.6</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -46,6 +46,7 @@ Cadmus data layer and business layer.
 
 ## History
 
+- 2026-06-08: updated packages.
 - 2026-04-26: updated packages.
 
 ### 10.1.4

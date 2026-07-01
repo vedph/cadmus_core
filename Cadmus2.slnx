@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="Cadmus.shfbproj" />
+    <File Path="CHANGELOG.md" />
     <File Path="Pack.bat" />
     <File Path="Push.bat" />
     <File Path="PushLocal.bat" />

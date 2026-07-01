@@ -102,7 +102,7 @@ public static class Program
             app.MapOpenApi();
             app.MapScalarApiReference(options =>
             {
-                options.WithTitle("Cadmus API")
+                options.WithTitle("Cadmus Graph API")
                        .AddPreferredSecuritySchemes("Bearer");
             });
 

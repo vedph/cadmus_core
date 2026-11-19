@@ -1,3 +1,5 @@
+⚠️⚠️⚠️ THIS IS OBSOLETE CODE. SEE https://github.com/vedph/cadmus-core ⚠️⚠️⚠️
+
 # Cadmus
 
 Cadmus data layer and business layer.
